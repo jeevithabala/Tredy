@@ -48,7 +48,7 @@ public class LoginActiviy extends AppCompatActivity {
     EditText name_text, email_text;
     ProgressBar progressBar;
     private ProgressDialog progressDoalog;
-String a;
+String c;
 String b;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
