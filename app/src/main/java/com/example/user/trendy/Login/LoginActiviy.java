@@ -49,7 +49,6 @@ public class LoginActiviy extends AppCompatActivity {
     ProgressBar progressBar;
     private ProgressDialog progressDoalog;
 
-    String Dhananjay = "singh";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
