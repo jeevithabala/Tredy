@@ -48,5 +48,6 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     implementation 'com.payumoney.sdkui:plug-n-play:1.4.1'
     implementation 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
+    implementation 'com.google.android.gms:play-services-auth:9.0.0'
 
 }

@@ -231,26 +231,27 @@ public class MyAccount extends Fragment {
         call.enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
             @Override
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
-                Log.e("data", "user..." + response.data().getCustomer().getOrders().getEdges().get(0).getNode().getOrderNumber());
-                Log.e("data", "user..." + response.data().getCustomer().getOrders().getEdges().get(0).getNode().getLineItems().getEdges().get(0).getNode().getVariant().getProduct().getTitle());
-                Log.e("came", "inside");
-                Log.e("data", "user..." + response.data().getCustomer().getOrders().toString());
+//                Log.e("data", "user..." + response.data().getCustomer().getOrders().getEdges().get(0).getNode().getOrderNumber());
+//                Log.e("data", "user..." + response.data().getCustomer().getOrders().getEdges().get(0).getNode().getLineItems().getEdges().get(0).getNode().getVariant().getProduct().getTitle());
+//                Log.e("came", "inside");
+//                Log.e("data", "user..." + response.data().getCustomer().getOrders().toString());
+                if (response.data().getCustomer().getOrders() != null) {
 
-
-                for (Storefront.OrderEdge order : response.data().getCustomer().getOrders().getEdges()) {
-                    OrderModel orderModel = new OrderModel();
-                    orderModel.setOrderd(order.getNode());
-                    orderModel.setLineitemsize(order.getNode().getLineItems().getEdges().size());
-                    orderModelArrayList.add(orderModel);
-                }
-                Log.e("orderModelArrayList", String.valueOf(orderModelArrayList.size()));
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-
+                    for (Storefront.OrderEdge order : response.data().getCustomer().getOrders().getEdges()) {
+                        OrderModel orderModel = new OrderModel();
+                        orderModel.setOrderd(order.getNode());
+                        orderModel.setLineitemsize(order.getNode().getLineItems().getEdges().size());
+                        orderModelArrayList.add(orderModel);
                     }
-                });
+                    Log.e("orderModelArrayList", String.valueOf(orderModelArrayList.size()));
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+
+                        }
+                    });
+                }
 
             }
 
