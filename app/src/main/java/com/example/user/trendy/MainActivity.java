@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
                     FragmentTransaction transactioncal = getSupportFragmentManager().beginTransaction();
                     transactioncal.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                     transactioncal.replace(R.id.home_container, fragment, "ForYou");
+                    transactioncal.addToBackStack("ForYou");
                     transactioncal.commit();
 
                     return true;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                     transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                     transaction.replace(R.id.home_container, new Categories(), "Categories");
-//                    transaction.addToBackStack(null);
+//                    transaction.addToBackStack("Categories");
                     transaction.commit();
 
                     return true;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                     FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
                     transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                     transaction1.replace(R.id.home_container, new Bag(), "Bag");
-//                    transaction1.addToBackStack(null);
+//                    transaction1.addToBackStack("Bag");
                     transaction1.commit();
 
                     return true;
@@ -71,6 +72,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finishAffinity();
+//        finishAffinity();
     }
 }
