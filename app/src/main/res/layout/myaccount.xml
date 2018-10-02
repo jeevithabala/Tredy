@@ -2,17 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
 
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:weightSum="4">
 
@@ -20,7 +24,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:layout_gravity="center"
-                android:layout_weight="1"
                 android:background="@color/appcolor"
                 android:gravity="center"
                 android:orientation="horizontal">
@@ -102,38 +105,29 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/change_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp">
-
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lucidasansdemibold"
-                        android:padding="20dp"
-                        android:text="Change Email" />
-
-                </android.support.v7.widget.CardView>
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:background="@color/grey"
                     android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/order"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/lucidasansdemiboldroman"
+                        android:textSize="16dp"
+                        android:textColor="@color/textcolor"
+                        android:visibility="gone"
+                        android:gravity="center"
+                        android:text="Your Order list is empty" />
+
 
                     <TextView
                         android:layout_width="match_parent"
@@ -143,7 +137,9 @@
                         android:text="Your Orders"
                         android:textColor="@color/textcolor"
                         android:textSize="14sp" />
+
                 </LinearLayout>
+
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/order_recyclerview"
@@ -154,6 +150,7 @@
                 </android.support.v7.widget.RecyclerView>
 
             </LinearLayout>
+        </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

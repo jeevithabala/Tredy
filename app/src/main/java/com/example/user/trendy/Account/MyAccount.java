@@ -38,7 +38,7 @@ public class MyAccount extends Fragment {
     LinearLayout change_email, edit_profile;
     String accessToken;
     private GraphClient graphClient;
-    TextView name, email, mobile_number;
+    TextView name, email, mobile_number,order;
     String nametext, emailtext, mobiletext, firstname, lastname;
     RecyclerView order_recyclerview;
     ArrayList<OrderModel> orderModelArrayList = new ArrayList<>();
@@ -52,8 +52,8 @@ public class MyAccount extends Fragment {
         mobile_number = view.findViewById(R.id.mobile_number);
         edit_profile = view.findViewById(R.id.edit_profile);
         order_recyclerview = view.findViewById(R.id.order_recyclerview);
+        order=view.findViewById(R.id.order);
 
-        change_email = view.findViewById(R.id.change_email);
         accessToken = SharedPreference.getData("accesstoken", getActivity());
         Log.e("accestoken", "" + accessToken);
         graphClient = GraphClient.builder(getActivity())
@@ -68,16 +68,7 @@ public class MyAccount extends Fragment {
         }
 
 
-        change_email.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction.replace(R.id.home_container, new Changeemail(), "account");
-//                    transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
+
 
         edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -243,14 +234,23 @@ public class MyAccount extends Fragment {
                         orderModel.setLineitemsize(order.getNode().getLineItems().getEdges().size());
                         orderModelArrayList.add(orderModel);
                     }
+
                     Log.e("orderModelArrayList", String.valueOf(orderModelArrayList.size()));
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            adapter.notifyDataSetChanged();
+                            if(orderModelArrayList.size()==0){
+                                order.setVisibility(View.VISIBLE);
+
+                            }else {
+                                adapter.notifyDataSetChanged();
+                            }
 
                         }
                     });
+                }else {
+                    order.setVisibility(View.VISIBLE);
+
                 }
 
             }

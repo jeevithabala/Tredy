@@ -53,15 +53,14 @@ public class LoginActiviy extends AppCompatActivity implements
     private static final int RC_SIGN_IN = 007;
     CallbackManager callbackManager;
     LoginButton login_button;
-    String firstname = "",lastname="", email = "", password;
+    String firstname = "", lastname = "", email = "", password;
     private GraphClient graphClient;
     Button facebook;
-    TextView signin,signup;
+    TextView signin, signup;
     EditText name_text, email_text;
     ProgressBar progressBar;
     private ProgressDialog progressDoalog;
     TextInputEditText etPassword;
-
 
 
     @Override
@@ -100,7 +99,7 @@ public class LoginActiviy extends AppCompatActivity implements
         btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
         btnSignOut = (Button) findViewById(R.id.btn_sign_out);
         btnRevokeAccess = (Button) findViewById(R.id.btn_revoke_access);
-        etPassword=findViewById(R.id.etPassword);
+        etPassword = findViewById(R.id.etPassword);
 
         btnSignIn.setOnClickListener(this);
         btnSignOut.setOnClickListener(this);
@@ -162,7 +161,7 @@ public class LoginActiviy extends AppCompatActivity implements
                                             // Bundle bFacebookData = getFacebookData(object);
                                             // email = response.getJSONObject().getString("email");
                                             firstname = object.getString("first_name");
-                                            lastname=object.getString("last_name");
+                                            lastname = object.getString("last_name");
                                             email = object.getString("email");
                                             Log.e("name", "" + firstname + email);
 //                                            gender = object.getString("gender");
@@ -221,7 +220,6 @@ public class LoginActiviy extends AppCompatActivity implements
         });
 
 
-
         facebook.setOnClickListener(new View.OnClickListener()
 
         {
@@ -234,14 +232,14 @@ public class LoginActiviy extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 email = email_text.getText().toString().trim();
-                password=etPassword.getText().toString().trim();
+                password = etPassword.getText().toString().trim();
                 if (email.trim().length() != 0) {
                     if (password.trim().length() != 0) {
                         checkCustomer(email.trim(), password.trim());
                     } else {
                         Toast.makeText(getApplicationContext(), "Please enter password", Toast.LENGTH_SHORT).show();
                     }
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
 
                 }
@@ -251,6 +249,7 @@ public class LoginActiviy extends AppCompatActivity implements
         });
 
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -266,7 +265,8 @@ public class LoginActiviy extends AppCompatActivity implements
             finish();
         }
     }
-//            Toast.makeText(getActivity(),"Press again to exit",Toast.LENGTH_SHORT);
+
+    //            Toast.makeText(getActivity(),"Press again to exit",Toast.LENGTH_SHORT);
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
@@ -274,13 +274,13 @@ public class LoginActiviy extends AppCompatActivity implements
 
             String personName = acct.getDisplayName();
 //            String personPhotoUrl = acct.getPhotoUrl().toString();
-             email = acct.getEmail();
+            email = acct.getEmail();
             String password1 = email;
 
             String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
             Log.e("coverted", password.trim());
-            checkCustomer(email.trim(),password.trim());
-        }else {
+            checkCustomer(email.trim(), password.trim());
+        } else {
             Log.e("erroer", result.toString());
         }
     }
@@ -311,7 +311,7 @@ public class LoginActiviy extends AppCompatActivity implements
 
         Storefront.CustomerCreateInput input = new Storefront.CustomerCreateInput(email.trim(), password.trim())
                 .setFirstName(firstname)
-                  .setLastName(lastname)
+                .setLastName(lastname)
                 .setAcceptsMarketing(true);
         //  .setPhone(Input.value("1-123-456-7890"));
 
@@ -370,7 +370,7 @@ public class LoginActiviy extends AppCompatActivity implements
 
     }
 
-    public void checkCustomer(String email,String password) {
+    public void checkCustomer(String email, String password) {
 //        if (progressDoalog != null) {
 //            progressDoalog = new ProgressDialog(LoginActiviy.this);
 //            progressDoalog.setMessage("loading....");
@@ -378,7 +378,6 @@ public class LoginActiviy extends AppCompatActivity implements
 //            progressDoalog.setCancelable(true);
 //            progressDoalog.show();
 //        }
-
 
 
         Storefront.CustomerAccessTokenCreateInput input1 = new Storefront.CustomerAccessTokenCreateInput(email.trim(), password.trim());

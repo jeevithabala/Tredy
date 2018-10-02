@@ -40,7 +40,7 @@ public class Whislist extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.whislist, container, false);
-
+        cartList.clear();
         whislist = view.findViewById(R.id.whislist);
         items = view.findViewById(R.id.items);
         nobag = view.findViewById(R.id.nobag);

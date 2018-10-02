@@ -53,7 +53,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         view = binding.getRoot();
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
-
+        cartList.clear();
         db = new DBHelper(getActivity());
         cartList = db.getCartList();
         Collections.reverse(cartList); // ADD THIS LINE TO REVERSE ORDER!

@@ -98,8 +98,9 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     private String collectionname;
     CartController cartController;
     CommanCartControler commanCartControler;
-    private int requestCount=1;
+    private int requestCount=1,requestCount1=1;
     RequestQueue requestQueue;
+    private String sortbykey="23z";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -175,6 +176,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         } else if (category.trim().equals("filter")) {
             min_price = getArguments().getString("min_price");
             max_price = getArguments().getString("max_price");
+            sortbykey=getArguments().getString("sortby");
             id = getArguments().getString("collectionid");
             selectedFilterList = getArguments().getStringArrayList("selectedFilterList");
             dynamicKey = getArguments().getString("dynamicKey");
@@ -184,6 +186,22 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
         if (category.trim().equals("filter")) {
             postFilter();
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                }
+
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+
+                    if (isLastItemDisplaying(recyclerView)) {
+                        //Calling the method getdata again
+                        postFilter();
+                    }
+                }
+            });
         } else {
 //            requestCount=1;
 
@@ -214,9 +232,17 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     }
 
     public void postFilter() {
+        requestQueue.add(postfilter(id,requestCount1));
+        Log.d("request counter1", String.valueOf(requestCount1));
+        requestCount1++;
 
+    }
+
+
+    private StringRequest postfilter(String id,int count) {
+        StringRequest stringRequest = null;
         try {
-            RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+
             String URL = "http://...";
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("collection_id", id);
@@ -243,8 +269,14 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
 
             final String requestBody = jsonBody.toString();
+            String a;
+            if(sortbykey.trim().length()==0){
+                a="?page_size=10&page=";
+            }else {
+                a="?"+sortbykey.trim()+"&page_size=10&page=";
+            }
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post+"?page_size=10&page=1", new Response.Listener<String>() {
+             stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + a+count, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     Log.i("VOLLEY", response);
@@ -328,60 +360,13 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
             };
 
-            requestQueue.add(stringRequest);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
 
-    @Override
-    public void onClick(String value) {
-        productid = value;
-        Log.d("productid", productid);
-        cart(productid);
-    }
+        return stringRequest;
 
 
-    public void cart(String id) {
-
-        Storefront.CheckoutCreateInput input = new Storefront.CheckoutCreateInput()
-                .setLineItemsInput(Input.value(Arrays.asList(
-                        new Storefront.CheckoutLineItemInput(3, new ID(id))
-                )));
-
-        Storefront.MutationQuery query = Storefront.mutation(mutationQuery -> mutationQuery
-
-                .checkoutCreate(input, createPayloadQuery -> createPayloadQuery
-                        .checkout(checkoutQuery -> checkoutQuery
-                                .webUrl()
-                        )
-                        .userErrors(userErrorQuery -> userErrorQuery
-                                .field()
-                                .message()
-                        )
-                )
-        );
-
-        graphClient.mutateGraph(query).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
-            @Override
-            public void onResponse(@NonNull GraphResponse<Storefront.Mutation> response) {
-                if (!response.data().getCheckoutCreate().getUserErrors().isEmpty()) {
-                    Log.e("data", response.data().getCheckoutCreate().toString());
-                    // handle user friendly errors
-                } else {
-                    checkoutId = String.valueOf(response.data().getCheckoutCreate().getCheckout().getId());
-                    String checkoutWebUrl = response.data().getCheckoutCreate().getCheckout().getWebUrl();
-                    Log.d("checkoutId", checkoutId);
-                    Log.d("checkoutWebUrl", checkoutWebUrl);
-                    //    checkId();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull GraphError error) {
-                // handle errors
-            }
-        });
     }
 
     private void getData() {
@@ -640,5 +625,56 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         commanCartControler = (CommanCartControler)cartController;
         commanCartControler.AddToWhislist(productid.trim());
     }
+
+    @Override
+    public void onClick(String value) {
+        productid = value;
+        Log.d("productid", productid);
+        cart(productid);
+    }
+
+
+    public void cart(String id) {
+
+        Storefront.CheckoutCreateInput input = new Storefront.CheckoutCreateInput()
+                .setLineItemsInput(Input.value(Arrays.asList(
+                        new Storefront.CheckoutLineItemInput(3, new ID(id))
+                )));
+
+        Storefront.MutationQuery query = Storefront.mutation(mutationQuery -> mutationQuery
+
+                .checkoutCreate(input, createPayloadQuery -> createPayloadQuery
+                        .checkout(checkoutQuery -> checkoutQuery
+                                .webUrl()
+                        )
+                        .userErrors(userErrorQuery -> userErrorQuery
+                                .field()
+                                .message()
+                        )
+                )
+        );
+
+        graphClient.mutateGraph(query).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
+            @Override
+            public void onResponse(@NonNull GraphResponse<Storefront.Mutation> response) {
+                if (!response.data().getCheckoutCreate().getUserErrors().isEmpty()) {
+                    Log.e("data", response.data().getCheckoutCreate().toString());
+                    // handle user friendly errors
+                } else {
+                    checkoutId = String.valueOf(response.data().getCheckoutCreate().getCheckout().getId());
+                    String checkoutWebUrl = response.data().getCheckoutCreate().getCheckout().getWebUrl();
+                    Log.d("checkoutId", checkoutId);
+                    Log.d("checkoutWebUrl", checkoutWebUrl);
+                    //    checkId();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull GraphError error) {
+                // handle errors
+            }
+        });
+    }
+
 }
 

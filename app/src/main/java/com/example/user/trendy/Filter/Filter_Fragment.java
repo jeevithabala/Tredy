@@ -84,7 +84,7 @@ public class Filter_Fragment extends Fragment {
     Toolbar toolbar;
     TextView type;
     String min_price, max_price;
-    String dynamicKey = "";
+    String dynamicKey = "", sortlistkey = "";
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -146,11 +146,21 @@ public class Filter_Fragment extends Fragment {
                     max_price = tokens.nextToken().trim();
                     Log.e("pricec", "" + min_price + max_price);
                 }
+
+                if (selectedsortList.size() != 0) {
+                    Log.e("sortby",selectedsortList.get(0));
+                    if (selectedsortList.get(0).trim().equals("Price : High to Low")) {
+                        sortlistkey = "sortBy=max_price&order=desc";
+                    } else {
+                        sortlistkey = "sortBy=min_price&order=asc";
+                    }
+                }
                 Fragment ProductList = new CategoryProduct();
                 Bundle bundle = new Bundle();
-                bundle.putString("collection","filter");
+                bundle.putString("collection", "filter");
                 bundle.putString("min_price", min_price);
                 bundle.putString("max_price", max_price);
+                bundle.putString("sortby",sortlistkey);
                 bundle.putString("collectionid", collectionid);
                 bundle.putString("dynamicKey", dynamicKey);
                 bundle.putStringArrayList("selectedFilterList", selectedFilterList);
@@ -158,7 +168,7 @@ public class Filter_Fragment extends Fragment {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                 transaction.replace(R.id.home_container, ProductList, "Categories");
-                    transaction.addToBackStack(null);
+                transaction.addToBackStack(null);
                 transaction.commit();
 
 //                postFilter();

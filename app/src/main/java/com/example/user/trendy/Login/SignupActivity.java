@@ -1,19 +1,32 @@
 package com.example.user.trendy.Login;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.user.trendy.BuildConfig;
+import com.example.user.trendy.MainActivity;
 import com.example.user.trendy.R;
+import com.example.user.trendy.Util.SharedPreference;
+import com.shopify.buy3.GraphCall;
+import com.shopify.buy3.GraphClient;
+import com.shopify.buy3.GraphError;
+import com.shopify.buy3.HttpCachePolicy;
+import com.shopify.buy3.Storefront;
 
+import java.io.File;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class SignupActivity extends Activity implements TextWatcher {
@@ -23,11 +36,20 @@ public class SignupActivity extends Activity implements TextWatcher {
     TextInputLayout firstNameInputLayout, lastNameInputLayout, emailInputLayout, mobileInputLayout, passwordInputLayout;
     Button submit_btn;
     String firstname, lastname, mobilenumber, email, password;
+    private GraphClient graphClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        graphClient = GraphClient.builder(this)
+                .shopDomain(BuildConfig.SHOP_DOMAIN)
+                .accessToken(BuildConfig.API_KEY)
+                .httpCache(new File(getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
+                .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
+                .build();
+
 
         final String PHONE_REGEX = "^[0-9][0-9]{9}$";
 
@@ -212,7 +234,224 @@ public class SignupActivity extends Activity implements TextWatcher {
 
 
     private void signingUpUser() {
-
+        checkCustomer(email.trim(), password.trim());
 
     }
+
+
+    public void checkCustomer(String email, String password) {
+//        if (progressDoalog != null) {
+//            progressDoalog = new ProgressDialog(LoginActiviy.this);
+//            progressDoalog.setMessage("loading....");
+//            progressDoalog.setTitle("Processing");
+//            progressDoalog.setCancelable(true);
+//            progressDoalog.show();
+//        }
+
+
+        Storefront.CustomerAccessTokenCreateInput input1 = new Storefront.CustomerAccessTokenCreateInput(email.trim(), password.trim());
+        Storefront.MutationQuery mutationQuery1 = Storefront.mutation(mutation -> mutation
+                .customerAccessTokenCreate(input1, query -> query
+                        .customerAccessToken(customerAccessToken -> customerAccessToken
+                                .accessToken()
+                                .expiresAt()
+                        )
+
+                        .userErrors(userError -> userError
+                                .field()
+                                .message()
+                        )
+                )
+        );
+
+        graphClient.mutateGraph(mutationQuery1).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
+
+
+            @Override
+            public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
+//                Log.e("response", response.toString());
+
+                if (response.data() != null) {
+
+
+                    if (response.data().getCustomerAccessTokenCreate().getCustomerAccessToken() != null) {
+                        //                        if (progressDoalog != null) {
+                        //                            progressDoalog.dismiss();
+                        //                        }
+                        String token = "" + response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getAccessToken().toString();
+                        String expire = response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getExpiresAt().toString();
+                        SharedPreference.saveData("accesstoken", token.trim(), getApplicationContext());
+
+                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        SharedPreference.saveData("login", "true", getApplicationContext());
+                        startActivity(i);
+
+
+                        Log.e("token", "" + token);
+                        Log.e("expire", "" + expire);
+                        //                    String id = response.data().getCustomerCreate().getCustomer().getId().toString();
+                        //                    String email = response.data().getCustomerCreate().getCustomer().getEmail();
+                        //  Log.d("em", "Create Customer Info:" + email + ":" + id);
+                    } else {
+                        Log.e("token", "" + "empty");
+                        create();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull GraphError error) {
+//                if (progressDoalog != null) {
+//                    progressDoalog.dismiss();
+//                }
+                Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
+
+            }
+
+
+        });
+    }
+
+    public void create() {
+//
+//        StringTokenizer st = new StringTokenizer(name, " "); //pass comma as delimeter
+//        String firstname = st.nextToken();
+//        String lastname = st.nextToken();
+//        Log.e("firstname", firstname);
+//        Log.e("lastname", lastname);
+
+//            String password1 = email.trim();
+//
+//            String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
+//            Log.e("coverted1", password.trim());
+        if (mobilenumber.trim().length() == 0) {
+
+            Storefront.CustomerCreateInput input = new Storefront.CustomerCreateInput(email.trim(), password.trim())
+                    .setFirstName(firstname)
+                    .setLastName(lastname)
+                    .setEmail(email.trim())
+                    .setAcceptsMarketing(true);
+            //  .setPhone(Input.value("1-123-456-7890"));
+
+            Storefront.MutationQuery mutationQuery = Storefront.mutation(mutation -> mutation
+                    .customerCreate(input, query -> query
+                            .customer(customer -> customer
+                                    .id()
+                                    .email()
+                                    .firstName()
+
+                            )
+                            .userErrors(userError -> userError
+                                    .field()
+                                    .message()
+                            )
+                    )
+            );
+
+
+            graphClient.mutateGraph(mutationQuery).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
+
+
+                @Override
+                public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
+//                Log.e("response", response.toString());
+
+                    if (response.data().getCustomerCreate() != null) {
+
+                        String id = response.data().getCustomerCreate().getCustomer().getId().toString();
+                        String email = response.data().getCustomerCreate().getCustomer().getEmail();
+                        Log.d("em", "Create Customer Info:" + email + ":" + id);
+
+                        if (id != null) {
+//                        if (progressDoalog != null) {
+//                            progressDoalog.dismiss();
+//                        }
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            SharedPreference.saveData("login", "true", getApplicationContext());
+                            startActivity(i);
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull GraphError error) {
+//                if (progressDoalog != null) {
+//                    progressDoalog.dismiss();
+//                }
+                    Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
+
+                }
+
+
+            });
+
+
+        } else {
+            if (mobilenumber.trim().length() == 10) {
+                mobilenumber = "+91" + mobilenumber;
+            }
+
+            Storefront.CustomerCreateInput input = new Storefront.CustomerCreateInput(email.trim(), password.trim())
+                    .setFirstName(firstname)
+                    .setLastName(lastname)
+                    .setEmail(email.trim())
+                    .setPhone(mobilenumber.trim())
+                    .setAcceptsMarketing(true);
+            //  .setPhone(Input.value("1-123-456-7890"));
+
+            Storefront.MutationQuery mutationQuery = Storefront.mutation(mutation -> mutation
+                    .customerCreate(input, query -> query
+                            .customer(customer -> customer
+                                    .id()
+                                    .email()
+                                    .firstName()
+
+                            )
+                            .userErrors(userError -> userError
+                                    .field()
+                                    .message()
+                            )
+                    )
+            );
+
+
+            graphClient.mutateGraph(mutationQuery).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
+
+
+                @Override
+                public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
+//                Log.e("response", response.toString());
+
+                    if (response.data().getCustomerCreate() != null) {
+
+                        String id = response.data().getCustomerCreate().getCustomer().getId().toString();
+                        String email = response.data().getCustomerCreate().getCustomer().getEmail();
+                        Log.d("em", "Create Customer Info:" + email + ":" + id);
+
+                        if (id != null) {
+//                        if (progressDoalog != null) {
+//                            progressDoalog.dismiss();
+//                        }
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            SharedPreference.saveData("login", "true", getApplicationContext());
+                            startActivity(i);
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull GraphError error) {
+//                if (progressDoalog != null) {
+//                    progressDoalog.dismiss();
+//                }
+                    Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
+
+                }
+
+
+            });
+        }
+    }
+
 }
