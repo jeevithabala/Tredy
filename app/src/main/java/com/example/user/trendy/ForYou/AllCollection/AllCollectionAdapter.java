@@ -85,7 +85,7 @@ public class AllCollectionAdapter  extends RecyclerView.Adapter<AllCollectionAda
                     fragment.setArguments(bundle);
                     FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container,fragment,"fragment");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    // ft.addToBackStack("fragment");
+                     ft.addToBackStack("fragment");
                     ft.commit();
 
 //                    Intent intent = new Intent(mContext, Main2Activity.class);

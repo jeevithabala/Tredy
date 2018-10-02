@@ -152,6 +152,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
 
         topselling_recyclerview.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         banner();
+        getObject().clear();
 //        productlist();
         collectionList();
         getCollection(converted.trim());
@@ -162,6 +163,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
             adapter = new MainAdapter(getActivity(), getObject(), getFragmentManager());
             topselling_recyclerview.setAdapter(adapter);
         }
+
         myaccount = view.findViewById(R.id.myaccount);
         whislist = view.findViewById(R.id.whislist);
         whislist.setOnClickListener(new View.OnClickListener() {

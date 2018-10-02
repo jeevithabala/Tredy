@@ -62,12 +62,12 @@ public class LoginActiviy extends AppCompatActivity {
                 .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
                 .build();
 
-        String login = SharedPreference.getData("login", getApplicationContext());
-//
-            if (login.equals("true")) {
-            Intent i = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(i);
-        }
+//        String login = SharedPreference.getData("login", getApplicationContext());
+////
+//            if (login.equals("true")) {
+//            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+//            startActivity(i);
+//        }
 
         login_button = findViewById(R.id.login_button);
         signup = findViewById(R.id.signup);
@@ -179,6 +179,24 @@ public class LoginActiviy extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        //In onresume fetching value from sharedpreference
+
+
+        String login = SharedPreference.getData("login", getApplicationContext());
+//
+        if (login.equals("true")) {
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(i);
+
+            finish();
+        }
+//            Toast.makeText(getActivity(),"Press again to exit",Toast.LENGTH_SHORT);
+
+    }
+
     protected void onActivityResult(int requestCode, int responseCode,
                                     Intent data) {
         super.onActivityResult(requestCode, responseCode, data);
@@ -198,7 +216,7 @@ public class LoginActiviy extends AppCompatActivity {
         String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
         Log.e("coverted1", password.trim());
 
-        Storefront.CustomerCreateInput input = new Storefront.CustomerCreateInput(email, password.trim())
+        Storefront.CustomerCreateInput input = new Storefront.CustomerCreateInput(email.trim(), password.trim())
                 .setFirstName(firstname)
                   .setLastName(lastname)
                 .setAcceptsMarketing(true);
