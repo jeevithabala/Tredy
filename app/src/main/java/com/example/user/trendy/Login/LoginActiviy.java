@@ -60,8 +60,6 @@ public class LoginActiviy extends AppCompatActivity implements
     EditText name_text, email_text;
     ProgressBar progressBar;
     private ProgressDialog progressDoalog;
-<<<<<<< HEAD
-=======
     TextInputEditText etPassword;
 
 
@@ -71,7 +69,6 @@ public class LoginActiviy extends AppCompatActivity implements
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         Log.d("TAG", "onConnectionFailed:" + connectionResult);
     }
->>>>>>> master
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +126,6 @@ public class LoginActiviy extends AppCompatActivity implements
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             }
         });
->>>>>>> master
 
         login_button = findViewById(R.id.login_button);
         signin = findViewById(R.id.signin);
@@ -255,8 +251,6 @@ public class LoginActiviy extends AppCompatActivity implements
         });
 
     }
-
-<<<<<<< HEAD
     @Override
     public void onResume() {
         super.onResume();
@@ -271,9 +265,8 @@ public class LoginActiviy extends AppCompatActivity implements
 
             finish();
         }
+    }
 //            Toast.makeText(getActivity(),"Press again to exit",Toast.LENGTH_SHORT);
-
-=======
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
@@ -288,9 +281,8 @@ public class LoginActiviy extends AppCompatActivity implements
             Log.e("coverted", password.trim());
             checkCustomer(email.trim(),password.trim());
         }else {
-            Log.e("erroer",result.toString());
+            Log.e("erroer", result.toString());
         }
->>>>>>> master
     }
 
     protected void onActivityResult(int requestCode, int responseCode,
