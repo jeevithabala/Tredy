@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -26,6 +27,13 @@ import com.facebook.GraphResponse;
 import com.example.user.trendy.R;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.GraphError;
@@ -38,16 +46,32 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-public class LoginActiviy extends AppCompatActivity {
+public class LoginActiviy extends AppCompatActivity implements
+        View.OnClickListener,
+        GoogleApiClient.OnConnectionFailedListener {
+
+    private static final int RC_SIGN_IN = 007;
     CallbackManager callbackManager;
     LoginButton login_button;
-    String firstname = "",lastname="", email = "";
+    String firstname = "",lastname="", email = "", password;
     private GraphClient graphClient;
     Button facebook;
-    TextView signup;
+    TextView signin,signup;
     EditText name_text, email_text;
     ProgressBar progressBar;
     private ProgressDialog progressDoalog;
+<<<<<<< HEAD
+=======
+    TextInputEditText etPassword;
+
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        Log.d("TAG", "onConnectionFailed:" + connectionResult);
+    }
+>>>>>>> master
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +86,53 @@ public class LoginActiviy extends AppCompatActivity {
                 .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
                 .build();
 
-//        String login = SharedPreference.getData("login", getApplicationContext());
-////
+
+        String login = SharedPreference.getData("login", getApplicationContext());
+
 //            if (login.equals("true")) {
 //            Intent i = new Intent(getApplicationContext(), MainActivity.class);
 //            startActivity(i);
 //        }
 
+
+        GoogleApiClient mGoogleApiClient;
+        ProgressDialog mProgressDialog;
+        SignInButton btnSignIn;
+        Button btnSignOut, btnRevokeAccess;
+
+        btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
+        btnSignOut = (Button) findViewById(R.id.btn_sign_out);
+        btnRevokeAccess = (Button) findViewById(R.id.btn_revoke_access);
+        etPassword=findViewById(R.id.etPassword);
+
+        btnSignIn.setOnClickListener(this);
+        btnSignOut.setOnClickListener(this);
+        btnRevokeAccess.setOnClickListener(this);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        // Customizing G+ button
+        btnSignIn.setSize(SignInButton.SIZE_STANDARD);
+        btnSignIn.setScopes(gso.getScopeArray());
+
+        btnSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+                startActivityForResult(signInIntent, RC_SIGN_IN);
+            }
+        });
+>>>>>>> master
+
         login_button = findViewById(R.id.login_button);
+        signin = findViewById(R.id.signin);
         signup = findViewById(R.id.signup);
         facebook = findViewById(R.id.facebookView);
         //  name_text = findViewById(R.id.name_text);
@@ -116,7 +179,12 @@ public class LoginActiviy extends AppCompatActivity {
                                             SharedPreference.saveData("email", email.trim(), getApplicationContext());
                                             SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
                                             SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
-                                            checkCustomer(email);
+                                            String password1 = email;
+
+                                            String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
+                                            Log.e("coverted", password.trim());
+
+                                            checkCustomer(email, password.trim());
 
 
                                         } catch (JSONException e) {
@@ -148,6 +216,16 @@ public class LoginActiviy extends AppCompatActivity {
                     }
                 });
 
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(LoginActiviy.this, SignupActivity.class);
+                startActivity(i);
+            }
+        });
+
+
+
         facebook.setOnClickListener(new View.OnClickListener()
 
         {
@@ -156,21 +234,20 @@ public class LoginActiviy extends AppCompatActivity {
                 login_button.performClick();
             }
         });
-        signup.setOnClickListener(new View.OnClickListener() {
+        signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                progressDoalog = new ProgressDialog(LoginActiviy.this);
-//                progressDoalog.setMessage("loading....");
-//                progressDoalog.setTitle("Processing");
-//                progressDoalog.setCancelable(true);
-//                //   progressDoalog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-//                progressDoalog.show();
-                //  name=name_text.getText().toString().trim();
                 email = email_text.getText().toString().trim();
+                password=etPassword.getText().toString().trim();
                 if (email.trim().length() != 0) {
-                    checkCustomer(email.trim());
-                } else {
+                    if (password.trim().length() != 0) {
+                        checkCustomer(email.trim(), password.trim());
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Please enter password", Toast.LENGTH_SHORT).show();
+                    }
+                }else {
                     Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
+
                 }
 
 
@@ -179,6 +256,7 @@ public class LoginActiviy extends AppCompatActivity {
 
     }
 
+<<<<<<< HEAD
     @Override
     public void onResume() {
         super.onResume();
@@ -195,12 +273,35 @@ public class LoginActiviy extends AppCompatActivity {
         }
 //            Toast.makeText(getActivity(),"Press again to exit",Toast.LENGTH_SHORT);
 
+=======
+    private void handleSignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+
+            String personName = acct.getDisplayName();
+//            String personPhotoUrl = acct.getPhotoUrl().toString();
+             email = acct.getEmail();
+            String password1 = email;
+
+            String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
+            Log.e("coverted", password.trim());
+            checkCustomer(email.trim(),password.trim());
+        }else {
+            Log.e("erroer",result.toString());
+        }
+>>>>>>> master
     }
 
     protected void onActivityResult(int requestCode, int responseCode,
                                     Intent data) {
         super.onActivityResult(requestCode, responseCode, data);
         callbackManager.onActivityResult(requestCode, responseCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
     }
 
     public void create() {
@@ -211,7 +312,7 @@ public class LoginActiviy extends AppCompatActivity {
 //        Log.e("firstname", firstname);
 //        Log.e("lastname", lastname);
 
-        String password1 = email;
+        String password1 = email.trim();
 
         String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
         Log.e("coverted1", password.trim());
@@ -277,7 +378,7 @@ public class LoginActiviy extends AppCompatActivity {
 
     }
 
-    public void checkCustomer(String email) {
+    public void checkCustomer(String email,String password) {
 //        if (progressDoalog != null) {
 //            progressDoalog = new ProgressDialog(LoginActiviy.this);
 //            progressDoalog.setMessage("loading....");
@@ -286,10 +387,7 @@ public class LoginActiviy extends AppCompatActivity {
 //            progressDoalog.show();
 //        }
 
-        String password1 = email;
 
-        String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
-        Log.e("coverted", password.trim());
 
         Storefront.CustomerAccessTokenCreateInput input1 = new Storefront.CustomerAccessTokenCreateInput(email.trim(), password.trim());
         Storefront.MutationQuery mutationQuery1 = Storefront.mutation(mutation -> mutation
@@ -370,5 +468,10 @@ public class LoginActiviy extends AppCompatActivity {
 //                        )
 //                )
 //        );
+    }
+
+    @Override
+    public void onClick(View view) {
+
     }
 }
