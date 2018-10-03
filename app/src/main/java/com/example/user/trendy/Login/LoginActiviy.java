@@ -296,7 +296,7 @@ public class LoginActiviy extends AppCompatActivity implements
         }
     }
 
-    public void create() {
+    public void create(String email,String password) {
 //
 //        StringTokenizer st = new StringTokenizer(name, " "); //pass comma as delimeter
 //        String firstname = st.nextToken();
@@ -304,10 +304,10 @@ public class LoginActiviy extends AppCompatActivity implements
 //        Log.e("firstname", firstname);
 //        Log.e("lastname", lastname);
 
-        String password1 = email.trim();
-
-        String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
-        Log.e("coverted1", password.trim());
+//        String password1 = email.trim();
+//
+//        String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
+//        Log.e("coverted1", password.trim());
 
         Storefront.CustomerCreateInput input = new Storefront.CustomerCreateInput(email.trim(), password.trim())
                 .setFirstName(firstname)
@@ -425,7 +425,7 @@ public class LoginActiviy extends AppCompatActivity implements
                         //  Log.d("em", "Create Customer Info:" + email + ":" + id);
                     } else {
                         Log.e("token", "" + "empty");
-                        create();
+                        create(email,password);
                     }
                 }
 

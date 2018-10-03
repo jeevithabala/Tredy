@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.user.trendy.Category.ProductDetail.ProductView;
 import com.example.user.trendy.ForYou.TopCollection.TopCollectionAdapter;
@@ -106,13 +107,16 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
                     cartController = new CartController(mContext);
                     commanCartControler = (CommanCartControler)cartController;
                     commanCartControler.AddToCart(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
-
+                    Toast.makeText(mContext,"Added to cart",Toast.LENGTH_SHORT).show();
 
                 }
 
                 @Override
                 public void OnclickWhislilst() {
-
+                    cartController = new CartController(mContext);
+                    commanCartControler = (CommanCartControler)cartController;
+                    commanCartControler.AddToWhislist(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
+                    Toast.makeText(mContext,"Added to Wishlist",Toast.LENGTH_SHORT).show();
                 }
             });
 

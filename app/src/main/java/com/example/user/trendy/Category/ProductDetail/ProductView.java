@@ -192,6 +192,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                     String[] str = val2.split("/");
                     Log.d("str value", str[4]);
                     commanCartControler.AddToCartGrocery(id.trim(), selectedID);
+                    Toast.makeText(getActivity(),"Added to cart",Toast.LENGTH_SHORT).show();
                 } else {
                     String text = "gid://shopify/Product/" + id.trim();
 
@@ -199,7 +200,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                     Log.e("coverted", converted.trim());
                     Log.e("id", id);
                     commanCartControler.AddToCartGrocery(converted.trim(), selectedID);
-
+                    Toast.makeText(getActivity(),"Added to cart",Toast.LENGTH_SHORT).show();
                 }
 
 

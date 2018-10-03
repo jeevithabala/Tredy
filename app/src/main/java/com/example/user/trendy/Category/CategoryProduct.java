@@ -63,6 +63,7 @@ import java.util.Arrays;
 import android.util.Base64;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -617,6 +618,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler)cartController;
         commanCartControler.AddToCart(productid.trim());
+        Toast.makeText(getActivity(),"Added to cart",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -624,6 +626,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler)cartController;
         commanCartControler.AddToWhislist(productid.trim());
+        Toast.makeText(getActivity(),"Added to Wishlist",Toast.LENGTH_SHORT).show();
     }
 
     @Override
