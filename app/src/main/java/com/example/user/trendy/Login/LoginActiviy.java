@@ -296,79 +296,79 @@ public class LoginActiviy extends AppCompatActivity implements
         }
     }
 
-    public void create(String email,String password) {
+//    public void create(String email,String password) {
+////
+////        StringTokenizer st = new StringTokenizer(name, " "); //pass comma as delimeter
+////        String firstname = st.nextToken();
+////        String lastname = st.nextToken();
+////        Log.e("firstname", firstname);
+////        Log.e("lastname", lastname);
 //
-//        StringTokenizer st = new StringTokenizer(name, " "); //pass comma as delimeter
-//        String firstname = st.nextToken();
-//        String lastname = st.nextToken();
-//        Log.e("firstname", firstname);
-//        Log.e("lastname", lastname);
-
-//        String password1 = email.trim();
+////        String password1 = email.trim();
+////
+////        String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
+////        Log.e("coverted1", password.trim());
 //
-//        String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
-//        Log.e("coverted1", password.trim());
-
-        Storefront.CustomerCreateInput input = new Storefront.CustomerCreateInput(email.trim(), password.trim())
-                .setFirstName(firstname)
-                .setLastName(lastname)
-                .setAcceptsMarketing(true);
-        //  .setPhone(Input.value("1-123-456-7890"));
-
-        Storefront.MutationQuery mutationQuery = Storefront.mutation(mutation -> mutation
-                .customerCreate(input, query -> query
-                        .customer(customer -> customer
-                                .id()
-                                .email()
-                                .firstName()
-
-                        )
-                        .userErrors(userError -> userError
-                                .field()
-                                .message()
-                        )
-                )
-        );
-
-
-        graphClient.mutateGraph(mutationQuery).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
-
-
-            @Override
-            public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
-//                Log.e("response", response.toString());
-
-                if (response.data().getCustomerCreate() != null) {
-
-                    String id = response.data().getCustomerCreate().getCustomer().getId().toString();
-                    String email = response.data().getCustomerCreate().getCustomer().getEmail();
-                    Log.d("em", "Create Customer Info:" + email + ":" + id);
-
-                    if (id != null) {
-//                        if (progressDoalog != null) {
-//                            progressDoalog.dismiss();
-//                        }
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                        SharedPreference.saveData("login", "true", getApplicationContext());
-                        startActivity(i);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull GraphError error) {
-//                if (progressDoalog != null) {
-//                    progressDoalog.dismiss();
+//        Storefront.CustomerCreateInput input = new Storefront.CustomerCreateInput(email.trim(), password.trim())
+//                .setFirstName(firstname)
+//                .setLastName(lastname)
+//                .setAcceptsMarketing(true);
+//        //  .setPhone(Input.value("1-123-456-7890"));
+//
+//        Storefront.MutationQuery mutationQuery = Storefront.mutation(mutation -> mutation
+//                .customerCreate(input, query -> query
+//                        .customer(customer -> customer
+//                                .id()
+//                                .email()
+//                                .firstName()
+//
+//                        )
+//                        .userErrors(userError -> userError
+//                                .field()
+//                                .message()
+//                        )
+//                )
+//        );
+//
+//
+//        graphClient.mutateGraph(mutationQuery).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
+//
+//
+//            @Override
+//            public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
+////                Log.e("response", response.toString());
+//
+//                if (response.data().getCustomerCreate() != null) {
+//
+//                    String id = response.data().getCustomerCreate().getCustomer().getId().toString();
+//                    String email = response.data().getCustomerCreate().getCustomer().getEmail();
+//                    Log.d("em", "Create Customer Info:" + email + ":" + id);
+//
+//                    if (id != null) {
+////                        if (progressDoalog != null) {
+////                            progressDoalog.dismiss();
+////                        }
+//                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+//                        SharedPreference.saveData("login", "true", getApplicationContext());
+//                        startActivity(i);
+//                    }
 //                }
-                Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
-
-            }
-
-
-        });
-
-
-    }
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull GraphError error) {
+////                if (progressDoalog != null) {
+////                    progressDoalog.dismiss();
+////                }
+//                Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
+//
+//            }
+//
+//
+//        });
+//
+//
+//    }
 
     public void checkCustomer(String email, String password) {
 //        if (progressDoalog != null) {
@@ -378,20 +378,20 @@ public class LoginActiviy extends AppCompatActivity implements
 //            progressDoalog.setCancelable(true);
 //            progressDoalog.show();
 //        }
-
-
         Storefront.CustomerAccessTokenCreateInput input1 = new Storefront.CustomerAccessTokenCreateInput(email.trim(), password.trim());
         Storefront.MutationQuery mutationQuery1 = Storefront.mutation(mutation -> mutation
                 .customerAccessTokenCreate(input1, query -> query
                         .customerAccessToken(customerAccessToken -> customerAccessToken
                                 .accessToken()
                                 .expiresAt()
+
                         )
 
                         .userErrors(userError -> userError
                                 .field()
                                 .message()
                         )
+
                 )
         );
 
@@ -425,7 +425,13 @@ public class LoginActiviy extends AppCompatActivity implements
                         //  Log.d("em", "Create Customer Info:" + email + ":" + id);
                     } else {
                         Log.e("token", "" + "empty");
-                        create(email,password);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "The email or password you entered is incorrect.", Toast.LENGTH_LONG).show();
+                            }
+                        });
+//                        create(email,password);
                     }
                 }
 

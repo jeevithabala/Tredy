@@ -328,6 +328,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                                                                 )
                                                         )
                                                         .tags()
+                                                        .options(option->option.name())
                                                         .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
                                                                 .edges(variantEdgeQuery -> variantEdgeQuery
                                                                         .node(productVariantQuery -> productVariantQuery

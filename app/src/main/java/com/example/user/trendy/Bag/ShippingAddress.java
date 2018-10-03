@@ -20,6 +20,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -39,6 +40,7 @@ import com.example.user.trendy.Category.CategoryModel;
 import com.example.user.trendy.Category.SubCategoryModel;
 import com.example.user.trendy.Interface.CartController;
 import com.example.user.trendy.Interface.CommanCartControler;
+import com.example.user.trendy.Login.Validationemail;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.Constants;
 import com.example.user.trendy.Util.SharedPreference;
@@ -77,12 +79,11 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     ArrayList<String> productlist = new ArrayList<>();
     CartController cartController;
     CommanCartControler commanCartControler;
-    int a = 0;
-    private String productid;
+    String block = "false",product_qty="",totalcost="";
+    private String product_varientid="";
     private String tag;
-    private String check=" ";
-    int placing_checkin=0;
-
+    private String check = " ", remove_cod = "";
+    int placing_checkin = 0, product_view = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.shippingaddress, container, false);
@@ -90,11 +91,19 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         commanCartControler = (CommanCartControler) cartController;
 
 
-        if(getArguments()!=null){
-             check=getArguments().getString("collection");
-            if (check.equals("productview")){
-                 productid=getArguments().getString("productid");
-                tag=getArguments().getString("tag");
+        if (getArguments() != null) {
+            check = getArguments().getString("collection");
+            if (check.equals("productview")) {
+                product_view = 1;
+                product_varientid = getArguments().getString("product_varientid");
+                product_qty = getArguments().getString("product_qty");
+                totalcost = getArguments().getString("totalcost");
+                tag = getArguments().getString("tag");
+                if (tag.trim().toLowerCase().contains("remove_cod")) {
+                    remove_cod = "remove_cod";
+                }
+            }else {
+                totalcost=getArguments().getString("totalcost");
             }
         }
 
@@ -170,6 +179,15 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     b_state = s_state;
                     b_country = s_country;
                     b_pincode = s_pincode;
+
+
+                    billing_door_street_input.setText(b_area);
+                    billing_city.setText(b_city);
+                    billing_state.setText(b_state);
+                    billing_country.setText(b_country);
+                    billing_pin.setText(b_pincode);
+
+
                     layout_same.setVisibility(View.GONE);
                 } else {
                     b_area = "";
@@ -177,6 +195,11 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     b_state = "";
                     b_country = "";
                     b_pincode = "";
+                    billing_door_street_input.setText(b_area);
+                    billing_city.setText(b_city);
+                    billing_state.setText(b_state);
+                    billing_country.setText(b_country);
+                    billing_pin.setText(b_pincode);
                     layout_same.setVisibility(View.VISIBLE);
                 }
             }
@@ -185,36 +208,61 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         payment_section.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (a == 0) {
-                    s_pincode = shipping_pin_input.getText().toString().trim();
-                    s_area = shipping_door_street_input.getText().toString().trim();
-                    s_state = shipping_state_input.getText().toString().trim();
-                    s_city = shipping_city_input.getText().toString().trim();
-                    s_country = shipping_country_input.getText().toString().trim();
-                    emailstring = email.getText().toString().trim();
-                    firstnamestring = first_name.getText().toString().trim();
-                    lastnamestring = last_name.getText().toString().trim();
+                s_pincode = shipping_pin_input.getText().toString().trim();
+                s_area = shipping_door_street_input.getText().toString().trim();
+                s_state = shipping_state_input.getText().toString().trim();
+                s_city = shipping_city_input.getText().toString().trim();
+                s_country = shipping_country_input.getText().toString().trim();
+                b_pincode = billing_pin.getText().toString().trim();
+                b_area = billing_door_street_input.getText().toString().trim();
+                b_state = billing_state.getText().toString().trim();
+                b_city = billing_city.getText().toString().trim();
+                b_country = billing_country.getText().toString().trim();
+                emailstring = email.getText().toString().trim();
+                firstnamestring = first_name.getText().toString().trim();
+                lastnamestring = last_name.getText().toString().trim();
 
-                    Intent intent = new Intent(getActivity(), PayUMoneyActivity.class);
-                    intent.putExtra("firstname", firstnamestring);
-                    intent.putExtra("lastname", lastnamestring);
-                    intent.putExtra("email", emailstring);
-                    intent.putExtra("s_area", s_area);
-                    intent.putExtra("s_city", s_city);
-                    intent.putExtra("s_state", s_state);
-                    intent.putExtra("s_country", s_country);
-                    intent.putExtra("s_pincode", s_pincode);
-                    startActivity(intent);
+                if (s_pincode.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your all shipping details", Toast.LENGTH_SHORT).show();
+                } else if (b_pincode.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your all billing details", Toast.LENGTH_SHORT).show();
+                } else if (emailstring.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your email", Toast.LENGTH_SHORT).show();
+                } else if (!Validationemail.isEmailAddress(email, true)) {
+                    Toast.makeText(getActivity(), "Please enter your valid email", Toast.LENGTH_SHORT).show();
                 } else {
-                    layout_placing.findFocus();
-                }
+                    if (block.equals("false")) {
 
+                        Intent intent = new Intent(getActivity(), PayUMoneyActivity.class);
+                        intent.putExtra("firstname", firstnamestring);
+                        intent.putExtra("lastname", lastnamestring);
+                        intent.putExtra("email", emailstring);
+                        intent.putExtra("s_area", s_area);
+                        intent.putExtra("s_city", s_city);
+                        intent.putExtra("s_state", s_state);
+                        intent.putExtra("s_country", s_country);
+                        intent.putExtra("s_pincode", s_pincode);
+                        intent.putExtra("b_pincode", b_pincode);
+                        intent.putExtra("b_area", b_area);
+                        intent.putExtra("b_state", b_state);
+                        intent.putExtra("b_city", b_city);
+                        intent.putExtra("b_country", b_country);
+                        intent.putExtra("remove_cod", remove_cod);
+                        intent.putExtra("product_varientid", product_varientid);
+                        intent.putExtra("product_qty", product_qty);
+                        intent.putExtra("totalcost", totalcost);
+                        intent.putExtra("tag", tag);
+                        startActivity(intent);
+                    } else {
+                        layout_placing.findFocus();
+                    }
+                }
             }
         });
         layout_placing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(placing_checkin==0) {
+                if (placing_checkin == 0) {
                     Log.d("checkproductlist", String.valueOf(productlist.size()));
                     Fragment bag = new Bag();
                     Bundle bundle = new Bundle();
@@ -226,7 +274,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     transaction1.replace(R.id.home_container, bag, "Bag");
 //                    transaction1.addToBackStack(null);
                     transaction1.commit();
-                }else{
+                } else {
 
                 }
             }
@@ -279,8 +327,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                                 billing_state.setText(state);
                                 billing_country.setText(country);
                             }
-
                             getdataDB(state);
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -348,10 +396,11 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     }
 
     public void getdataDB(String state) {
-        if(check.trim().length()==0) {
-            placing_checkin=0;
+        if (!check.trim().equals("productview")) {
+            placing_checkin = 0;
             include_state = "";
             exclude_state = "";
+            block = "false";
             productlist.clear();
             cartList.clear();
             DBHelper db = new DBHelper(getActivity());
@@ -359,12 +408,15 @@ public class ShippingAddress extends Fragment implements TextWatcher {
             for (int i = 0; i < cartList.size(); i++) {
                 String tag = cartList.get(i).getTag();
                 Log.e("tag", "" + cartList.get(i).getTag());
+                if (tag.trim().toLowerCase().contains("remove_cod")) {
+                    remove_cod = "remove_cod";
+                }
                 String tagcheck = "EXCLUDES:" + state;
                 String exclude = "EXCLUDES";
                 String include = "INCLUDES";
                 String includecheck = "INCLUDES:" + state;
                 if (tag.toLowerCase().contains(exclude.toLowerCase())) {
-                    a = 1;
+
                     getInclude.clear();
                     productlist.add(cartList.get(i).getProduct_varient_id().trim());
 
@@ -386,6 +438,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         String statespace = state.replace(" ", "");
 //                if (tag.toLowerCase().contains(tagcheck.toLowerCase())) {
                         if (excludespace.trim().toLowerCase().contains(statespace.trim().toLowerCase())) {
+                            block = "true";
                             commanCartControler.UpdateShipping(cartList.get(i).getProduct_varient_id().trim(), "false");
                             layout_placing.setVisibility(View.VISIBLE);
                             placing.setText("Few of the products in your cart cannot be shipped to your given " + state + ".");
@@ -398,7 +451,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 
                 }
                 if (tag.toLowerCase().contains(include.toLowerCase())) {
-                    a = 1;
+
 //                productlist.add(cartList.get(i).getProduct_varient_id());
                     getInclude.clear();
                     productlist.add(cartList.get(i).getProduct_varient_id().trim());
@@ -423,6 +476,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         layout_placing.setVisibility(View.GONE);
 
                     } else {
+                        block = "true";
                         commanCartControler.UpdateShipping(cartList.get(i).getProduct_varient_id().trim(), "false");
 //                    cartList.get(i).setShip("false");
                         layout_placing.setVisibility(View.VISIBLE);
@@ -430,18 +484,20 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         placing1.setText(R.string.link);
                     }
 
+
                 }
 
 
             }
-        }else {
-            placing_checkin=1;
+        } else {
+            placing_checkin = 1;
             include_state = "";
             exclude_state = "";
             String exclude = "EXCLUDES";
             String include = "INCLUDES";
-            if(tag.toLowerCase().contains(exclude.toLowerCase())){
-                a=1;
+            block = "false";
+            if (tag.toLowerCase().contains(exclude.toLowerCase())) {
+
                 getInclude.clear();
 
                 String[] items1 = tag.split(",");
@@ -461,6 +517,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     String statespace = state.replace(" ", "");
 //                if (tag.toLowerCase().contains(tagcheck.toLowerCase())) {
                     if (excludespace.trim().toLowerCase().contains(statespace.trim().toLowerCase())) {
+                        block = "true";
                         layout_placing.setVisibility(View.VISIBLE);
                         placing.setText("Few of the products in your cart cannot be shipped to your given " + state + ".");
                         placing1.setText(getResources().getText(R.string.link));
@@ -473,7 +530,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
             }
 
             if (tag.toLowerCase().contains(include.toLowerCase())) {
-                a=1;
+
                 getInclude.clear();
                 String[] items = tag.split(",");
                 for (String item : items) {
@@ -494,6 +551,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     layout_placing.setVisibility(View.GONE);
 
                 } else {
+                    block = "true";
                     layout_placing.setVisibility(View.VISIBLE);
                     placing.setText("Few of the products in your cart cannot be shipped to your given " + state + "." + " Few Products can be Shipped only in" + " " + include_state + ".");
                 }

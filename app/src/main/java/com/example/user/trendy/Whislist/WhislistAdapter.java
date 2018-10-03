@@ -28,6 +28,7 @@ public class WhislistAdapter extends   RecyclerView.Adapter<WhislistAdapter.View
     CommanCartControler commanCartControler;
     FragmentManager fragmentManager;
     TextView textView;
+    GetTotalCost getTotalCost;
     String state;
 
     public WhislistAdapter(List<AddWhislistModel> items, Context mContext) {
@@ -35,10 +36,12 @@ public class WhislistAdapter extends   RecyclerView.Adapter<WhislistAdapter.View
         this.mContext = mContext;
     }
 
-    public WhislistAdapter(List<AddWhislistModel> items, Context mContext, FragmentManager fragmentManager) {
+    public WhislistAdapter(List<AddWhislistModel> items, Context mContext, GetTotalCost getTotalCost, FragmentManager fragmentManager, TextView textView) {
         this.items = items;
         this.mContext = mContext;
+        this.getTotalCost=getTotalCost;
         this.fragmentManager = fragmentManager;
+        this.textView=textView;
     }
 
     @Override
@@ -60,7 +63,7 @@ public class WhislistAdapter extends   RecyclerView.Adapter<WhislistAdapter.View
 
         holder.binding.setWhislistitem(items.get(position));
         Log.d("Product varient id ", items.get(position).getProduct_varient_id());
-
+textView.setText(items.size()+" items");
     }
 
     @Override
@@ -96,6 +99,9 @@ public class WhislistAdapter extends   RecyclerView.Adapter<WhislistAdapter.View
                     if (db.deleteRow(items.get(getAdapterPosition()).getProduct_varient_id().trim())) {
                         items.remove(getAdapterPosition());
                         notifyItemRemoved(getAdapterPosition());
+
+                        notifyDataSetChanged();
+                        getTotalCost.totalcostinjterface();
                     }
                 }
             });
@@ -104,7 +110,9 @@ public class WhislistAdapter extends   RecyclerView.Adapter<WhislistAdapter.View
     }
 
 
-
+    public interface GetTotalCost {
+        void totalcostinjterface();
+    }
 
 }
 

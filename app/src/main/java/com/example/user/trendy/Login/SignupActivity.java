@@ -53,20 +53,19 @@ public class SignupActivity extends Activity implements TextWatcher {
 
         final String PHONE_REGEX = "^[0-9][0-9]{9}$";
 
-        first_name = findViewById(R.id.first_name);
-        last_name = findViewById(R.id.last_name);
-        mobile = findViewById(R.id.number);
-        email_id = findViewById(R.id.email_id);
-        create_password = findViewById(R.id.create_password);
+        first_name= findViewById(R.id.first_name);
+        last_name=findViewById(R.id.last_name);
+        mobile=findViewById(R.id.number);
+        email_id=findViewById(R.id.email_id);
+        create_password=findViewById(R.id.create_password);
 
-        firstNameInputLayout = findViewById(R.id.first_name_input_layout);
-        lastNameInputLayout = findViewById(R.id.last_name_input_layout);
-        ;
+        firstNameInputLayout=findViewById(R.id.first_name_input_layout);
+        lastNameInputLayout = findViewById(R.id.last_name_input_layout);;
         mobileInputLayout = findViewById(R.id.mobile_input_layout);
         emailInputLayout = findViewById(R.id.email_input_layout);
         passwordInputLayout = findViewById(R.id.password_input_layout);
 
-        submit_btn = (Button) findViewById(R.id.signup);
+        submit_btn=(Button)findViewById(R.id.signup);
 
         first_name.addTextChangedListener(this);
         last_name.addTextChangedListener(this);
@@ -77,109 +76,20 @@ public class SignupActivity extends Activity implements TextWatcher {
         submit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                firstname = first_name.getText().toString();
-                lastname = last_name.getText().toString();
-                mobilenumber = mobile.getText().toString();
-                email = email_id.getText().toString();
-                password = create_password.getText().toString();
-
-
-                if (firstname.isEmpty() && lastname.isEmpty() && email.isEmpty() && password.isEmpty()) {
-                    firstNameInputLayout.setError("First name is empty");
-                    lastNameInputLayout.setError("Last name is empty");
-//                    mobileInputLayout.setError("Enter mobile no");
-                    emailInputLayout.setError("Enter email id");
-                    passwordInputLayout.setError("password is empty");
-                }
-                if (!firstname.isEmpty() && !lastname.isEmpty() && !email.isEmpty() && !mobilenumber.isEmpty()
-                        && !password.isEmpty() && Validationemail.isEmailAddress(email_id, true)
-                        && Validationmobile.isPhoneNumber(mobile, true)) {
-
-
+                if(isValid()==true)
+                {
+//                    Toast.makeText(SignupActivity.this,"GOT",Toast.LENGTH_SHORT).show();
+                    firstname = first_name.getText().toString();
+                    lastname = last_name.getText().toString();
+                    mobilenumber = mobile.getText().toString();
+                    email = email_id.getText().toString();
+                    password = create_password.getText().toString();
                     signingUpUser();
-
                 }
-
-                if (firstname.isEmpty()) {
-                    firstNameInputLayout.setError("First name is empty");
-                } else {
-                    firstNameInputLayout.setError(null);
+                else
+                {
+//                    Toast.makeText(SignupActivity.this,"Not GOT",Toast.LENGTH_SHORT).show();
                 }
-
-                if (lastname.isEmpty()) {
-                    lastNameInputLayout.setError("Last name is empty");
-                } else {
-                    lastNameInputLayout.setError(null);
-                }
-
-                if (!mobilenumber.isEmpty()) {
-                    if (!Validationmobile.isPhoneNumber(mobile, true)) {
-                        mobileInputLayout.setError("Invalid mobile");
-//                } else {
-//                    mobileInputLayout.setError(null);
-                    }
-
-                    if (email.isEmpty()) {
-                        emailInputLayout.setError("Enter email id");
-                    } else if (!Validationemail.isEmailAddress(email_id, true)) {
-                        emailInputLayout.setError("Invalid email");
-                    } else {
-                        emailInputLayout.setError(null);
-                    }
-
-                    if (password.isEmpty()) {
-                        passwordInputLayout.setError("password is empty");
-//                    } else if (password.length() < 6) {
-//                        passwordInputLayout.setError("Enter valid password");
-//                    } else if (password.length() >= 6) {
-//                        if (!isValidPassword(password)) {
-//                            passwordInputLayout.setError("Enter valid password");
-//                        } else {
-//                            passwordInputLayout.setError(null);
-//                        }
-//                    } else {
-//                        passwordInputLayout.setError(null);
-                    }
-                }
-//                if(first_name.getText().toString().isEmpty())
-//                {
-//                    firstNameInputLayout.setError("Please Enter First Name");
-//                }
-//
-//                if(last_name.getText().toString().isEmpty())
-//                {
-//                    lastNameInputLayout.setError("Please Enter Last Name");
-//                }
-//
-//                if(email_id.getText().toString().isEmpty())
-//                {
-//                    emailInputLayout.setError("Please Enter Email");
-//                }
-//
-//                if(create_password.getText().toString().isEmpty())
-//                {
-//                    passwordInputLayout.setError("Please Enter Password");
-//                }
-//
-//                if(mobile.getText().toString().length()!=0) {
-//                    if (isValidMobile(mobile.getText().toString())) {
-//                        //GOT THE CORRECT EMAIL;
-//                        Toast.makeText(SignupActivity.this, "GOT Phone Number", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        mobileInputLayout.setError("Please Enter mobile no ");
-//                    }
-//                }
-//
-//                if(isValidMail(email_id.getText().toString()))
-//                {
-//                    //GOT THE CORRECT EMAIL;
-//                    Toast.makeText(SignupActivity.this,"GOT ",Toast.LENGTH_SHORT).show();
-//                }
-//                else
-//                {
-//                    emailInputLayout.setError("Please Enter Email");
-//                }
             }
         });
     }
@@ -212,15 +122,21 @@ public class SignupActivity extends Activity implements TextWatcher {
             } else {
                 emailInputLayout.setError(null);
             }
-        } else if (charSequence.hashCode() == mobile.getText().hashCode()) {
+        }
+        else if (charSequence.hashCode() == mobile.getText().hashCode()) {
             if (mobile.getText().toString().isEmpty()) {
                 mobileInputLayout.setError("Enter mobile no");
+                if(mobile.getText().toString().length()==0)
+                {
+                    mobileInputLayout.setError(null);
+                }
             } else {
                 mobileInputLayout.setError(null);
             }
-        } else {
+        }
+        else {
             if (create_password.getText().toString().isEmpty()) {
-                passwordInputLayout.setError("password is empty");
+                passwordInputLayout.setError("Minimum 5 character is required");
             } else {
                 passwordInputLayout.setError(null);
             }
@@ -232,6 +148,107 @@ public class SignupActivity extends Activity implements TextWatcher {
 
     }
 
+    private boolean isValid() {
+        boolean check=true;
+
+        if(first_name.getText().toString().isEmpty())
+        {
+            firstNameInputLayout.setError("Please Enter First Name");
+            return false;
+        }
+
+        if(last_name.getText().toString().isEmpty())
+        {
+            lastNameInputLayout.setError("Please Enter Last Name");
+            return false;
+        }
+
+        if(email_id.getText().toString().isEmpty())
+        {
+            emailInputLayout.setError("Please Enter Email");
+            return false;
+        }
+
+        if(create_password.getText().toString().isEmpty())
+        {
+            passwordInputLayout.setError("Minimum 5 character is required");
+            return false;
+        }
+        else
+        {
+            if(create_password.getText().toString().length()>=5)
+            {
+                check=isValidPassword(create_password.getText().toString());
+            }
+            else {
+                passwordInputLayout.setError("Minimum 5 character is required");
+                return false;
+            }
+
+
+        }
+
+        if(mobile.getText().toString().length()!=0)
+        {
+            if(mobile.getText().toString().length()==10)
+            {
+                check=isValidMobile(mobile.getText().toString());
+            }
+            else
+            {
+                mobileInputLayout.setError("Please Enter 10 Digit Mobile Number");
+                return false;
+            }
+        }
+        else if(mobile.getText().toString().length()==0)
+            {
+                check=true;
+            }
+
+
+        if(isValidMail(email_id.getText().toString()))
+        {
+            check=true;
+        }
+        else
+        {
+            emailInputLayout.setError("Please Enter Email");
+            return false;
+        }
+
+        return check;
+    }
+
+    private boolean isValidMail(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private boolean isValidMobile(String phone) {
+        boolean check=false;
+        if(!Pattern.matches("[a-zA-Z]+", phone)) {
+            if(phone.length() < 1) {
+                // if(phone.length() != 10) {
+                check = false;
+                mobileInputLayout.setError("Not Valid Number");
+            } else {
+                check = true;
+            }
+        } else {
+            check=false;
+        }
+        return check;
+    }
+
+    private boolean isValidPassword(String pass)
+    {
+        boolean check=false;
+        if(pass.length()>=5){
+            check=true;
+        } else {
+            check=false;
+        }
+        return check;
+    }
 
     private void signingUpUser() {
         checkCustomer(email.trim(), password.trim());
@@ -296,6 +313,7 @@ public class SignupActivity extends Activity implements TextWatcher {
                         Log.e("token", "" + "empty");
                         create();
                     }
+
                 }
 
             }
@@ -381,6 +399,7 @@ public class SignupActivity extends Activity implements TextWatcher {
 //                }
                     Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
 
+
                 }
 
 
@@ -415,7 +434,6 @@ public class SignupActivity extends Activity implements TextWatcher {
                     )
             );
 
-
             graphClient.mutateGraph(mutationQuery).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
 
 
@@ -424,20 +442,34 @@ public class SignupActivity extends Activity implements TextWatcher {
 //                Log.e("response", response.toString());
 
                     if (response.data().getCustomerCreate() != null) {
+                        if(response.data().getCustomerCreate().getCustomer()==null){
+                        if (response.data().getCustomerCreate().getUserErrors() != null) {
+                            String message = response.data().getCustomerCreate().getUserErrors().get(0).getMessage();
+                            Log.e("messagecheck", " " + message);
+                           runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                        } else {
 
-                        String id = response.data().getCustomerCreate().getCustomer().getId().toString();
-                        String email = response.data().getCustomerCreate().getCustomer().getEmail();
-                        Log.d("em", "Create Customer Info:" + email + ":" + id);
+                            String id = response.data().getCustomerCreate().getCustomer().getId().toString();
+                            String email = response.data().getCustomerCreate().getCustomer().getEmail();
+                            Log.d("em", "Create Customer Info:" + email + ":" + id);
 
-                        if (id != null) {
+                            if (id != null) {
 //                        if (progressDoalog != null) {
 //                            progressDoalog.dismiss();
 //                        }
-                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                            SharedPreference.saveData("login", "true", getApplicationContext());
-                            startActivity(i);
+                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                SharedPreference.saveData("login", "true", getApplicationContext());
+                                startActivity(i);
+                            }
                         }
                     }
+
                 }
 
                 @Override

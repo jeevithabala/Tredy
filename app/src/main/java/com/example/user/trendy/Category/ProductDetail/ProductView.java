@@ -175,6 +175,9 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 Bundle bundle = new Bundle();
                 bundle.putString("collection", "productview");
                 bundle.putString("productid", itemModel.getProductid());
+                bundle.putString("product_varientid", String.valueOf(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getId()));
+                bundle.putString("product_qty",itemModel.getCount());
+                bundle.putString("totalcost", String.valueOf(itemModel.getCost()));
                 bundle.putString("tag", String.valueOf(itemModel.getProduct().getTags()));
                 Fragment fragment = new ShippingAddress();
                 fragment.setArguments(bundle);

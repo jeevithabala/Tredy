@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class Whislist extends Fragment {
+public class Whislist extends Fragment implements WhislistAdapter.GetTotalCost {
     RecyclerView whislist;
     DBWhislist db;
     private List<AddWhislistModel> cartList = new ArrayList<>();
@@ -44,6 +44,7 @@ public class Whislist extends Fragment {
         whislist = view.findViewById(R.id.whislist);
         items = view.findViewById(R.id.items);
         nobag = view.findViewById(R.id.nobag);
+        items.setVisibility(View.VISIBLE);
 
         db = new DBWhislist(getActivity());
         cartList = db.getCartList();
@@ -63,19 +64,28 @@ public class Whislist extends Fragment {
         whislist.setItemAnimator(new DefaultItemAnimator());
 
 
-        adapter = new WhislistAdapter(cartList, getActivity(), getFragmentManager());
+        adapter = new WhislistAdapter(cartList, getActivity(), this, getFragmentManager(), items);
         whislist.setAdapter(adapter);
 
-        if (cartList.size() != 0) {
-            items.setText(cartList.size() + " " + "Items");
-            nobag.setVisibility(View.GONE);
-            items.setVisibility(View.VISIBLE);
-        } else {
-            items.setVisibility(View.GONE);
-            nobag.setVisibility(View.VISIBLE);
-        }
         adapter.notifyDataSetChanged();
 
+
         return view;
+    }
+
+    @Override
+    public void totalcostinjterface() {
+        visibilityCheck();
+    }
+
+    private void visibilityCheck() {
+        if (cartList.size() == 0) {
+//            items.setText(cartList.size() + " " + "Items");
+            nobag.setVisibility(View.VISIBLE);
+            items.setVisibility(View.GONE);
+        } else {
+            items.setVisibility(View.VISIBLE);
+            nobag.setVisibility(View.GONE);
+        }
     }
 }

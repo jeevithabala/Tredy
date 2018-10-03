@@ -22,7 +22,6 @@ import com.example.user.trendy.Interface.FragmentRecyclerViewClick;
 import com.example.user.trendy.Interface.TopSellingInterface;
 import com.example.user.trendy.R;
 import com.example.user.trendy.databinding.NewarrivalAdapterBinding;
-import com.example.user.trendy.databinding.TopsellingAdapterBinding;
 
 import java.util.ArrayList;
 
@@ -118,6 +117,8 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
                     commanCartControler.AddToWhislist(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
                     Toast.makeText(mContext,"Added to Wishlist",Toast.LENGTH_SHORT).show();
                 }
+
+
             });
 
 

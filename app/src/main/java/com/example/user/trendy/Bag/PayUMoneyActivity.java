@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -29,6 +30,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.user.trendy.Bag.Db.AddToCart_Model;
 import com.example.user.trendy.Bag.Db.DBHelper;
+import com.example.user.trendy.Login.Validationemail;
+import com.example.user.trendy.Login.Validationmobile;
 import com.example.user.trendy.Payu_Utility.AppEnvironment;
 import com.example.user.trendy.Payu_Utility.AppPreference;
 import com.example.user.trendy.Payu_Utility.MyApplication;
@@ -62,14 +65,17 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     private PayUmoneySdkInitializer.PaymentParam mPaymentParams;
     Button btnsubmit1, btncancel;
     RadioButton btnradonline, btnradcod;
-    String emailstring, totalamount, coupon,firstname="",lastname="",address1="",city="",state="",country="",zip="",phone="";
+    String emailstring, totalamount, coupon, firstname = "", lastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "";
     TextView txtpayamount, t_pay, discount_price;
     CardView apply_discount;
     LinearLayout discount_layout;
-    int i = 0;
-    private String dynamicKey = "";
+    int i = 0, cod = 0;
+    private String dynamicKey = "", remove_cod = "";
     DBHelper db;
     List<AddToCart_Model> cartlist = new ArrayList<>();
+    String product_varientid = "", product_qty = "", totalcost = "", tag = "";
+    private String kind_transaction = "";
+    private String product_varientid1 = "";
 
 
     @Override
@@ -83,17 +89,33 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         totalamount = SharedPreference.getData("total", getApplicationContext());
         emailstring = SharedPreference.getData("email", getApplicationContext());
 
+        if (getIntent() != null) {
+            firstname = getIntent().getStringExtra("firstname");
+            lastname = getIntent().getStringExtra("lastname");
+            emailstring = getIntent().getStringExtra("email");
+            address1 = getIntent().getStringExtra("s_area");
+            city = getIntent().getStringExtra("s_city");
+            state = getIntent().getStringExtra("s_state");
+            country = getIntent().getStringExtra("s_country");
+            zip = getIntent().getStringExtra("s_pincode");
 
+            b_address1 = getIntent().getStringExtra("b_area");
+            b_city = getIntent().getStringExtra("b_city");
+            b_state = getIntent().getStringExtra("b_state");
+            b_country = getIntent().getStringExtra("b_country");
+            b_zip = getIntent().getStringExtra("b_pincode");
+            remove_cod = getIntent().getStringExtra("remove_cod");
+            product_varientid = getIntent().getStringExtra("product_varientid");
+            product_qty = getIntent().getStringExtra("product_qty");
+            totalcost = getIntent().getStringExtra("totalcost");
+            tag = getIntent().getStringExtra("tag");
+            if (product_varientid.trim().length() != 0) {
+                byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
+                String val2 = new String(tmp2);
+                String[] str = val2.split("/");
+                product_varientid = str[4];
+            }
 
-        if(getIntent()!=null){
-            firstname=getIntent().getStringExtra("firstname");
-            lastname=getIntent().getStringExtra("lastname");
-            emailstring=getIntent().getStringExtra("email");
-            address1=getIntent().getStringExtra("s_area");
-            city=getIntent().getStringExtra("s_city");
-            state=getIntent().getStringExtra("s_state");
-            country=getIntent().getStringExtra("s_country");
-            zip=getIntent().getStringExtra("s_pincode");
 
         }
         emailedit = (EditText) findViewById(R.id.payuemail);
@@ -111,7 +133,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
         emailedit.setText(emailstring);
         amountedit.setText(totalamount);
-        postOrder();
+
     }
 
     private PayUmoneySdkInitializer.PaymentParam calculateServerSideHashAndInitiatePayment1(final PayUmoneySdkInitializer.PaymentParam paymentParam) {
@@ -260,7 +282,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             // Check which object is non-null
             if (transactionResponse != null && transactionResponse.getPayuResponse() != null) {
                 if (transactionResponse.getTransactionStatus().equals(TransactionResponse.TransactionStatus.SUCCESSFUL)) {
-                    //Success Transaction
+                    postOrder();
 
                 } else {
                     //Failure Transaction
@@ -302,7 +324,19 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 btnradonline.setChecked(false);
                 break;
             case R.id.paynowbtn:
-                showCustomDialog1();
+                phone = mobile.getText().toString().trim();
+                if (!Validationemail.isEmailAddress(emailedit, true)) {
+                    Toast.makeText(PayUMoneyActivity.this, "Please enter your valid email", Toast.LENGTH_SHORT).show();
+
+                } else if (phone.trim().length() == 0) {
+                    Toast.makeText(getApplicationContext(), "Please enter your phone number", Toast.LENGTH_SHORT).show();
+                } else if (!Validationmobile.isPhoneNumber(mobile, true)) {
+                    Toast.makeText(getApplicationContext(), "Please enter your valid phone number", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    showCustomDialog1();
+
+                }
                 break;
             case R.id.apply_discount:
                 discount();
@@ -343,6 +377,11 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         txtpayamount = (TextView) dialog.findViewById(R.id.pay_amount);
         btnradonline = (RadioButton) dialog.findViewById(R.id.online);
         btnradcod = (RadioButton) dialog.findViewById(R.id.cod);
+        if (remove_cod.trim().length() != 0) {
+            btnradcod.setVisibility(View.GONE);
+        } else {
+            btnradcod.setVisibility(View.VISIBLE);
+        }
 
         txtpayamount.setText(totalamount);
         btnradonline.setOnClickListener(this);
@@ -354,13 +393,22 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onClick(View view) {
                 Log.e("dismiss", "dialog dismiss");
-                dialog.dismiss();
 
-                if (btnradonline.isChecked()) {
-                    launchPayUMoneyFlow();
-                } else {
+                if (btnradonline.isChecked() || btnradcod.isChecked()) {
+                    dialog.dismiss();
+                    if (btnradonline.isChecked()) {
+                        cod = 0;
+                        launchPayUMoneyFlow();
+                    } else {
+                        cod = 1;
+                        postOrder();
+
 //cms
+                    }
+                } else {
+                    Toast.makeText(PayUMoneyActivity.this, "Select the payment method", Toast.LENGTH_SHORT).show();
                 }
+
 
             }
         });
@@ -382,7 +430,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void postOrder() {
-phone=mobile.getText().toString().trim();
+        phone = mobile.getText().toString().trim();
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             JSONObject jsonBody = new JSONObject();
@@ -390,21 +438,33 @@ phone=mobile.getText().toString().trim();
             jsonBody.put("financial_status", "pending");
 
 
-
-
             JSONArray line_items = new JSONArray();
             JSONObject items = new JSONObject();
+            if (product_varientid.trim().length() == 0) {
+                for (int i = 0; i < cartlist.size(); i++) {
 
-            for (int i = 0; i < cartlist.size(); i++) {
-                String product_varient_id = cartlist.get(i).getProduct_varient_id();
-                Integer quantity = cartlist.get(i).getQty();
-                Log.e("type", product_varient_id);
-                items.put("variant_id", "5823671107611");
-                items.put("quantity", quantity);
+                    product_varientid = cartlist.get(i).getProduct_varient_id();
+                    byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
+                    String val2 = new String(tmp2);
+                    String[] str = val2.split("/");
+                    product_varientid = str[4];
+
+                    Integer quantity = cartlist.get(i).getQty();
+
+                    items.put("variant_id", product_varientid.trim());
+                    items.put("quantity", quantity);
+                    line_items.put(items);
+                    jsonBody.put("line_items", line_items);
+                }
+            } else {
+
+
+                items.put("variant_id", product_varientid.trim());
+                items.put("quantity", product_qty);
+                line_items.put(items);
+                jsonBody.put("line_items", line_items);
+
             }
-            line_items.put(items);
-            jsonBody.put("line_items", line_items);
-
 
 
             JSONArray note = new JSONArray();
@@ -413,8 +473,9 @@ phone=mobile.getText().toString().trim();
             notes.put("name", "paypal");
             notes.put("value", "78233011");
 
-            line_items.put(items);
+            note.put(notes);
             jsonBody.put("note_attributes", note);
+
 
             JSONObject shipping = new JSONObject();
             shipping.put("first_name", firstname);
@@ -431,13 +492,27 @@ phone=mobile.getText().toString().trim();
             JSONObject billingaddress = new JSONObject();
             billingaddress.put("first_name", firstname);
             billingaddress.put("last_name", lastname);
-            billingaddress.put("address1", address1);
+            billingaddress.put("address1", b_address1);
             billingaddress.put("phone", phone);
-            billingaddress.put("city", city);
-            billingaddress.put("province", state);
-            billingaddress.put("country", country);
-            billingaddress.put("zip", zip);
+            billingaddress.put("city", b_city);
+            billingaddress.put("province", b_state);
+            billingaddress.put("country", b_country);
+            billingaddress.put("zip", b_zip);
             jsonBody.put("billing_address", billingaddress);
+
+            JSONArray cost = new JSONArray();
+            JSONObject costobject = new JSONObject();
+            if (cod == 1) {
+                kind_transaction = "cod";
+            } else {
+                kind_transaction = "online";
+            }
+            costobject.put("kind", kind_transaction);
+            costobject.put("status", "success");
+            costobject.put("amount", totalcost);
+
+            cost.put(costobject);
+            jsonBody.put("transactions", cost);
 
 
             Log.d("check JSON", jsonBody.toString());
@@ -461,14 +536,14 @@ phone=mobile.getText().toString().trim();
                             while (keys.hasNext()) {
                                 dynamicKey = (String) keys.next();
                                 Log.d("Dynamic Key", "" + dynamicKey);
-                                if(dynamicKey.equals("order")){
-                                    JSONObject order=obj.getJSONObject("order");
-                                    String orderid=order.getString("id");
-                                    Log.e("orderid",orderid);
+                                if (dynamicKey.equals("order")) {
+                                    JSONObject order = obj.getJSONObject("order");
+                                    String orderid = order.getString("id");
+                                    Log.e("orderid", orderid);
 
                                 }
                             }
-
+                            Toast.makeText(PayUMoneyActivity.this, "Your Order Placed Sucessfully", Toast.LENGTH_SHORT).show();
                         }
 
 

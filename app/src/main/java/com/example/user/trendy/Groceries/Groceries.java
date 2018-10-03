@@ -84,6 +84,7 @@ public class Groceries extends Fragment {
                                                         .productType()
                                                         .description()
                                                         .descriptionHtml()
+
                                                         .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
                                                                 .edges(imageEdgeQuery -> imageEdgeQuery
                                                                         .node(imageQuery -> imageQuery
@@ -92,6 +93,8 @@ public class Groceries extends Fragment {
                                                                 )
                                                         )
                                                         .tags()
+                                                        .options(option->option
+                                                                .name())
                                                         .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
                                                                 .edges(variantEdgeQuery -> variantEdgeQuery
                                                                         .node(productVariantQuery -> productVariantQuery
@@ -124,7 +127,7 @@ public class Groceries extends Fragment {
 
                 Log.e("groceryModelArrayList", String.valueOf(groceryModelArrayList.size()));
                 Log.e("groceryModelArrayList", String.valueOf(product.getProducts().getEdges().size()));
-                Log.e("productch", product.getProducts().getEdges().get(0).getNode().getTitle());
+                Log.e("productch", ""+product.getProducts().getEdges().get(0).getNode().getOptions().get(0).getName());
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

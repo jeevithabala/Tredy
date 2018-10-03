@@ -118,6 +118,7 @@
                         android:background="@color/grey_dark" />
 
                     <LinearLayout
+                        android:onClick="@{(v)->onitemclickplus.OnclickWhislilst()}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"

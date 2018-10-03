@@ -88,6 +88,18 @@
                             android:textColor="@color/cost"
                             android:textSize="12sp"
                             app:cost="@{grocery.product}" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="40dp"
+                            android:layout_marginRight="40dp"
+                            android:fontFamily="@font/lucidasansdemibold"
+                            android:textColor="@color/cost"
+                            android:textSize="12sp"
+                            app:weight="@{grocery.product}" />
+
                     </LinearLayout>
 
 
@@ -118,9 +130,9 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
-                            android:orientation="horizontal"
                             android:gravity="center"
-                            android:onClick="@{(v)->counter.decrease()}">
+                            android:onClick="@{(v)->counter.decrease()}"
+                            android:orientation="horizontal">
 
                             <!--<ImageView-->
 
@@ -132,11 +144,11 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="14sp"
                                 android:fontFamily="@font/lucidasansdemibold"
-                                android:textColor="@color/textcolor"
                                 android:gravity="center"
-                                android:text="-" />
+                                android:text="-"
+                                android:textColor="@color/textcolor"
+                                android:textSize="14sp" />
 
                             <View
                                 android:layout_width="1dp"
@@ -179,20 +191,21 @@
                                 android:layout_height="match_parent"
                                 android:layout_marginRight="10dp"
                                 android:background="@color/grey" />
+
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="14sp"
                                 android:fontFamily="@font/lucidasansdemibold"
-                                android:textColor="@color/textcolor"
                                 android:gravity="center"
-                                android:text="+" />
+                                android:text="+"
+                                android:textColor="@color/textcolor"
+                                android:textSize="14sp" />
 
                             <!--<ImageView-->
-                                <!--android:layout_width="15dp"-->
-                                <!--android:layout_height="15dp"-->
-                                <!--android:layout_marginRight="5dp"-->
-                                <!--android:src="@drawable/ic_uparrow" />-->
+                            <!--android:layout_width="15dp"-->
+                            <!--android:layout_height="15dp"-->
+                            <!--android:layout_marginRight="5dp"-->
+                            <!--android:src="@drawable/ic_uparrow" />-->
                         </LinearLayout>
 
 

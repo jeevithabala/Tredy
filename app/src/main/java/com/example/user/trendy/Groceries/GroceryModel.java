@@ -71,11 +71,27 @@ public class GroceryModel implements Serializable {
     @BindingAdapter("cost")
     public static void productcost(TextView textView,  Storefront.Product product) {
         if(product!=null) {
-            String cost = String.valueOf(product.getVariants().getEdges().get(0).getNode().getPrice());
+            String cost = String.valueOf("Rs."+product.getVariants().getEdges().get(0).getNode().getPrice());
             textView.setText(cost);
         }
     }
-
+    @BindingAdapter("weight")
+    public static void weight(TextView textView,  Storefront.Product product) {
+        if(product!=null) {
+            String c="";
+            if(product.getOptions()!=null) {
+                if(product.getOptions().size()==1){
+                    c= String.valueOf(product.getOptions().get(0).getName());
+                }else {
+                    for (int i = 0; i < product.getOptions().size(); i++) {
+                        c = c + String.valueOf(product.getOptions().get(i).getName()) + " / ";
+                    }
+                }
+                String cost = String.valueOf(c);
+                textView.setText(cost);
+            }
+        }
+    }
     @BindingAdapter("imageg")
     public static  void loadImage(ImageView view,  Storefront.Product product) {
         if (product != null) {

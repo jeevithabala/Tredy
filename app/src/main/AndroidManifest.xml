@@ -18,6 +18,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".Login.LoginActiviy"
+            android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,7 +33,6 @@
 
         <activity
             android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
         <activity
             android:name="com.facebook.CustomTabActivity"
@@ -46,8 +46,11 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".Bag.PayUMoneyActivity" />
+        <activity android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"/>
+        <activity android:name=".Bag.PayUMoneyActivity"
+            android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"/>
+        <activity android:name=".Login.SignupActivity" />
     </application>
 
 </manifest>

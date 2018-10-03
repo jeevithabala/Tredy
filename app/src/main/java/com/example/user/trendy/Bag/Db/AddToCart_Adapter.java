@@ -30,7 +30,7 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
     CartController cartController;
     CommanCartControler commanCartControler;
     GetTotalCost getTotalCost;
-    TextView textView;
+    TextView textView,textView1;
     String state;
 
     public AddToCart_Adapter(List<AddToCart_Model> items, Context mContext, GetTotalCost getTotalCost) {
@@ -39,11 +39,12 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
         this.getTotalCost = getTotalCost;
     }
 
-    public AddToCart_Adapter(List<AddToCart_Model> items, Context mContext, GetTotalCost getTotalCost, TextView textView) {
+    public AddToCart_Adapter(List<AddToCart_Model> items, Context mContext, GetTotalCost getTotalCost, TextView textView, TextView textView1) {
         this.items = items;
         this.mContext = mContext;
         this.getTotalCost = getTotalCost;
         this.textView = textView;
+        this.textView1 = textView1;
     }
 
     @Override
@@ -70,6 +71,8 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
         }else{
             holder.shipping_visibility.setVisibility(View.GONE);
         }
+
+        textView1.setText(items.size()+ " items");
 
     }
 
@@ -113,8 +116,10 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
                     DBHelper db = new DBHelper(mContext);
                     if (db.deleteRow(items.get(getAdapterPosition()).getProduct_varient_id().trim())) {
                         items.remove(getAdapterPosition());
+                        notifyDataSetChanged();
                         notifyItemRemoved(getAdapterPosition());
                         getTotalCost.totalcostinjterface();
+
                     }
                 }
             });
