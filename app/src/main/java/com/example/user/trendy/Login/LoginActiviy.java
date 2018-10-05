@@ -50,6 +50,7 @@ public class LoginActiviy extends AppCompatActivity implements
         View.OnClickListener,
         GoogleApiClient.OnConnectionFailedListener {
 
+    
     private static final int RC_SIGN_IN = 007;
     CallbackManager callbackManager;
     LoginButton login_button;
