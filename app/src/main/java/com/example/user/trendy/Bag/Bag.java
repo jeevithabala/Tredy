@@ -48,8 +48,6 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
     String state = "",totalcosts="";
     CartController cartController;
     CommanCartControler commanCartControler;
-    LinearLayout linearLayout;
-
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.bag, container, false);
@@ -59,14 +57,6 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         items = view.findViewById(R.id.items);
         totalcost = view.findViewById(R.id.total);
         nobag = view.findViewById(R.id.nobag);
-        linearLayout=view.findViewById(R.id.product);
-
-        linearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getActivity(), "SHUBHAM", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
