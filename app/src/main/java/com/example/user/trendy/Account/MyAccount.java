@@ -135,6 +135,9 @@ public class MyAccount extends Fragment {
                 nametext = response.data().getCustomer().getFirstName() + "" + response.data().getCustomer().getLastName();
                 emailtext = "" + response.data().getCustomer().getEmail();
                 mobiletext = "" + response.data().getCustomer().getPhone();
+                if(mobiletext.trim().length()!=0){
+                    SharedPreference.saveData("mobile",mobiletext.trim(),getActivity());
+                }
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

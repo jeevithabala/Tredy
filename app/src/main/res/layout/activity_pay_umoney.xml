@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
+    android:focusable="false"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
     tools:context=".Bag.PayUMoneyActivity">
+    <ScrollView
+        android:layout_marginBottom="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
 
     <TextView
+        android:id="@+id/pay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -21,6 +33,7 @@
 
 
     <LinearLayout
+        android:layout_below="@+id/pay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -83,100 +96,66 @@
         </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.7"
-                android:paddingBottom="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp">
-
-                <EditText
-                    android:id="@+id/discount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/edt_bg_selector"
-                    android:focusable="true"
-                    android:fontFamily="@font/lucidasansdemibold"
-                    android:hint="Discount Code"
-                    android:text="APP50"
-                    android:singleLine="true"
-                    android:textSize="12sp" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.v7.widget.CardView
-                android:layout_marginTop="5dp"
-                android:id="@+id/apply_discount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1.3"
-                app:cardBackgroundColor="@color/grey"
-                app:cardCornerRadius="10dp">
-
-                <TextView
-                    android:padding="5dp"
-                    android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/lucidasansdemibold"
-                    android:text="Apply"
-                    android:textColor="@color/textcolor"
-                    android:textSize="14sp" />
-
-            </android.support.v7.widget.CardView>
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:id="@+id/discount_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
             android:visibility="gone">
 
-            <LinearLayout
-                android:layout_marginTop="10dp"
+            <TextView
+                android:id="@+id/apply_coupon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:fontFamily="@font/lucidasansdemibold"
+                android:text=""
+                android:textColor="@color/textcolor"
+                android:textSize="12sp" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal"
                 android:weightSum="3">
+
+
+
+
                 <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.9"
-                    android:textSize="12sp"
-                    android:textColor="@color/textcolor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:fontFamily="@font/lucidasansdemibold"
-                    android:text="You Saved"/>
+                    android:text="You Saved"
+                    android:textColor="@color/textcolor"
+                    android:textSize="12sp" />
 
 
                 <TextView
-                    android:layout_weight="1.1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1.1"
                     android:fontFamily="@font/lucidasansdemibold"
-                    android:textSize="12sp"
+                    android:text=":"
                     android:textColor="@color/textcolor"
-                    android:text=":"/>
+                    android:textSize="12sp" />
 
 
                 <TextView
                     android:id="@+id/discount_price"
-                    android:layout_weight="1"
-                    android:textColor="@color/textcolor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:fontFamily="@font/lucidasansdemibold"
-                    android:textSize="12sp"
-                    android:text=""/>
+                    android:text=""
+                    android:textColor="@color/textcolor"
+                    android:textSize="12sp" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -186,82 +165,140 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/lucidasansdemibold"
-                    android:textSize="12sp"
-                    android:textColor="@color/textcolor"
                     android:layout_weight="0.9"
-                    android:text="Total Amount to Pay"/>
-                <TextView
-                    android:layout_weight="1.1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:fontFamily="@font/lucidasansdemibold"
-                    android:textSize="12sp"
+                    android:text="Total Amount to Pay"
                     android:textColor="@color/textcolor"
-                    android:text=":"/>
+                    android:textSize="12sp" />
 
                 <TextView
-                    android:layout_weight="1"
-                    android:id="@+id/t_pay"
-                    android:fontFamily="@font/lucidasansdemibold"
-                    android:textSize="12sp"
-                    android:textColor="@color/textcolor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""/>
+                    android:layout_weight="1.1"
+                    android:fontFamily="@font/lucidasansdemibold"
+                    android:text=":"
+                    android:textColor="@color/textcolor"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/t_pay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/lucidasansdemibold"
+                    android:text=""
+                    android:textColor="@color/textcolor"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
         </LinearLayout>
 
 
-
-        <LinearLayout
+        <TextView
+            android:gravity="right"
+            android:fontFamily="@font/lucidasansdemibold"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/textcolor"
+            android:textSize="14sp"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="40dp"
-            android:weightSum="2">
+            android:id="@+id/view_coupon"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:visibility="visible"
+            android:id="@+id/recycler_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.5">
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:paddingBottom="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="10dp">
+
+                    <TextView
+                        android:id="@+id/discount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:fontFamily="@font/lucidasansdemibold"
+                        android:singleLine="true"
+                        android:text="Discount Code"
+                        android:textSize="14sp" />
+                </android.support.design.widget.TextInputLayout>
+
 
             </LinearLayout>
 
-            <android.support.v7.widget.CardView
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/discount_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                app:cardCornerRadius="5dp">
+                android:layout_marginTop="5dp">
 
-                <LinearLayout
-                    android:id="@+id/paynowbtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorAccent">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/lucidasansdemiboldroman"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:text="Continue to payment method"
-                        android:textColor="@color/white"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-
-            </android.support.v7.widget.CardView>
-
+            </android.support.v7.widget.RecyclerView>
         </LinearLayout>
+
+
+
 
 
     </LinearLayout>
 
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="40dp"
+        android:weightSum="2">
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5">
+
+        </LinearLayout>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            app:cardCornerRadius="5dp">
+
+            <LinearLayout
+                android:id="@+id/paynowbtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorAccent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lucidasansdemiboldroman"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="Continue to payment method"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</RelativeLayout>

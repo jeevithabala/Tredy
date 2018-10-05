@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -20,18 +23,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.user.trendy.Bag.Db.AddToCart_Model;
 import com.example.user.trendy.Bag.Db.DBHelper;
 import com.example.user.trendy.Login.Validationemail;
 import com.example.user.trendy.Login.Validationmobile;
+import com.example.user.trendy.MainActivity;
 import com.example.user.trendy.Payu_Utility.AppEnvironment;
 import com.example.user.trendy.Payu_Utility.AppPreference;
 import com.example.user.trendy.Payu_Utility.MyApplication;
@@ -58,15 +65,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-public class PayUMoneyActivity extends AppCompatActivity implements View.OnClickListener {
+public class PayUMoneyActivity extends AppCompatActivity implements View.OnClickListener, DiscountAdapter.Discountinterface {
 
     EditText emailedit, mobile, amountedit, discount;
-    LinearLayout paynowbtn;
+    LinearLayout paynowbtn,recycler_layout;
     private PayUmoneySdkInitializer.PaymentParam mPaymentParams;
     Button btnsubmit1, btncancel;
     RadioButton btnradonline, btnradcod;
     String emailstring, totalamount, coupon, firstname = "", lastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "";
-    TextView txtpayamount, t_pay, discount_price;
+    TextView txtpayamount, t_pay, discount_price,apply_coupon;
     CardView apply_discount;
     LinearLayout discount_layout;
     int i = 0, cod = 0;
@@ -76,6 +83,12 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     String product_varientid = "", product_qty = "", totalcost = "", tag = "";
     private String kind_transaction = "";
     private String product_varientid1 = "";
+    RecyclerView discount_recycler;
+    private RequestQueue mRequestQueue;
+    ArrayList<DiscountModel> discountlist = new ArrayList<>();
+    private JsonArrayRequest request;
+    DiscountAdapter discountAdapter;
+    TextView view_coupon;
 
 
     @Override
@@ -86,8 +99,12 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         db = new DBHelper(this);
 
         cartlist = db.getCartList();
-        totalamount = SharedPreference.getData("total", getApplicationContext());
+        totalcost = SharedPreference.getData("total", getApplicationContext());
+        phone = SharedPreference.getData("mobile", getApplicationContext());
         emailstring = SharedPreference.getData("email", getApplicationContext());
+        discount_recycler = findViewById(R.id.discount_recycler);
+        recycler_layout=findViewById(R.id.recycler_layout);
+        view_coupon=findViewById(R.id.view_coupon);
 
         if (getIntent() != null) {
             firstname = getIntent().getStringExtra("firstname");
@@ -109,30 +126,47 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             product_qty = getIntent().getStringExtra("product_qty");
             totalcost = getIntent().getStringExtra("totalcost");
             tag = getIntent().getStringExtra("tag");
-            if (product_varientid.trim().length() != 0) {
-                byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
-                String val2 = new String(tmp2);
-                String[] str = val2.split("/");
-                product_varientid = str[4];
+            if (product_varientid != null) {
+                if (product_varientid.trim().length() != 0) {
+                    byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
+                    String val2 = new String(tmp2);
+                    String[] str = val2.split("/");
+                    product_varientid = str[4];
+                }
             }
 
 
         }
+        totalamount=totalcost;
         emailedit = (EditText) findViewById(R.id.payuemail);
         mobile = (EditText) findViewById(R.id.payumobile);
         amountedit = (EditText) findViewById(R.id.payuamount);
-        discount = findViewById(R.id.discount);
-        apply_discount = findViewById(R.id.apply_discount);
+//        apply_discount = findViewById(R.id.apply_discount);
         discount_price = findViewById(R.id.discount_price);
         t_pay = findViewById(R.id.t_pay);
         discount_layout = findViewById(R.id.discount_layout);
-
+        apply_coupon=findViewById(R.id.apply_coupon);
         paynowbtn = (LinearLayout) findViewById(R.id.paynowbtn);
         paynowbtn.setOnClickListener(this);
-        apply_discount.setOnClickListener(this);
+      view_coupon.setOnClickListener(this);
 
         emailedit.setText(emailstring);
-        amountedit.setText(totalamount);
+        amountedit.setText(totalcost);
+        if (phone.trim().length() != 0) {
+            mobile.setText(phone);
+        }
+
+
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+        discount_recycler.setLayoutManager(layoutManager1);
+        discount_recycler.setItemAnimator(new DefaultItemAnimator());
+
+
+        discountAdapter = new DiscountAdapter(getApplicationContext(), discountlist, this);
+        discount_recycler.setAdapter(discountAdapter);
+        getDiscount();
+
+        discountAdapter.notifyDataSetChanged();
 
     }
 
@@ -338,8 +372,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
                 }
                 break;
-            case R.id.apply_discount:
-                discount();
+            case R.id.view_coupon:
+                recycler_layout.setVisibility(View.VISIBLE);
                 break;
 
 
@@ -402,6 +436,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     } else {
                         cod = 1;
                         postOrder();
+//                        postCheck();
 
 //cms
                     }
@@ -450,16 +485,16 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     product_varientid = str[4];
 
                     Integer quantity = cartlist.get(i).getQty();
-
-                    items.put("variant_id", product_varientid.trim());
+                    items.put("variant_id", "5823671107611");
+//                    items.put("variant_id", product_varientid.trim());
                     items.put("quantity", quantity);
                     line_items.put(items);
                     jsonBody.put("line_items", line_items);
                 }
             } else {
 
-
-                items.put("variant_id", product_varientid.trim());
+                items.put("variant_id", "5823671107611");
+//                items.put("variant_id", product_varientid.trim());
                 items.put("quantity", product_qty);
                 line_items.put(items);
                 jsonBody.put("line_items", line_items);
@@ -544,6 +579,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                                 }
                             }
                             Toast.makeText(PayUMoneyActivity.this, "Your Order Placed Sucessfully", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(PayUMoneyActivity.this, MainActivity.class);
+                            startActivity(i);
                         }
 
 
@@ -597,5 +634,209 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    public void postCheck() {
+        phone = mobile.getText().toString().trim();
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            JSONObject jsonBody1 = new JSONObject();
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("email", emailstring);
+            jsonBody.put("financial_status", "pending");
 
+
+            JSONArray line_items = new JSONArray();
+            JSONObject items = new JSONObject();
+            if (product_varientid.trim().length() == 0) {
+                for (int i = 0; i < cartlist.size(); i++) {
+
+                    product_varientid = cartlist.get(i).getProduct_varient_id();
+                    byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
+                    String val2 = new String(tmp2);
+                    String[] str = val2.split("/");
+                    product_varientid = str[4];
+
+                    Integer quantity = cartlist.get(i).getQty();
+
+                    items.put("variant_id", product_varientid.trim());
+                    items.put("quantity", quantity);
+                    line_items.put(items);
+                    jsonBody.put("line_items", line_items);
+                }
+            } else {
+
+
+                items.put("variant_id", product_varientid.trim());
+                items.put("quantity", product_qty);
+                line_items.put(items);
+                jsonBody.put("line_items", line_items);
+
+            }
+
+            jsonBody1.put("order", jsonBody);
+
+            Log.d("check JSON", jsonBody1.toString());
+
+
+            final String requestBody = jsonBody1.toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.postch, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("VOLLEY", response);
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        String msg = obj.getString("msg");
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("VOLLEY", error.toString());
+                }
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    try {
+                        return requestBody == null ? null : requestBody.getBytes("utf-8");
+//                        return requestBody == null;
+                    } catch (UnsupportedEncodingException uee) {
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                        return null;
+                    }
+                }
+
+                @Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
+                    String statusCode = String.valueOf(response.statusCode);
+                    //Handling logic
+                    return super.parseNetworkResponse(response);
+                }
+//                @Override
+//                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+//                    String responseString = "";
+//                    if (response != null) {
+//                        responseString = String.valueOf(response.statusCode);
+//                        // can get more details such as response.headers
+//                    }
+//                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+//                }
+            };
+
+            requestQueue.add(stringRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getDiscount() {
+        discountlist.clear();
+        mRequestQueue = Volley.newRequestQueue(PayUMoneyActivity.this);
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.getDiscount,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.e("response", " " + response);
+
+                            JSONObject obj = new JSONObject(response);
+                            Log.e("response1", response);
+
+                            JSONArray jsonarray = obj.getJSONArray("discounts");
+                            Log.e("jsonarray", String.valueOf(jsonarray));
+
+                            for (int i = 0; i < jsonarray.length(); i++) {
+                                JSONObject collectionobject = jsonarray.getJSONObject(i);
+
+                                DiscountModel discountModel = new DiscountModel();
+                                String discountname = collectionobject.getString("title");
+                                String value = collectionobject.getString("value");
+                                discountModel.setTitle(discountname);
+                                discountModel.setValue(value);
+
+
+                                Log.e("discountname", discountname);
+                                Log.e("value", value);
+                                discountlist.add(discountModel);
+                            }
+
+
+                            discountAdapter.notifyDataSetChanged();
+//
+//
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("error", error.getMessage());
+
+                    }
+                }) {
+
+            @Override
+            protected void deliverResponse(String response) {
+                Log.e("ree", " " + response);
+                super.deliverResponse(response);
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                Log.e("reen", " " + response.headers);
+                return super.parseNetworkResponse(response);
+            }
+        };
+        stringRequest.setTag("categories_page");
+        // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
+
+        int socketTimeout = 10000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        mRequestQueue.add(stringRequest);
+
+
+    }
+
+
+    @Override
+    public void discountValue(String discounted_amount, String coupon) {
+        if (discounted_amount.trim().length() != 0) {
+            int amount = Integer.parseInt(discounted_amount);
+
+            String val2 = new String(discounted_amount);
+            String[] str = val2.split("-");
+            discounted_amount = str[1];
+            Log.e("amount", String.valueOf(discounted_amount));
+            totalcost=totalamount;
+            if (Integer.parseInt(totalcost) > amount) {
+                discount_layout.setVisibility(View.VISIBLE);
+                int a = Integer.parseInt(totalcost) + amount;
+                totalcost = String.valueOf(a);
+
+                t_pay.setText(totalcost);
+                discount_price.setText(discounted_amount);
+                apply_coupon.setText("Your Applied Coupon Code is : " + coupon);
+                recycler_layout.setVisibility(View.GONE);
+                view_coupon.setText(R.string.view);
+                view_coupon.setVisibility(View.VISIBLE);
+
+            }
+        }
+    }
 }

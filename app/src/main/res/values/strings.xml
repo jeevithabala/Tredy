@@ -12,4 +12,10 @@
     <string name="link"><u>Please remove them to continue.</u></string>
     <string name="btn_logout_from_google">Logout from Google</string>
     <string name="btn_revoke_access">Revoke Access</string>
+    <string name="view"><u>view coupon</u></string>
+
+    <string name="merchant_id">139259</string>
+    <string name="access_code">AVNP71EF61CG46PNGC</string>
+    <string name="working_key">7D5D362F459067648502505D7F924140</string>
+
 </resources>

@@ -79,11 +79,11 @@ public class SignupActivity extends Activity implements TextWatcher {
                 if(isValid()==true)
                 {
 //                    Toast.makeText(SignupActivity.this,"GOT",Toast.LENGTH_SHORT).show();
-                    firstname = first_name.getText().toString();
-                    lastname = last_name.getText().toString();
-                    mobilenumber = mobile.getText().toString();
-                    email = email_id.getText().toString();
-                    password = create_password.getText().toString();
+                    firstname = first_name.getText().toString().trim();
+                    lastname = last_name.getText().toString().trim();
+                    mobilenumber = mobile.getText().toString().trim();
+                    email = email_id.getText().toString().trim();
+                    password = create_password.getText().toString().trim();
                     signingUpUser();
                 }
                 else
@@ -442,7 +442,9 @@ public class SignupActivity extends Activity implements TextWatcher {
 //                Log.e("response", response.toString());
 
                     if (response.data().getCustomerCreate() != null) {
-                        if(response.data().getCustomerCreate().getCustomer()==null){
+                        Log.e("messagecheck", " " + "j");
+                        if(response.data().getCustomerCreate().getCustomer()==null||response.data().getCheckoutCreate()==null){
+                            Log.e("messagecheck", " " + "b");
                         if (response.data().getCustomerCreate().getUserErrors() != null) {
                             String message = response.data().getCustomerCreate().getUserErrors().get(0).getMessage();
                             Log.e("messagecheck", " " + message);
@@ -467,6 +469,18 @@ public class SignupActivity extends Activity implements TextWatcher {
                                 SharedPreference.saveData("login", "true", getApplicationContext());
                                 startActivity(i);
                             }
+                        }
+                    }else {
+                        if (response.data() == null) {
+                            Log.e("messagecheck", " " + "j1");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), "Try again Later", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }else{
+                            Log.e("messagecheck", " " + "j11");
                         }
                     }
 

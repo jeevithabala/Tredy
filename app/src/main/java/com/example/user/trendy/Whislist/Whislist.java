@@ -68,7 +68,7 @@ public class Whislist extends Fragment implements WhislistAdapter.GetTotalCost {
         whislist.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
-
+visibilityCheck();
 
         return view;
     }
