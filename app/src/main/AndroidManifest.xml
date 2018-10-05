@@ -51,6 +51,9 @@
         <activity android:name=".Bag.PayUMoneyActivity"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"/>
         <activity android:name=".Login.SignupActivity" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="05aa485592c738eae971569c1dd704eca8c47b79" />
     </application>
 
 </manifest>
