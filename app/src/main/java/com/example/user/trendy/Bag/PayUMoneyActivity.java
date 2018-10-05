@@ -358,7 +358,10 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 btnradonline.setChecked(false);
                 break;
             case R.id.paynowbtn:
+
                 phone = mobile.getText().toString().trim();
+                phone=phone.substring(3);
+                mobile.setText(phone);
                 if (!Validationemail.isEmailAddress(emailedit, true)) {
                     Toast.makeText(PayUMoneyActivity.this, "Please enter your valid email", Toast.LENGTH_SHORT).show();
 

@@ -86,6 +86,8 @@ public class ProductView extends Fragment implements ProductClickInterface {
     int selectedID = 0;
     String productvarient_id;
 
+    RadioGroup radioGroup;
+
     String no_of_count;
 
     @Override
@@ -100,6 +102,8 @@ public class ProductView extends Fragment implements ProductClickInterface {
         //  final View view = inflater.inflate(R.layout.product_view, container, false);
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
+
+        radioGroup=view.findViewById(R.id.radiogroup);
 
         veg = view.findViewById(R.id.veg);
         eggless = view.findViewById(R.id.eggless);
@@ -195,27 +199,39 @@ public class ProductView extends Fragment implements ProductClickInterface {
         bag_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (product.trim().equals("grocery")) {
-                    no_of_count=count.getText().toString();
-                    byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
-                    String val2 = new String(tmp2);
-                    String[] str = val2.split("/");
-                    Log.d("str value", str[4]);
-                    commanCartControler.AddToCartGrocery(id.trim(), selectedID,Integer.parseInt(no_of_count));
-                    Toast.makeText(getActivity(),"Added to cart",Toast.LENGTH_SHORT).show();
-                } else {
-                    String text = "gid://shopify/Product/" + id.trim();
 
-                    String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-                    no_of_count=count.getText().toString();
-//                    Log.e("count",no_of_count);
-                    Log.e("coverted", converted.trim());
-                    Log.e("id", id);
-                    commanCartControler.AddToCartGrocery(converted.trim(), selectedID,Integer.parseInt(no_of_count));
-                    Toast.makeText(getActivity(),"Added to cart",Toast.LENGTH_SHORT).show();
+                int selected =  radioGroup .getCheckedRadioButtonId();
+                int no_of_variants = itemModel.getProduct().getVariants().getEdges().size();
+
+//                Log.e("radio",""+selected);
+//                Log.e("radio1",""+no_of_variants);
+
+                if(no_of_variants>0)
+                {
+                    if(selected==-1)
+                    {
+                        Toast.makeText(getActivity(), "Please Select Size.", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        if (product.trim().equals("grocery")) {
+                            no_of_count=count.getText().toString();
+                            byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
+                            String val2 = new String(tmp2);
+                            String[] str = val2.split("/");
+                            Log.d("str value", str[4]);
+                            commanCartControler.AddToCartGrocery(id.trim(), selectedID,Integer.parseInt(no_of_count));
+                            Toast.makeText(getActivity(),"Added to cart",Toast.LENGTH_SHORT).show();
+                        } else {
+                            String text = "gid://shopify/Product/" + id.trim();
+                            String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
+                            no_of_count=count.getText().toString();
+                            Log.e("coverted", converted.trim());
+                            Log.e("id", id);
+                            commanCartControler.AddToCartGrocery(converted.trim(), selectedID,Integer.parseInt(no_of_count));
+                            Toast.makeText(getActivity(),"Added to cart",Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
-
-
             }
         });
 

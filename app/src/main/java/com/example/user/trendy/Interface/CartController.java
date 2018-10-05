@@ -182,7 +182,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                     }
                     String available = productVariant.get(selectedID).getAvailableForSale().toString();
                     Log.e("available", available);
-                    if (productVariant.get(0).getAvailableForSale()) {
+                    if (productVariant.get(selectedID).getAvailableForSale()) {
                         if (cartList.size() == 0) {
                             Log.e("empty", "empty");
 

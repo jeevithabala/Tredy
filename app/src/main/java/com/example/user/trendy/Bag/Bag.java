@@ -16,10 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user.trendy.Bag.Db.AddToCart_Adapter;
 import com.example.user.trendy.Bag.Db.AddToCart_Model;
 import com.example.user.trendy.Bag.Db.DBHelper;
+import com.example.user.trendy.Category.ProductDetail.ProductView;
 import com.example.user.trendy.Interface.CartController;
 import com.example.user.trendy.Interface.CommanCartControler;
 import com.example.user.trendy.R;
@@ -46,6 +48,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
     String state = "",totalcosts="";
     CartController cartController;
     CommanCartControler commanCartControler;
+    LinearLayout linearLayout;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,6 +59,14 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         items = view.findViewById(R.id.items);
         totalcost = view.findViewById(R.id.total);
         nobag = view.findViewById(R.id.nobag);
+        linearLayout=view.findViewById(R.id.product);
+
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "SHUBHAM", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
@@ -151,7 +162,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
         SharedPreference.saveData("total", String.valueOf(commanCartControler.getTotalPrice()), getActivity());
-        totalcost.setText(Integer.toString(commanCartControler.getTotalPrice()));
+        totalcost.setText("Rs. "+Integer.toString(commanCartControler.getTotalPrice()));
 
 
     }

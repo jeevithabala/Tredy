@@ -90,6 +90,13 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
 
+        emailstring = SharedPreference.getData("email", getActivity());
+        firstnamestring = SharedPreference.getData("firstname", getActivity());
+        lastnamestring = SharedPreference.getData("lastname", getActivity());
+
+        Log.e("email",emailstring);
+        Log.e("first",firstnamestring);
+        Log.e("name",lastnamestring);
 
         if (getArguments() != null) {
             check = getArguments().getString("collection");
@@ -113,10 +120,6 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 .httpCache(new File(getActivity().getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
                 .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
                 .build();
-
-        emailstring = SharedPreference.getData("email", getActivity());
-        firstnamestring = SharedPreference.getData("firstname", getActivity());
-        lastnamestring = SharedPreference.getData("lastname", getActivity());
 
         email = view.findViewById(R.id.email);
         first_name = view.findViewById(R.id.first_name);
