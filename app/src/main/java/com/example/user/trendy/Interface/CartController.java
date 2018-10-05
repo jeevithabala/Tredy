@@ -112,6 +112,9 @@ public class CartController extends ViewModel implements CommanCartControler {
 
     @Override
     public void AddToCartGrocery(String trim, int selectedID, int count) {
+        cartList.clear();
+
+        cartList = db.getCartList();
         getProductVariantIDgrocery(trim.trim(),selectedID);
         qty=count;
     }
@@ -182,7 +185,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                     }
                     String available = productVariant.get(selectedID).getAvailableForSale().toString();
                     Log.e("available", available);
-                    if (productVariant.get(selectedID).getAvailableForSale()) {
+                    if (productVariant.get(0).getAvailableForSale()) {
                         if (cartList.size() == 0) {
                             Log.e("empty", "empty");
 
