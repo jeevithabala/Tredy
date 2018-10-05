@@ -33,6 +33,7 @@ public class CartController extends ViewModel implements CommanCartControler {
     Context mContext;
     private List<AddToCart_Model> cartList = new ArrayList<>();
     private List<AddWhislistModel> whislist = new ArrayList<>();
+    int qty;
 
     public CartController(Context mContext) {
         this.mContext = mContext;
@@ -110,8 +111,9 @@ public class CartController extends ViewModel implements CommanCartControler {
     }
 
     @Override
-    public void AddToCartGrocery(String trim, int selectedID) {
+    public void AddToCartGrocery(String trim, int selectedID, int count) {
         getProductVariantIDgrocery(trim.trim(),selectedID);
+        qty=count;
     }
 
     private void getProductVariantIDgrocery(String trim, int selectedID) {
@@ -183,7 +185,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                     if (productVariant.get(0).getAvailableForSale()) {
                         if (cartList.size() == 0) {
                             Log.e("empty", "empty");
-                            int qty = 1;
+
                             db.insertToDo(productVariant.get(selectedID), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
                         } else {
 
@@ -192,7 +194,7 @@ public class CartController extends ViewModel implements CommanCartControler {
 
                                 db.update(productVariant.get(selectedID).getId().toString().trim(), 1);
                             } else {
-                                db.insertToDo(productVariant.get(selectedID), 1, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
+                                db.insertToDo(productVariant.get(selectedID), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
                             }
                         }
 

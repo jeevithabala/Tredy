@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,10 @@ public class MyAccountEdit extends Fragment {
         firstname.setText(firstnametext);
         lastname.setText(lastnametext);
         email.setText(emailtext);
+        if(mobiletext.length()>0)
+        {
+            mobiletext = mobiletext.substring(3, 13);
+        }
         mobilenumber.setText(mobiletext);
         accessToken = SharedPreference.getData("accesstoken", getActivity());
         Log.e("accestoken", ""+accessToken);
@@ -66,14 +71,33 @@ public class MyAccountEdit extends Fragment {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Boolean valid=true;
                 if (accessToken != null) {
                     emailtext=email.getText().toString().trim();
                     mobiletext=mobilenumber.getText().toString().trim();
                     firstnametext=firstname.getText().toString().trim();
                     lastnametext=lastname.getText().toString().trim();
-//                    passwordtext=password.getText().toString().trim();
+                    if(mobiletext.length()>0)
+                    {
+                        if(mobiletext.length()<10) {
+                            Toast.makeText(getActivity(), "Please Enter 10 Digit Mobile Number", Toast.LENGTH_SHORT).show();
+                            valid = false;
+                        }
+                        else if(mobiletext.length()==10)
+                        {
+                            valid=true;
+                        }
+                    }
+                    else
+                    {
+                        valid=true;
+                    }
+                }
 
-                   update(accessToken);
+                if(valid==true)
+                {
+                    mobiletext=("+91"+mobiletext).trim();
+                    update(accessToken);
                 }
             }
         });
@@ -119,6 +143,12 @@ public class MyAccountEdit extends Fragment {
                         String email = response.data().getCustomerUpdate().getCustomer().getEmail();
                         String id=response.data().getCustomerUpdate().getCustomer().getId().toString();
                         Log.e("phone", ""+phone+firstName+lastName+email+id);
+
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                        transaction.replace(R.id.home_container, new MyAccount(), "Account");
+                        transaction.addToBackStack(null);
+                        transaction.commit();
 
                     }else{
 

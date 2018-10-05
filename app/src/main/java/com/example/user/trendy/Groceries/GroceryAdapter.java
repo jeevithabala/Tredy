@@ -34,6 +34,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     CartController cartController;
     CommanCartControler commanCartControler;
     int pos=0;
+    String getQuantity = "1";
 
     private FragmentManager fragmentManager;
     private LayoutInflater layoutInflater;
@@ -88,7 +89,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
                 public void onClick(View view) {
                     cartController = new CartController(mContext);
                     commanCartControler = (CommanCartControler)cartController;
-                    commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()),pos);
+                    commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()),pos,Integer.parseInt(getQuantity));
                 }
             });
 //            spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) mContext);
@@ -96,7 +97,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
             binding.setCounter(new GroceryInterface() {
                 @Override
                 public void increase() {
-                    String getQuantity = textView.getText().toString();
+                    getQuantity = textView.getText().toString();
                     int increase_qty = Integer.parseInt(getQuantity) + 1;
                     getQuantity = String.valueOf(increase_qty);
                     itemsList.get(getAdapterPosition()).setQty(getQuantity);
@@ -105,7 +106,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
 
                 @Override
                 public void decrease() {
-                    String getQuantity = textView.getText().toString();
+                    getQuantity = textView.getText().toString();
                     if (getQuantity.trim().equals("1")) {
 
                     } else {
