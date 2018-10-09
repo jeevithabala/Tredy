@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import com.example.user.trendy.BuildConfig;
 import com.example.user.trendy.Category.ProductAdapter;
 import com.example.user.trendy.ForYou.NewArrival.NewArrivalModel;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
@@ -41,7 +42,7 @@ public class Groceries extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.grocery, container, false);
 
-
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("Grocery");
         grocery_recycler = view.findViewById(R.id.grocery_recycler);
         title_layout=view.findViewById(R.id.title_layout);
         title_layout.setVisibility(View.GONE);

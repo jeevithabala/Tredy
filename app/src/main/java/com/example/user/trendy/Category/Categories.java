@@ -26,6 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.user.trendy.BuildConfig;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.Constants;
 import com.shopify.buy3.GraphCall;
@@ -48,7 +49,7 @@ import java.util.concurrent.TimeUnit;
 public class Categories extends Fragment {
     public String collectionurl = "https://cdn.shopify.com/s/files/1/2364/1061/t/4/assets/tf.json?3518560706218956420";
 
-    private TextView mTextMessage;
+    private TextView all;
     Toolbar toolbar;
     RecyclerView recyclerView;
     GraphClient graphClient;
@@ -59,17 +60,15 @@ public class Categories extends Fragment {
     String imageurl = "";
     LinearLayout subcategory;
     String converted;
-    private String image1="";
+    private String image1 = "";
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.categories, container, false);
 
-//        toolbar = (Toolbar) getActivity().findViewById(R.id.tool_bar);
-//        toolbar.setTitle("Categories");
-//        toolbar.getMenu().clear();
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("Categories");
 
-//        mTextMessage = view.findViewById(R.id.message);
-//        mTextMessage.setText(R.string.title_categories);
+        all = view.findViewById(R.id.all);
+        all.setVisibility(View.GONE);
         subcategory = view.findViewById(R.id.sublayout);
         subcategory.setVisibility(View.GONE);
 
@@ -242,9 +241,9 @@ public class Categories extends Fragment {
 
                                             String subid = "" + subcollectionobject.getString("subject_id");
                                             String subcollectiontitle = subcollectionobject.getString("title");
-                                            String type=subcollectionobject.getString("type");
-                                            if(type.trim().equals("collection")) {
-                                                 image1 = subcollectionobject.getString("image");
+                                            String type = subcollectionobject.getString("type");
+                                            if (type.trim().equals("collection")) {
+                                                image1 = subcollectionobject.getString("image");
                                             }
 
                                             if (!subid.trim().equals("null")) {

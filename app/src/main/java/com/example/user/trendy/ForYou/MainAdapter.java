@@ -137,7 +137,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 bundle.putSerializable("category_id", getBestCollection().get(0));
 //                Log.e("iddddddd", getBestCollection().get(0).getCollectionTitle());
                 fragment.setArguments(bundle);
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                 ft.addToBackStack("fragment");
                 ft.commit();
@@ -165,7 +165,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 bundle.putSerializable("category_id", getTopSellingCollection().get(0));
 //                Log.e("iddddddd", getTopSellingCollection().get(0).getCollectionTitle());
                 fragment.setArguments(bundle);
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                  ft.addToBackStack("fragment");
                 ft.commit();
@@ -202,7 +202,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 bundle.putSerializable("category_id", getNewArrival().get(0));
 //                Log.e("iddddddd", getNewArrival().get(0).getCollectionTitle());
                 fragment.setArguments(bundle);
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                  ft.addToBackStack("fragment");
                 ft.commit();

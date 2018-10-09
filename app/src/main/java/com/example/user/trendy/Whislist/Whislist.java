@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.example.user.trendy.Bag.Cart;
 import com.example.user.trendy.Bag.Db.AddToCart_Adapter;
 import com.example.user.trendy.Bag.Db.DBHelper;
 import com.example.user.trendy.BuildConfig;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Whislist.WhislistDB.DBWhislist;
 import com.shopify.buy3.GraphClient;
@@ -36,12 +38,14 @@ public class Whislist extends Fragment implements WhislistAdapter.GetTotalCost {
     WhislistAdapter adapter;
     TextView items;
     private TextView nobag;
-
+Toolbar toolbar;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.whislist, container, false);
+
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("Wishlist");
+
         cartList.clear();
-        whislist = view.findViewById(R.id.whislist);
         items = view.findViewById(R.id.items);
         nobag = view.findViewById(R.id.nobag);
         items.setVisibility(View.VISIBLE);

@@ -10,7 +10,7 @@ public interface CommanCartControler {
 
     public void RemoveQuantity(String id);
     public int getTotalPrice();
-public void  UpdateShipping(String id, String value);
+    public void  UpdateShipping(String id, String value);
 
     public void AddToWhislist(String id);
 

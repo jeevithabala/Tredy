@@ -372,6 +372,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
                 }
                 break;
+
             case R.id.view_coupon:
                 recycler_layout.setVisibility(View.VISIBLE);
                 break;

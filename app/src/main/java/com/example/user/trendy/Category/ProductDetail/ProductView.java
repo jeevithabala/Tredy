@@ -357,6 +357,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 rbn = new RadioButton(getActivity());
 
                 rbn.setId(i);
+
                 String weightunit = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeightUnit().toString();
                 selectedweight = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeight().toString() + " " + weightunit;
                 if (weightunit.trim().equals("GRAMS")) {

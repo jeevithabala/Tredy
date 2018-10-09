@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.trendy.BuildConfig;
-import com.example.user.trendy.MainActivity;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.Util.SharedPreference;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -259,7 +259,7 @@ public class LoginActiviy extends AppCompatActivity implements
         String login = SharedPreference.getData("login", getApplicationContext());
 //
         if (login.equals("true")) {
-            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            Intent i = new Intent(getApplicationContext(), Navigation.class);
             startActivity(i);
 
             finish();
@@ -413,7 +413,7 @@ public class LoginActiviy extends AppCompatActivity implements
                         String expire = response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getExpiresAt().toString();
                         SharedPreference.saveData("accesstoken", token.trim(), getApplicationContext());
 
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        Intent i = new Intent(getApplicationContext(), Navigation.class);
                         SharedPreference.saveData("login", "true", getApplicationContext());
                         startActivity(i);
 

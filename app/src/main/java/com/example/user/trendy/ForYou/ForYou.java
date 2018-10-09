@@ -1,8 +1,11 @@
 package com.example.user.trendy.ForYou;
 
+import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -16,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
@@ -41,6 +45,7 @@ import com.example.user.trendy.ForYou.TopSelling.TopSellingAdapter;
 import com.example.user.trendy.ForYou.TopSelling.TopSellingModel;
 import com.example.user.trendy.Groceries.Groceries;
 import com.example.user.trendy.Groceries.GroceryModel;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.Constants;
 import com.example.user.trendy.Whislist.Whislist;
@@ -114,9 +119,13 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
     ArrayList<TopCollectionModel> topCollectionModelArray = new ArrayList<>();
     ArrayList<NewArrivalModel> newArrivalModelArray = new ArrayList<>();
     private ArrayList<GroceryModel> groceryModelArrayList = new ArrayList<>();
+    Toolbar toolbar;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.foryou, container, false);
+
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("For You");
+
 //String collectionids="345069894,321817286,33238122615";
         topselling_recyclerview = view.findViewById(R.id.main_recyclerview);
         allcollection = view.findViewById(R.id.allcollection);
@@ -163,29 +172,6 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
             adapter = new MainAdapter(getActivity(), getObject(), getFragmentManager());
             topselling_recyclerview.setAdapter(adapter);
         }
-
-        myaccount = view.findViewById(R.id.myaccount);
-        whislist = view.findViewById(R.id.whislist);
-        whislist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction.replace(R.id.home_container, new Whislist(), "whislist");
-//                    transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
-        myaccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction.replace(R.id.home_container, new MyAccount(), "account");
-//                    transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
 
         return view;
     }
@@ -308,6 +294,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
     }
 
     private void getCollection(String trim) {
+        groceryModels.clear();
         groceryModelArrayList.clear();
         Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
                 .node(new ID(trim.trim()), nodeQuery -> nodeQuery
@@ -386,6 +373,11 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                             topSellingModelArrayList.clear();
                             topCollectionModelArrayList.clear();
                             newArrivalModelArrayList.clear();
+                            topSellingModelArray.clear();
+                            topCollectionModelArray.clear();
+                            newArrivalModelArray.clear();
+
+
 
                             Iterator keys = obj.keys();
                             Log.e("Keys", "" + String.valueOf(keys));
@@ -604,7 +596,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
     }
 
     private void banner() {
-        bannerlist.clear();
+
         mRequestQueue = Volley.newRequestQueue(getActivity());
 
 
@@ -612,6 +604,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray jsonArray) {
+                        bannerlist.clear();
                         for (int i = 0; i < jsonArray.length(); i++) {
                             try {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -649,6 +642,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
     private void init() {
 
 //Log.e("bannerlist", ""+String.valueOf(bannerlist.size()));
+        ImagesArray.clear();
         for (int i = 0; i < bannerlist.size(); i++)
             ImagesArray.add(bannerlist.get(i));
 

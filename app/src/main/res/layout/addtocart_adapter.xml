@@ -70,7 +70,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:fontFamily="@font/lucidasansdemibold"
-                        android:text="@{Double.toString(cartitem.product_price)}"
+                        android:text="@{@string/Rs+Double.toString(cartitem.product_price)}"
                         android:textColor="@color/cost"
                         android:textSize="12dp" />
 

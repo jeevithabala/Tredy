@@ -608,7 +608,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         fragment.setArguments(bundle);
         FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-        // ft.addToBackStack("fragment");
+        ft.addToBackStack("categoryproduct");
         ft.commit();
 
     }

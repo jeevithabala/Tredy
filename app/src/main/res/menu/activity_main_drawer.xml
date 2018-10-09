@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/for_you"
+            android:icon="@drawable/foryou"
+            android:checked="true"
+            android:title="For You" />
+        <item
+            android:id="@+id/category"
+            android:icon="@drawable/categories"
+            android:title="Categories" />
+
+        <item
+            android:id="@+id/account"
+            android:icon="@drawable/user"
+            android:title="Account" />
+
+        <item
+            android:id="@+id/wishlist"
+            android:icon="@drawable/ic_whislist"
+            android:title="Wishlist" />
+
+
+    </group>
+
+    <item android:title="Others">
+        <menu>
+            <item
+                android:id="@+id/share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+
+            <item
+                android:id="@+id/logout"
+                android:icon="@drawable/ic_logout"
+                android:title="Logout" />
+
+        </menu>
+    </item>
+
+</menu>

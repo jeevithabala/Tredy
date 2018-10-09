@@ -111,50 +111,52 @@ public class CartController extends ViewModel implements CommanCartControler {
 
     @Override
     public void AddToCartGrocery(String trim, int selectedID) {
+        cartList.clear();
 
+        cartList = db.getCartList();
         getProductVariantIDgrocery(trim.trim(),selectedID);
     }
 
     private void getProductVariantIDgrocery(String trim, int selectedID) {
-            GraphClient graphClient = GraphClient.builder(mContext)
-                    .shopDomain(BuildConfig.SHOP_DOMAIN)
-                    .accessToken(BuildConfig.API_KEY)
-                    .httpCache(new File(mContext.getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
-                    .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
-                    .build();
-            Log.e("id,",trim);
+        GraphClient graphClient = GraphClient.builder(mContext)
+                .shopDomain(BuildConfig.SHOP_DOMAIN)
+                .accessToken(BuildConfig.API_KEY)
+                .httpCache(new File(mContext.getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
+                .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
+                .build();
+        Log.e("id,",trim);
 
-            Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
-                    .node(new ID(trim), nodeQuery -> nodeQuery
-                            .onProduct(productQuery -> productQuery
-                                    .title()
-                                    .description()
-                                    .descriptionHtml()
-                                    .tags()
-                                    .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
-                                            .edges(imageEdgeQuery -> imageEdgeQuery
-                                                    .node(imageQuery -> imageQuery
-                                                            .src()
-                                                    )
-                                            )
-                                    )
-                                    .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
-                                            .edges(variantEdgeQuery -> variantEdgeQuery
-                                                    .node(productVariantQuery -> productVariantQuery
-                                                            .price()
-                                                            .title()
-                                                            .compareAtPrice()
-                                                            .availableForSale()
-                                                            .image(args -> args.src())
-                                                            .weight()
-                                                            .weightUnit()
-                                                            .available()
-                                                    )
-                                            )
-                                    )
-                            )
-                    )
-            );
+        Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
+                .node(new ID(trim), nodeQuery -> nodeQuery
+                        .onProduct(productQuery -> productQuery
+                                .title()
+                                .description()
+                                .descriptionHtml()
+                                .tags()
+                                .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
+                                        .edges(imageEdgeQuery -> imageEdgeQuery
+                                                .node(imageQuery -> imageQuery
+                                                        .src()
+                                                )
+                                        )
+                                )
+                                .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
+                                        .edges(variantEdgeQuery -> variantEdgeQuery
+                                                .node(productVariantQuery -> productVariantQuery
+                                                        .price()
+                                                        .title()
+                                                        .compareAtPrice()
+                                                        .availableForSale()
+                                                        .image(args -> args.src())
+                                                        .weight()
+                                                        .weightUnit()
+                                                        .available()
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
 
         graphClient.queryGraph(query).enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
 
@@ -212,7 +214,7 @@ public class CartController extends ViewModel implements CommanCartControler {
 
         });
 
-        }
+    }
 
     private void getProductVariantID1(String productID) {
 
@@ -414,4 +416,3 @@ public class CartController extends ViewModel implements CommanCartControler {
     }
 
 }
-

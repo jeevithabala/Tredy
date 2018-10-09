@@ -62,7 +62,7 @@ public class GroceryModel implements Serializable {
 
     @BindingAdapter("productname")
     public static  void productname(TextView textView, Storefront.Product product) {
-       if(product!=null){
+        if(product!=null){
             String name = product.getTitle();
             textView.setText(name);
         }

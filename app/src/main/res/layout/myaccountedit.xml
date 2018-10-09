@@ -7,38 +7,8 @@
 
 
 
-    <LinearLayout
-        android:id="@+id/tool"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/appcolor">
 
-        <TextView
-            android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Edit Profile"
-            android:textColor="@color/white"
-            android:fontFamily="@font/lucidasansdemibold"
-            android:padding="10dp"/>
-
-        <TextView
-            android:id="@+id/save"
-            android:layout_weight="1"
-            android:layout_marginRight="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save"
-            android:gravity="right"
-            android:textColor="@color/white"
-            android:fontFamily="@font/lucidasansdemibold"
-            android:padding="10dp"/>
-
-    </LinearLayout>
     <ScrollView
-       android:layout_below="@+id/tool"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
@@ -139,28 +109,20 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <!--<android.support.design.widget.TextInputLayout-->
-                <!--android:id="@+id/password_input_layout"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--app:passwordToggleEnabled="true">-->
-
-                <!--<android.support.design.widget.TextInputEditText-->
-                    <!--android:id="@+id/password"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:paddingTop="20dp"-->
-                    <!--android:background="@drawable/edt_bg_selector"-->
-                    <!--android:hint="Password"-->
-                    <!--android:inputType="textPassword"-->
-                    <!--android:singleLine="true"-->
-                    <!--android:textSize="15sp" />-->
-            <!--</android.support.design.widget.TextInputLayout>-->
-
 
         </LinearLayout>
     </ScrollView>
 
-
+    <TextView
+        android:layout_alignParentBottom="true"
+        android:background="@color/appcolor"
+        android:id="@+id/save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:fontFamily="@font/lucidasansdemibold"
+        android:padding="10dp"/>
 
 </RelativeLayout>

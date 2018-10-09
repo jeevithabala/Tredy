@@ -167,7 +167,7 @@ public class Filter_Fragment extends Fragment {
                 ProductList.setArguments(bundle);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction.replace(R.id.home_container, ProductList, "Categories");
+                transaction.replace(R.id.home_container, ProductList, "categoryproduct");
                 transaction.addToBackStack(null);
                 transaction.commit();
 

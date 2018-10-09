@@ -41,6 +41,7 @@ import com.example.user.trendy.Category.SubCategoryModel;
 import com.example.user.trendy.Interface.CartController;
 import com.example.user.trendy.Interface.CommanCartControler;
 import com.example.user.trendy.Login.Validationemail;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.Constants;
 import com.example.user.trendy.Util.SharedPreference;
@@ -87,6 +88,9 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.shippingaddress, container, false);
+
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("Shipping");
+
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
 

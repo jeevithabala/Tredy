@@ -81,6 +81,7 @@ public class TopCollectionAdapter extends RecyclerView.Adapter<TopCollectionAdap
                     fragment.setArguments(bundle);
                     FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    ft.addToBackStack("ForYou");
                     ft.commit();
                 }
             });

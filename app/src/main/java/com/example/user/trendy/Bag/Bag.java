@@ -22,6 +22,7 @@ import com.example.user.trendy.Bag.Db.AddToCart_Model;
 import com.example.user.trendy.Bag.Db.DBHelper;
 import com.example.user.trendy.Interface.CartController;
 import com.example.user.trendy.Interface.CommanCartControler;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.SharedPreference;
 import com.example.user.trendy.databinding.BagBinding;
@@ -50,6 +51,9 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.bag, container, false);
+
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("Bag");
+
         view = binding.getRoot();
         checkoutbtn = view.findViewById(R.id.checkoutbtn);
         check = view.findViewById(R.id.check);
@@ -151,7 +155,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
         SharedPreference.saveData("total", String.valueOf(commanCartControler.getTotalPrice()), getActivity());
-        totalcost.setText(Integer.toString(commanCartControler.getTotalPrice()));
+        totalcost.setText("Rs. "+Integer.toString(commanCartControler.getTotalPrice()));
 
 
     }

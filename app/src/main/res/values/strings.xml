@@ -3,7 +3,7 @@
     <string name="title_you">For You</string>
     <string name="title_categories">Categories</string>
     <string name="title_bag">Bag</string>
-    <string name="title_whishlist">Whislist</string>
+    <string name="title_whishlist">Wishlist</string>
     <string name="dollar">$</string>
     <string name="facebook_app_id">259137058253282</string>
     <string name="fb_login_protocol_scheme">fb259137058253282</string>
@@ -17,5 +17,12 @@
     <string name="merchant_id">139259</string>
     <string name="access_code">AVNP71EF61CG46PNGC</string>
     <string name="working_key">7D5D362F459067648502505D7F924140</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Tredy Foods</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

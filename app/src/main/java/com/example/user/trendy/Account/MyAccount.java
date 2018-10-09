@@ -19,6 +19,7 @@ import com.example.user.trendy.Account.Orders.OrderAdapter;
 import com.example.user.trendy.Account.Orders.OrderModel;
 import com.example.user.trendy.Bag.Db.AddToCart_Adapter;
 import com.example.user.trendy.BuildConfig;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.SharedPreference;
 import com.shopify.buy3.GraphCall;
@@ -38,7 +39,7 @@ public class MyAccount extends Fragment {
     LinearLayout change_email, edit_profile;
     String accessToken;
     private GraphClient graphClient;
-    TextView name, email, mobile_number,order;
+    TextView name, email, mobile_number, order;
     String nametext, emailtext, mobiletext, firstname, lastname;
     RecyclerView order_recyclerview;
     ArrayList<OrderModel> orderModelArrayList = new ArrayList<>();
@@ -47,12 +48,14 @@ public class MyAccount extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.myaccount, container, false);
 
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("Account");
+
         name = view.findViewById(R.id.name);
         email = view.findViewById(R.id.email);
         mobile_number = view.findViewById(R.id.mobile_number);
         edit_profile = view.findViewById(R.id.edit_profile);
         order_recyclerview = view.findViewById(R.id.order_recyclerview);
-        order=view.findViewById(R.id.order);
+        order = view.findViewById(R.id.order);
 
         accessToken = SharedPreference.getData("accesstoken", getActivity());
         Log.e("accestoken", "" + accessToken);
@@ -68,8 +71,6 @@ public class MyAccount extends Fragment {
         }
 
 
-
-
         edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,8 +84,8 @@ public class MyAccount extends Fragment {
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction.replace(R.id.home_container, fragment, "account");
-//                    transaction.addToBackStack(null);
+                transaction.replace(R.id.home_container, fragment, "accountedit");
+                transaction.addToBackStack("account");
                 transaction.commit();
             }
         });
@@ -135,8 +136,8 @@ public class MyAccount extends Fragment {
                 nametext = response.data().getCustomer().getFirstName() + "" + response.data().getCustomer().getLastName();
                 emailtext = "" + response.data().getCustomer().getEmail();
                 mobiletext = "" + response.data().getCustomer().getPhone();
-                if(mobiletext.trim().length()!=0){
-                    SharedPreference.saveData("mobile",mobiletext.trim(),getActivity());
+                if (mobiletext.trim().length() != 0) {
+                    SharedPreference.saveData("mobile", mobiletext.trim(), getActivity());
                 }
 
                 getActivity().runOnUiThread(new Runnable() {
@@ -242,16 +243,16 @@ public class MyAccount extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if(orderModelArrayList.size()==0){
+                            if (orderModelArrayList.size() == 0) {
                                 order.setVisibility(View.VISIBLE);
 
-                            }else {
+                            } else {
                                 adapter.notifyDataSetChanged();
                             }
 
                         }
                     });
-                }else {
+                } else {
                     order.setVisibility(View.VISIBLE);
 
                 }
