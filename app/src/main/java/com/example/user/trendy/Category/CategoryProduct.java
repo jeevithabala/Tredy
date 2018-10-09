@@ -40,6 +40,7 @@ import com.example.user.trendy.ForYou.TopSelling.TopSellingModel;
 import com.example.user.trendy.Interface.CartController;
 import com.example.user.trendy.Interface.CommanCartControler;
 import com.example.user.trendy.Interface.ProductClickInterface;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.Product.ProductListModel;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.Constants;
@@ -99,9 +100,9 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     private String collectionname;
     CartController cartController;
     CommanCartControler commanCartControler;
-    private int requestCount=1,requestCount1=1;
+    private int requestCount = 1, requestCount1 = 1;
     RequestQueue requestQueue;
-    private String sortbykey="23z";
+    private String sortbykey = "23z";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -121,7 +122,6 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         view1.setOnClickListener(this);
 
         requestQueue = Volley.newRequestQueue(getActivity());
-
 
 
         recyclerView = view.findViewById(R.id.product_recyclerview);
@@ -156,7 +156,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 //            detail.setCollection(topSellingModel.getCollection());
             id = topSellingModel.getCollectionid().trim();
             title = topSellingModel.getCollectionTitle();
-        }else if(category.trim().equals("bestcollection")){
+        } else if (category.trim().equals("bestcollection")) {
             TopCollectionModel topCollectionModel = (TopCollectionModel) getArguments().getSerializable("category_id");
             id = topCollectionModel.getCollectionid().trim();
             title = topCollectionModel.getCollectionTitle();
@@ -177,11 +177,15 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         } else if (category.trim().equals("filter")) {
             min_price = getArguments().getString("min_price");
             max_price = getArguments().getString("max_price");
-            sortbykey=getArguments().getString("sortby");
+            sortbykey = getArguments().getString("sortby");
             id = getArguments().getString("collectionid");
             selectedFilterList = getArguments().getStringArrayList("selectedFilterList");
             dynamicKey = getArguments().getString("dynamicKey");
             Log.e("iddc", id);
+
+        }
+        if (title.trim().length() != 0) {
+            ((Navigation) getActivity()).getSupportActionBar().setTitle(title);
 
         }
 
@@ -233,14 +237,14 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     }
 
     public void postFilter() {
-        requestQueue.add(postfilter(id,requestCount1));
+        requestQueue.add(postfilter(id, requestCount1));
         Log.d("request counter1", String.valueOf(requestCount1));
         requestCount1++;
 
     }
 
 
-    private StringRequest postfilter(String id,int count) {
+    private StringRequest postfilter(String id, int count) {
         StringRequest stringRequest = null;
         try {
 
@@ -271,13 +275,13 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
             final String requestBody = jsonBody.toString();
             String a;
-            if(sortbykey.trim().length()==0){
-                a="?page_size=10&page=";
-            }else {
-                a="?"+sortbykey.trim()+"&page_size=10&page=";
+            if (sortbykey.trim().length() == 0) {
+                a = "?page_size=10&page=";
+            } else {
+                a = "?" + sortbykey.trim() + "&page_size=10&page=";
             }
 
-             stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + a+count, new Response.Listener<String>() {
+            stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + a + count, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     Log.i("VOLLEY", response);
@@ -371,12 +375,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     }
 
     private void getData() {
-        requestQueue.add(collectionList(id,requestCount));
+        requestQueue.add(collectionList(id, requestCount));
         Log.d("request counter", String.valueOf(requestCount));
         requestCount++;
     }
 
-    private StringRequest collectionList(String id,int count) {
+    private StringRequest collectionList(String id, int count) {
 
         String URL = "http://...";
         JSONObject jsonBody = new JSONObject();
@@ -392,7 +396,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
         final String requestBody = jsonBody.toString();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post+"?page_size=10&page="+count, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + "?page_size=10&page=" + count, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.i("VOLLEY", response);
@@ -487,7 +491,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     private boolean isLastItemDisplaying(RecyclerView recyclerView) {
         if (recyclerView.getAdapter().getItemCount() != 0) {
             int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount()-1)
+            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1)
                 return true;
         }
         return false;
@@ -604,7 +608,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         Fragment fragment = new ProductView();
         Bundle bundle = new Bundle();
         bundle.putString("category", "ca_adapter");
-        bundle.putString("product_id",productid);
+        bundle.putString("product_id", productid);
         fragment.setArguments(bundle);
         FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
@@ -616,17 +620,17 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     @Override
     public void OnclickPlus(String productid) {
         cartController = new CartController(getActivity());
-        commanCartControler = (CommanCartControler)cartController;
+        commanCartControler = (CommanCartControler) cartController;
         commanCartControler.AddToCart(productid.trim());
-        Toast.makeText(getActivity(),"Added to cart",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void OnclickWhislilst(String productid) {
         cartController = new CartController(getActivity());
-        commanCartControler = (CommanCartControler)cartController;
+        commanCartControler = (CommanCartControler) cartController;
         commanCartControler.AddToWhislist(productid.trim());
-        Toast.makeText(getActivity(),"Added to Wishlist",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Added to Wishlist", Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Categories extends Fragment {
-    public String collectionurl = "https://cdn.shopify.com/s/files/1/2364/1061/t/4/assets/tf.json?3518560706218956420";
+
 
     private TextView all;
     Toolbar toolbar;
