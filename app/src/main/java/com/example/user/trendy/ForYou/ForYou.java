@@ -397,6 +397,10 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                                         JSONObject object1 = array.getJSONObject(i);
                                         collectionid = object1.getString("id");
                                         collectionname = object1.getString("title");
+                                        if(collectionname.trim().toLowerCase().equals("home page")){
+                                            collectionname="Trending";
+                                        }
+
                                         JSONArray array1 = object1.getJSONArray("products");
                                         for (int j = 0; j < array1.length(); j++) {
                                             JSONObject objec = array1.getJSONObject(j);
