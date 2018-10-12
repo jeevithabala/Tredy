@@ -230,6 +230,7 @@ public class MyAccount extends Fragment {
 //                Log.e("data", "user..." + response.data().getCustomer().getOrders().getEdges().get(0).getNode().getLineItems().getEdges().get(0).getNode().getVariant().getProduct().getTitle());
 //                Log.e("came", "inside");
 //                Log.e("data", "user..." + response.data().getCustomer().getOrders().toString());
+
                 if (response.data().getCustomer().getOrders() != null) {
 
                     for (Storefront.OrderEdge order : response.data().getCustomer().getOrders().getEdges()) {

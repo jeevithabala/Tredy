@@ -64,7 +64,7 @@ public class SubCategory extends Fragment {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                 transaction.replace(R.id.home_container, new Categories(), "Categories");
-                transaction.addToBackStack(null);
+                transaction.addToBackStack("Categories");
                 transaction.commit();
             }
         });
