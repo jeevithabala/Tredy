@@ -1,5 +1,6 @@
 package com.example.user.trendy.ForYou;
 
+import com.example.user.trendy.ForYou.GroceryHome.GroceryHomeModel;
 import com.example.user.trendy.ForYou.NewArrival.NewArrivalModel;
 import com.example.user.trendy.ForYou.TopCollection.TopCollectionModel;
 import com.example.user.trendy.ForYou.TopSelling.TopSellingModel;
@@ -16,5 +17,5 @@ public interface ResultCallBackInterface {
     public void bestCollection(ArrayList<TopCollectionModel> arrayList);
     public void topSelling(ArrayList<TopSellingModel> arrayList);
     public void newArrivals(ArrayList<NewArrivalModel> arrayList);
-    public void grocery(ArrayList<GroceryModel> arrayList);
+    public void grocery(ArrayList<GroceryHomeModel> arrayList);
 }

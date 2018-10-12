@@ -84,7 +84,7 @@ public class NewArrivalModel implements Serializable {
     @BindingAdapter("price")
     public static void price(TextView textView, String price)
     {
-        textView.setText("$"+price);
+        textView.setText("Rs. "+price);
     }
     @BindingAdapter("imageUrl")
     public static void loadImage(ImageView view, String imageUrl) {

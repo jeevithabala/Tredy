@@ -8,9 +8,13 @@
         <variable
             name="whislistitem"
             type="com.example.user.trendy.Whislist.AddWhislistModel" />
+        <variable
+            name="itemclick"
+            type="com.example.user.trendy.Interface.FragmentRecyclerViewClick" />
     </data>
 
     <android.support.v7.widget.CardView
+        android:onClick="@{(v)->itemclick.onClickPostion()}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
@@ -79,10 +83,30 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="20dp"
-                        android:layout_weight="1">
+                      android:weightSum="2">
+
+                        <LinearLayout
+                            android:id="@+id/addcart"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:background="@color/colorAccent">
+
+                            <TextView
+
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:fontFamily="@font/lucidasansdemiboldroman"
+                                android:gravity="center"
+                                android:text="Add to cart"
+                                android:textColor="@color/white"
+                                android:textSize="14dp" />
+                        </LinearLayout>
+
 
                         <TextView
+                            android:layout_weight="1"
                             android:id="@+id/remove"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

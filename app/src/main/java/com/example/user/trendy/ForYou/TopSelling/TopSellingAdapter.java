@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.user.trendy.Bag.Cart;
 import com.example.user.trendy.Bag.Db.AddToCart_Model;
@@ -109,6 +110,7 @@ public class TopSellingAdapter extends RecyclerView.Adapter<TopSellingAdapter.Vi
                     fragment.setArguments(bundle);
                     FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    ft.addToBackStack("ForYou");
                     ft.commit();
                 }
             });
@@ -120,6 +122,8 @@ public class TopSellingAdapter extends RecyclerView.Adapter<TopSellingAdapter.Vi
                     cartController = new CartController(mContext);
                     commanCartControler = (CommanCartControler)cartController;
                     commanCartControler.AddToCart(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
+                    Toast.makeText(mContext,"Added to cart",Toast.LENGTH_SHORT).show();
+
                 }
 
                 @Override
@@ -127,6 +131,7 @@ public class TopSellingAdapter extends RecyclerView.Adapter<TopSellingAdapter.Vi
                     cartController = new CartController(mContext);
                     commanCartControler = (CommanCartControler)cartController;
                     commanCartControler.AddToWhislist(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
+                    Toast.makeText(mContext,"Added to Wishlist",Toast.LENGTH_SHORT).show();
                 }
             });
 

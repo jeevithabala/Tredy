@@ -79,15 +79,48 @@
                             android:textSize="14sp"
                             app:productname="@{grocery.product}" />
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/lucidasansdemibold"
+                                android:textColor="@color/cost"
+                                android:textSize="12sp"
+                                app:cost="@{grocery.product}" />
+
+
+                            <TextView
+                                android:id="@+id/add_to_cart"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/lucidasansdemibold"
+                                android:text="Added to Cart"
+                                android:textColor="@color/red"
+                                android:textSize="12sp"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="40dp"
+                            android:layout_marginRight="40dp"
                             android:fontFamily="@font/lucidasansdemibold"
                             android:textColor="@color/cost"
                             android:textSize="12sp"
-                            app:cost="@{grocery.product}" />
+                            app:weight="@{grocery.product}" />
+
+
                     </LinearLayout>
 
 
@@ -118,9 +151,9 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
-                            android:orientation="horizontal"
                             android:gravity="center"
-                            android:onClick="@{(v)->counter.decrease()}">
+                            android:onClick="@{(v)->counter.decrease()}"
+                            android:orientation="horizontal">
 
                             <!--<ImageView-->
 
@@ -132,11 +165,11 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="14sp"
                                 android:fontFamily="@font/lucidasansdemibold"
-                                android:textColor="@color/textcolor"
                                 android:gravity="center"
-                                android:text="-" />
+                                android:text="-"
+                                android:textColor="@color/textcolor"
+                                android:textSize="14sp" />
 
                             <View
                                 android:layout_width="1dp"
@@ -179,20 +212,21 @@
                                 android:layout_height="match_parent"
                                 android:layout_marginRight="10dp"
                                 android:background="@color/grey" />
+
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="14sp"
                                 android:fontFamily="@font/lucidasansdemibold"
-                                android:textColor="@color/textcolor"
                                 android:gravity="center"
-                                android:text="+" />
+                                android:text="+"
+                                android:textColor="@color/textcolor"
+                                android:textSize="14sp" />
 
                             <!--<ImageView-->
-                                <!--android:layout_width="15dp"-->
-                                <!--android:layout_height="15dp"-->
-                                <!--android:layout_marginRight="5dp"-->
-                                <!--android:src="@drawable/ic_uparrow" />-->
+                            <!--android:layout_width="15dp"-->
+                            <!--android:layout_height="15dp"-->
+                            <!--android:layout_marginRight="5dp"-->
+                            <!--android:src="@drawable/ic_uparrow" />-->
                         </LinearLayout>
 
 

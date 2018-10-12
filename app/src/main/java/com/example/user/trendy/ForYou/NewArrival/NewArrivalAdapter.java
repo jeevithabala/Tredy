@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.user.trendy.Category.ProductDetail.ProductView;
 import com.example.user.trendy.ForYou.TopCollection.TopCollectionAdapter;
@@ -21,7 +22,6 @@ import com.example.user.trendy.Interface.FragmentRecyclerViewClick;
 import com.example.user.trendy.Interface.TopSellingInterface;
 import com.example.user.trendy.R;
 import com.example.user.trendy.databinding.NewarrivalAdapterBinding;
-import com.example.user.trendy.databinding.TopsellingAdapterBinding;
 
 import java.util.ArrayList;
 
@@ -95,7 +95,7 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
                     fragment.setArguments(bundle);
                     FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    // ft.addToBackStack("fragment");
+                    ft.addToBackStack("ForYou");
                     ft.commit();
                 }
             });
@@ -106,14 +106,19 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
                     cartController = new CartController(mContext);
                     commanCartControler = (CommanCartControler)cartController;
                     commanCartControler.AddToCart(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
-
+                    Toast.makeText(mContext,"Added to cart",Toast.LENGTH_SHORT).show();
 
                 }
 
                 @Override
                 public void OnclickWhislilst() {
-
+                    cartController = new CartController(mContext);
+                    commanCartControler = (CommanCartControler)cartController;
+                    commanCartControler.AddToWhislist(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
+                    Toast.makeText(mContext,"Added to Wishlist",Toast.LENGTH_SHORT).show();
                 }
+
+
             });
 
 

@@ -1,1 +1,55 @@
-{"installed":{"client_id":"401722226273-08oc658872p2jqab1l5h5ivq5fqgt299.apps.googleusercontent.com","project_id":"tredyfoods-218114","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://www.googleapis.com/oauth2/v3/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
+{
+  "project_info": {
+    "project_number": "401722226273",
+    "firebase_url": "https://tredyfoods-218114.firebaseio.com",
+    "project_id": "tredyfoods-218114",
+    "storage_bucket": "tredyfoods-218114.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401722226273:android:1d44b2ad1721c3b0",
+        "android_client_info": {
+          "package_name": "com.example.user.trendy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "401722226273-08oc658872p2jqab1l5h5ivq5fqgt299.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.user.trendy",
+            "certificate_hash": "30914eb72ab0b0549133d82fd4cb613479fb2cc2"
+          }
+        },
+        {
+          "client_id": "401722226273-0idfakp8pgi4thub6t0r8t4fcf21tjse.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCko8Hb2U8HU9SlayzcrkzaaM2bBi_dkDk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "401722226273-0idfakp8pgi4thub6t0r8t4fcf21tjse.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

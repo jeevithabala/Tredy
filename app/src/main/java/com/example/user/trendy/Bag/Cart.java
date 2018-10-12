@@ -7,21 +7,17 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.user.trendy.Bag.Db.AddRemoveCartItem;
 import com.example.user.trendy.Bag.Db.AddToCart_Model;
 import com.example.user.trendy.Bag.Db.DBHelper;
 import com.example.user.trendy.BuildConfig;
 import com.example.user.trendy.Category.ProductDetail.SelectItemModel;
-import com.example.user.trendy.ForYou.TopSelling.TopSellingModel;
 import com.example.user.trendy.Util.SharedPreference;
 import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.GraphError;
 import com.shopify.buy3.GraphResponse;
 import com.shopify.buy3.HttpCachePolicy;
-import com.shopify.buy3.RetryHandler;
 import com.shopify.buy3.Storefront;
 import com.shopify.graphql.support.ID;
 import com.shopify.graphql.support.Input;
@@ -32,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class Cart extends AppCompatActivity implements AddRemoveCartItem {
+public class Cart extends AppCompatActivity  {
     String checkoutId = "", productid, productvarientid;
     GraphClient graphClient;
     DBHelper db;
@@ -133,7 +129,7 @@ public class Cart extends AppCompatActivity implements AddRemoveCartItem {
                         if (cartList.size() == 0) {
                             Log.e("empty", "empty");
                             int qty = 1;
-                            db.insertToDo(productVariant.get(0), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()),model.getShip());
+                            db.insertToDo(productID.trim(),productVariant.get(0), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()),model.getShip());
                         } else {
                             for (int i = 0; i < cartList.size(); i++) {
                                 if ((cartList.get(i).getProduct_varient_id().trim()).equals(productVariant.get(0).getId().toString().trim())) {
@@ -150,7 +146,7 @@ public class Cart extends AppCompatActivity implements AddRemoveCartItem {
                                     Log.e("" + cartList.get(i).getProduct_varient_id(), "" + productVariant.get(0).getId());
                                     int qty = 1;
                                     Log.e("variant_id",productVariant.get(0).getId().toString());
-                                    db.insertToDo(productVariant.get(0), qty, model.getProduct().getTitle(),String.valueOf(model.getProduct().getTags()),model.getShip());
+                                    db.insertToDo(productID.trim(),productVariant.get(0), qty, model.getProduct().getTitle(),String.valueOf(model.getProduct().getTags()),model.getShip());
 
                                 }
                             }
@@ -308,16 +304,5 @@ public class Cart extends AppCompatActivity implements AddRemoveCartItem {
         });
     }
 
-    @Override
-    public void AddCartItem() {
-        cart_count++;
-    }
-
-    @Override
-    public void RemoveCartItem() {
-        cart_count--;
-
-
-    }
 }
 

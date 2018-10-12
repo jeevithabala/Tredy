@@ -75,6 +75,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
         viewHolder.getBinding().setVariable(BR.product, itemsList.get(position));
         viewHolder.getBinding().setVariable(BR.itemclick,productClickInterface);
+        viewHolder.getBinding().executePendingBindings();
 //        viewHolder.getBinding().setVariable(BR.onitemclickplus,plus;
         //        viewHolder.getBinding().getRoot().setOnClickListener(new View.OnClickListener() {
 //            @Override

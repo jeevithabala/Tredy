@@ -22,6 +22,7 @@ import com.example.user.trendy.Bag.Db.AddToCart_Model;
 import com.example.user.trendy.Bag.Db.DBHelper;
 import com.example.user.trendy.Interface.CartController;
 import com.example.user.trendy.Interface.CommanCartControler;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.SharedPreference;
 import com.example.user.trendy.databinding.BagBinding;
@@ -43,17 +44,25 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
     View view;
     TextView nobag;
     ArrayList<String> productlist = new ArrayList<>();
-    String state = "";
+    String state = "",totalcosts="";
     CartController cartController;
     CommanCartControler commanCartControler;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.bag, container, false);
+
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("Bag");
+
         view = binding.getRoot();
+        checkoutbtn = view.findViewById(R.id.checkoutbtn);
+        check = view.findViewById(R.id.check);
+        items = view.findViewById(R.id.items);
+        totalcost = view.findViewById(R.id.total);
+        nobag = view.findViewById(R.id.nobag);
+
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
-
         db = new DBHelper(getActivity());
         cartList = db.getCartList();
         Collections.reverse(cartList); // ADD THIS LINE TO REVERSE ORDER!
@@ -87,7 +96,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         bag_recyclerview.setItemAnimator(new DefaultItemAnimator());
 
 
-        adapter = new AddToCart_Adapter(cartList, getActivity(), this, binding.total);
+        adapter = new AddToCart_Adapter(cartList, getActivity(), this, binding.total,items,getFragmentManager());
         bag_recyclerview.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -95,15 +104,11 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
 //adapter.notifyDataSetChanged();
 
 
-        checkoutbtn = view.findViewById(R.id.checkoutbtn);
-        check = view.findViewById(R.id.check);
-        items = view.findViewById(R.id.items);
-        totalcost = view.findViewById(R.id.total);
-        nobag = view.findViewById(R.id.nobag);
-        if (cartList.size() != 0) {
-            items.setText(cartList.size() + " " + "Items");
 
-        }
+//        if (cartList.size() != 0) {
+//            items.setText(cartList.size() + " " + "Items");
+//
+//        }
 
 
 //            Toast.makeText(getApplicationContext(), cartList.get(0).getProduct_name(), Toast.LENGTH_SHORT).show();
@@ -113,8 +118,10 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         checkoutbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                totalcosts=totalcost.getText().toString();
                 Bundle bundle = new Bundle();
                 bundle.putString("collection", "allcollection");
+                bundle.putString("totalcost",totalcosts);
                 Fragment fragment = new ShippingAddress();
                 fragment.setArguments(bundle);
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
@@ -148,7 +155,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
         SharedPreference.saveData("total", String.valueOf(commanCartControler.getTotalPrice()), getActivity());
-        totalcost.setText(Integer.toString(commanCartControler.getTotalPrice()));
+        totalcost.setText("Rs. "+Integer.toString(commanCartControler.getTotalPrice()));
 
 
     }
@@ -168,6 +175,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         } else {
             nobag.setVisibility(View.GONE);
             check.setVisibility(View.VISIBLE);
+            total();
         }
     }
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.trendy.BuildConfig;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.SharedPreference;
 import com.shopify.buy3.GraphCall;
@@ -35,6 +37,8 @@ public class MyAccountEdit extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.myaccountedit, container, false);
 
+        ((Navigation) getActivity()).getSupportActionBar().setTitle(" Edit Account");
+
         firstname = view.findViewById(R.id.first_name);
         lastname = view.findViewById(R.id.last_name);
         email = view.findViewById(R.id.email);
@@ -51,6 +55,11 @@ public class MyAccountEdit extends Fragment {
         firstname.setText(firstnametext);
         lastname.setText(lastnametext);
         email.setText(emailtext);
+        if(mobiletext!=null) {
+            if (mobiletext.length() > 0) {
+                mobiletext = mobiletext.substring(3, 13);
+            }
+        }
         mobilenumber.setText(mobiletext);
         accessToken = SharedPreference.getData("accesstoken", getActivity());
         Log.e("accestoken", ""+accessToken);
@@ -66,14 +75,33 @@ public class MyAccountEdit extends Fragment {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Boolean valid=true;
                 if (accessToken != null) {
                     emailtext=email.getText().toString().trim();
                     mobiletext=mobilenumber.getText().toString().trim();
                     firstnametext=firstname.getText().toString().trim();
                     lastnametext=lastname.getText().toString().trim();
-//                    passwordtext=password.getText().toString().trim();
+                    if(mobiletext.length()>0)
+                    {
+                        if(mobiletext.length()<10) {
+                            Toast.makeText(getActivity(), "Please Enter 10 Digit Mobile Number", Toast.LENGTH_SHORT).show();
+                            valid = false;
+                        }
+                        else if(mobiletext.length()==10)
+                        {
+                            valid=true;
+                        }
+                    }
+                    else
+                    {
+                        valid=true;
+                    }
+                }
 
-                   update(accessToken);
+                if(valid==true)
+                {
+                    mobiletext=("+91"+mobiletext).trim();
+                    update(accessToken);
                 }
             }
         });
@@ -119,6 +147,22 @@ public class MyAccountEdit extends Fragment {
                         String email = response.data().getCustomerUpdate().getCustomer().getEmail();
                         String id=response.data().getCustomerUpdate().getCustomer().getId().toString();
                         Log.e("phone", ""+phone+firstName+lastName+email+id);
+
+//                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+//                        transaction.replace(R.id.home_container, new MyAccount(), "account");
+//                        transaction.addToBackStack("account");
+//                        transaction.commit();
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(),"Changes updated.. It takes few minutes to update in your account",Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+
+
+                        getFragmentManager().popBackStack();
 
                     }else{
 

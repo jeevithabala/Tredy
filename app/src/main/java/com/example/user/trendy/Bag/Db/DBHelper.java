@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.user.trendy.Interface.AddRemoveCartItem;
 import com.shopify.buy3.Storefront;
 
 import java.security.acl.LastOwnerException;
@@ -29,6 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_QTY = "qty";
     private static final String COLUMN_TAG= "tag";
     private static final String COLUMN_SHIPPING= "shipping";
+    private static final String COLUMN_PRODUCT_ID= "product_id";
 
     private Context mContext;
 
@@ -40,6 +42,7 @@ public class DBHelper extends SQLiteOpenHelper {
             + COLUMN_QTY + " INTEGER,"
             + COLUMN_TAG + " TEXT,"
             + COLUMN_SHIPPING + " TEXT,"
+            + COLUMN_PRODUCT_ID + " TEXT,"
             + COLUMN_IMAGE_URL + " TEXT" + ")";
 
 
@@ -69,7 +72,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public void insertToDo(Storefront.ProductVariant listItem, int qty, String Product_name, String tag ,String shipping) {
+    public void insertToDo(String productid, Storefront.ProductVariant listItem, int qty, String Product_name, String tag ,String shipping) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -80,6 +83,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_QTY, qty);
         values.put(COLUMN_TAG, tag);
         values.put(COLUMN_SHIPPING, shipping);
+        values.put(COLUMN_PRODUCT_ID, productid);
         values.put(COLUMN_IMAGE_URL, listItem.getImage().getSrc());
 
 //
@@ -87,7 +91,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_ADDTOCART, null, values);
         db.close();
 
-//        ((AddRemoveCartItem) mContext).AddCartItem();
+        ((AddRemoveCartItem) mContext).AddCartItem();
     }
 
     public List<AddToCart_Model> getCartList() {
@@ -106,6 +110,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 user.setQty(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_QTY))));
                 user.setImageUrl(cursor.getString(cursor.getColumnIndex(COLUMN_IMAGE_URL)));
                 user.setTag(cursor.getString(cursor.getColumnIndex(COLUMN_TAG)));
+                user.setProduct_id(cursor.getString(cursor.getColumnIndex(COLUMN_PRODUCT_ID)));
                 user.setShip(cursor.getString(cursor.getColumnIndex(COLUMN_SHIPPING)));
 
                 // Adding user record to list
@@ -134,6 +139,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.update(TABLE_ADDTOCART, values, COLUMN_PRODUCT_VARIENT_ID + "= '" + id+ "'", null);
         }
         db.close();
+        ((AddRemoveCartItem) mContext).AddCartItem();
     }
 
     public void updateshipping(String id, String ship) {
@@ -178,6 +184,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         }
         db.close();
+        ((AddRemoveCartItem) mContext).AddCartItem();
     }
 
 
@@ -207,7 +214,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public boolean deleteRow(String name)
     {
         SQLiteDatabase db = this.getWritableDatabase();
+
         return db.delete(TABLE_ADDTOCART, COLUMN_PRODUCT_VARIENT_ID + "='" + name +"' ;", null) > 0;
+
+
     }
 
     public boolean checkUser(String id) {
@@ -220,6 +230,44 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // selection criteria
         String selection = COLUMN_PRODUCT_VARIENT_ID + " = ?";
+
+        // selection argument
+        String[] selectionArgs = {id};
+
+        // query user table with condition
+        /**
+         * Here query function is used to fetch records from user table this function works like we use sql query.
+         * SQL query equivalent to this query function is
+         * SELECT user_id FROM user WHERE user_email = 'jack@androidtutorialshub.com';
+         */
+        Cursor cursor = db.query(TABLE_ADDTOCART, //Table to query
+                columns,                    //columns to return
+                selection,                  //columns for the WHERE clause
+                selectionArgs,              //The values for the WHERE clause
+                null,                       //group the rows
+                null,                      //filter by row groups
+                null);                      //The sort order
+        int cursorCount = cursor.getCount();
+        cursor.close();
+        db.close();
+
+        if (cursorCount > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean checkProduct(String id) {
+
+        // array of columns to fetch
+        String[] columns = {
+                COLUMN_ID
+        };
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // selection criteria
+        String selection = COLUMN_PRODUCT_ID + " = ?";
 
         // selection argument
         String[] selectionArgs = {id};

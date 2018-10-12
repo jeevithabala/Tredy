@@ -2,6 +2,7 @@ package com.example.user.trendy.Category.ProductDetail;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.databinding.BaseObservable;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -40,6 +41,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.trendy.Bag.Db.AddToCart_Model;
 import com.example.user.trendy.Bag.ShippingAddress;
 import com.example.user.trendy.BuildConfig;
 import com.example.user.trendy.Category.ProductModel;
@@ -50,7 +52,9 @@ import com.example.user.trendy.Groceries.GroceryModel;
 import com.example.user.trendy.Interface.CartController;
 import com.example.user.trendy.Interface.CommanCartControler;
 import com.example.user.trendy.Interface.ProductClickInterface;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
+import com.example.user.trendy.Whislist.AddWhislistModel;
 import com.example.user.trendy.databinding.ProductViewBinding;
 import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
@@ -85,6 +89,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
     String selectedweight = "";
     int selectedID = 0;
     String productvarient_id;
+    ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,6 +100,9 @@ public class ProductView extends Fragment implements ProductClickInterface {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         productViewBinding = DataBindingUtil.inflate(inflater, R.layout.product_view, container, false);
         view = productViewBinding.getRoot();
+
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("Product");
+
         //  final View view = inflater.inflate(R.layout.product_view, container, false);
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
@@ -146,6 +154,15 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //            itemModel.setProduct(detail.getProduct());
             id = detail.getProduct().getId().toString();
             Log.e("idd", id);
+        }else if(product.trim().equals("bag")){
+            AddToCart_Model model=(AddToCart_Model)getArguments().getSerializable("category_id");
+
+            id=model.getProduct_id();
+        }else if(product.trim().equals("wishlist")){
+            AddWhislistModel model=(AddWhislistModel)getArguments().getSerializable("category_id");
+
+            id=model.getProduct_id();
+
         } else {
             ProductModel detail = (ProductModel) getArguments().getSerializable("category_id");
 //            itemModel.setProduct(detail.getProduct());
@@ -157,7 +174,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //            Log.e("descriptionhtml", "" + detail.getProduct().getDescriptionHtml().toString());
 //            mHtmlString = detail.getProduct().getDescriptionHtml().toString();
         }
-        if (product.trim().equals("grocery")) {
+        if (product.trim().equals("grocery")||product.trim().equals("bag")||product.trim().equals("wishlist")) {
             getProductVariantID(id.trim());
         } else {
             String text = "gid://shopify/Product/" + id.trim();
@@ -175,6 +192,9 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 Bundle bundle = new Bundle();
                 bundle.putString("collection", "productview");
                 bundle.putString("productid", itemModel.getProductid());
+                bundle.putString("product_varientid", String.valueOf(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getId()));
+                bundle.putString("product_qty",itemModel.getCount());
+                bundle.putString("totalcost", String.valueOf(itemModel.getCost()));
                 bundle.putString("tag", String.valueOf(itemModel.getProduct().getTags()));
                 Fragment fragment = new ShippingAddress();
                 fragment.setArguments(bundle);
@@ -191,15 +211,16 @@ public class ProductView extends Fragment implements ProductClickInterface {
                     String val2 = new String(tmp2);
                     String[] str = val2.split("/");
                     Log.d("str value", str[4]);
-                    commanCartControler.AddToCartGrocery(id.trim(), selectedID);
+                    commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(itemModel.getCount()));
+                    Toast.makeText(getActivity(),"Added to cart",Toast.LENGTH_SHORT).show();
                 } else {
                     String text = "gid://shopify/Product/" + id.trim();
 
                     String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
                     Log.e("coverted", converted.trim());
                     Log.e("id", id);
-                    commanCartControler.AddToCartGrocery(converted.trim(), selectedID);
-
+                    commanCartControler.AddToCartGrocery(converted.trim(), selectedID,Integer.parseInt(itemModel.getCount()));
+                    Toast.makeText(getActivity(),"Added to cart",Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -210,6 +231,11 @@ public class ProductView extends Fragment implements ProductClickInterface {
     }
 
     public void getProductVariantID(String productID) {
+        ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("loading, please wait...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
         Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
                 .node(new ID(productID), nodeQuery -> nodeQuery
                         .onProduct(productQuery -> productQuery
@@ -246,20 +272,22 @@ public class ProductView extends Fragment implements ProductClickInterface {
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
 
 
-                if (response != null) {
+                if (response.data() != null) {
                     Storefront.Product product = (Storefront.Product) response.data().getNode();
-                    Log.e("titit", product.getTitle());
+//                    Log.e("titit", product.getTitle());
                     itemModel.setProduct(product);
 
                     productViewBinding.setProductview(itemModel);
 
-                    Log.e("title", itemModel.getProduct().getTitle());
+//                    Log.e("title", itemModel.getProduct().getTitle());
 //                    getData();
+
                 }
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         getData();
+                        progressDialog.dismiss();
                     }
                 });
                 return;
@@ -268,6 +296,12 @@ public class ProductView extends Fragment implements ProductClickInterface {
 
             @Override
             public void onFailure(@NonNull GraphError error) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                    }
+                });
 
 //                Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
             }
@@ -281,9 +315,9 @@ public class ProductView extends Fragment implements ProductClickInterface {
     public void getData() {
         if (itemModel != null) {
 
-            Log.e("title", itemModel.getProduct().getTitle());
-            Log.e("description", itemModel.getProduct().getDescription());
-            Log.e("descriptionhtml", "" + itemModel.getProduct().getDescriptionHtml().toString());
+//            Log.e("title", itemModel.getProduct().getTitle());
+//            Log.e("description", itemModel.getProduct().getDescription());
+//            Log.e("descriptionhtml", "" + itemModel.getProduct().getDescriptionHtml().toString());
             mHtmlString = itemModel.getProduct().getDescriptionHtml().toString();
             itemModel.setPrice(selectedID);
 
@@ -353,6 +387,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 rbn = new RadioButton(getActivity());
 
                 rbn.setId(i);
+
                 String weightunit = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeightUnit().toString();
                 selectedweight = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeight().toString() + " " + weightunit;
                 if (weightunit.trim().equals("GRAMS")) {

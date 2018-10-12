@@ -11,8 +11,9 @@ import android.view.MenuItem;
 import com.example.user.trendy.Bag.Bag;
 import com.example.user.trendy.Category.Categories;
 import com.example.user.trendy.ForYou.ForYou;
+import com.example.user.trendy.Interface.CartController;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
 
 
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
                     FragmentTransaction transactioncal = getSupportFragmentManager().beginTransaction();
                     transactioncal.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                     transactioncal.replace(R.id.home_container, fragment, "ForYou");
-                    transactioncal.addToBackStack("ForYou");
+                    transactioncal.addToBackStack(null);
                     transactioncal.commit();
 
                     return true;
@@ -74,4 +75,6 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
 //        finishAffinity();
     }
+
+
 }

@@ -17,7 +17,7 @@ import com.example.user.trendy.databinding.AllcollectionAdapterBinding;
 
 import java.util.ArrayList;
 
-public class AllCollectionAdapter  extends RecyclerView.Adapter<AllCollectionAdapter.ViewHolder> {
+public class AllCollectionAdapter extends RecyclerView.Adapter<AllCollectionAdapter.ViewHolder> {
 
     Context mContext;
     ArrayList<AllCollectionModel> itemsList;
@@ -31,7 +31,7 @@ public class AllCollectionAdapter  extends RecyclerView.Adapter<AllCollectionAda
         this.fragmentManager = fragmentManager;
     }
 
-    public AllCollectionAdapter( ArrayList<AllCollectionModel> itemsList) {
+    public AllCollectionAdapter(ArrayList<AllCollectionModel> itemsList) {
 
         this.itemsList = itemsList;
     }
@@ -67,12 +67,12 @@ public class AllCollectionAdapter  extends RecyclerView.Adapter<AllCollectionAda
             this.binding = itembinding;
 
 
-        binding.setItemclick(new FragmentRecyclerViewClick() {
-            @Override
-            public void onClickPostion() {
-                Bundle bundle = new Bundle();
-                bundle.putString("collection","allcollection");
-                bundle.putSerializable("category_id",itemsList.get(getAdapterPosition()));
+            binding.setItemclick(new FragmentRecyclerViewClick() {
+                @Override
+                public void onClickPostion() {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("collection", "allcollection");
+                    bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
 
 //                onItemClick.onClick(itemsList.get(getAdapterPosition()).getProduct_ID());
 //                    Storefront.CheckoutCreateInput input = new Storefront.CheckoutCreateInput()
@@ -83,17 +83,17 @@ public class AllCollectionAdapter  extends RecyclerView.Adapter<AllCollectionAda
                     Fragment fragment = new CategoryProduct();
 
                     fragment.setArguments(bundle);
-                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container,fragment,"fragment");
+                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                     ft.addToBackStack("fragment");
+                    ft.addToBackStack("ForYou");
                     ft.commit();
 
 //                    Intent intent = new Intent(mContext, Main2Activity.class);
 //                    intent.putExtra("productDetail",itemsList.get(getAdapterPosition()).getCollection().getId());
 //                    mContext.startActivity(intent);
 ////
-            }
-        });
+                }
+            });
         }
 
     }

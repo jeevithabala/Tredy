@@ -33,11 +33,13 @@ public class CartController extends ViewModel implements CommanCartControler {
     Context mContext;
     private List<AddToCart_Model> cartList = new ArrayList<>();
     private List<AddWhislistModel> whislist = new ArrayList<>();
+    GraphClient graphClient;
 
     public CartController(Context mContext) {
         this.mContext = mContext;
         db = new DBHelper(mContext);
         dbWhislist = new DBWhislist(mContext);
+
 
     }
 
@@ -50,7 +52,7 @@ public class CartController extends ViewModel implements CommanCartControler {
         Log.e("plus", "plus");
         String text = "gid://shopify/Product/" + id.trim();
 
-        String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
+        String converted = Base64.encodeToString(text.getBytes(), Base64.DEFAULT);
         Log.e("coverted", converted.trim());
 
         getProductVariantID(converted.trim());
@@ -89,6 +91,14 @@ public class CartController extends ViewModel implements CommanCartControler {
     }
 
     @Override
+    public int getItemCount() {
+        cartList.clear();
+
+        cartList = db.getCartList();
+        return cartList.size();
+    }
+
+    @Override
     public void UpdateShipping(String id, String value) {
 
         db.updateshipping(id.trim(), value);
@@ -110,50 +120,53 @@ public class CartController extends ViewModel implements CommanCartControler {
     }
 
     @Override
-    public void AddToCartGrocery(String trim, int selectedID) {
-        getProductVariantIDgrocery(trim.trim(),selectedID);
+    public void AddToCartGrocery(String trim, int selectedID, int qty) {
+        cartList.clear();
+
+        cartList = db.getCartList();
+        getProductVariantIDgrocery(trim.trim(),selectedID, qty);
     }
 
-    private void getProductVariantIDgrocery(String trim, int selectedID) {
-            GraphClient graphClient = GraphClient.builder(mContext)
-                    .shopDomain(BuildConfig.SHOP_DOMAIN)
-                    .accessToken(BuildConfig.API_KEY)
-                    .httpCache(new File(mContext.getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
-                    .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
-                    .build();
-            Log.e("id,",trim);
+    private void getProductVariantIDgrocery(String trim, int selectedID, int qty) {
+        GraphClient graphClient = GraphClient.builder(mContext)
+                .shopDomain(BuildConfig.SHOP_DOMAIN)
+                .accessToken(BuildConfig.API_KEY)
+                .httpCache(new File(mContext.getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
+                .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
+                .build();
+        Log.e("id,"," "+trim);
 
-            Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
-                    .node(new ID(trim), nodeQuery -> nodeQuery
-                            .onProduct(productQuery -> productQuery
-                                    .title()
-                                    .description()
-                                    .descriptionHtml()
-                                    .tags()
-                                    .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
-                                            .edges(imageEdgeQuery -> imageEdgeQuery
-                                                    .node(imageQuery -> imageQuery
-                                                            .src()
-                                                    )
-                                            )
-                                    )
-                                    .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
-                                            .edges(variantEdgeQuery -> variantEdgeQuery
-                                                    .node(productVariantQuery -> productVariantQuery
-                                                            .price()
-                                                            .title()
-                                                            .compareAtPrice()
-                                                            .availableForSale()
-                                                            .image(args -> args.src())
-                                                            .weight()
-                                                            .weightUnit()
-                                                            .available()
-                                                    )
-                                            )
-                                    )
-                            )
-                    )
-            );
+        Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
+                .node(new ID(trim), nodeQuery -> nodeQuery
+                        .onProduct(productQuery -> productQuery
+                                .title()
+                                .description()
+                                .descriptionHtml()
+                                .tags()
+                                .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
+                                        .edges(imageEdgeQuery -> imageEdgeQuery
+                                                .node(imageQuery -> imageQuery
+                                                        .src()
+                                                )
+                                        )
+                                )
+                                .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
+                                        .edges(variantEdgeQuery -> variantEdgeQuery
+                                                .node(productVariantQuery -> productVariantQuery
+                                                        .price()
+                                                        .title()
+                                                        .compareAtPrice()
+                                                        .availableForSale()
+                                                        .image(args -> args.src())
+                                                        .weight()
+                                                        .weightUnit()
+                                                        .available()
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
 
         graphClient.queryGraph(query).enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
 
@@ -161,9 +174,9 @@ public class CartController extends ViewModel implements CommanCartControler {
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
 
 
-                if (response != null) {
+                if (response.data() != null) {
                     Storefront.Product product = (Storefront.Product) response.data().getNode();
-                    Log.e("titit", product.getTitle());
+//                    Log.e("titit", product.getTitle());
                     model = new SelectItemModel();
                     model.setProduct(product);
                     model.setShip("true");
@@ -183,16 +196,16 @@ public class CartController extends ViewModel implements CommanCartControler {
                     if (productVariant.get(0).getAvailableForSale()) {
                         if (cartList.size() == 0) {
                             Log.e("empty", "empty");
-                            int qty = 1;
-                            db.insertToDo(productVariant.get(selectedID), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
+//                            int qty = 1;
+                            db.insertToDo(trim.trim(),productVariant.get(selectedID), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
                         } else {
 
 //                            db.checkUser(productVariant.get(0).getId().toString().trim());
                             if (db.checkUser(productVariant.get(selectedID).getId().toString().trim())) {
 
-                                db.update(productVariant.get(selectedID).getId().toString().trim(), 1);
+                                db.update(productVariant.get(selectedID).getId().toString().trim(), qty);
                             } else {
-                                db.insertToDo(productVariant.get(selectedID), 1, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
+                                db.insertToDo(trim.trim(),productVariant.get(selectedID), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
                             }
                         }
 
@@ -211,7 +224,7 @@ public class CartController extends ViewModel implements CommanCartControler {
 
         });
 
-        }
+    }
 
     private void getProductVariantID1(String productID) {
 
@@ -260,9 +273,9 @@ public class CartController extends ViewModel implements CommanCartControler {
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
 
 
-                if (response != null) {
+                if (response.data() != null) {
                     Storefront.Product product = (Storefront.Product) response.data().getNode();
-                    Log.e("titit", product.getTitle());
+//                    Log.e("titit", product.getTitle());
                     model = new SelectItemModel();
                     model.setProduct(product);
                     model.setShip("true");
@@ -283,7 +296,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                         if (whislist.size() == 0) {
                             Log.e("empty", "empty");
                             int qty = 1;
-                            dbWhislist.insertToDo(productVariant.get(0), model.getProduct().getTitle());
+                            dbWhislist.insertToDo(productID.trim(),productVariant.get(0), model.getProduct().getTitle());
                         } else {
 
 //                            db.checkUser(productVariant.get(0).getId().toString().trim());
@@ -291,7 +304,7 @@ public class CartController extends ViewModel implements CommanCartControler {
 
 //                                db.update(productVariant.get(0).getId().toString().trim(), 1);
                             } else {
-                                dbWhislist.insertToDo(productVariant.get(0), model.getProduct().getTitle());
+                                dbWhislist.insertToDo(productID.trim(),productVariant.get(0), model.getProduct().getTitle());
                             }
                         }
 
@@ -314,7 +327,8 @@ public class CartController extends ViewModel implements CommanCartControler {
     }
 
     private void getProductVariantID(String productID) {
-        GraphClient graphClient = GraphClient.builder(mContext)
+
+        graphClient= GraphClient.builder(mContext)
                 .shopDomain(BuildConfig.SHOP_DOMAIN)
                 .accessToken(BuildConfig.API_KEY)
                 .httpCache(new File(mContext.getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
@@ -328,6 +342,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                                 .description()
                                 .descriptionHtml()
                                 .tags()
+                                .productType()
                                 .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
                                         .edges(imageEdgeQuery -> imageEdgeQuery
                                                 .node(imageQuery -> imageQuery
@@ -359,9 +374,12 @@ public class CartController extends ViewModel implements CommanCartControler {
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
 
 
-                if (response != null) {
+                if (response.data() != null) {
+                    Log.e("productid",productID);
+                    Log.e("reponse"," "+response.data().toString());
+//                    Log.e("reponse"," "+response.data().getNode());
                     Storefront.Product product = (Storefront.Product) response.data().getNode();
-                    Log.e("titit", product.getTitle());
+                    Log.e("titit", " "+product.getTitle());
                     model = new SelectItemModel();
                     model.setProduct(product);
                     model.setShip("true");
@@ -372,7 +390,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                         productVariant.add(productVariantEdge.getNode()
                         );
 //
-                        Log.d("Product varient Id : ", String.valueOf(productVariantEdge.getNode().getId()));
+                        Log.d("Product varient Id : ", " "+String.valueOf(productVariantEdge.getNode().getId()));
 
 
                     }
@@ -382,7 +400,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                         if (cartList.size() == 0) {
                             Log.e("empty", "empty");
                             int qty = 1;
-                            db.insertToDo(productVariant.get(0), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
+                            db.insertToDo(productID.trim(),productVariant.get(0), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
                         } else {
 
 //                            db.checkUser(productVariant.get(0).getId().toString().trim());
@@ -390,7 +408,7 @@ public class CartController extends ViewModel implements CommanCartControler {
 
                                 db.update(productVariant.get(0).getId().toString().trim(), 1);
                             } else {
-                                db.insertToDo(productVariant.get(0), 1, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
+                                db.insertToDo(productID.trim(),productVariant.get(0), 1, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
                             }
                         }
 
@@ -413,4 +431,3 @@ public class CartController extends ViewModel implements CommanCartControler {
     }
 
 }
-

@@ -3,6 +3,10 @@ package com.example.user.trendy.Bag.Db;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,8 +17,13 @@ import android.widget.TextView;
 
 
 import com.example.user.trendy.Bag.Bag;
+import com.example.user.trendy.Category.CategoryProduct;
+import com.example.user.trendy.Category.ProductDetail.ProductView;
+import com.example.user.trendy.Category.SubCategory;
+import com.example.user.trendy.Interface.AddRemoveCartItem;
 import com.example.user.trendy.Interface.CartController;
 import com.example.user.trendy.Interface.CommanCartControler;
+import com.example.user.trendy.Interface.FragmentRecyclerViewClick;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.SharedPreference;
 import com.example.user.trendy.databinding.AddtocartAdapterBinding;
@@ -30,8 +39,9 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
     CartController cartController;
     CommanCartControler commanCartControler;
     GetTotalCost getTotalCost;
-    TextView textView;
+    TextView textView,textView1;
     String state;
+    private FragmentManager fragmentManager;
 
     public AddToCart_Adapter(List<AddToCart_Model> items, Context mContext, GetTotalCost getTotalCost) {
         this.items = items;
@@ -39,11 +49,13 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
         this.getTotalCost = getTotalCost;
     }
 
-    public AddToCart_Adapter(List<AddToCart_Model> items, Context mContext, GetTotalCost getTotalCost, TextView textView) {
+    public AddToCart_Adapter(List<AddToCart_Model> items, Context mContext, GetTotalCost getTotalCost, TextView textView, TextView textView1,FragmentManager fragmentManager) {
         this.items = items;
         this.mContext = mContext;
         this.getTotalCost = getTotalCost;
         this.textView = textView;
+        this.textView1 = textView1;
+        this.fragmentManager=fragmentManager;
     }
 
     @Override
@@ -70,6 +82,8 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
         }else{
             holder.shipping_visibility.setVisibility(View.GONE);
         }
+
+        textView1.setText(items.size()+ " items");
 
     }
 
@@ -101,9 +115,22 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
             String state=SharedPreference.getData("state",mContext);
             shipping_visibility.setText("Oops! The product cannot be shipped to  "+state);
 
+            binding.setItemclick(new FragmentRecyclerViewClick() {
+                @Override
+                public void onClickPostion() {
 
 
-
+                    Bundle bundle = new Bundle();
+                    bundle.putString("category", "bag");
+                    bundle.putSerializable("category_id", items.get(getAdapterPosition()));
+                    Fragment fragment = new ProductView();
+                    fragment.setArguments(bundle);
+                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    ft.addToBackStack("Bag");
+                    ft.commit();
+                }
+            });
 
             remove.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -112,9 +139,12 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
 //                    remove1.removeItem(items.get(getAdapterPosition()).getProduct_varient_id());
                     DBHelper db = new DBHelper(mContext);
                     if (db.deleteRow(items.get(getAdapterPosition()).getProduct_varient_id().trim())) {
+                        ((AddRemoveCartItem) mContext).RemoveCartItem();
                         items.remove(getAdapterPosition());
+                        notifyDataSetChanged();
                         notifyItemRemoved(getAdapterPosition());
                         getTotalCost.totalcostinjterface();
+
                     }
                 }
             });

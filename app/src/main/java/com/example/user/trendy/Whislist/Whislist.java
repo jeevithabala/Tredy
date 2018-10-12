@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.example.user.trendy.Bag.Cart;
 import com.example.user.trendy.Bag.Db.AddToCart_Adapter;
 import com.example.user.trendy.Bag.Db.DBHelper;
 import com.example.user.trendy.BuildConfig;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Whislist.WhislistDB.DBWhislist;
 import com.shopify.buy3.GraphClient;
@@ -28,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class Whislist extends Fragment {
+public class Whislist extends Fragment implements WhislistAdapter.GetTotalCost {
     RecyclerView whislist;
     DBWhislist db;
     private List<AddWhislistModel> cartList = new ArrayList<>();
@@ -36,14 +38,17 @@ public class Whislist extends Fragment {
     WhislistAdapter adapter;
     TextView items;
     private TextView nobag;
-
+Toolbar toolbar;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.whislist, container, false);
 
-        whislist = view.findViewById(R.id.whislist);
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("Wishlist");
+
+        cartList.clear();
         items = view.findViewById(R.id.items);
         nobag = view.findViewById(R.id.nobag);
+        items.setVisibility(View.VISIBLE);
 
         db = new DBWhislist(getActivity());
         cartList = db.getCartList();
@@ -63,19 +68,28 @@ public class Whislist extends Fragment {
         whislist.setItemAnimator(new DefaultItemAnimator());
 
 
-        adapter = new WhislistAdapter(cartList, getActivity(), getFragmentManager());
+        adapter = new WhislistAdapter(cartList, getActivity(), this, getFragmentManager(), items);
         whislist.setAdapter(adapter);
 
-        if (cartList.size() != 0) {
-            items.setText(cartList.size() + " " + "Items");
-            nobag.setVisibility(View.GONE);
-            items.setVisibility(View.VISIBLE);
-        } else {
-            items.setVisibility(View.GONE);
-            nobag.setVisibility(View.VISIBLE);
-        }
         adapter.notifyDataSetChanged();
+visibilityCheck();
 
         return view;
+    }
+
+    @Override
+    public void totalcostinjterface() {
+        visibilityCheck();
+    }
+
+    private void visibilityCheck() {
+        if (cartList.size() == 0) {
+//            items.setText(cartList.size() + " " + "Items");
+            nobag.setVisibility(View.VISIBLE);
+            items.setVisibility(View.GONE);
+        } else {
+            items.setVisibility(View.VISIBLE);
+            nobag.setVisibility(View.GONE);
+        }
     }
 }

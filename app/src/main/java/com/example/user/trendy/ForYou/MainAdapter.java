@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.trendy.Category.CategoryProduct;
+import com.example.user.trendy.ForYou.GroceryHome.GroceryHomeAdapter;
 import com.example.user.trendy.ForYou.NewArrival.NewArrivalAdapter;
 import com.example.user.trendy.ForYou.NewArrival.NewArrivalModel;
 import com.example.user.trendy.ForYou.NewArrivalRecycler.NewMainAdapter;
@@ -31,7 +32,7 @@ import com.example.user.trendy.R;
 import java.util.ArrayList;
 
 import static com.example.user.trendy.ForYou.ForYou.getBestCollection;
-import static com.example.user.trendy.ForYou.ForYou.getGroceryModels;
+import static com.example.user.trendy.ForYou.ForYou.getGroceryHomeModels;
 import static com.example.user.trendy.ForYou.ForYou.getNewArrival;
 import static com.example.user.trendy.ForYou.ForYou.getTopSellingCollection;
 
@@ -43,7 +44,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int HORIZONTAL = 0;
     private final int VERTICAL = 1;
     private final int HORIZONTAL1 = 2;
-    private final int Grocery=3;
+    private final int Grocery = 3;
     private FragmentManager fragmentManager;
 
 
@@ -79,7 +80,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 break;
             case Grocery:
-                view = inflater.inflate(R.layout.grocery, parent, false);
+                view = inflater.inflate(R.layout.groceryhome, parent, false);
                 holder = new GroceryHolder(view);
 
                 break;
@@ -137,9 +138,9 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 bundle.putSerializable("category_id", getBestCollection().get(0));
 //                Log.e("iddddddd", getBestCollection().get(0).getCollectionTitle());
                 fragment.setArguments(bundle);
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                ft.addToBackStack("fragment");
+                ft.addToBackStack("ForYou");
                 ft.commit();
             }
         });
@@ -165,9 +166,9 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 bundle.putSerializable("category_id", getTopSellingCollection().get(0));
 //                Log.e("iddddddd", getTopSellingCollection().get(0).getCollectionTitle());
                 fragment.setArguments(bundle);
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                 ft.addToBackStack("fragment");
+                ft.addToBackStack("ForYou");
                 ft.commit();
             }
         });
@@ -202,20 +203,21 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 bundle.putSerializable("category_id", getNewArrival().get(0));
 //                Log.e("iddddddd", getNewArrival().get(0).getCollectionTitle());
                 fragment.setArguments(bundle);
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                 ft.addToBackStack("fragment");
+                ft.addToBackStack("ForYou");
                 ft.commit();
             }
         });
 
     }
-    private void grocery(GroceryHolder holder){
-        GroceryAdapter groceryAdapter=new GroceryAdapter(context,getGroceryModels(),fragmentManager);
+
+    private void grocery(GroceryHolder holder) {
+        GroceryHomeAdapter groceryAdapter = new GroceryHomeAdapter(context, getGroceryHomeModels(), fragmentManager);
         holder.grocery_recyclerview.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         holder.grocery_recyclerview.setAdapter(groceryAdapter);
-        if (getGroceryModels().size() != 0) {
-            holder.grocery_title.setText(getGroceryModels().get(0).getTitle());
+        if (getGroceryHomeModels().size() != 0) {
+            holder.grocery_title.setText(getGroceryHomeModels().get(0).getTitle());
         }
         holder.seall.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,6 +225,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                 transaction.replace(R.id.home_container, new Groceries(), "grocery");
+                transaction.addToBackStack("ForYou");
                 transaction.commit();
             }
         });
@@ -240,7 +243,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return HORIZONTAL;
         else if (position == 1)
             return VERTICAL;
-        else if(position==3)
+        else if (position == 3)
             return Grocery;
         else
             return HORIZONTAL1;
@@ -280,7 +283,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         VerticalViewHolder(View itemView) {
             super(itemView);
-             bestselling = itemView.findViewById(R.id.category_title);
+            bestselling = itemView.findViewById(R.id.category_title);
             recyclerView = itemView.findViewById(R.id.bestselling_recyclerView);
             seall = itemView.findViewById(R.id.see_all);
         }
@@ -295,7 +298,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             super(itemView);
             newarrival = itemView.findViewById(R.id.new_arrival_text);
             recyclerView = itemView.findViewById(R.id.newarrival_recyclerView);
-            seeall1=itemView.findViewById(R.id.see_all);
+            seeall1 = itemView.findViewById(R.id.see_all);
         }
     }
 
@@ -308,7 +311,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public GroceryHolder(View view) {
             super(view);
             grocery_recyclerview = view.findViewById(R.id.grocery_recycler);
-            grocery_title=view.findViewById(R.id.category_title);
+            grocery_title = view.findViewById(R.id.category_title);
             seall = itemView.findViewById(R.id.see_all);
         }
     }
