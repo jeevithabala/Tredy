@@ -382,6 +382,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                                             JSONObject objec = array1.getJSONObject(j);
 
                                             title = objec.getString("title");
+                                            Log.e("title_h", title);
                                             if(title.trim().toLowerCase().equals("home page")){
                                                 title="Treding";
                                             }
