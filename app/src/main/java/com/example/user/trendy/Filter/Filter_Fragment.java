@@ -44,6 +44,7 @@ import com.example.user.trendy.Filter.Price.PriceAdapter;
 import com.example.user.trendy.Filter.Price.PriceModel;
 import com.example.user.trendy.Filter.SortBy.SortByAdapter;
 import com.example.user.trendy.Filter.SortBy.SortByModel;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.Product.ProductList;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.Constants;
@@ -90,9 +91,8 @@ public class Filter_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.filter_fragment, container, false);
 
-        toolbar = view.findViewById(R.id.toolbar);
-        toolbar.setTitle("Filter");
-        toolbar.setTitleTextColor(getResources().getColor(R.color.appcolor));
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("Filter");
+
 
         collectionid = getArguments().getString("collectionid");
         Log.e("collection", collectionid);
@@ -168,7 +168,7 @@ public class Filter_Fragment extends Fragment {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                 transaction.replace(R.id.home_container, ProductList, "categoryproduct");
-                transaction.addToBackStack(null);
+                transaction.addToBackStack("Categories");
                 transaction.commit();
 
 //                postFilter();

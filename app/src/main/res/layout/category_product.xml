@@ -20,15 +20,15 @@
                 android:layout_marginLeft="10dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:fontFamily="@font/lucidasansdemiboldroman"
-                    android:text="All"
-                    android:textColor="@color/white"
-                    android:textSize="18sp" />
+                <!--<TextView-->
+                    <!--android:id="@+id/all"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginLeft="10dp"-->
+                    <!--android:fontFamily="@font/lucidasansdemiboldroman"-->
+                    <!--android:text="All"-->
+                    <!--android:textColor="@color/white"-->
+                    <!--android:textSize="18sp" />-->
 
                 <LinearLayout
                     android:id="@+id/sublayout"

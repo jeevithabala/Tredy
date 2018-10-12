@@ -29,6 +29,7 @@ public class DBWhislist   extends SQLiteOpenHelper {
     private static final String COLUMN_QTY = "qty";
     private static final String COLUMN_TAG= "tag";
     private static final String COLUMN_SHIPPING= "shipping";
+    private static final String COLUMN_PRODUCT_ID= "product_id";
 
     private Context mContext;
 
@@ -37,6 +38,7 @@ public class DBWhislist   extends SQLiteOpenHelper {
             + COLUMN_PRODUCT_VARIENT_ID + " TEXT,"
             + COLUMN_PRICE + " REAL,"
             + COLUMN_PRODUCT_VARIENT_TITLE + " TEXT,"
+            + COLUMN_PRODUCT_ID + " TEXT,"
             + COLUMN_IMAGE_URL + " TEXT" + ")";
 
 
@@ -66,7 +68,7 @@ public class DBWhislist   extends SQLiteOpenHelper {
     }
 
 
-    public void insertToDo(Storefront.ProductVariant listItem, String Product_name) {
+    public void insertToDo(String productid,Storefront.ProductVariant listItem, String Product_name) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -75,6 +77,7 @@ public class DBWhislist   extends SQLiteOpenHelper {
         values.put(COLUMN_PRICE, Double.parseDouble(String.valueOf(listItem.getPrice())));
         values.put(COLUMN_PRODUCT_VARIENT_TITLE, listItem.getTitle());
         values.put(COLUMN_IMAGE_URL, listItem.getImage().getSrc());
+        values.put(COLUMN_PRODUCT_ID, productid);
 
 //
 //        // Inserting Row
@@ -98,6 +101,7 @@ public class DBWhislist   extends SQLiteOpenHelper {
                 user.setProduct_price(Double.valueOf(cursor.getString(cursor.getColumnIndex(COLUMN_PRICE))));
                 user.setProduct_varient_title(cursor.getString(cursor.getColumnIndex(COLUMN_PRODUCT_VARIENT_TITLE)));
                 user.setImageUrl(cursor.getString(cursor.getColumnIndex(COLUMN_IMAGE_URL)));
+                user.setProduct_id(cursor.getString(cursor.getColumnIndex(COLUMN_PRODUCT_ID)));
 
                 // Adding user record to list
                 userList.add(user);

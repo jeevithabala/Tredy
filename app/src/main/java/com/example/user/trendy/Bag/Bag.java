@@ -96,7 +96,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         bag_recyclerview.setItemAnimator(new DefaultItemAnimator());
 
 
-        adapter = new AddToCart_Adapter(cartList, getActivity(), this, binding.total,items);
+        adapter = new AddToCart_Adapter(cartList, getActivity(), this, binding.total,items,getFragmentManager());
         bag_recyclerview.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -175,6 +175,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         } else {
             nobag.setVisibility(View.GONE);
             check.setVisibility(View.VISIBLE);
+            total();
         }
     }
 

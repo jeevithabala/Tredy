@@ -93,7 +93,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     public static int i = 0;
     public static boolean isViewWithCatalog = true;
     CategoryModel detail = new CategoryModel();
-    String id, title;
+    String id, title="";
     private RequestQueue mRequestQueue;
     String min_price = "", max_price = "", dynamicKey;
     ArrayList<String> selectedFilterList = new ArrayList<>();
@@ -140,8 +140,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         recyclerView.setAdapter(productAdapter);
 //        getProductByCollection(id.trim());
 
-        category_title.setText(title);
-        SharedPreference.saveData("collectionid", id, getActivity());
+
         return view;
     }
 
@@ -184,10 +183,17 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             Log.e("iddc", id);
 
         }
+        if(title!=null){
         if (title.trim().length() != 0) {
             ((Navigation) getActivity()).getSupportActionBar().setTitle(title);
 
+        }}else {
+            ((Navigation) getActivity()).getSupportActionBar().setTitle("Categories");
+
         }
+
+        category_title.setText(title);
+        SharedPreference.saveData("collectionid", id, getActivity());
 
         if (category.trim().equals("filter")) {
             postFilter();

@@ -10,9 +10,10 @@ public interface CommanCartControler {
 
     public void RemoveQuantity(String id);
     public int getTotalPrice();
+    public int getItemCount();
     public void  UpdateShipping(String id, String value);
 
     public void AddToWhislist(String id);
 
-    void AddToCartGrocery(String trim, int selectedweight);
+    void AddToCartGrocery(String trim, int selectedweight, int qty);
 }

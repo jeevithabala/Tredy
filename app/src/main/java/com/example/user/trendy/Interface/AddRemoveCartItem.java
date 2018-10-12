@@ -1,4 +1,4 @@
-package com.example.user.trendy.Bag.Db;
+package com.example.user.trendy.Interface;
 
 public interface AddRemoveCartItem {
 

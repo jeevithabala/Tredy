@@ -1,5 +1,6 @@
 package com.example.user.trendy.Category;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -61,6 +62,7 @@ public class Categories extends Fragment {
     LinearLayout subcategory;
     String converted;
     private String image1 = "";
+    private ProgressDialog progressDialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.categories, container, false);
@@ -185,7 +187,10 @@ public class Categories extends Fragment {
     }
 
     private void collectionList() {
-
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("loading, please wait...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
         mRequestQueue = Volley.newRequestQueue(getActivity());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.navigation,
                 new Response.Listener<String>() {
@@ -287,7 +292,7 @@ public class Categories extends Fragment {
 
                             recyclerView.setAdapter(categoreDetailAdapter);
                             categoreDetailAdapter.notifyDataSetChanged();
-
+                            progressDialog.dismiss();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -296,7 +301,7 @@ public class Categories extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        progressDialog.dismiss();
                     }
                 }) {
 
