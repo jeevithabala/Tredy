@@ -1,6 +1,7 @@
 package com.example.user.trendy.ForYou;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,13 +39,13 @@ import com.example.user.trendy.Account.MyAccount;
 import com.example.user.trendy.BuildConfig;
 import com.example.user.trendy.ForYou.AllCollection.AllCollectionAdapter;
 import com.example.user.trendy.ForYou.AllCollection.AllCollectionModel;
+import com.example.user.trendy.ForYou.GroceryHome.GroceryHomeModel;
 import com.example.user.trendy.ForYou.NewArrival.NewArrivalModel;
 import com.example.user.trendy.ForYou.TopCollection.TopCollectionAdapter;
 import com.example.user.trendy.ForYou.TopCollection.TopCollectionModel;
 import com.example.user.trendy.ForYou.TopSelling.TopSellingAdapter;
 import com.example.user.trendy.ForYou.TopSelling.TopSellingModel;
 import com.example.user.trendy.Groceries.Groceries;
-import com.example.user.trendy.Groceries.GroceryModel;
 import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.Constants;
@@ -83,7 +84,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
     static ArrayList<TopSellingModel> topSellingModelArrayList = new ArrayList<>();
     static ArrayList<TopCollectionModel> topCollectionModelArrayList = new ArrayList<>();
     static ArrayList<NewArrivalModel> newArrivalModelArrayList = new ArrayList<>();
-    static ArrayList<GroceryModel> groceryModels = new ArrayList<>();
+    static ArrayList<GroceryHomeModel> GroceryHomeModels = new ArrayList<>();
     TopSellingAdapter topSellingAdapter;
     TopCollectionAdapter topCollectionAdapter;
     String topsellingid = "Z2lkOi8vc2hvcGlmeS9Db2xsZWN0aW9uLzM0NTA2OTg5NA==";
@@ -97,7 +98,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
     AllCollectionAdapter allCollectionAdapter;
     ArrayList<AllCollectionModel> allCollectionModelArrayList = new ArrayList<>();
     ArrayList<String> bannerlist = new ArrayList<>();
-
+    ProgressDialog progressDialog;
     private ArrayList<Object> getObjects1 = new ArrayList<>();
     private ArrayList<TopCollectionModel> topcollectionlist = new ArrayList<>();
     View view;
@@ -118,13 +119,14 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
     ArrayList<TopSellingModel> topSellingModelArray = new ArrayList<>();
     ArrayList<TopCollectionModel> topCollectionModelArray = new ArrayList<>();
     ArrayList<NewArrivalModel> newArrivalModelArray = new ArrayList<>();
-    private ArrayList<GroceryModel> groceryModelArrayList = new ArrayList<>();
+    private ArrayList<GroceryHomeModel> GroceryHomeModelArrayList = new ArrayList<>();
     Toolbar toolbar;
+    private String converted="";
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.foryou, container, false);
 
-        ((Navigation) getActivity()).getSupportActionBar().setTitle("For You");
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("Home");
 
 //String collectionids="345069894,321817286,33238122615";
         topselling_recyclerview = view.findViewById(R.id.main_recyclerview);
@@ -133,7 +135,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
 //        grcery = view.findViewById(R.id.grocery);
         String id = "58881703997";
         String text = "gid://shopify/Collection/" + id.trim();
-        String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
+         converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
         Log.e("coverted1", converted.trim());
 
 
@@ -143,16 +145,6 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                 .httpCache(new File(getActivity().getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
                 .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
                 .build();
-//        grcery.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//                transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-//                transaction.replace(R.id.home_container, new Groceries(), "whislist");
-////                    transaction.addToBackStack(null);
-//                transaction.commit();
-//            }
-//        });
 
         mPager = (ViewPager) view.findViewById(R.id.pager);
         allCollectionAdapter = new AllCollectionAdapter(getActivity(), allCollectionModelArrayList, getFragmentManager());
@@ -160,15 +152,11 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
         allcollection.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         topselling_recyclerview.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        banner();
         getObject().clear();
-//        productlist();
+        banner();
         collectionList();
         getCollection(converted.trim());
-//        getBestSellingCollection();
-
-//        getNewArrivals();
-        if (getTopSellingCollection() != null || getNewArrival() != null||getGroceryModels()!=null) {
+        if (getTopSellingCollection() != null || getNewArrival() != null||getGroceryHomeModels()!=null) {
             adapter = new MainAdapter(getActivity(), getObject(), getFragmentManager());
             topselling_recyclerview.setAdapter(adapter);
         }
@@ -193,8 +181,14 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
         return newArrivalModelArrayList;
     }
 
-    public static ArrayList<GroceryModel> getGroceryModels() {
-        return groceryModels;
+    public static ArrayList<GroceryHomeModel> getGroceryHomeModels() {
+        return GroceryHomeModels;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     @Override
@@ -224,12 +218,8 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
 
             @Override
             public void run() {
-//                TopSellingModel topSellingModel = new TopSellingModel(id, title, price, image, collectionname);
-//                Log.e("product", title);
-//                topSellingModel.setCollectionid(collectionid);
                 for (int i = 0; i < arrayList.size(); i++) {
                     TopSellingModel topSellingModel = new TopSellingModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
-//                Log.e("product", title);
                     topSellingModel.setCollectionid(arrayList.get(i).getCollectionid());
                     topSellingModelArrayList.add(topSellingModel);
                 }
@@ -250,14 +240,10 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
 
             @Override
             public void run() {
-//                NewArrivalModel newArrivalModel = new NewArrivalModel(id, title, price, image, collectionname);
-//                Log.e("product", title);
-//                newArrivalModel.setCollectionid(collectionid);
-//                newArrivalModelArrayList.add(newArrivalModel);
+
 
                 for (int i = 0; i < arrayList.size(); i++) {
                     NewArrivalModel newArrivalModel = new NewArrivalModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
-//                Log.e("product", title);
                     newArrivalModel.setCollectionid(arrayList.get(i).getCollectionid());
                     newArrivalModelArrayList.add(newArrivalModel);
                 }
@@ -270,20 +256,15 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
     }
 
     @Override
-    public void grocery(ArrayList<GroceryModel> arrayList) {
+    public void grocery(ArrayList<GroceryHomeModel> arrayList) {
         for (int i = 0; i <arrayList.size() ; i++) {
-            GroceryModel groceryModel = new GroceryModel();
-            groceryModel.setProduct(arrayList.get(i).getProduct());
-            groceryModel.setQty("1");
-            groceryModel.setTitle(arrayList.get(i).getTitle());
-            groceryModels.add(groceryModel);
+            GroceryHomeModel GroceryHomeModel = new GroceryHomeModel();
+            GroceryHomeModel.setProduct(arrayList.get(i).getProduct());
+            GroceryHomeModel.setQty("1");
+            GroceryHomeModel.setTitle(arrayList.get(i).getTitle());
+            GroceryHomeModels.add(GroceryHomeModel);
         }
-
-
-
-        Log.d("grocery ", String.valueOf(groceryModels.size()));
-        getObject().add(groceryModels.get(0));
-//        adapter.notifyDataSetChanged();
+        getObject().add(GroceryHomeModels.get(0));
         getActivity().runOnUiThread(new Runnable() {
 
             @Override
@@ -294,8 +275,8 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
     }
 
     private void getCollection(String trim) {
-        groceryModels.clear();
-        groceryModelArrayList.clear();
+        GroceryHomeModels.clear();
+        GroceryHomeModelArrayList.clear();
         Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
                 .node(new ID(trim.trim()), nodeQuery -> nodeQuery
                         .onCollection(collectionQuery -> collectionQuery
@@ -340,15 +321,15 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                 Storefront.Collection product = (Storefront.Collection) response.data().getNode();
 
                 for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
-                    GroceryModel groceryModel = new GroceryModel();
-                    groceryModel.setProduct(productEdge.getNode());
-                    groceryModel.setTitle(product.getTitle());
-                    groceryModel.setQty("1");
-                    groceryModelArrayList.add(groceryModel);
+                    GroceryHomeModel GroceryHomeModel = new GroceryHomeModel();
+                    GroceryHomeModel.setProduct(productEdge.getNode());
+                    GroceryHomeModel.setTitle(product.getTitle());
+                    GroceryHomeModel.setQty("1");
+                    GroceryHomeModelArrayList.add(GroceryHomeModel);
                 }
-                resultCallBackInterface.grocery(groceryModelArrayList);
-                Log.e("groceryModelArrayList", String.valueOf(groceryModelArrayList.size()));
-                Log.e("groceryModelArrayList", String.valueOf(product.getProducts().getEdges().size()));
+                resultCallBackInterface.grocery(GroceryHomeModelArrayList);
+                Log.e("GroceryHomeModelArrayList", String.valueOf(GroceryHomeModelArrayList.size()));
+                Log.e("GroceryHomeModelArrayList", String.valueOf(product.getProducts().getEdges().size()));
                 Log.e("productch", product.getProducts().getEdges().get(0).getNode().getTitle());
                 }
 
@@ -369,7 +350,6 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                         try {
 
                             JSONObject obj = new JSONObject(response);
-//                            collectionname = obj.getString("collection_name");
                             topSellingModelArrayList.clear();
                             topCollectionModelArrayList.clear();
                             newArrivalModelArrayList.clear();
@@ -406,6 +386,10 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                                             JSONObject objec = array1.getJSONObject(j);
 
                                             title = objec.getString("title");
+                                            Log.e("title_h", title);
+                                            if(title.trim().toLowerCase().equals("home page")){
+                                                title="Treding";
+                                            }
                                             JSONArray varientsarray = objec.getJSONArray("variants");
                                             for (int k = 0; k < varientsarray.length(); k++) {
                                                 JSONObject objec1 = varientsarray.getJSONObject(k);
@@ -449,6 +433,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                                     resultCallBackInterface.topSelling(topSellingModelArray);
                                     resultCallBackInterface.bestCollection(topCollectionModelArray);
                                     resultCallBackInterface.newArrivals(newArrivalModelArray);
+                                    progressDialog.dismiss();
                                 } catch (JSONException e1) {
                                     e1.printStackTrace();
 
@@ -464,7 +449,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        progressDialog.dismiss();
                     }
                 }) {
 
@@ -481,25 +466,24 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
 
 
     private void collectionList() {
+         progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("loading, please wait...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
         mRequestQueue = Volley.newRequestQueue(getActivity());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.navigation,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            Log.e("response", " " + response);
+
 
                             JSONObject obj = new JSONObject(response);
                             Log.e("response1", response);
                             allCollectionModelArrayList.clear();
                             JSONObject menu = obj.getJSONObject("menu");
-                            //  String status = obj.getString("menu");
-
                             String title = menu.getString("title");
-                            Log.e("title", title);
-                            // JSONObject allhistoryobj = obj.getJSONObject("insurance");
                             JSONArray jsonarray = menu.getJSONArray("items");
-                            Log.e("jsonarray", String.valueOf(jsonarray));
 
                             for (int i = 0; i < jsonarray.length(); i++) {
                                 JSONObject collectionobject = jsonarray.getJSONObject(i);
@@ -508,7 +492,6 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                                 String id = "" + collectionobject.getString("subject_id");
                                 String collectiontitle = collectionobject.getString("title");
                                 String nav = collectionobject.getString("type");
-//                                String image = collectionobject.getString("image");
 
 
                                 Log.e("id", id);
@@ -554,8 +537,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
 
                                         }
                                         allCollectionAdapter.notifyDataSetChanged();
-//                                    } else {
-//                                        categoryList.add(categoreDetail);
+//
                                     }
 
                                 }
@@ -572,8 +554,8 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("error", error.getMessage());
-
+                        Log.d("error", ""+error.getMessage());
+                        progressDialog.dismiss();
                     }
                 }) {
 

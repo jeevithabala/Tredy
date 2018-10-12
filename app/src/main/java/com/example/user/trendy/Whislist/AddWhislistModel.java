@@ -5,14 +5,24 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-public class AddWhislistModel {
+import java.io.Serializable;
+
+public class AddWhislistModel implements Serializable{
 
     private String product_name;
     private String product_varient_id;
     private Double product_price;
     private String product_varient_title;
     private String imageUrl;
-    String col_id;
+    String col_id,product_id;
+
+    public String getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(String product_id) {
+        this.product_id = product_id;
+    }
 
     public String getCol_id() {
         return col_id;

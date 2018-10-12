@@ -29,11 +29,13 @@ import com.example.user.trendy.Bag.Db.DBHelper;
 import com.example.user.trendy.Bag.ShippingAddress;
 import com.example.user.trendy.Category.ProductDetail.ProductView;
 import com.example.user.trendy.Category.SubCategoryModel;
+import com.example.user.trendy.ForYou.ForYou;
 import com.example.user.trendy.Interface.CartController;
 import com.example.user.trendy.Interface.CommanCartControler;
 import com.example.user.trendy.Interface.FragmentRecyclerViewClick;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.SharedPreference;
+import com.example.user.trendy.Whislist.Whislist;
 import com.example.user.trendy.databinding.GroceryadapterBinding;
 
 import java.util.ArrayList;
@@ -48,16 +50,18 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     int pos = 0;
     DBHelper db;
     List<AddToCart_Model> addToCart_modelArrayList = new ArrayList<>();
-
+    CartDailog cartDailog;
     private FragmentManager fragmentManager;
     private LayoutInflater layoutInflater;
     private int pos1 = 0;
 
-    public GroceryAdapter(Context mContext, ArrayList<GroceryModel> itemsList, FragmentManager fragmentManager) {
+    public GroceryAdapter(Context mContext, ArrayList<GroceryModel> itemsList, FragmentManager fragmentManager, CartDailog cartDailog) {
         this.mContext = mContext;
         this.itemsList = itemsList;
         this.fragmentManager = fragmentManager;
+        this.cartDailog = cartDailog;
     }
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -74,6 +78,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         holder.binding.setGrocery(itemsList.get(position));
+
 
     }
 
@@ -103,7 +108,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
 
         db = new DBHelper(mContext);
         addToCart_modelArrayList = db.getCartList();
-        Log.e("Shubham",""+db.getCartList());
+        Log.e("array", "" + db.getCartList());
         int cart_size = addToCart_modelArrayList.size();
         cart_size++;
         itemCount.setText("Items : " + cart_size);
@@ -118,6 +123,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
         subTotal.setText("SubTotal : Rs. " + cost);
 
         cost = commanCartControler.getTotalPrice();
+
 
         btn_continue.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,7 +151,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnItemSelectedListener {
 
         private final GroceryadapterBinding binding;
-        TextView textView, addgrocery;
+        TextView textView, addgrocery, add_to_cart;
         Spinner spinner;
 
         public ViewHolder(final GroceryadapterBinding itembinding) {
@@ -154,16 +160,35 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
             textView = itemView.findViewById(R.id.qty);
             spinner = itemView.findViewById(R.id.options);
             addgrocery = itemView.findViewById(R.id.addgrocery);
-
+            add_to_cart = itemView.findViewById(R.id.add_to_cart);
+//
             spinner.setOnItemSelectedListener(this);
+//            db=new DBHelper(mContext);
+
             addgrocery.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     pos1 = getAdapterPosition();
-                    display();
+//                    display();
                     cartController = new CartController(mContext);
                     commanCartControler = (CommanCartControler) cartController;
-                    commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos);
+                    commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos,Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
+//                    add_to_cart.setVisibility(View.VISIBLE);
+//                    addToCart_modelArrayList.clear();
+//                    addToCart_modelArrayList = db.getCartList();
+//                    for (int i = 0; i < addToCart_modelArrayList.size(); i++) {
+//                        if (db.checkProduct(addToCart_modelArrayList.get(i).getProduct_id())) {
+//                            add_to_cart.setVisibility(View.VISIBLE);
+//                            notifyDataSetChanged();
+//                        } else {
+//                            add_to_cart.setVisibility(View.GONE);
+//                            notifyDataSetChanged();
+//                        }
+//
+//                    }
+
+                    cartDailog.cart(pos1, pos,Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
+
 
                 }
             });
@@ -240,4 +265,10 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
 
         }
     }
+
+    public interface CartDailog {
+        public void cart(int adapter_pos, int varient_pos, int qty);
+    }
+
+
 }

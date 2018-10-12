@@ -8,9 +8,10 @@ import android.widget.ImageView;
 import com.android.databinding.library.baseAdapters.BR;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class AddToCart_Model extends BaseObservable {
+public class AddToCart_Model extends BaseObservable implements Serializable {
 
     private String product_name;
     private String product_varient_id;
@@ -22,7 +23,15 @@ public class AddToCart_Model extends BaseObservable {
     int total;
     private  String tag;
     ArrayList<String> productlist=new ArrayList<>();
-    String ship;
+    String ship, product_id;
+
+    public String getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(String product_id) {
+        this.product_id = product_id;
+    }
 
     public String getShip() {
         return ship;

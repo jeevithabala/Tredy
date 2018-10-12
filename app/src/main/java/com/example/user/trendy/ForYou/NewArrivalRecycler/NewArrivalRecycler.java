@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.user.trendy.BuildConfig;
+import com.example.user.trendy.ForYou.GroceryHome.GroceryHomeModel;
 import com.example.user.trendy.ForYou.NewArrival.NewArrivalModel;
 import com.example.user.trendy.ForYou.ResultCallBackInterface;
 import com.example.user.trendy.ForYou.TopCollection.TopCollectionModel;
@@ -182,7 +183,7 @@ public class NewArrivalRecycler extends Fragment implements ResultCallBackInterf
     }
 
     @Override
-    public void grocery(ArrayList<GroceryModel> arrayList) {
+    public void grocery(ArrayList<GroceryHomeModel> arrayList) {
 
     }
 }

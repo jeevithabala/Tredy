@@ -80,7 +80,7 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
                         fragment.setArguments(bundle);
                         FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
                         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                         ft.addToBackStack("fragment");
+                         ft.addToBackStack("ForYou");
                         ft.commit();
                     }else{
 

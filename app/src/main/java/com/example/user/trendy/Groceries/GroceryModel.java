@@ -95,16 +95,22 @@ public class GroceryModel implements Serializable {
     @BindingAdapter("imageg")
     public static  void loadImage(ImageView view,  Storefront.Product product) {
         if (product != null) {
-            String imageUrl = product.getVariants().getEdges().get(0).getNode().getImage().getSrc();
+            if(product.getVariants().getEdges().get(0).getNode().getImage()!=null) {
+                String imageUrl = product.getVariants().getEdges().get(0).getNode().getImage().getSrc();
 
-            if (imageUrl != null) {
-                Picasso.with(view.getContext())
-                        .load(imageUrl)
-                        .placeholder(R.drawable.trendybanner)
-                        .error(R.drawable.trendybanner)
-                        .resize(200, 200)
-                        .into(view);
-            } else {
+                if (imageUrl != null) {
+                    Picasso.with(view.getContext())
+                            .load(imageUrl)
+                            .placeholder(R.drawable.trendybanner)
+                            .error(R.drawable.trendybanner)
+                            .resize(200, 200)
+                            .into(view);
+                } else {
+                    Picasso.with(view.getContext())
+                            .load(R.drawable.trendybanner)
+                            .into(view);
+                }
+            }else {
                 Picasso.with(view.getContext())
                         .load(R.drawable.trendybanner)
                         .into(view);

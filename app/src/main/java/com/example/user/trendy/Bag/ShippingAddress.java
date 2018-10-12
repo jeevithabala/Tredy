@@ -64,10 +64,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ShippingAddress extends Fragment implements TextWatcher {
-    String emailstring, firstnamestring, lastnamestring, pincode, area, state, city, country, check_ship_bill = "", s_pincode, s_area, s_state, s_city, s_country, include_state = "", exclude_state = "", product_id = " ";
+    String emailstring, firstnamestring, lastnamestring, bfirstnamestring, blastnamestring, pincode, area, state, city, country, check_ship_bill = "", s_pincode, s_area, s_state, s_city, s_country, include_state = "", exclude_state = "", product_id = " ";
     String b_area, b_city, b_state, b_country, b_pincode;
     EditText email, first_name, last_name, shipping_door_street_input, shipping_pin_input, shipping_city_input, shipping_state_input, shipping_country_input;
-    EditText billing_door_street_input, billing_city, billing_state, billing_country, billing_pin;
+    EditText bfirst_name, blast_name, billing_door_street_input, billing_city, billing_state, billing_country, billing_pin;
     CheckBox same;
     private RequestQueue mRequestQueue;
     ArrayList<String> citylist = new ArrayList<>();
@@ -80,8 +80,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     ArrayList<String> productlist = new ArrayList<>();
     CartController cartController;
     CommanCartControler commanCartControler;
-    String block = "false",product_qty="",totalcost="";
-    private String product_varientid="";
+    String block = "false", product_qty = "", totalcost = "";
+    private String product_varientid = "";
     private String tag;
     private String check = " ", remove_cod = "";
     int placing_checkin = 0, product_view = 0;
@@ -106,8 +106,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 if (tag.trim().toLowerCase().contains("remove_cod")) {
                     remove_cod = "remove_cod";
                 }
-            }else {
-                totalcost=getArguments().getString("totalcost");
+            } else {
+                totalcost = getArguments().getString("totalcost");
             }
         }
 
@@ -125,6 +125,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         email = view.findViewById(R.id.email);
         first_name = view.findViewById(R.id.first_name);
         last_name = view.findViewById(R.id.last_name);
+        bfirst_name = view.findViewById(R.id.b_first_name);
+        blast_name = view.findViewById(R.id.b_last_name);
         shipping_door_street_input = view.findViewById(R.id.shipping_door_street_input);
         shipping_pin_input = view.findViewById(R.id.shipping_pin_input);
         shipping_city_input = view.findViewById(R.id.shipping_city_input);
@@ -212,6 +214,34 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         payment_section.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (same.isChecked()) {
+                    firstnamestring = first_name.getText().toString().trim();
+                    lastnamestring = last_name.getText().toString().trim();
+                    s_area = shipping_door_street_input.getText().toString();
+                    s_city = shipping_city_input.getText().toString();
+                    s_state = shipping_state_input.getText().toString();
+                    s_country = shipping_country_input.getText().toString();
+                    s_pincode = shipping_pin_input.getText().toString();
+
+                    bfirstnamestring = firstnamestring;
+                    blastnamestring = lastnamestring;
+                    b_area = s_area;
+                    b_city = s_city;
+                    b_state = s_state;
+                    b_country = s_country;
+                    b_pincode = s_pincode;
+
+                    bfirst_name.setText(firstnamestring);
+                    blast_name.setText(blastnamestring);
+                    billing_door_street_input.setText(b_area);
+                    billing_city.setText(b_city);
+                    billing_state.setText(b_state);
+                    billing_country.setText(b_country);
+                    billing_pin.setText(b_pincode);
+
+
+                    layout_same.setVisibility(View.GONE);
+                }
                 s_pincode = shipping_pin_input.getText().toString().trim();
                 s_area = shipping_door_street_input.getText().toString().trim();
                 s_state = shipping_state_input.getText().toString().trim();
@@ -225,6 +255,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 emailstring = email.getText().toString().trim();
                 firstnamestring = first_name.getText().toString().trim();
                 lastnamestring = last_name.getText().toString().trim();
+                bfirstnamestring = bfirst_name.getText().toString().trim();
+                blastnamestring = blast_name.getText().toString().trim();
 
                 if (s_pincode.trim().length() == 0) {
                     Toast.makeText(getActivity(), "Please enter your all shipping details", Toast.LENGTH_SHORT).show();
@@ -246,6 +278,9 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         intent.putExtra("s_state", s_state);
                         intent.putExtra("s_country", s_country);
                         intent.putExtra("s_pincode", s_pincode);
+
+                        intent.putExtra("bfirstname", bfirstnamestring);
+                        intent.putExtra("blastname", blastnamestring);
                         intent.putExtra("b_pincode", b_pincode);
                         intent.putExtra("b_area", b_area);
                         intent.putExtra("b_state", b_state);
@@ -276,7 +311,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     FragmentTransaction transaction1 = getFragmentManager().beginTransaction();
                     transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                     transaction1.replace(R.id.home_container, bag, "Bag");
-//                    transaction1.addToBackStack(null);
+                    transaction1.addToBackStack("Bag");
                     transaction1.commit();
                 } else {
 

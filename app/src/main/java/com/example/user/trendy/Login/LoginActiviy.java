@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.user.trendy.BuildConfig;
 import com.example.user.trendy.Navigation;
 import com.example.user.trendy.Util.SharedPreference;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -25,6 +26,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 
 import com.example.user.trendy.R;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -55,13 +57,16 @@ public class LoginActiviy extends AppCompatActivity implements
     LoginButton login_button;
     String firstname = "", lastname = "", email = "", password;
     private GraphClient graphClient;
-    Button facebook;
-    TextView signin, signup;
+    Button facebook, google, btnSignIn;
+    TextView signin, signup, forgot_password;
     EditText name_text, email_text;
     ProgressBar progressBar;
     private ProgressDialog progressDoalog;
     TextInputEditText etPassword;
-
+    GoogleApiClient mGoogleApiClient;
+    ProgressDialog mProgressDialog;
+    //    SignInButton btnSignIn;
+    Button btnSignOut, btnRevokeAccess;
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -91,12 +96,7 @@ public class LoginActiviy extends AppCompatActivity implements
 //        }
 
 
-        GoogleApiClient mGoogleApiClient;
-        ProgressDialog mProgressDialog;
-        SignInButton btnSignIn;
-        Button btnSignOut, btnRevokeAccess;
-
-        btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
+        btnSignIn = (Button) findViewById(R.id.btn_sign_in);
         btnSignOut = (Button) findViewById(R.id.btn_sign_out);
         btnRevokeAccess = (Button) findViewById(R.id.btn_revoke_access);
         etPassword = findViewById(R.id.etPassword);
@@ -104,6 +104,7 @@ public class LoginActiviy extends AppCompatActivity implements
         btnSignIn.setOnClickListener(this);
         btnSignOut.setOnClickListener(this);
         btnRevokeAccess.setOnClickListener(this);
+
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -115,14 +116,16 @@ public class LoginActiviy extends AppCompatActivity implements
                 .build();
 
         // Customizing G+ button
-        btnSignIn.setSize(SignInButton.SIZE_STANDARD);
-        btnSignIn.setScopes(gso.getScopeArray());
+//        btnSignIn.setSize(SignInButton.SIZE_STANDARD);
+//        btnSignIn.setScopes(gso.getScopeArray());
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
                 startActivityForResult(signInIntent, RC_SIGN_IN);
+
             }
         });
 
@@ -132,6 +135,7 @@ public class LoginActiviy extends AppCompatActivity implements
         facebook = findViewById(R.id.facebookView);
         //  name_text = findViewById(R.id.name_text);
         email_text = findViewById(R.id.email_text);
+        forgot_password = findViewById(R.id.forgot_password);
         login_button.setReadPermissions("email", "public_profile");
         callbackManager = CallbackManager.Factory.create();
 
@@ -185,8 +189,6 @@ public class LoginActiviy extends AppCompatActivity implements
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
-//                                        name_edit.setText(name);
-//                                        email_id.setText(email);
                                     }
                                 });
                         Bundle parameters = new Bundle();
@@ -219,15 +221,43 @@ public class LoginActiviy extends AppCompatActivity implements
             }
         });
 
+        forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                email = email_text.getText().toString().trim();
+                if (email.trim().length() != 0) {
+                    if (Validationemail.isEmailAddress(email_text, true)) {
+                        forgotpassword();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Please enter valid email", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
         facebook.setOnClickListener(new View.OnClickListener()
 
         {
             @Override
             public void onClick(View v) {
-                login_button.performClick();
+                if (AccessToken.getCurrentAccessToken() != null && com.facebook.Profile.getCurrentProfile() != null) {
+                    //Logged in so show the login button
+
+                    LoginManager.getInstance().logOut();
+
+                    login_button.performClick();
+
+                } else {
+                    login_button.performClick();
+                }
             }
         });
+
+
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -429,6 +459,9 @@ public class LoginActiviy extends AppCompatActivity implements
                             @Override
                             public void run() {
                                 Toast.makeText(getApplicationContext(), "The email or password you entered is incorrect.", Toast.LENGTH_LONG).show();
+                                if (mGoogleApiClient.isConnected()) {
+                                    Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                                }
                             }
                         });
 //                        create(email,password);
@@ -451,24 +484,58 @@ public class LoginActiviy extends AppCompatActivity implements
 
     }
 
-    public void getId() {
-//        Storefront.QueryRootQuery query = Storefront.query(root -> root
-//                .customer(accessToken, customer -> customer
-//                        .
-//                        .orders(arg -> arg.first(10), connection -> connection
-//                                .edges(edge -> edge
-//                                        .node(node -> node
-//                                                .orderNumber()
-//                                                .totalPrice()
-//                                        )
-//                                )
-//                        )
-//                )
-//        );
-    }
-
     @Override
     public void onClick(View view) {
+
+    }
+
+    public void forgotpassword() {
+        Storefront.MutationQuery mutationQuery = Storefront.mutation(mutation -> mutation
+                .customerRecover(email.trim(), query -> query
+                        .userErrors(userError -> userError
+                                .field()
+                                .message()
+                        )
+                )
+        );
+
+        graphClient.mutateGraph(mutationQuery).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
+
+
+            @Override
+            public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
+//                Log.e("response", response.toString());
+
+                if (response.data() != null) {
+
+
+                    if (response.data().getCustomerRecover() != null) {
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "Password reset link is sent to your email ID", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        if (response.data().getCustomerRecover().getUserErrors() != null) {
+//                           Log.e("errorr"," "+response.data().getCustomerRecover().getUserErrors().get(0).getMessage());
+                        }
+
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull GraphError error) {
+
+                Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
+
+            }
+
+
+        });
 
     }
 }

@@ -345,6 +345,7 @@ public class SignupActivity extends Activity implements TextWatcher {
 //            Log.e("coverted1", password.trim());
         if (mobilenumber.trim().length() == 0) {
 
+
             Storefront.CustomerCreateInput input = new Storefront.CustomerCreateInput(email.trim(), password.trim())
                     .setFirstName(firstname)
                     .setLastName(lastname)
@@ -385,6 +386,10 @@ public class SignupActivity extends Activity implements TextWatcher {
 //                        if (progressDoalog != null) {
 //                            progressDoalog.dismiss();
 //                        }
+                            SharedPreference.saveData("email", email.trim(), getApplicationContext());
+                            SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
+                            SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
+
                             Intent i = new Intent(getApplicationContext(), MainActivity.class);
                             SharedPreference.saveData("login", "true", getApplicationContext());
                             startActivity(i);
@@ -409,6 +414,8 @@ public class SignupActivity extends Activity implements TextWatcher {
         } else {
             if (mobilenumber.trim().length() == 10) {
                 mobilenumber = "+91" + mobilenumber;
+
+
             }
 
             Storefront.CustomerCreateInput input = new Storefront.CustomerCreateInput(email.trim(), password.trim())
@@ -464,6 +471,11 @@ public class SignupActivity extends Activity implements TextWatcher {
                             if (id != null) {
 //                        if (progressDoalog != null) {
 //                            progressDoalog.dismiss();
+
+                                SharedPreference.saveData("email", email.trim(), getApplicationContext());
+                                SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
+                                SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
+                                SharedPreference.saveData("mobile", mobilenumber.trim(), getApplicationContext());
 //                        }
                                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                                 SharedPreference.saveData("login", "true", getApplicationContext());

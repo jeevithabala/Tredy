@@ -36,6 +36,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.user.trendy.Bag.Db.AddToCart_Model;
 import com.example.user.trendy.Bag.Db.DBHelper;
+import com.example.user.trendy.CcAvenue.InitialActivity;
 import com.example.user.trendy.Login.Validationemail;
 import com.example.user.trendy.Login.Validationmobile;
 import com.example.user.trendy.MainActivity;
@@ -72,7 +73,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     private PayUmoneySdkInitializer.PaymentParam mPaymentParams;
     Button btnsubmit1, btncancel;
     RadioButton btnradonline, btnradcod;
-    String emailstring, totalamount, coupon, firstname = "", lastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "";
+    String emailstring, totalamount, coupon, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "";
     TextView txtpayamount, t_pay, discount_price,apply_coupon;
     CardView apply_discount;
     LinearLayout discount_layout;
@@ -116,6 +117,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             country = getIntent().getStringExtra("s_country");
             zip = getIntent().getStringExtra("s_pincode");
 
+            bfirstname = getIntent().getStringExtra("bfirstname");
+            blastname = getIntent().getStringExtra("blastname");
             b_address1 = getIntent().getStringExtra("b_area");
             b_city = getIntent().getStringExtra("b_city");
             b_state = getIntent().getStringExtra("b_state");
@@ -138,6 +141,15 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
         }
         totalamount=totalcost;
+        if(totalamount!=null) {
+            if (totalamount.contains("Rs")) {
+                String[] separated = totalamount.split(" ");
+                totalamount = separated[1];
+            }
+        }
+
+
+
         emailedit = (EditText) findViewById(R.id.payuemail);
         mobile = (EditText) findViewById(R.id.payumobile);
         amountedit = (EditText) findViewById(R.id.payuamount);
@@ -153,8 +165,16 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         emailedit.setText(emailstring);
         amountedit.setText(totalcost);
         if (phone.trim().length() != 0) {
-            mobile.setText(phone);
+//            mobile.setText(phone);
+//            phone=mobile.getText().toString();
+            if(phone.contains("+91")){
+                phone = phone.substring(3, 13);
+                mobile.setText(phone);
+            }else {
+                mobile.setText(phone);
+            }
         }
+
 
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
@@ -215,6 +235,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void launchPayUMoneyFlow() {
+
         PayUmoneyConfig payUmoneyConfig = PayUmoneyConfig.getInstance();
 
         //Use this to set your custom text on result screen button
@@ -433,7 +454,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     dialog.dismiss();
                     if (btnradonline.isChecked()) {
                         cod = 0;
-                        launchPayUMoneyFlow();
+//                        launchPayUMoneyFlow();
+                        Intent i=new Intent(getApplicationContext(),InitialActivity.class);
+                        startActivity(i);
                     } else {
                         cod = 1;
                         postOrder();
@@ -526,8 +549,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
             JSONObject billingaddress = new JSONObject();
-            billingaddress.put("first_name", firstname);
-            billingaddress.put("last_name", lastname);
+            billingaddress.put("first_name", bfirstname);
+            billingaddress.put("last_name", blastname);
             billingaddress.put("address1", b_address1);
             billingaddress.put("phone", phone);
             billingaddress.put("city", b_city);
