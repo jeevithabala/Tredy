@@ -87,7 +87,12 @@ public class Navigation extends AppCompatActivity
         onNavigationItemSelected(navigationView.getMenu().getItem(0));
         db = new DBHelper(getApplicationContext());
         cartList = db.getCartList();
-        cart_count = cartList.size();
+//        cart_count = cartList.size();
+        cart_count=0;
+        for (int i = 0; i <cartList.size() ; i++) {
+            cartList.get(i).getQty();
+            cart_count=cart_count+  cartList.get(i).getQty();
+        }
     }
 
     @Override
@@ -210,7 +215,13 @@ public class Navigation extends AppCompatActivity
     public void AddCartItem() {
         cartList.clear();
         cartList = db.getCartList();
-        cart_count = cartList.size();
+        cart_count=0;
+        for (int i = 0; i <cartList.size() ; i++) {
+            cartList.get(i).getQty();
+            cart_count=cart_count+  cartList.get(i).getQty();
+        }
+        Log.e("countt", String.valueOf(cart_count));
+//        cart_count = cartList.size();
         invalidateOptionsMenu();
     }
 
@@ -218,8 +229,13 @@ public class Navigation extends AppCompatActivity
     public void RemoveCartItem() {
         cartList.clear();
         cartList = db.getCartList();
-        cart_count = cartList.size();
-        Log.e("countt", String.valueOf(cartList.size()));
+        cart_count=0;
+        for (int i = 0; i <cartList.size() ; i++) {
+            cartList.get(i).getQty();
+            cart_count=cart_count+  cartList.get(i).getQty();
+        }
+//        cart_count = cartList.size();
+        Log.e("countt", String.valueOf(cart_count));
         invalidateOptionsMenu();
     }
 

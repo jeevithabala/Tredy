@@ -625,10 +625,17 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
     @Override
     public void OnclickPlus(String productid) {
-        cartController = new CartController(getActivity());
-        commanCartControler = (CommanCartControler) cartController;
-        commanCartControler.AddToCart(productid.trim());
-        Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                cartController = new CartController(getActivity());
+                commanCartControler = (CommanCartControler) cartController;
+                commanCartControler.AddToCart(productid.trim());
+//                productAdapter.notifyDataSetChanged();
+                Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override

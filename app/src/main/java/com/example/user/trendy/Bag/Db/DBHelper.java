@@ -139,6 +139,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.update(TABLE_ADDTOCART, values, COLUMN_PRODUCT_VARIENT_ID + "= '" + id+ "'", null);
         }
         db.close();
+        ((AddRemoveCartItem) mContext).AddCartItem();
     }
 
     public void updateshipping(String id, String ship) {
@@ -183,6 +184,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         }
         db.close();
+        ((AddRemoveCartItem) mContext).AddCartItem();
     }
 
 

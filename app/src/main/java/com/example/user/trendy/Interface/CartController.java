@@ -33,11 +33,13 @@ public class CartController extends ViewModel implements CommanCartControler {
     Context mContext;
     private List<AddToCart_Model> cartList = new ArrayList<>();
     private List<AddWhislistModel> whislist = new ArrayList<>();
+    GraphClient graphClient;
 
     public CartController(Context mContext) {
         this.mContext = mContext;
         db = new DBHelper(mContext);
         dbWhislist = new DBWhislist(mContext);
+
 
     }
 
@@ -50,7 +52,7 @@ public class CartController extends ViewModel implements CommanCartControler {
         Log.e("plus", "plus");
         String text = "gid://shopify/Product/" + id.trim();
 
-        String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
+        String converted = Base64.encodeToString(text.getBytes(), Base64.DEFAULT);
         Log.e("coverted", converted.trim());
 
         getProductVariantID(converted.trim());
@@ -172,9 +174,9 @@ public class CartController extends ViewModel implements CommanCartControler {
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
 
 
-                if (response != null) {
+                if (response.data() != null) {
                     Storefront.Product product = (Storefront.Product) response.data().getNode();
-                    Log.e("titit", product.getTitle());
+//                    Log.e("titit", product.getTitle());
                     model = new SelectItemModel();
                     model.setProduct(product);
                     model.setShip("true");
@@ -271,9 +273,9 @@ public class CartController extends ViewModel implements CommanCartControler {
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
 
 
-                if (response != null) {
+                if (response.data() != null) {
                     Storefront.Product product = (Storefront.Product) response.data().getNode();
-                    Log.e("titit", product.getTitle());
+//                    Log.e("titit", product.getTitle());
                     model = new SelectItemModel();
                     model.setProduct(product);
                     model.setShip("true");
@@ -325,7 +327,8 @@ public class CartController extends ViewModel implements CommanCartControler {
     }
 
     private void getProductVariantID(String productID) {
-        GraphClient graphClient = GraphClient.builder(mContext)
+
+        graphClient= GraphClient.builder(mContext)
                 .shopDomain(BuildConfig.SHOP_DOMAIN)
                 .accessToken(BuildConfig.API_KEY)
                 .httpCache(new File(mContext.getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
@@ -339,6 +342,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                                 .description()
                                 .descriptionHtml()
                                 .tags()
+                                .productType()
                                 .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
                                         .edges(imageEdgeQuery -> imageEdgeQuery
                                                 .node(imageQuery -> imageQuery
@@ -370,9 +374,12 @@ public class CartController extends ViewModel implements CommanCartControler {
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
 
 
-                if (response != null) {
+                if (response.data() != null) {
+                    Log.e("productid",productID);
+                    Log.e("reponse"," "+response.data().toString());
+//                    Log.e("reponse"," "+response.data().getNode());
                     Storefront.Product product = (Storefront.Product) response.data().getNode();
-                    Log.e("titit", product.getTitle());
+                    Log.e("titit", " "+product.getTitle());
                     model = new SelectItemModel();
                     model.setProduct(product);
                     model.setShip("true");
@@ -383,7 +390,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                         productVariant.add(productVariantEdge.getNode()
                         );
 //
-                        Log.d("Product varient Id : ", String.valueOf(productVariantEdge.getNode().getId()));
+                        Log.d("Product varient Id : ", " "+String.valueOf(productVariantEdge.getNode().getId()));
 
 
                     }
