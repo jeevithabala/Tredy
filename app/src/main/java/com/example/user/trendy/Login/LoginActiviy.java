@@ -78,6 +78,13 @@ public class LoginActiviy extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+        try {
+            // simulate a slow startup
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 //        SharedPreference.saveData("login", "true", getApplicationContext());
 
         graphClient = GraphClient.builder(this)

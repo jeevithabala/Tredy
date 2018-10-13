@@ -12,9 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-/**
- * Created by chintu gandhwani on 1/23/2018.
- */
+
 
 public class Converter {
 
