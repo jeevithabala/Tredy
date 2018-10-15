@@ -160,14 +160,14 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //            itemModel.setProduct(detail.getProduct());
             id = detail.getProduct().getId().toString();
             Log.e("idd", id);
-        }else if(product.trim().equals("bag")){
-            AddToCart_Model model=(AddToCart_Model)getArguments().getSerializable("category_id");
+        } else if (product.trim().equals("bag")) {
+            AddToCart_Model model = (AddToCart_Model) getArguments().getSerializable("category_id");
 
-            id=model.getProduct_id();
-        }else if(product.trim().equals("wishlist")){
-            AddWhislistModel model=(AddWhislistModel)getArguments().getSerializable("category_id");
+            id = model.getProduct_id();
+        } else if (product.trim().equals("wishlist")) {
+            AddWhislistModel model = (AddWhislistModel) getArguments().getSerializable("category_id");
 
-            id=model.getProduct_id();
+            id = model.getProduct_id();
 
         } else {
             ProductModel detail = (ProductModel) getArguments().getSerializable("category_id");
@@ -180,7 +180,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //            Log.e("descriptionhtml", "" + detail.getProduct().getDescriptionHtml().toString());
 //            mHtmlString = detail.getProduct().getDescriptionHtml().toString();
         }
-        if (product.trim().equals("grocery")||product.trim().equals("bag")||product.trim().equals("wishlist")) {
+        if (product.trim().equals("grocery") || product.trim().equals("bag") || product.trim().equals("wishlist")) {
             getProductVariantID(id.trim());
         } else {
             String text = "gid://shopify/Product/" + id.trim();
@@ -199,7 +199,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 bundle.putString("collection", "productview");
                 bundle.putString("productid", itemModel.getProductid());
                 bundle.putString("product_varientid", String.valueOf(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getId()));
-                bundle.putString("product_qty",itemModel.getCount());
+                bundle.putString("product_qty", itemModel.getCount());
                 bundle.putString("totalcost", String.valueOf(itemModel.getCost()));
                 bundle.putString("tag", String.valueOf(itemModel.getProduct().getTags()));
                 Fragment fragment = new ShippingAddress();
@@ -211,37 +211,33 @@ public class ProductView extends Fragment implements ProductClickInterface {
         });
 
 
-
         bag_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int selected =  radioGroup .getCheckedRadioButtonId();
+                int selected = radioGroup.getCheckedRadioButtonId();
                 int no_of_variants = itemModel.getProduct().getVariants().getEdges().size();
                 //                Log.e("radio",""+selected);
 //                Log.e("radio1",""+no_of_variants);
-                if(no_of_variants>0)
-                {
-                    if(selected==-1)
-                    {
+                if (no_of_variants > 0) {
+                    if (selected == -1) {
                         Toast.makeText(getActivity(), "Please Select Size.", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
+                    } else {
                         if (product.trim().equals("grocery")) {
-                            no_of_count=count.getText().toString();
+                            no_of_count = count.getText().toString();
                             byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
                             String val2 = new String(tmp2);
                             String[] str = val2.split("/");
                             Log.d("str value", str[4]);
-                            commanCartControler.AddToCartGrocery(id.trim(), selectedID,Integer.parseInt(no_of_count));
-                            Toast.makeText(getActivity(),"Added to cart",Toast.LENGTH_SHORT).show();
+                            commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(no_of_count));
+                            Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
                         } else {
                             String text = "gid://shopify/Product/" + id.trim();
                             String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-                            no_of_count=count.getText().toString();
+                            no_of_count = count.getText().toString();
                             Log.e("coverted", converted.trim());
                             Log.e("id", id);
-                            commanCartControler.AddToCartGrocery(converted.trim(), selectedID,Integer.parseInt(no_of_count));
-                            Toast.makeText(getActivity(),"Added to cart",Toast.LENGTH_SHORT).show();
+                            commanCartControler.AddToCartGrocery(converted.trim(), selectedID, Integer.parseInt(no_of_count));
+                            Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -452,11 +448,9 @@ public class ProductView extends Fragment implements ProductClickInterface {
                                 rbn.setTextColor(Color.WHITE);
                             }
                         }
-
-
                     }
                 });
-
+                radioGroup.check(0);
             }
         }
 
