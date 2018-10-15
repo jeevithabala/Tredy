@@ -259,15 +259,34 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 blastnamestring = blast_name.getText().toString().trim();
 
                 if (s_pincode.trim().length() == 0) {
-                    Toast.makeText(getActivity(), "Please enter your all shipping details", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Please enter your shipping address pin-code", Toast.LENGTH_SHORT).show();
                 } else if (b_pincode.trim().length() == 0) {
-                    Toast.makeText(getActivity(), "Please enter your all billing details", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Please enter your billing address pin-code", Toast.LENGTH_SHORT).show();
                 } else if (emailstring.trim().length() == 0) {
                     Toast.makeText(getActivity(), "Please enter your email", Toast.LENGTH_SHORT).show();
                 } else if (!Validationemail.isEmailAddress(email, true)) {
                     Toast.makeText(getActivity(), "Please enter your valid email", Toast.LENGTH_SHORT).show();
-                } else {
+                }else if (s_pincode.trim().length() < 6) {
+                    Toast.makeText(getActivity(), "Please enter your valid pin-code", Toast.LENGTH_SHORT).show();
+                }else if (firstnamestring.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your shipping address first name", Toast.LENGTH_SHORT).show();
+                }else if (lastnamestring.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your shipping address last name", Toast.LENGTH_SHORT).show();
+                }else if (s_area.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your shipping address address", Toast.LENGTH_SHORT).show();
+                }else if (s_state.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your valid shipping address pin-code", Toast.LENGTH_SHORT).show();
+                }else if (bfirstnamestring.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your billing address first name", Toast.LENGTH_SHORT).show();
+                }else if (blastnamestring.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your billing address last name", Toast.LENGTH_SHORT).show();
+                }else if (b_area.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your billing address address", Toast.LENGTH_SHORT).show();
+                }else if (b_country.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your valid billing address pin-code", Toast.LENGTH_SHORT).show();
+                }else {
                     if (block.equals("false")) {
+
 
                         Intent intent = new Intent(getActivity(), PayUMoneyActivity.class);
                         intent.putExtra("firstname", firstnamestring);

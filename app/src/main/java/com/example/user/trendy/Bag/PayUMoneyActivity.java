@@ -402,24 +402,24 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    private void discount() {
-        if (i == 0) {
-            coupon = discount.getText().toString();
-            if (coupon.trim().length() != 0) {
-                if (Integer.parseInt(totalamount) > 50) {
-                    int a = Integer.parseInt(totalamount) - 50;
-                    totalamount = String.valueOf(a);
-
-                    t_pay.setText(totalamount);
-                    discount_price.setText("50");
-                    discount_layout.setVisibility(View.VISIBLE);
-                }
-            }
-            i = 1;
-        }
-
-
-    }
+//    private void discount() {
+//        if (i == 0) {
+//            coupon = discount.getText().toString();
+//            if (coupon.trim().length() != 0) {
+//                if (Integer.parseInt(totalamount) > 50) {
+//                    int a = Integer.parseInt(totalamount) - 50;
+//                    totalamount = String.valueOf(a);
+//
+//                    t_pay.setText(totalamount);
+//                    discount_price.setText("50");
+//                    discount_layout.setVisibility(View.VISIBLE);
+//                }
+//            }
+//            i = 1;
+//        }
+//
+//
+//    }
 
     protected void showCustomDialog1() {
         // TODO Auto-generated method stub
@@ -439,7 +439,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             btnradcod.setVisibility(View.VISIBLE);
         }
 
-        txtpayamount.setText(totalamount);
+        txtpayamount.setText(totalcost);
         btnradonline.setOnClickListener(this);
         btnradcod.setOnClickListener(this);
 
@@ -478,10 +478,10 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             public void onClick(View view) {
                 // progressDialog.dismiss();
                 dialog.dismiss();
-                if (getApplicationContext() != null) {
-                    finish();
-                    startActivity(new Intent(PayUMoneyActivity.this, PayUMoneyActivity.class));
-                }
+//                if (getApplicationContext() != null) {
+//                    finish();
+//                    startActivity(new Intent(PayUMoneyActivity.this, PayUMoneyActivity.class));
+//                }
             }
         });
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -852,7 +852,6 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 discount_layout.setVisibility(View.VISIBLE);
                 int a = Integer.parseInt(totalcost) + amount;
                 totalcost = String.valueOf(a);
-
                 t_pay.setText(totalcost);
                 discount_price.setText(discounted_amount);
                 apply_coupon.setText("Your Applied Coupon Code is : " + coupon);
