@@ -50,6 +50,7 @@ import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.GraphError;
 import com.shopify.buy3.GraphResponse;
 import com.shopify.buy3.HttpCachePolicy;
+import com.shopify.buy3.QueryGraphCall;
 import com.shopify.buy3.Storefront;
 import com.shopify.graphql.support.ID;
 
@@ -85,6 +86,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     private String tag;
     private String check = " ", remove_cod = "";
     int placing_checkin = 0, product_view = 0;
+    String accessToken;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.shippingaddress, container, false);
@@ -111,6 +113,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
             }
         }
 
+        accessToken = SharedPreference.getData("accesstoken", getActivity());
+
         graphClient = GraphClient.builder(getActivity())
                 .shopDomain(BuildConfig.SHOP_DOMAIN)
                 .accessToken(BuildConfig.API_KEY)
@@ -118,9 +122,15 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
                 .build();
 
-        emailstring = SharedPreference.getData("email", getActivity());
-        firstnamestring = SharedPreference.getData("firstname", getActivity());
-        lastnamestring = SharedPreference.getData("lastname", getActivity());
+        if (accessToken != null) {
+            getEmailId();
+        }
+
+//        emailstring = SharedPreference.getData("email", getActivity());
+//        firstnamestring = SharedPreference.getData("firstname", getActivity());
+//        lastnamestring = SharedPreference.getData("lastname", getActivity());
+
+//        Toast.makeText(getActivity(), emailstring, Toast.LENGTH_SHORT).show();
 
         email = view.findViewById(R.id.email);
         first_name = view.findViewById(R.id.first_name);
@@ -147,9 +157,9 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         layout_same = view.findViewById(R.id.layout_same);
 
         s_pincode = shipping_pin_input.getText().toString();
-        email.setText(emailstring);
-        first_name.setText(firstnamestring);
-        last_name.setText(lastnamestring);
+//        email.setText(emailstring);
+//        first_name.setText(firstnamestring);
+//        last_name.setText(lastnamestring);
 //        shipping_city_input.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -174,38 +184,39 @@ public class ShippingAddress extends Fragment implements TextWatcher {
             @Override
             public void onClick(View view) {
                 if (same.isChecked()) {
-                    s_area = shipping_door_street_input.getText().toString();
-                    s_city = shipping_city_input.getText().toString();
-                    s_state = shipping_state_input.getText().toString();
-                    s_country = shipping_country_input.getText().toString();
-                    s_pincode = shipping_pin_input.getText().toString();
-
-                    b_area = s_area;
-                    b_city = s_city;
-                    b_state = s_state;
-                    b_country = s_country;
-                    b_pincode = s_pincode;
-
-
-                    billing_door_street_input.setText(b_area);
-                    billing_city.setText(b_city);
-                    billing_state.setText(b_state);
-                    billing_country.setText(b_country);
-                    billing_pin.setText(b_pincode);
+//                    s_area = shipping_door_street_input.getText().toString();
+//                    s_city = shipping_city_input.getText().toString();
+//                    s_state = shipping_state_input.getText().toString();
+//                    s_country = shipping_country_input.getText().toString();
+//                    s_pincode = shipping_pin_input.getText().toString();
+//
+//                    b_area = s_area;
+//                    b_city = s_city;
+//                    b_state = s_state;
+//                    b_country = s_country;
+//                    b_pincode = s_pincode;
+//
+//
+//                    billing_door_street_input.setText(b_area);
+//                    billing_city.setText(b_city);
+//                    billing_state.setText(b_state);
+//                    billing_country.setText(b_country);
+//                    billing_pin.setText(b_pincode);
 
 
                     layout_same.setVisibility(View.GONE);
                 } else {
-                    b_area = "";
-                    b_city = "";
-                    b_state = "";
-                    b_country = "";
-                    b_pincode = "";
-                    billing_door_street_input.setText(b_area);
-                    billing_city.setText(b_city);
-                    billing_state.setText(b_state);
-                    billing_country.setText(b_country);
-                    billing_pin.setText(b_pincode);
+//                    b_area = "";
+//                    b_city = "";
+//                    b_state = "";
+//                    b_country = "";
+//                    b_pincode = "";
+//                    billing_door_street_input.setText(b_area);
+//                    billing_city.setText(b_city);
+//                    billing_state.setText(b_state);
+//                    billing_country.setText(b_country);
+//                    billing_pin.setText(b_pincode);
+
                     layout_same.setVisibility(View.VISIBLE);
                 }
             }
@@ -618,5 +629,49 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 
     }
 
+    public void getEmailId() {
+        Storefront.QueryRootQuery query = Storefront.query(root -> root
+                .customer(accessToken, customer -> customer
+                        .firstName()
+                        .lastName()
+                        .email()
+                        .phone()
+                        .displayName()
+                        .id()
+                )
+        );
 
+        QueryGraphCall call = graphClient.queryGraph(query);
+
+        call.enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
+            @Override
+            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
+                Log.e("data", "user..." + response.data().getCustomer().getFirstName());
+                Log.e("data", "user..." + response.data().getCustomer().getLastName());
+                Log.e("data", "user..." + response.data().getCustomer().getEmail());
+                Log.e("data", "user..." + response.data().getCustomer().getPhone());
+                Log.e("data", "user..." + response.data().getCustomer().getDisplayName());
+                Log.e("data", "user..." + response.data().getCustomer().getId());
+
+                firstnamestring = response.data().getCustomer().getFirstName();
+                lastnamestring = response.data().getCustomer().getLastName();
+                emailstring = response.data().getCustomer().getEmail();
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        email.setText(emailstring);
+                        first_name.setText(firstnamestring);
+                        last_name.setText(lastnamestring);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(@NonNull GraphError error) {
+                Log.e("TAG", "Failed to execute query", error);
+            }
+        });
+    }
 }

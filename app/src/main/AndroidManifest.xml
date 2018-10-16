@@ -57,7 +57,8 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"/>
         <activity android:name=".Login.SignupActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"/>
         <activity android:name=".CcAvenue.InitialActivity" />
         <activity android:name=".CcAvenue.WebViewActivity" />
         <activity android:name=".CcAvenue.StatusActivity" />
@@ -65,6 +66,9 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="05aa485592c738eae971569c1dd704eca8c47b79" />
+
+        <activity android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"/>
 
         <receiver android:name=".CcAvenue.SmsReceiver" >
             <intent-filter>

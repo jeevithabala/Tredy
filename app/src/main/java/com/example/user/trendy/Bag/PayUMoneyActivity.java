@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -36,6 +37,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.user.trendy.Bag.Db.AddToCart_Model;
 import com.example.user.trendy.Bag.Db.DBHelper;
+import com.example.user.trendy.BuildConfig;
 import com.example.user.trendy.CcAvenue.InitialActivity;
 import com.example.user.trendy.Login.Validationemail;
 import com.example.user.trendy.Login.Validationmobile;
@@ -53,11 +55,19 @@ import com.payumoney.core.PayUmoneySdkInitializer;
 import com.payumoney.core.entity.TransactionResponse;
 import com.payumoney.sdkui.ui.utils.PayUmoneyFlowManager;
 import com.payumoney.sdkui.ui.utils.ResultModel;
+import com.shopify.buy3.GraphCall;
+import com.shopify.buy3.GraphClient;
+import com.shopify.buy3.GraphError;
+import com.shopify.buy3.GraphResponse;
+import com.shopify.buy3.HttpCachePolicy;
+import com.shopify.buy3.QueryGraphCall;
+import com.shopify.buy3.Storefront;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -65,16 +75,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class PayUMoneyActivity extends AppCompatActivity implements View.OnClickListener, DiscountAdapter.Discountinterface {
 
     EditText emailedit, mobile, amountedit, discount;
-    LinearLayout paynowbtn,recycler_layout;
+    LinearLayout paynowbtn, recycler_layout;
     private PayUmoneySdkInitializer.PaymentParam mPaymentParams;
     Button btnsubmit1, btncancel;
     RadioButton btnradonline, btnradcod;
     String emailstring, totalamount, coupon, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "";
-    TextView txtpayamount, t_pay, discount_price,apply_coupon;
+    TextView txtpayamount, t_pay, discount_price, apply_coupon;
     CardView apply_discount;
     LinearLayout discount_layout;
     int i = 0, cod = 0;
@@ -90,22 +101,34 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     private JsonArrayRequest request;
     DiscountAdapter discountAdapter;
     TextView view_coupon;
-
+    String accessToken;
+    private GraphClient graphClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay_umoney);
 
+        accessToken = SharedPreference.getData("accesstoken", PayUMoneyActivity.this);
+
+        graphClient = GraphClient.builder(PayUMoneyActivity.this)
+                .shopDomain(BuildConfig.SHOP_DOMAIN)
+                .accessToken(BuildConfig.API_KEY)
+                .httpCache(new File(PayUMoneyActivity.this.getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
+                .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
+                .build();
+
+        if (accessToken != null) {
+            getEmailId();
+        }
+
         db = new DBHelper(this);
 
         cartlist = db.getCartList();
         totalcost = SharedPreference.getData("total", getApplicationContext());
-        phone = SharedPreference.getData("mobile", getApplicationContext());
-        emailstring = SharedPreference.getData("email", getApplicationContext());
         discount_recycler = findViewById(R.id.discount_recycler);
-        recycler_layout=findViewById(R.id.recycler_layout);
-        view_coupon=findViewById(R.id.view_coupon);
+        recycler_layout = findViewById(R.id.recycler_layout);
+        view_coupon = findViewById(R.id.view_coupon);
 
         if (getIntent() != null) {
             firstname = getIntent().getStringExtra("firstname");
@@ -140,14 +163,13 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
         }
-        totalamount=totalcost;
-        if(totalamount!=null) {
+        totalamount = totalcost;
+        if (totalamount != null) {
             if (totalamount.contains("Rs")) {
                 String[] separated = totalamount.split(" ");
                 totalamount = separated[1];
             }
         }
-
 
 
         emailedit = (EditText) findViewById(R.id.payuemail);
@@ -157,25 +179,13 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         discount_price = findViewById(R.id.discount_price);
         t_pay = findViewById(R.id.t_pay);
         discount_layout = findViewById(R.id.discount_layout);
-        apply_coupon=findViewById(R.id.apply_coupon);
+        apply_coupon = findViewById(R.id.apply_coupon);
         paynowbtn = (LinearLayout) findViewById(R.id.paynowbtn);
         paynowbtn.setOnClickListener(this);
-      view_coupon.setOnClickListener(this);
+        view_coupon.setOnClickListener(this);
 
         emailedit.setText(emailstring);
         amountedit.setText(totalcost);
-        if (phone.trim().length() != 0) {
-//            mobile.setText(phone);
-//            phone=mobile.getText().toString();
-            if(phone.contains("+91")){
-                phone = phone.substring(3, 13);
-                mobile.setText(phone);
-            }else {
-                mobile.setText(phone);
-            }
-        }
-
-
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         discount_recycler.setLayoutManager(layoutManager1);
@@ -455,7 +465,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     if (btnradonline.isChecked()) {
                         cod = 0;
 //                        launchPayUMoneyFlow();
-                        Intent i=new Intent(getApplicationContext(),InitialActivity.class);
+                        Intent i = new Intent(getApplicationContext(), InitialActivity.class);
                         startActivity(i);
                     } else {
                         cod = 1;
@@ -847,7 +857,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             String[] str = val2.split("-");
             discounted_amount = str[1];
             Log.e("amount", String.valueOf(discounted_amount));
-            totalcost=totalamount;
+            totalcost = totalamount;
             if (Integer.parseInt(totalcost) > amount) {
                 discount_layout.setVisibility(View.VISIBLE);
                 int a = Integer.parseInt(totalcost) + amount;
@@ -862,4 +872,57 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             }
         }
     }
+
+    public void getEmailId() {
+        Storefront.QueryRootQuery query = Storefront.query(root -> root
+                .customer(accessToken, customer -> customer
+                        .firstName()
+                        .lastName()
+                        .email()
+                        .phone()
+                        .displayName()
+                        .id()
+                )
+        );
+
+        QueryGraphCall call = graphClient.queryGraph(query);
+
+        call.enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
+            @Override
+            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
+                Log.e("data", "user..." + response.data().getCustomer().getFirstName());
+                Log.e("data", "user..." + response.data().getCustomer().getLastName());
+                Log.e("data", "user..." + response.data().getCustomer().getEmail());
+                Log.e("data", "user..." + response.data().getCustomer().getPhone());
+                Log.e("data", "user..." + response.data().getCustomer().getDisplayName());
+                Log.e("data", "user..." + response.data().getCustomer().getId());
+
+                phone = response.data().getCustomer().getPhone();
+
+                PayUMoneyActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (phone.trim().length() != 0) {
+//            mobile.setText(phone);
+//            phone=mobile.getText().toString();
+                            if (phone.contains("+91")) {
+                                phone = phone.substring(3, 13);
+                                mobile.setText(phone);
+                            } else {
+                                mobile.setText(phone);
+                            }
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(@NonNull GraphError error) {
+                Log.e("TAG", "Failed to execute query", error);
+            }
+        });
+
+    }
+
 }
