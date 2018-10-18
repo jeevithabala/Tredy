@@ -375,15 +375,15 @@ public class CartController extends ViewModel implements CommanCartControler {
 
 
                 if (response.data() != null) {
-                    Log.e("productid",productID);
-                    Log.e("reponse"," "+response.data().toString());
+//                    Log.e("productid",productID);
+//                    Log.e("reponse"," "+response.data().toString());
 //                    Log.e("reponse"," "+response.data().getNode());
                     Storefront.Product product = (Storefront.Product) response.data().getNode();
-                    Log.e("titit", " "+product.getTitle());
+//                    Log.e("titit", " "+product.getTitle());
                     model = new SelectItemModel();
                     model.setProduct(product);
                     model.setShip("true");
-                    Log.e("tttyt", String.valueOf(model.getProduct().getTags()));
+//                    Log.e("tttyt", String.valueOf(model.getProduct().getTags()));
 
                     List<Storefront.ProductVariant> productVariant = new ArrayList<>();
                     for (final Storefront.ProductVariantEdge productVariantEdge : product.getVariants().getEdges()) {

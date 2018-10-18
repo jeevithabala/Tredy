@@ -1,8 +1,10 @@
 package com.example.user.trendy.Util;
 
 public class Constants {
-    public static final String filter_tag ="https://food.marmeto.com/api/products/filters";
-    public static final String filter_tag1 ="https://app1.marmeto.in/api/v1/products/getfilters/";
+
+    public static final String Base_URL = "https://food.marmeto.com/api/products/";
+    public static final String filter_tag = Base_URL+"filters";
+    public static final String filter_tag1 =Base_URL+"getfilters/";
 public static final String navigation ="https://app1.marmeto.in/api/v1/navigation/";
 public static final String navigation1 ="https://app1.marmeto.in/api/v1/navigation/";
     public static final String filter_post ="https://app1.marmeto.in/api/v1/products/filter";
