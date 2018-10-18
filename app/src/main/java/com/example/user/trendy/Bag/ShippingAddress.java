@@ -50,6 +50,7 @@ import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.GraphError;
 import com.shopify.buy3.GraphResponse;
 import com.shopify.buy3.HttpCachePolicy;
+import com.shopify.buy3.QueryGraphCall;
 import com.shopify.buy3.Storefront;
 import com.shopify.graphql.support.ID;
 
@@ -85,6 +86,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     private String tag;
     private String check = " ", remove_cod = "";
     int placing_checkin = 0, product_view = 0;
+    String accessToken;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.shippingaddress, container, false);
@@ -111,6 +113,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
             }
         }
 
+        accessToken = SharedPreference.getData("accesstoken", getActivity());
+
         graphClient = GraphClient.builder(getActivity())
                 .shopDomain(BuildConfig.SHOP_DOMAIN)
                 .accessToken(BuildConfig.API_KEY)
@@ -118,9 +122,15 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
                 .build();
 
-        emailstring = SharedPreference.getData("email", getActivity());
-        firstnamestring = SharedPreference.getData("firstname", getActivity());
-        lastnamestring = SharedPreference.getData("lastname", getActivity());
+        if (accessToken != null) {
+            getEmailId();
+        }
+
+//        emailstring = SharedPreference.getData("email", getActivity());
+//        firstnamestring = SharedPreference.getData("firstname", getActivity());
+//        lastnamestring = SharedPreference.getData("lastname", getActivity());
+
+//        Toast.makeText(getActivity(), emailstring, Toast.LENGTH_SHORT).show();
 
         email = view.findViewById(R.id.email);
         first_name = view.findViewById(R.id.first_name);
@@ -147,9 +157,9 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         layout_same = view.findViewById(R.id.layout_same);
 
         s_pincode = shipping_pin_input.getText().toString();
-        email.setText(emailstring);
-        first_name.setText(firstnamestring);
-        last_name.setText(lastnamestring);
+//        email.setText(emailstring);
+//        first_name.setText(firstnamestring);
+//        last_name.setText(lastnamestring);
 //        shipping_city_input.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -174,38 +184,39 @@ public class ShippingAddress extends Fragment implements TextWatcher {
             @Override
             public void onClick(View view) {
                 if (same.isChecked()) {
-                    s_area = shipping_door_street_input.getText().toString();
-                    s_city = shipping_city_input.getText().toString();
-                    s_state = shipping_state_input.getText().toString();
-                    s_country = shipping_country_input.getText().toString();
-                    s_pincode = shipping_pin_input.getText().toString();
-
-                    b_area = s_area;
-                    b_city = s_city;
-                    b_state = s_state;
-                    b_country = s_country;
-                    b_pincode = s_pincode;
-
-
-                    billing_door_street_input.setText(b_area);
-                    billing_city.setText(b_city);
-                    billing_state.setText(b_state);
-                    billing_country.setText(b_country);
-                    billing_pin.setText(b_pincode);
+//                    s_area = shipping_door_street_input.getText().toString();
+//                    s_city = shipping_city_input.getText().toString();
+//                    s_state = shipping_state_input.getText().toString();
+//                    s_country = shipping_country_input.getText().toString();
+//                    s_pincode = shipping_pin_input.getText().toString();
+//
+//                    b_area = s_area;
+//                    b_city = s_city;
+//                    b_state = s_state;
+//                    b_country = s_country;
+//                    b_pincode = s_pincode;
+//
+//
+//                    billing_door_street_input.setText(b_area);
+//                    billing_city.setText(b_city);
+//                    billing_state.setText(b_state);
+//                    billing_country.setText(b_country);
+//                    billing_pin.setText(b_pincode);
 
 
                     layout_same.setVisibility(View.GONE);
                 } else {
-                    b_area = "";
-                    b_city = "";
-                    b_state = "";
-                    b_country = "";
-                    b_pincode = "";
-                    billing_door_street_input.setText(b_area);
-                    billing_city.setText(b_city);
-                    billing_state.setText(b_state);
-                    billing_country.setText(b_country);
-                    billing_pin.setText(b_pincode);
+//                    b_area = "";
+//                    b_city = "";
+//                    b_state = "";
+//                    b_country = "";
+//                    b_pincode = "";
+//                    billing_door_street_input.setText(b_area);
+//                    billing_city.setText(b_city);
+//                    billing_state.setText(b_state);
+//                    billing_country.setText(b_country);
+//                    billing_pin.setText(b_pincode);
+
                     layout_same.setVisibility(View.VISIBLE);
                 }
             }
@@ -259,15 +270,34 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 blastnamestring = blast_name.getText().toString().trim();
 
                 if (s_pincode.trim().length() == 0) {
-                    Toast.makeText(getActivity(), "Please enter your all shipping details", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Please enter your shipping address pin-code", Toast.LENGTH_SHORT).show();
                 } else if (b_pincode.trim().length() == 0) {
-                    Toast.makeText(getActivity(), "Please enter your all billing details", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Please enter your billing address pin-code", Toast.LENGTH_SHORT).show();
                 } else if (emailstring.trim().length() == 0) {
                     Toast.makeText(getActivity(), "Please enter your email", Toast.LENGTH_SHORT).show();
                 } else if (!Validationemail.isEmailAddress(email, true)) {
                     Toast.makeText(getActivity(), "Please enter your valid email", Toast.LENGTH_SHORT).show();
-                } else {
+                }else if (s_pincode.trim().length() < 6) {
+                    Toast.makeText(getActivity(), "Please enter your valid pin-code", Toast.LENGTH_SHORT).show();
+                }else if (firstnamestring.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your shipping address first name", Toast.LENGTH_SHORT).show();
+                }else if (lastnamestring.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your shipping address last name", Toast.LENGTH_SHORT).show();
+                }else if (s_area.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your shipping address address", Toast.LENGTH_SHORT).show();
+                }else if (s_state.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your valid shipping address pin-code", Toast.LENGTH_SHORT).show();
+                }else if (bfirstnamestring.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your billing address first name", Toast.LENGTH_SHORT).show();
+                }else if (blastnamestring.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your billing address last name", Toast.LENGTH_SHORT).show();
+                }else if (b_area.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your billing address address", Toast.LENGTH_SHORT).show();
+                }else if (b_country.trim().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter your valid billing address pin-code", Toast.LENGTH_SHORT).show();
+                }else {
                     if (block.equals("false")) {
+
 
                         Intent intent = new Intent(getActivity(), PayUMoneyActivity.class);
                         intent.putExtra("firstname", firstnamestring);
@@ -599,5 +629,49 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 
     }
 
+    public void getEmailId() {
+        Storefront.QueryRootQuery query = Storefront.query(root -> root
+                .customer(accessToken, customer -> customer
+                        .firstName()
+                        .lastName()
+                        .email()
+                        .phone()
+                        .displayName()
+                        .id()
+                )
+        );
 
+        QueryGraphCall call = graphClient.queryGraph(query);
+
+        call.enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
+            @Override
+            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
+                Log.e("data", "user..." + response.data().getCustomer().getFirstName());
+                Log.e("data", "user..." + response.data().getCustomer().getLastName());
+                Log.e("data", "user..." + response.data().getCustomer().getEmail());
+                Log.e("data", "user..." + response.data().getCustomer().getPhone());
+                Log.e("data", "user..." + response.data().getCustomer().getDisplayName());
+                Log.e("data", "user..." + response.data().getCustomer().getId());
+
+                firstnamestring = response.data().getCustomer().getFirstName();
+                lastnamestring = response.data().getCustomer().getLastName();
+                emailstring = response.data().getCustomer().getEmail();
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        email.setText(emailstring);
+                        first_name.setText(firstnamestring);
+                        last_name.setText(lastnamestring);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(@NonNull GraphError error) {
+                Log.e("TAG", "Failed to execute query", error);
+            }
+        });
+    }
 }
