@@ -102,7 +102,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     CommanCartControler commanCartControler;
     private int requestCount = 1, requestCount1 = 1;
     RequestQueue requestQueue;
-    private String sortbykey = "23z";
+    private String sortbykey;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -254,7 +254,6 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         StringRequest stringRequest = null;
         try {
 
-            String URL = "http://...";
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("collection_id", id);
 
@@ -282,12 +281,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             final String requestBody = jsonBody.toString();
             String a;
             if (sortbykey.trim().length() == 0) {
-                a = "?page_size=10&page=";
+                a = "?page_size=10&page="+count;
             } else {
-                a = "?" + sortbykey.trim() + "&page_size=10&page=";
+                a = "?" + sortbykey.trim() + "&page_size=10&page="+ count;
             }
 
-            stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + a + count, new Response.Listener<String>() {
+            stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + a, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     Log.i("VOLLEY", response);

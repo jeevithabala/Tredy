@@ -118,8 +118,11 @@ public class Filter_Fragment extends Fragment {
         sortby_recycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
 
+        sortlist.clear();
+        sortByModelArrayList.clear();
         sortlist.add("Price : Low to High");
         sortlist.add("Price : High to Low");
+
 
         for (String tag : sortlist) {
             SortByModel sortByModel = new SortByModel(tag, false);
@@ -184,8 +187,10 @@ public class Filter_Fragment extends Fragment {
 
 
     public void getTaglist() {
+        producttag.clear();
+
         filterModelArrayList.clear();
-        pricelist.clear();
+
         mRequestQueue = Volley.newRequestQueue(getActivity());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.filter_tag1 + collectionid.trim(),
                 new Response.Listener<String>() {
@@ -221,6 +226,8 @@ public class Filter_Fragment extends Fragment {
                             String max_price = obj.getString("max_price");
                             Log.d(" max_price", max_price);
 
+                            pricelist.clear();
+
                             int splitvalue;
                             splitvalue = Integer.parseInt(max_price) / 4;
                             firstsplit = Math.round(Integer.parseInt(minprice) + splitvalue);
@@ -237,6 +244,7 @@ public class Filter_Fragment extends Fragment {
                             pricelist.add(second);
                             pricelist.add(third);
                             pricelist.add(fourth);
+                            priceModelArrayList.clear();
                             for (String tag : pricelist) {
                                 PriceModel priceModel = new PriceModel(tag, false);
                                 priceModelArrayList.add(priceModel);
