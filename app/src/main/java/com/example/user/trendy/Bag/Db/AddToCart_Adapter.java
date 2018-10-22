@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -39,7 +40,7 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
     CartController cartController;
     CommanCartControler commanCartControler;
     GetTotalCost getTotalCost;
-    TextView textView,textView1;
+    TextView textView, textView1;
     String state;
     private FragmentManager fragmentManager;
 
@@ -49,13 +50,13 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
         this.getTotalCost = getTotalCost;
     }
 
-    public AddToCart_Adapter(List<AddToCart_Model> items, Context mContext, GetTotalCost getTotalCost, TextView textView, TextView textView1,FragmentManager fragmentManager) {
+    public AddToCart_Adapter(List<AddToCart_Model> items, Context mContext, GetTotalCost getTotalCost, TextView textView, TextView textView1, FragmentManager fragmentManager) {
         this.items = items;
         this.mContext = mContext;
         this.getTotalCost = getTotalCost;
         this.textView = textView;
         this.textView1 = textView1;
-        this.fragmentManager=fragmentManager;
+        this.fragmentManager = fragmentManager;
     }
 
     @Override
@@ -79,11 +80,11 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
         Log.d("Product varient id ", items.get(position).getProduct_varient_id());
         if (items.get(position).getShip().equals("false")) {
             holder.shipping_visibility.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             holder.shipping_visibility.setVisibility(View.GONE);
         }
 
-        textView1.setText(items.size()+ " items");
+        textView1.setText(items.size() + " items");
 
     }
 
@@ -99,7 +100,7 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
 //    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView remove, shipping_visibility;
+        TextView remove, shipping_visibility, product_name;
         LinearLayout decrease, increase;
         DBHelper db = new DBHelper(mContext);
 
@@ -112,14 +113,29 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
             decrease = itemView.findViewById(R.id.decrease);
             increase = itemView.findViewById(R.id.increase);
             shipping_visibility = itemView.findViewById(R.id.shipping_visibility);
-            String state=SharedPreference.getData("state",mContext);
-            shipping_visibility.setText("Oops! The product cannot be shipped to  "+state);
+            String state = SharedPreference.getData("state", mContext);
+            shipping_visibility.setText("Oops! The product cannot be shipped to  " + state);
 
-            binding.setItemclick(new FragmentRecyclerViewClick() {
+            product_name = itemView.findViewById(R.id.product_name);
+
+            binding.productImage.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClickPostion() {
+                public void onClick(View view) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("category", "bag");
+                    bundle.putSerializable("category_id", items.get(getAdapterPosition()));
+                    Fragment fragment = new ProductView();
+                    fragment.setArguments(bundle);
+                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    ft.addToBackStack("Bag");
+                    ft.commit();
+                }
+            });
 
-
+            product_name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
                     Bundle bundle = new Bundle();
                     bundle.putString("category", "bag");
                     bundle.putSerializable("category_id", items.get(getAdapterPosition()));
@@ -157,7 +173,7 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
                     commanCartControler.AddQuantity(items.get(getAdapterPosition()).getProduct_varient_id().trim());
 
                     items.get(getAdapterPosition()).setQty(Integer.parseInt(db.getQuantity(items.get(getAdapterPosition()).getProduct_varient_id())));
-                    textView.setText(Integer.toString(commanCartControler.getTotalPrice()));
+                    textView.setText("Rs. " + Integer.toString(commanCartControler.getTotalPrice()));
                     SharedPreference.saveData("total", String.valueOf(commanCartControler.getTotalPrice()), mContext);
                     Log.e("costcheckadapter", "" + String.valueOf(commanCartControler.getTotalPrice()));
 //                    getTotalCost.totalcostinjterface(commanCartControler.getTotalPrice());
@@ -172,7 +188,7 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
                     commanCartControler = (CommanCartControler) cartController;
                     commanCartControler.RemoveQuantity(items.get(getAdapterPosition()).getProduct_varient_id().trim());
                     items.get(getAdapterPosition()).setQty(Integer.parseInt(db.getQuantity(items.get(getAdapterPosition()).getProduct_varient_id())));
-                    textView.setText(Integer.toString(commanCartControler.getTotalPrice()));
+                    textView.setText("Rs. " + Integer.toString(commanCartControler.getTotalPrice()));
                     SharedPreference.saveData("total", String.valueOf(commanCartControler.getTotalPrice()), mContext);
                 }
             });

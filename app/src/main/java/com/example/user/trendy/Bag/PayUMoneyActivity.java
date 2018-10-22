@@ -851,16 +851,17 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void discountValue(String discounted_amount, String coupon) {
         if (discounted_amount.trim().length() != 0) {
-            int amount = Integer.parseInt(discounted_amount);
+            int amount = 0;
 
             String val2 = new String(discounted_amount);
             String[] str = val2.split("-");
             discounted_amount = str[1];
+            amount = Integer.parseInt(discounted_amount);
             Log.e("amount", String.valueOf(discounted_amount));
             totalcost = totalamount;
-            if (Integer.parseInt(totalcost) > amount) {
+            if (Integer.parseInt(totalcost) >= amount) {
                 discount_layout.setVisibility(View.VISIBLE);
-                int a = Integer.parseInt(totalcost) + amount;
+                int a = Integer.parseInt(totalcost) - amount;
                 totalcost = String.valueOf(a);
                 t_pay.setText(totalcost);
                 discount_price.setText(discounted_amount);
@@ -868,7 +869,18 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 recycler_layout.setVisibility(View.GONE);
                 view_coupon.setText(R.string.view);
                 view_coupon.setVisibility(View.VISIBLE);
-
+            }
+            else
+            {
+                discount_layout.setVisibility(View.VISIBLE);
+//                int a = Integer.parseInt(totalcost) - amount;
+                discount_price.setText(totalcost);
+                totalcost = String.valueOf(0);
+                t_pay.setText("0");
+                apply_coupon.setText("Your Applied Coupon Code is : " + coupon);
+                recycler_layout.setVisibility(View.GONE);
+                view_coupon.setText(R.string.view);
+                view_coupon.setVisibility(View.VISIBLE);
             }
         }
     }
