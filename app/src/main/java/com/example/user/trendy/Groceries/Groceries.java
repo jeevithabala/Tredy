@@ -58,6 +58,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
     RelativeLayout add_to_cart;
     CartController cartController;
     CommanCartControler commanCartControler;
+    int cost;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -83,6 +84,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
         btn_continue = view.findViewById(R.id.btn_continue_shopping);
         btn_checkout = view.findViewById(R.id.btn_checkout);
 
+        cost = commanCartControler.getTotalPrice();
 
         addToCart_modelArrayList.clear();
         db = new DBHelper(getActivity());
@@ -92,7 +94,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
         if (cart_size != 0) {
             add_to_cart.setVisibility(View.VISIBLE);
             itemCount.setText("Items : " + cart_size);
-            int cost = commanCartControler.getTotalPrice();
+            cost = commanCartControler.getTotalPrice();
             subTotal.setText("SubTotal : Rs. " + cost);
 
         }
@@ -147,8 +149,13 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
         btn_checkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Bundle bundle = new Bundle();
+                bundle.putString("collection", "allcollection");
+                bundle.putString("totalcost",Integer.toString(cost));
                 Fragment fragment = new ShippingAddress();
-                FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "shipping");
+                fragment.setArguments(bundle);
+                FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                 ft.addToBackStack("grocery");
                 ft.commit();
@@ -378,7 +385,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
         Log.e("array", "" + db.getCartList());
 
 
-        int cost = commanCartControler.getTotalPrice();
+        cost = commanCartControler.getTotalPrice();
         int current_cost = (groceryModelArrayList.get(adapter_pos).getProduct().getVariants().getEdges().get(varient_pos).getNode().getPrice().intValue()) * qty;
         cost = cost + current_cost;
         subTotal.setText("SubTotal : Rs. " + cost);

@@ -1,7 +1,14 @@
 package com.example.user.trendy;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +19,7 @@ import com.example.user.trendy.Bag.Bag;
 import com.example.user.trendy.Category.Categories;
 import com.example.user.trendy.ForYou.ForYou;
 import com.example.user.trendy.Interface.CartController;
+import com.example.user.trendy.NetworkCheck.NetworkSchedulerService;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -22,10 +30,14 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navigation.setSelectedItemId(R.id.navigation_you);
     }
+
+
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -75,6 +87,9 @@ public class MainActivity extends AppCompatActivity{
         super.onBackPressed();
 //        finishAffinity();
     }
+
+
+
 
 
 }

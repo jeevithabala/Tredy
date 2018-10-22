@@ -16,7 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.user.trendy.BuildConfig;
-import com.example.user.trendy.MainActivity;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.SharedPreference;
 import com.shopify.buy3.GraphCall;
@@ -84,6 +84,7 @@ public class SignupActivity extends Activity implements TextWatcher {
                     mobilenumber = mobile.getText().toString().trim();
                     email = email_id.getText().toString().trim();
                     password = create_password.getText().toString().trim();
+
                     signingUpUser();
                 }
                 else
@@ -299,7 +300,11 @@ public class SignupActivity extends Activity implements TextWatcher {
                         String expire = response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getExpiresAt().toString();
                         SharedPreference.saveData("accesstoken", token.trim(), getApplicationContext());
 
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        SharedPreference.saveData("email", email.trim(), getApplicationContext());
+                        SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
+                        SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
+
+                        Intent i = new Intent(getApplicationContext(), Navigation.class);
                         SharedPreference.saveData("login", "true", getApplicationContext());
                         startActivity(i);
 
@@ -332,6 +337,10 @@ public class SignupActivity extends Activity implements TextWatcher {
     }
 
     public void create() {
+
+        SharedPreference.saveData("email", email.trim(), getApplicationContext());
+        SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
+        SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
 //
 //        StringTokenizer st = new StringTokenizer(name, " "); //pass comma as delimeter
 //        String firstname = st.nextToken();
@@ -386,11 +395,7 @@ public class SignupActivity extends Activity implements TextWatcher {
 //                        if (progressDoalog != null) {
 //                            progressDoalog.dismiss();
 //                        }
-                            SharedPreference.saveData("email", email.trim(), getApplicationContext());
-                            SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
-                            SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
-
-                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            Intent i = new Intent(getApplicationContext(), Navigation.class);
                             SharedPreference.saveData("login", "true", getApplicationContext());
                             startActivity(i);
                         }
@@ -412,6 +417,12 @@ public class SignupActivity extends Activity implements TextWatcher {
 
 
         } else {
+
+            SharedPreference.saveData("email", email.trim(), getApplicationContext());
+            SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
+            SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
+            SharedPreference.saveData("mobile", mobilenumber.trim(), getApplicationContext());
+
             if (mobilenumber.trim().length() == 10) {
                 mobilenumber = "+91" + mobilenumber;
 
@@ -472,12 +483,9 @@ public class SignupActivity extends Activity implements TextWatcher {
 //                        if (progressDoalog != null) {
 //                            progressDoalog.dismiss();
 
-                                SharedPreference.saveData("email", email.trim(), getApplicationContext());
-                                SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
-                                SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
-                                SharedPreference.saveData("mobile", mobilenumber.trim(), getApplicationContext());
+
 //                        }
-                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                Intent i = new Intent(getApplicationContext(), Navigation.class);
                                 SharedPreference.saveData("login", "true", getApplicationContext());
                                 startActivity(i);
                             }

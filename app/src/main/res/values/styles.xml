@@ -21,6 +21,27 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">13sp</item>
         <item name="android:fontFamily">@font/lucidasansdemibold</item>
+
+    </style>
+
+    <style name="GalaxyZooThemeToolbarDarkOverflow" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+
+    </style>
+
+
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Fullscreen -->
+
+
+        <item name="android:windowBackground">@drawable/tredylogo_splash</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
     </style>
 
 </resources>

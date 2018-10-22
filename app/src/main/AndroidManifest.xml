@@ -8,11 +8,19 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+
+
+    <!-- Always required on api < 21, needed to keep a wake lock while your job is running -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- Required on api < 21 if you are using setRequiredNetworkType(int) -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- Required on all api levels if you are using setPersisted(true) -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
 
     <application
-        android:name=".Payu_Utility.MyApplication"
+
+        android:name=".App"
         tools:replace="android:allowBackup"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -22,6 +30,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".Login.LoginActiviy"
+            android:theme="@style/SplashTheme"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"
             android:label="@string/app_name">
             <intent-filter>
@@ -57,7 +66,8 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"/>
         <activity android:name=".Login.SignupActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"/>
         <activity android:name=".CcAvenue.InitialActivity" />
         <activity android:name=".CcAvenue.WebViewActivity" />
         <activity android:name=".CcAvenue.StatusActivity" />
@@ -66,11 +76,19 @@
             android:name="io.fabric.ApiKey"
             android:value="05aa485592c738eae971569c1dd704eca8c47b79" />
 
+        <activity android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"/>
+
         <receiver android:name=".CcAvenue.SmsReceiver" >
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".NetworkCheck.NetworkSchedulerService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
     </application>
 
 </manifest>

@@ -1,10 +1,16 @@
 package com.example.user.trendy;
 
 import android.app.AlertDialog;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -30,7 +36,9 @@ import com.example.user.trendy.Category.Categories;
 import com.example.user.trendy.ForYou.ForYou;
 import com.example.user.trendy.Interface.AddRemoveCartItem;
 import com.example.user.trendy.Interface.CartController;
+import com.example.user.trendy.Interface.OnNetworkCheckCallBack;
 import com.example.user.trendy.Login.LoginActiviy;
+import com.example.user.trendy.NetworkCheck.NetworkSchedulerService;
 import com.example.user.trendy.Util.SharedPreference;
 import com.example.user.trendy.Whislist.Whislist;
 import com.facebook.AccessToken;
@@ -48,22 +56,32 @@ import java.util.List;
 
 
 public class Navigation extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener {
 
     FragmentManager fragmentManager;
     private int cart_count = 0;
     DBHelper db;
     private List<AddToCart_Model> cartList = new ArrayList<>();
     private GoogleApiClient mGoogleApiClient;
-
+    Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+
+        init();
+
+    }
+
+    public void init()
+    {
+
+        scheduleJob();
         fragmentManager = getSupportFragmentManager();
 
 
@@ -104,6 +122,41 @@ public class Navigation extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void scheduleJob() {
+        JobInfo myJob = new JobInfo.Builder(0, new ComponentName(this, NetworkSchedulerService.class))
+                .setRequiresCharging(true)
+                .setMinimumLatency(1000)
+                .setOverrideDeadline(2000)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .build();
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(myJob);
+    }
+
+    @Override
+    protected void onStop() {
+        // A service can be "started" and/or "bound". In this case, it's "started" by this Activity
+        // and "bound" to the JobScheduler (also called "Scheduled" by the JobScheduler). This call
+        // to stopService() won't prevent scheduled jobs to be processed. However, failing
+        // to call stopService() would keep it alive indefinitely.
+        stopService(new Intent(this, NetworkSchedulerService.class));
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Start service and provide it a way to communicate with this class.
+        Intent startServiceIntent = new Intent(this, NetworkSchedulerService.class);
+        startService(startServiceIntent);
+
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -291,5 +344,14 @@ public class Navigation extends AppCompatActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    public  void refreshActivity()
+    {
+
+        Toast.makeText(this, "Main ACtivity", Toast.LENGTH_SHORT).show();
+
+    }
+
+
 }
 

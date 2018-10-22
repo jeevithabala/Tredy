@@ -164,6 +164,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
         return view;
     }
 
+
     private ArrayList<Object> getObject() {
 
         return objects;
