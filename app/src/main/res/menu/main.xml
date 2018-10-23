@@ -16,6 +16,8 @@
     <item
         android:id="@+id/searchBar"
         app:showAsAction="always"
-        app:actionViewClass="android.support.v7.widget.SearchView"
-        />
+        android:icon="@drawable/ic_shopping_bag"
+        android:title="search"/>
+        <!--app:actionViewClass="android.support.v7.widget.SearchView"-->
+        <!--/>-->
 </menu>
