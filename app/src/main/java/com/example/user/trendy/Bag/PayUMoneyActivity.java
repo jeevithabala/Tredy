@@ -1,6 +1,7 @@
 package com.example.user.trendy.Bag;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ import com.example.user.trendy.CcAvenue.InitialActivity;
 import com.example.user.trendy.Login.Validationemail;
 import com.example.user.trendy.Login.Validationmobile;
 import com.example.user.trendy.MainActivity;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.Payu_Utility.AppEnvironment;
 import com.example.user.trendy.Payu_Utility.AppPreference;
 import com.example.user.trendy.Payu_Utility.MyApplication;
@@ -103,6 +105,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     TextView view_coupon;
     String accessToken;
     private GraphClient graphClient;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -515,6 +518,10 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void postOrder() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("loading, please wait...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
         phone = mobile.getText().toString().trim();
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -628,8 +635,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
                                 }
                             }
+                            progressDialog.dismiss();
                             Toast.makeText(PayUMoneyActivity.this, "Your Order Placed Sucessfully", Toast.LENGTH_SHORT).show();
-                            Intent i = new Intent(PayUMoneyActivity.this, MainActivity.class);
+                            Intent i = new Intent(PayUMoneyActivity.this, Navigation.class);
                             startActivity(i);
                         }
 
@@ -641,6 +649,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    progressDialog.dismiss();
                     Log.e("VOLLEY", error.toString());
                 }
             }) {
