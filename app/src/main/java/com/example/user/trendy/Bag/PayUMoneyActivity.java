@@ -106,6 +106,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     String accessToken;
     private GraphClient graphClient;
     private ProgressDialog progressDialog;
+    ArrayList<OrderDetailModel> orderDetailModelArrayList=new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,8 +170,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         }
         totalamount = totalcost;
         if (totalamount != null) {
-                String[] separated = totalamount.split(" ");
-                totalamount = separated[1];
+            String[] separated = totalamount.split(" ");
+            totalamount = separated[1];
         }
 
 
@@ -199,183 +201,10 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
         discountAdapter.notifyDataSetChanged();
 
+
+
     }
 
-    private PayUmoneySdkInitializer.PaymentParam calculateServerSideHashAndInitiatePayment1(final PayUmoneySdkInitializer.PaymentParam paymentParam) {
-        StringBuilder stringBuilder = new StringBuilder();
-        HashMap<String, String> params = paymentParam.getParams();
-        stringBuilder.append(params.get(PayUmoneyConstants.KEY) + "|");
-        stringBuilder.append(params.get(PayUmoneyConstants.TXNID) + "|");
-        stringBuilder.append(params.get(PayUmoneyConstants.AMOUNT) + "|");
-        stringBuilder.append(params.get(PayUmoneyConstants.PRODUCT_INFO) + "|");
-        stringBuilder.append(params.get(PayUmoneyConstants.FIRSTNAME) + "|");
-        stringBuilder.append(params.get(PayUmoneyConstants.EMAIL) + "|");
-        stringBuilder.append(params.get(PayUmoneyConstants.UDF1) + "|");
-        stringBuilder.append(params.get(PayUmoneyConstants.UDF2) + "|");
-        stringBuilder.append(params.get(PayUmoneyConstants.UDF3) + "|");
-        stringBuilder.append(params.get(PayUmoneyConstants.UDF4) + "|");
-        stringBuilder.append(params.get(PayUmoneyConstants.UDF5) + "||||||");
-        AppEnvironment appEnvironment = ((MyApplication) getApplication()).getAppEnvironment();
-        stringBuilder.append(appEnvironment.salt());
-
-//        Logger.LogError("hashsequence",stringBuilder.toString());
-        String hash = hashCal("SHA-512", stringBuilder.toString());
-      /*  AppEnvironment appEnvironment = ((BaseApplication) getApplication()).getAppEnvironment();
-        stringBuilder.append(appEnvironment.salt());
-
-        //String hash = hashCal(stringBuilder.toString());*/
-        paymentParam.setMerchantHash(hash);
-
-        return paymentParam;
-    }
-
-    public static String hashCal(String type, String hashString) {
-        StringBuilder hash = new StringBuilder();
-        MessageDigest messageDigest = null;
-        try {
-            messageDigest = MessageDigest.getInstance(type);
-            messageDigest.update(hashString.getBytes());
-            byte[] mdbytes = messageDigest.digest();
-            for (byte hashByte : mdbytes) {
-                hash.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
-            }
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return hash.toString();
-    }
-
-    private void launchPayUMoneyFlow() {
-
-        PayUmoneyConfig payUmoneyConfig = PayUmoneyConfig.getInstance();
-
-        //Use this to set your custom text on result screen button
-        // payUmoneyConfig.setDoneButtonText(((EditText) findViewById(R.id.status_page_et)).getText().toString());
-
-        //Use this to set your custom title for the activity
-        //payUmoneyConfig.setPayUmoneyActivityTitle(((EditText) findViewById(R.id.activity_title_et)).getText().toString());
-
-        PayUmoneySdkInitializer.PaymentParam.Builder builder = new PayUmoneySdkInitializer.PaymentParam.Builder();
-
-        double amount = 0;
-        try {
-            amount = Double.parseDouble(amountedit.getText().toString());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        String txnId = System.currentTimeMillis() + "";
-        String phone = mobile.getText().toString();
-        String productName = "product name";
-        String firstName = "marcony";
-        String email = emailedit.getText().toString();
-        String udf1 = "";
-        String udf2 = "";
-        String udf3 = "";
-        String udf4 = "";
-        String udf5 = "";
-        String udf6 = "";
-        String udf7 = "";
-        String udf8 = "";
-        String udf9 = "";
-        String udf10 = "";
-
-        AppEnvironment appEnvironment = ((MyApplication) getApplication()).getAppEnvironment();
-        builder.setAmount(amount)
-                .setTxnId(txnId)
-                .setPhone(phone)
-                .setProductName(productName)
-                .setFirstName(firstName)
-                .setEmail(email)
-                .setsUrl(appEnvironment.surl())
-                .setfUrl(appEnvironment.furl())
-                .setUdf1(udf1)
-                .setUdf2(udf2)
-                .setUdf3(udf3)
-                .setUdf4(udf4)
-                .setUdf5(udf5)
-                .setUdf6(udf6)
-                .setUdf7(udf7)
-                .setUdf8(udf8)
-                .setUdf9(udf9)
-                .setUdf10(udf10)
-                .setIsDebug(appEnvironment.debug())
-                .setKey(appEnvironment.merchant_Key())
-                .setMerchantId(appEnvironment.merchant_ID());
-
-        try {
-            mPaymentParams = builder.build();
-
-            /*
-             * Hash should always be generated from your server side.
-             * */
-            /* generateHashFromServer(mPaymentParams);*/
-
-            /**
-             * Do not use below code when going live
-             * Below code is provided to generate hash from sdk.
-             * It is recommended to generate hash from server side only.
-             * */
-            mPaymentParams = calculateServerSideHashAndInitiatePayment1(mPaymentParams);
-
-            if (AppPreference.selectedTheme != -1) {
-                PayUmoneyFlowManager.startPayUMoneyFlow(mPaymentParams, PayUMoneyActivity.this, AppPreference.selectedTheme, false);
-            } else {
-                PayUmoneyFlowManager.startPayUMoneyFlow(mPaymentParams, PayUMoneyActivity.this, R.style.AppTheme_default, false);
-            }
-
-        } catch (Exception e) {
-            // some exception occurred
-            Log.e("Message", e.getStackTrace().toString());
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-            paynowbtn.setEnabled(true);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Result Code is -1 send from Payumoney activity
-        Log.d("MainActivity", "request code " + requestCode + " resultcode " + resultCode);
-        if (requestCode == PayUmoneyFlowManager.REQUEST_CODE_PAYMENT && resultCode == RESULT_OK && data !=
-                null) {
-            TransactionResponse transactionResponse = data.getParcelableExtra(PayUmoneyFlowManager
-                    .INTENT_EXTRA_TRANSACTION_RESPONSE);
-
-            ResultModel resultModel = data.getParcelableExtra(PayUmoneyFlowManager.ARG_RESULT);
-
-            // Check which object is non-null
-            if (transactionResponse != null && transactionResponse.getPayuResponse() != null) {
-                if (transactionResponse.getTransactionStatus().equals(TransactionResponse.TransactionStatus.SUCCESSFUL)) {
-                    postOrder();
-
-                } else {
-                    //Failure Transaction
-                }
-
-                // Response from Payumoney
-                String payuResponse = transactionResponse.getPayuResponse();
-
-                // Response from SURl and FURL
-                String merchantResponse = transactionResponse.getTransactionDetails();
-
-                new AlertDialog.Builder(this)
-                        .setCancelable(false)
-                        .setMessage("Payu's Data : " + payuResponse + "\n\n\n Merchant's Data: " + merchantResponse)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                            }
-                        }).show();
-
-            } else if (resultModel != null && resultModel.getError() != null) {
-                Log.d("PAYU", "Error response : " + resultModel.getError().getTransactionResponse());
-            } else {
-                Log.d("PAYU", "Both objects are null!");
-            }
-        }
-    }
 
     @Override
     public void onClick(View v) {
@@ -465,15 +294,18 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     dialog.dismiss();
                     if (btnradonline.isChecked()) {
                         cod = 0;
-//                        launchPayUMoneyFlow();
+
+                        OrderDetailModel orderDetailModel=new OrderDetailModel(emailstring,totalcost,firstname,lastname,bfirstname,blastname,address1,city,state,country,zip,phone,b_address1,b_city,b_state,b_country,b_zip, product_varientid,product_qty);
+                        orderDetailModelArrayList.add(orderDetailModel);
+
                         Intent i = new Intent(getApplicationContext(), InitialActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("value", orderDetailModelArrayList.get(0));
+                        i.putExtras(bundle);
                         startActivity(i);
                     } else {
                         cod = 1;
                         postOrder();
-//                        postCheck();
-
-//cms
                     }
                 } else {
                     Toast.makeText(PayUMoneyActivity.this, "Select the payment method", Toast.LENGTH_SHORT).show();
@@ -690,109 +522,6 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    public void postCheck() {
-        phone = mobile.getText().toString().trim();
-        try {
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            JSONObject jsonBody1 = new JSONObject();
-            JSONObject jsonBody = new JSONObject();
-            jsonBody.put("email", emailstring);
-            jsonBody.put("financial_status", "pending");
-
-
-            JSONArray line_items = new JSONArray();
-            JSONObject items = new JSONObject();
-            if (product_varientid.trim().length() == 0) {
-                for (int i = 0; i < cartlist.size(); i++) {
-
-                    product_varientid = cartlist.get(i).getProduct_varient_id();
-                    byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
-                    String val2 = new String(tmp2);
-                    String[] str = val2.split("/");
-                    product_varientid = str[4];
-
-                    Integer quantity = cartlist.get(i).getQty();
-
-                    items.put("variant_id", product_varientid.trim());
-                    items.put("quantity", quantity);
-                    line_items.put(items);
-                    jsonBody.put("line_items", line_items);
-                }
-            } else {
-
-
-                items.put("variant_id", product_varientid.trim());
-                items.put("quantity", product_qty);
-                line_items.put(items);
-                jsonBody.put("line_items", line_items);
-
-            }
-
-            jsonBody1.put("order", jsonBody);
-
-            Log.d("check JSON", jsonBody1.toString());
-
-
-            final String requestBody = jsonBody1.toString();
-
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.postch, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.i("VOLLEY", response);
-                    try {
-                        JSONObject obj = new JSONObject(response);
-                        String msg = obj.getString("msg");
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("VOLLEY", error.toString());
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
-
-                @Override
-                public byte[] getBody() throws AuthFailureError {
-                    try {
-                        return requestBody == null ? null : requestBody.getBytes("utf-8");
-//                        return requestBody == null;
-                    } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-                        return null;
-                    }
-                }
-
-                @Override
-                protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                    //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
-                    String statusCode = String.valueOf(response.statusCode);
-                    //Handling logic
-                    return super.parseNetworkResponse(response);
-                }
-//                @Override
-//                protected Response<String> parseNetworkResponse(NetworkResponse response) {
-//                    String responseString = "";
-//                    if (response != null) {
-//                        responseString = String.valueOf(response.statusCode);
-//                        // can get more details such as response.headers
-//                    }
-//                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-//                }
-            };
-
-            requestQueue.add(stringRequest);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void getDiscount() {
         discountlist.clear();
