@@ -36,7 +36,7 @@ public class ProductListModel {
     }
 
     public static void price(TextView textView, String cost) {
-        textView.setText("$" +cost);
+        textView.setText("₹ " + cost);
     }
 
     @BindingAdapter("imageUrl1")

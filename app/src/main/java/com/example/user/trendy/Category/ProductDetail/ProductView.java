@@ -202,6 +202,11 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 bundle.putString("product_qty", itemModel.getCount());
                 bundle.putString("totalcost", String.valueOf(itemModel.getCost()));
                 bundle.putString("tag", String.valueOf(itemModel.getProduct().getTags()));
+//                commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(itemModel.getCount()));
+                no_of_count = count.getText().toString();
+                String text = "gid://shopify/Product/" + id.trim();
+                String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
+                commanCartControler.AddToCartGrocery(converted.trim(), selectedID, Integer.parseInt(no_of_count));
                 Fragment fragment = new ShippingAddress();
                 fragment.setArguments(bundle);
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
@@ -351,7 +356,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
 
 
             product_price = view.findViewById(R.id.product_price);
-            product_price.setText("$ " + itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getPrice().toString());
+            product_price.setText(getResources().getString(R.string.Rs) + " " + itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getPrice().toString());
 
             recyclerView = view.findViewById(R.id.product_view_recycler);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
@@ -435,7 +440,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                         selectedweight = itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getWeight().toString() + " " + finalWeightunit;
 //                    Toast.makeText(getActivity(), rbn.getText(), Toast.LENGTH_SHORT).show();
 //adapter.notifyItemChanged(selectedID);
-                        product_price.setText("$ " + itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getPrice().toString());
+                        product_price.setText(getResources().getString(R.string.Rs) + " " + itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getPrice().toString());
 
                         itemModel.setPrice(selectedID);
                         itemModel.setProductid(String.valueOf(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getId()));

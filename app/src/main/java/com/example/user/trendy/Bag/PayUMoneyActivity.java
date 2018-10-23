@@ -165,10 +165,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         }
         totalamount = totalcost;
         if (totalamount != null) {
-            if (totalamount.contains("Rs")) {
                 String[] separated = totalamount.split(" ");
                 totalamount = separated[1];
-            }
         }
 
 
@@ -453,7 +451,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         btnradonline.setOnClickListener(this);
         btnradcod.setOnClickListener(this);
 
-        dialog.setCanceledOnTouchOutside(true);
+        dialog.setCanceledOnTouchOutside(false);
 
         btnsubmit1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -487,7 +485,22 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onClick(View view) {
                 // progressDialog.dismiss();
-                dialog.dismiss();
+                AlertDialog.Builder builder = new AlertDialog.Builder(PayUMoneyActivity.this);
+                builder.setMessage("Are you sure you want to cancel?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog1, int id) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog1, int id) {
+                                dialog1.cancel();
+                            }
+                        })
+                        .show();
+
+
 //                if (getApplicationContext() != null) {
 //                    finish();
 //                    startActivity(new Intent(PayUMoneyActivity.this, PayUMoneyActivity.class));
@@ -863,20 +876,18 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 discount_layout.setVisibility(View.VISIBLE);
                 int a = Integer.parseInt(totalcost) - amount;
                 totalcost = String.valueOf(a);
-                t_pay.setText(totalcost);
-                discount_price.setText(discounted_amount);
+                t_pay.setText(getResources().getString(R.string.Rs) + " " + totalcost);
+                discount_price.setText(getResources().getString(R.string.Rs) + " " + discounted_amount);
                 apply_coupon.setText("Your Applied Coupon Code is : " + coupon);
                 recycler_layout.setVisibility(View.GONE);
                 view_coupon.setText(R.string.view);
                 view_coupon.setVisibility(View.VISIBLE);
-            }
-            else
-            {
+            } else {
                 discount_layout.setVisibility(View.VISIBLE);
 //                int a = Integer.parseInt(totalcost) - amount;
-                discount_price.setText(totalcost);
+                discount_price.setText(getResources().getString(R.string.Rs) + " " + totalcost);
                 totalcost = String.valueOf(0);
-                t_pay.setText("0");
+                t_pay.setText(getResources().getString(R.string.Rs) + " 0");
                 apply_coupon.setText("Your Applied Coupon Code is : " + coupon);
                 recycler_layout.setVisibility(View.GONE);
                 view_coupon.setText(R.string.view);
