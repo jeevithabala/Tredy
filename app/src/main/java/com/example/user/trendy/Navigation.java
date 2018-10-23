@@ -34,12 +34,15 @@ import com.example.user.trendy.Bag.Bag;
 import com.example.user.trendy.Bag.Db.AddToCart_Model;
 import com.example.user.trendy.Bag.Db.DBHelper;
 import com.example.user.trendy.Category.Categories;
+import com.example.user.trendy.Category.CategoryProduct;
 import com.example.user.trendy.ForYou.ForYou;
 import com.example.user.trendy.Interface.AddRemoveCartItem;
 import com.example.user.trendy.Interface.CartController;
+import com.example.user.trendy.Interface.OnFilterDataCallBack;
 import com.example.user.trendy.Interface.OnNetworkCheckCallBack;
 import com.example.user.trendy.Login.LoginActiviy;
 import com.example.user.trendy.NetworkCheck.NetworkSchedulerService;
+import com.example.user.trendy.Search.Search;
 import com.example.user.trendy.Util.SharedPreference;
 import com.example.user.trendy.Whislist.Whislist;
 import com.facebook.AccessToken;
@@ -57,7 +60,7 @@ import java.util.List;
 
 
 public class Navigation extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener{
+        implements NavigationView.OnNavigationItemSelectedListener,AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener,OnFilterDataCallBack {
 
     FragmentManager fragmentManager;
     private int cart_count = 0;
@@ -72,8 +75,6 @@ public class Navigation extends AppCompatActivity
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
 
         init();
 
@@ -187,7 +188,7 @@ public class Navigation extends AppCompatActivity
 //        if (id == R.id.action_settings) {
 //            return true;
 //        } else
-        if (id == R.id.bag) {
+              if (id == R.id.bag) {
             FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
             transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
             transaction1.replace(R.id.home_container, new Bag(), "Bag");
@@ -195,6 +196,15 @@ public class Navigation extends AppCompatActivity
             transaction1.commit();
             return true;
         }
+       else if (id == R.id.searchBar) {
+            FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+            transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+            transaction1.replace(R.id.home_container, new Search(), "search");
+            transaction1.addToBackStack("ForYou");
+            transaction1.commit();
+            return true;
+        }
+
 
 
         return super.onOptionsItemSelected(item);
@@ -362,5 +372,20 @@ public class Navigation extends AppCompatActivity
     }
 
 
+    @Override
+    public void onFilterValueSelectCallBack(String minprice, String maxprice, String sortby, String collectionid, ArrayList<String> selectedFilterLists, String CollectionName) {
+        CategoryProduct categoryProduct = (CategoryProduct)getSupportFragmentManager().findFragmentByTag("categoryproduct");
+        categoryProduct.getFilterData(minprice,maxprice,sortby,collectionid,selectedFilterLists,CollectionName);
+//
+//        if (categoryProduct == null) {
+//            categoryProduct = new CategoryProduct();
+//        }
+//
+//        FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, categoryProduct, "categoryproduct");
+//        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+//        ft.addToBackStack("ForYou");
+//        ft.commit();
+
+    }
 }
 

@@ -132,9 +132,10 @@ public class AddToCart_Model extends BaseObservable implements Serializable {
     }
     @BindingAdapter("imageUrl")
     public static void loadImage(ImageView view, String imageUrl) {
+        if (imageUrl.equals("")){}else {
         Picasso.with(view.getContext())
                 .load(imageUrl)
-                .into(view);
+                .into(view);}
     }
 
 }

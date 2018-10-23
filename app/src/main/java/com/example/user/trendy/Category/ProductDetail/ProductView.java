@@ -55,6 +55,7 @@ import com.example.user.trendy.Interface.CommanCartControler;
 import com.example.user.trendy.Interface.ProductClickInterface;
 import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
+import com.example.user.trendy.Search.SearchModel;
 import com.example.user.trendy.Whislist.AddWhislistModel;
 import com.example.user.trendy.databinding.ProductViewBinding;
 import com.shopify.buy3.GraphCall;
@@ -171,7 +172,8 @@ public class ProductView extends Fragment implements ProductClickInterface {
             AddWhislistModel model = (AddWhislistModel) getArguments().getSerializable("category_id");
 
             id = model.getProduct_id();
-
+        }else if(product.trim().equals("search")){
+            id = getArguments().getString("product_id");
         } else {
             ProductModel detail = (ProductModel) getArguments().getSerializable("category_id");
 //            itemModel.setProduct(detail.getProduct());
