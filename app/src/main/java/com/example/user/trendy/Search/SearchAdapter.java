@@ -2,13 +2,19 @@ package com.example.user.trendy.Search;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.android.databinding.library.baseAdapters.BR;
+import com.example.user.trendy.Category.ProductDetail.ProductView;
 import com.example.user.trendy.Interface.FragmentRecyclerViewClick;
+import com.example.user.trendy.Interface.ProductClickInterface;
 import com.example.user.trendy.R;
 import com.example.user.trendy.databinding.SearchAdapterBinding;
 
@@ -19,10 +25,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     ArrayList<SearchModel> itemsList;
     private FragmentManager fragmentManager;
     private LayoutInflater layoutInflater;
+    ProductClickInterface productClickInterface;
 
-    public SearchAdapter(Context mContext, ArrayList<SearchModel> itemsList) {
+    public SearchAdapter(Context mContext, ArrayList<SearchModel> itemsList,ProductClickInterface productClickInterface) {
         this.mContext = mContext;
         this.itemsList = itemsList;
+        this.productClickInterface=productClickInterface;
     }
 
     @Override
@@ -41,6 +49,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         holder.binding.setSearchproduct(itemsList.get(position));
+        holder.binding.setVariable(BR.itemclick,productClickInterface);
+        holder.binding.executePendingBindings();
     }
 
     @Override
@@ -59,42 +69,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             this.binding = itembinding;
 
 
-//            binding.setItemclick(new FragmentRecyclerViewClick() {
-//                @Override
-//                public void onClickPostion() {
-//
-//                    discountinterface.discountValue(itemsList.get(getAdapterPosition()).getValue(), itemsList.get(getAdapterPosition()).getTitle());
-//
-//                }
-//            });
         }
 
 
     }
-
-//    public void filter(String queryText)
-//    {
-//        itemsList.clear();
-//
-//        if(queryText.isEmpty())
-//        {
-//            itemsList.addAll(copyList);
-//        }
-//        else
-//        {
-//
-//            for(String name: copyList)
-//            {
-//                if(name.toLowerCase().contains(queryText.toLowerCase()))
-//                {
-//                    itemsList.add(name);
-//                }
-//            }
-//
-//        }
-//
-//        notifyDataSetChanged();
-//    }
 
 
 }
