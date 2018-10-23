@@ -156,7 +156,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
         SharedPreference.saveData("total", String.valueOf(commanCartControler.getTotalPrice()), getActivity());
-        totalcost.setText("Rs. "+Integer.toString(commanCartControler.getTotalPrice()));
+        totalcost.setText(getResources().getString(R.string.Rs) + " " + Integer.toString(commanCartControler.getTotalPrice()));
 
 
     }

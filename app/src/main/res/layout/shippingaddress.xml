@@ -688,7 +688,7 @@
                             android:fontFamily="@font/lucidasansdemibold"
                             android:gravity="center"
                             android:padding="5dp"
-                            android:text="Few of the products in your cart cannot be shipped to your given"
+                            android:text=""
                             android:textColor="@color/textcolor"
                             android:textSize="11dp" />
 
@@ -700,7 +700,7 @@
                             android:fontFamily="@font/lucidasansdemibold"
                             android:gravity="center"
                            android:paddingBottom="5dp"
-                            android:text="Few of the products in your cart cannot be shipped to your given"
+                            android:text=""
                             android:textColor="@color/colorAccent"
                             android:textSize="11dp"
                             />

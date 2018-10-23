@@ -112,6 +112,8 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                             status = "Transaction Declined!";
                         } else if (html.indexOf("Success") != -1) {
                             status = "Transaction Successful!";
+
+
                         } else if (html.indexOf("Aborted") != -1) {
                             status = "Transaction Cancelled!";
                         } else {

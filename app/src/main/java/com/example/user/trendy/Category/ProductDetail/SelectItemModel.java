@@ -155,7 +155,7 @@ public class SelectItemModel extends BaseObservable {
     {
         if(product!=null) {
             if (product.getVariants() != null)
-                textView.setText("Rs . "+product.getVariants().getEdges().get(i).getNode().getPrice().toString());
+                textView.setText("₹ " +product.getVariants().getEdges().get(i).getNode().getPrice().toString());
         }
     }
 
