@@ -44,6 +44,7 @@ import com.example.user.trendy.Filter.Price.PriceAdapter;
 import com.example.user.trendy.Filter.Price.PriceModel;
 import com.example.user.trendy.Filter.SortBy.SortByAdapter;
 import com.example.user.trendy.Filter.SortBy.SortByModel;
+import com.example.user.trendy.Interface.OnFilterDataCallBack;
 import com.example.user.trendy.Navigation;
 import com.example.user.trendy.Product.ProductList;
 import com.example.user.trendy.R;
@@ -105,6 +106,8 @@ public class Filter_Fragment extends Fragment {
         btn_filter = view.findViewById(R.id.btn_filter1);
         type = view.findViewById(R.id.type);
 
+
+
         filterAdapter = new FilterAdapter(getActivity(), filterModelArrayList, getFragmentManager());
         filter_recycler.setAdapter(filterAdapter);
         filter_recycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -117,7 +120,12 @@ public class Filter_Fragment extends Fragment {
         sortby_recycler.setAdapter(sortByAdapter);
         sortby_recycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
+        selectedFilterList = new ArrayList<>();
 
+        if(selectedFilterList.size()>0)
+        {
+            Toast.makeText(getActivity(), String.valueOf(selectedFilterList.size()), Toast.LENGTH_SHORT).show();
+        }
         sortlist.clear();
         sortByModelArrayList.clear();
         sortlist.add("Price : Low to High");
@@ -135,7 +143,6 @@ public class Filter_Fragment extends Fragment {
             public void onClick(View view) {
                 Log.e("inside", "came");
 
-                selectedFilterList = new ArrayList<>();
 
                 selectedFilterList = ((FilterAdapter) filterAdapter).getSelectedContactList();
                 selectedsortList = ((SortByAdapter) sortByAdapter).getSelectedSortList();
@@ -158,23 +165,20 @@ public class Filter_Fragment extends Fragment {
                         sortlistkey = "sortBy=min_price&order=asc";
                     }
                 }
-                Fragment ProductList = new CategoryProduct();
-                Bundle bundle = new Bundle();
-                bundle.putString("collection", "filter");
-                bundle.putString("min_price", min_price);
-                bundle.putString("max_price", max_price);
-                bundle.putString("sortby",sortlistkey);
-                bundle.putString("collectionid", collectionid);
-                bundle.putString("dynamicKey", dynamicKey);
-                bundle.putStringArrayList("selectedFilterList", selectedFilterList);
-                ProductList.setArguments(bundle);
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction.replace(R.id.home_container, ProductList, "categoryproduct");
-                transaction.addToBackStack("Categories");
-                transaction.commit();
+
+
+                OnFilterDataCallBack onFilterDataCallBack = (OnFilterDataCallBack)getActivity();
+                onFilterDataCallBack.onFilterValueSelectCallBack(min_price,max_price,sortlistkey,collectionid,selectedFilterList,dynamicKey);
+
+
+//
+
+                getActivity().onBackPressed();
+
+//                getFragmentManager().beginTransaction().remove(Filter_Fragment.this).commit();
 
 //                postFilter();
+
             }
         });
 

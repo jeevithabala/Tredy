@@ -81,10 +81,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     GraphClient graphClient;
     RecyclerView recyclerView;
     ArrayList<ProductModel> productDetalList = new ArrayList<>();
+    ArrayList<ProductModel> productDetalList1 = new ArrayList<>();
     ArrayList vendorarray = new ArrayList();
     ArrayList producttype = new ArrayList();
     ArrayList producttag = new ArrayList();
     ProductAdapter productAdapter;
+    ProductAdapter productAdapter1;
     String productid = "", productidapi = "", price = "";
     String checkoutId;
     TextView category_title;
@@ -95,7 +97,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     CategoryModel detail = new CategoryModel();
     String id, title="";
     private RequestQueue mRequestQueue;
-    String min_price = "", max_price = "", dynamicKey;
+    String min_price = "", max_price = "", dynamicKey,dynamicKey1;
     ArrayList<String> selectedFilterList = new ArrayList<>();
     private String collectionname;
     CartController cartController;
@@ -103,6 +105,8 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     private int requestCount = 1, requestCount1 = 1;
     RequestQueue requestQueue;
     private String sortbykey;
+
+    private Boolean isFilterData=false;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -125,6 +129,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
 
         recyclerView = view.findViewById(R.id.product_recyclerview);
+
 
 
 //        isViewWithCatalog = !isViewWithCatalog;
@@ -174,12 +179,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             id = newArrivalModel.getCollectionid().trim();
             title = newArrivalModel.getCollectionTitle();
         } else if (category.trim().equals("filter")) {
-            min_price = getArguments().getString("min_price");
-            max_price = getArguments().getString("max_price");
-            sortbykey = getArguments().getString("sortby");
-            id = getArguments().getString("collectionid");
-            selectedFilterList = getArguments().getStringArrayList("selectedFilterList");
-            dynamicKey = getArguments().getString("dynamicKey");
+
             Log.e("iddc", id);
 
         }
@@ -195,25 +195,25 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         category_title.setText(title);
         SharedPreference.saveData("collectionid", id, getActivity());
 
-        if (category.trim().equals("filter")) {
-            postFilter();
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
-                }
-
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-
-                    if (isLastItemDisplaying(recyclerView)) {
-                        //Calling the method getdata again
-                        postFilter();
-                    }
-                }
-            });
-        } else {
+//        if (isFilterData=true) {
+//            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//                @Override
+//                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                    super.onScrollStateChanged(recyclerView, newState);
+//                }
+//
+//                @Override
+//                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                    super.onScrolled(recyclerView, dx, dy);
+//
+//                    if (isLastItemDisplaying(recyclerView)) {
+//                        //Calling the method getdata again
+//                        postFilter();
+//                    }
+//                }
+//            });
+//        }
+//        else {
 //            requestCount=1;
 
 //            collectionList(id.trim(),requestCount);
@@ -231,18 +231,57 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
                     if (isLastItemDisplaying(recyclerView)) {
                         //Calling the method getdata again
-                        getData();
+                        if(isFilterData==true)
+                        {
+                            postFilter();
+                        }else {
+                            getData();
+                        }
                     }
                 }
             });
 
 
-        }
+//        }
 
 
     }
 
+    public void getFilterData(String minprice,String maxprice,String sortby,String collectionid,ArrayList<String> selectedFilterLists ,String CollectionName    ){
+
+
+        isFilterData=true;
+
+        productDetalList1.clear();
+
+        min_price = minprice;
+        max_price = maxprice;
+        sortbykey = sortby;
+        id = collectionid;
+        selectedFilterList = selectedFilterLists;
+        dynamicKey1 = CollectionName;
+
+        postFilter();
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//            }
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//
+//                if (isLastItemDisplaying(recyclerView)) {
+//                    //Calling the method getdata again
+//                    postFilter();
+//                }
+//            }
+//        });
+
+    }
     public void postFilter() {
+        isFilterData=true;
         requestQueue.add(postfilter(id, requestCount1));
         Log.d("request counter1", String.valueOf(requestCount1));
         requestCount1++;
@@ -268,8 +307,8 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             for (int i = 0; i < selectedFilterList.size(); i++) {
                 String type = selectedFilterList.get(i).trim();
                 Log.e("type", type);
-                food1.put("name", dynamicKey);
-                food1.put("value", "Filter" + " " + dynamicKey + " " + type);
+                food1.put("name", dynamicKey1);
+                food1.put("value", "Filter" + " " + dynamicKey1 + " " + type);
             }
             food.put(food1);
             jsonBody.put("food", food);
@@ -319,12 +358,15 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                                         String imagesrc = object.getString("src");
                                         ProductModel productModel = new ProductModel(productidapi, min_price, title, imagesrc);
                                         Log.e("image", productidapi + imagesrc);
-                                        productDetalList.add(productModel);
+                                        productDetalList1.add(productModel);
                                     }
 
 
                                 }
-                                productAdapter.notifyDataSetChanged();
+
+                                productAdapter1 = new ProductAdapter(getActivity(), productDetalList1, getFragmentManager(), CategoryProduct.this);
+                                recyclerView.setAdapter(productAdapter1);
+                                productAdapter1.notifyDataSetChanged();
                             } catch (JSONException e1) {
                                 e1.printStackTrace();
 
@@ -380,6 +422,8 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     }
 
     private void getData() {
+//        isFilterData=false;
+
         requestQueue.add(collectionList(id, requestCount));
         Log.d("request counter", String.valueOf(requestCount));
         requestCount++;
@@ -588,10 +632,17 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 //                bundle.putStringArrayList("producttag", producttag);
 //                bundle.putStringArrayList("producttype", producttype);
                 fragment.setArguments(bundle);
-                FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "filter");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                ft.addToBackStack(null);
-                ft.commit();
+//                ft.addToBackStack(null);
+                if(getFragmentManager().findFragmentByTag("filter")==null) {
+                    ft.addToBackStack("filter");
+                    ft.commit();
+                }
+                else {
+                    ft.commit();
+                }
+
 
                 break;
 
