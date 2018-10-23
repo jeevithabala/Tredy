@@ -1,5 +1,6 @@
 package com.example.user.trendy.Groceries;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -59,6 +60,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
     CartController cartController;
     CommanCartControler commanCartControler;
     int cost;
+    private ProgressDialog progressDialog;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -152,7 +154,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
 
                 Bundle bundle = new Bundle();
                 bundle.putString("collection", "allcollection");
-                bundle.putString("totalcost",Integer.toString(cost));
+                bundle.putString("totalcost", Integer.toString(cost));
                 Fragment fragment = new ShippingAddress();
                 fragment.setArguments(bundle);
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
@@ -183,6 +185,10 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
 
 
     private void getCollection(String trim) {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("loading, please wait...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
         Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
                 .node(new ID(trim.trim()), nodeQuery -> nodeQuery
                         .onCollection(collectionQuery -> collectionQuery
@@ -268,6 +274,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        progressDialog.dismiss();
                         adapter.notifyDataSetChanged();
                     }
                 });
@@ -275,7 +282,12 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
 
             @Override
             public void onFailure(@NonNull GraphError error) {
-
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                    }
+                });
             }
         });
     }

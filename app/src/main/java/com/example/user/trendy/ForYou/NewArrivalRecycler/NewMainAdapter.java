@@ -1,31 +1,37 @@
 package com.example.user.trendy.ForYou.NewArrivalRecycler;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import com.example.user.trendy.Category.CategoryProduct;
 import com.example.user.trendy.ForYou.NewArrival.NewArrivalAdapter;
 import com.example.user.trendy.ForYou.NewArrival.NewArrivalModel;
 import com.example.user.trendy.R;
 
 import java.util.ArrayList;
 
+import static com.example.user.trendy.ForYou.ForYou.getNewArrival;
 
 
 public class NewMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     private ArrayList<Object> items;
-    private final int HORIZONTAL = 0;
-    private final int VERTICAL = 2;
-    private final int HORIZONTAL1 = 1;
+//    private final int HORIZONTAL = 0;
+    private final int VERTICAL = 1;
+    private final int HORIZONTAL1 = 0;
     ArrayList<NewArrivalModel> newArrival;
     FragmentManager fragmentManager;
 
@@ -51,10 +57,10 @@ public class NewMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         View view;
         RecyclerView.ViewHolder holder;
         switch (viewType) {
-            case HORIZONTAL:
-                view = inflater.inflate(R.layout.blank, parent, false);
-                holder = new HorizontalViewHolder(view);
-                break;
+//            case HORIZONTAL:
+//                view = inflater.inflate(R.layout.blank, parent, false);
+//                holder = new HorizontalViewHolder(view);
+//                break;
 
             case HORIZONTAL1:
                 view = inflater.inflate(R.layout.newarrival1, parent, false);
@@ -63,14 +69,14 @@ public class NewMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 break;
 
             case VERTICAL:
-                view = inflater.inflate(R.layout.blank, parent, false);
+                view = inflater.inflate(R.layout.blank1, parent, false);
                 holder = new VerticalViewHolder(view);
                 break;
 
 
 
             default:
-                view = inflater.inflate(R.layout.blank, parent, false);
+                view = inflater.inflate(R.layout.blank1, parent, false);
                 holder = new VerticalViewHolder(view);
 
                 break;
@@ -85,10 +91,10 @@ public class NewMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
 
-        if (holder.getItemViewType() == HORIZONTAL)
-            topSelling((HorizontalViewHolder) holder);
+//        if (holder.getItemViewType() == HORIZONTAL)
+//            topSelling((HorizontalViewHolder) holder);
 
-        else if (holder.getItemViewType() == VERTICAL)
+         if (holder.getItemViewType() == VERTICAL)
             bestCollection((VerticalViewHolder) holder);
 
         else if (holder.getItemViewType() == HORIZONTAL1)
@@ -102,14 +108,20 @@ public class NewMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void bestCollection(VerticalViewHolder holder) {
 
 
-        Log.d("Adapter", "come");
-//
-//        TopCollectionAdapter adapter1 = new TopCollectionAdapter(getBestCollection());
-//        holder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-//        holder.recyclerView.setAdapter(adapter1);
-    //    holder.bestselling.setText("j");
-//        Log.d("collectiontitle", "" + getBestCollection().get(0).getCollectionTitle());
-
+       holder.see_all.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               Fragment fragment = new CategoryProduct();
+               Bundle bundle = new Bundle();
+               bundle.putString("collection", "newarrival");
+               bundle.putSerializable("category_id", getNewArrival().get(0));
+               fragment.setArguments(bundle);
+               FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
+               ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+               ft.addToBackStack("ForYou");
+               ft.commit();
+           }
+       });
     }
 
     //
@@ -134,17 +146,16 @@ public class NewMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemCount() {
         Log.e("item Sizelist",""+ String.valueOf(newArrival.size()));
-        return 3;
+        return 2;
     }
 
     @Override
     public int getItemViewType(int position) {
         if (position == 0)
-            return HORIZONTAL;
-        else if (position == 2)
-            return VERTICAL;
-        else
             return HORIZONTAL1;
+        else
+            return VERTICAL;
+
     }
 
 //    public class AllView extends RecyclerView.ViewHolder{
@@ -174,11 +185,11 @@ public class NewMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public class VerticalViewHolder extends RecyclerView.ViewHolder {
         RecyclerView recyclerView;
-        TextView bestselling;
+      LinearLayout see_all;
 
         VerticalViewHolder(View itemView) {
             super(itemView);
-         //  bestselling = itemView.findViewById(R.id.category_title);
+            see_all = itemView.findViewById(R.id.see_all);
            // recyclerView = itemView.findViewById(R.id.bestselling_recyclerView);
         }
     }

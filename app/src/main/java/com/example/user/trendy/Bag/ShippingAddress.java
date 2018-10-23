@@ -91,7 +91,10 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.shippingaddress, container, false);
 
-        ((Navigation) getActivity()).getSupportActionBar().setTitle("Shipping");
+        if(getActivity()!=null){
+            ((Navigation) getActivity()).getSupportActionBar().setTitle("Shipping");
+
+        }
 
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
@@ -465,7 +468,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     }
 
     public void getdataDB(String state) {
-        if (!check.trim().equals("productview")) {
+//        if (!check.trim().equals("productview")) {
             placing_checkin = 0;
             include_state = "";
             exclude_state = "";
@@ -510,7 +513,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                             block = "true";
                             commanCartControler.UpdateShipping(cartList.get(i).getProduct_varient_id().trim(), "false");
                             layout_placing.setVisibility(View.VISIBLE);
-                            placing.setText("Few of the products in your cart cannot be shipped to your given " + state + ".");
+                            //placing.setText("Few of the products in your cart cannot be shipped to your given " + state + ".");
                             placing1.setText(getResources().getText(R.string.link));
                         } else {
                             Log.e("tag", "not there");
@@ -553,79 +556,79 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         placing1.setText(R.string.link);
                     }
 
-
                 }
 
 
             }
-        } else {
-            placing_checkin = 1;
-            include_state = "";
-            exclude_state = "";
-            String exclude = "EXCLUDES";
-            String include = "INCLUDES";
-            block = "false";
-            if (tag.toLowerCase().contains(exclude.toLowerCase())) {
-
-                getInclude.clear();
-
-                String[] items1 = tag.split(",");
-                for (String item : items1) {
-                    getInclude.add(item);
-                }
-                Log.d("getsize", String.valueOf(getInclude.size()));
-                for (int j = 0; j < getInclude.size(); j++) {
-                    if (getInclude.get(j).toLowerCase().contains(exclude.toLowerCase())) {
-                        String[] item = getInclude.get(j).split(":");
-                        exclude_state = item[1];
-                        Log.d("exclude_state", exclude_state);
-                    }
-                    Log.d("state", state.trim().toLowerCase());
-                    Log.d("exclude", " " + exclude_state.trim().toLowerCase());
-                    String excludespace = exclude_state.replace(" ", "");
-                    String statespace = state.replace(" ", "");
-//                if (tag.toLowerCase().contains(tagcheck.toLowerCase())) {
-                    if (excludespace.trim().toLowerCase().contains(statespace.trim().toLowerCase())) {
-                        block = "true";
-                        layout_placing.setVisibility(View.VISIBLE);
-                        placing.setText("Few of the products in your cart cannot be shipped to your given " + state + ".");
-                        placing1.setText(getResources().getText(R.string.link));
-                    } else {
-                        Log.e("tag", "not there");
-                        layout_placing.setVisibility(View.GONE);
-                    }
-                }
-
-            }
-
-            if (tag.toLowerCase().contains(include.toLowerCase())) {
-
-                getInclude.clear();
-                String[] items = tag.split(",");
-                for (String item : items) {
-                    getInclude.add(item);
-                }
-                for (int j = 0; j < getInclude.size(); j++) {
-                    if (getInclude.get(j).toLowerCase().contains(include.toLowerCase())) {
-                        String[] item = getInclude.get(j).split(":");
-                        include_state = item[1];
-                        Log.d("include_state", include_state);
-                    }
-
-                }
-                String excludespace = include_state.replace(" ", "");
-                String statespace = state.replace(" ", "");
-
-                if (excludespace.trim().toLowerCase().contains(statespace.trim().toLowerCase())) {
-                    layout_placing.setVisibility(View.GONE);
-
-                } else {
-                    block = "true";
-                    layout_placing.setVisibility(View.VISIBLE);
-                    placing.setText("Few of the products in your cart cannot be shipped to your given " + state + "." + " Few Products can be Shipped only in" + " " + include_state + ".");
-                }
-            }
-        }
+//        }
+//        else {
+//            placing_checkin = 1;
+//            include_state = "";
+//            exclude_state = "";
+//            String exclude = "EXCLUDES";
+//            String include = "INCLUDES";
+//            block = "false";
+//            if (tag.toLowerCase().contains(exclude.toLowerCase())) {
+//
+//                getInclude.clear();
+//
+//                String[] items1 = tag.split(",");
+//                for (String item : items1) {
+//                    getInclude.add(item);
+//                }
+//                Log.d("getsize", String.valueOf(getInclude.size()));
+//                for (int j = 0; j < getInclude.size(); j++) {
+//                    if (getInclude.get(j).toLowerCase().contains(exclude.toLowerCase())) {
+//                        String[] item = getInclude.get(j).split(":");
+//                        exclude_state = item[1];
+//                        Log.d("exclude_state", exclude_state);
+//                    }
+//                    Log.d("state", state.trim().toLowerCase());
+//                    Log.d("exclude", " " + exclude_state.trim().toLowerCase());
+//                    String excludespace = exclude_state.replace(" ", "");
+//                    String statespace = state.replace(" ", "");
+////                if (tag.toLowerCase().contains(tagcheck.toLowerCase())) {
+//                    if (excludespace.trim().toLowerCase().contains(statespace.trim().toLowerCase())) {
+//                        block = "true";
+//                        layout_placing.setVisibility(View.VISIBLE);
+//                        //placing.setText("Few of the products in your cart cannot be shipped to your given " + state + ".");
+//                        placing1.setText(getResources().getText(R.string.link));
+//                    } else {
+//                        Log.e("tag", "not there");
+//                        layout_placing.setVisibility(View.GONE);
+//                    }
+//                }
+//
+//            }
+//
+//            if (tag.toLowerCase().contains(include.toLowerCase())) {
+//
+//                getInclude.clear();
+//                String[] items = tag.split(",");
+//                for (String item : items) {
+//                    getInclude.add(item);
+//                }
+//                for (int j = 0; j < getInclude.size(); j++) {
+//                    if (getInclude.get(j).toLowerCase().contains(include.toLowerCase())) {
+//                        String[] item = getInclude.get(j).split(":");
+//                        include_state = item[1];
+//                        Log.d("include_state", include_state);
+//                    }
+//
+//                }
+//                String excludespace = include_state.replace(" ", "");
+//                String statespace = state.replace(" ", "");
+//
+//                if (excludespace.trim().toLowerCase().contains(statespace.trim().toLowerCase())) {
+//                    layout_placing.setVisibility(View.GONE);
+//
+//                } else {
+//                    block = "true";
+//                    layout_placing.setVisibility(View.VISIBLE);
+//                    placing.setText("Few of the products in your cart cannot be shipped to your given " + state + "." + " Few Products can be Shipped only in" + " " + include_state + ".");
+//                }
+//            }
+//        }
 
     }
 
@@ -657,15 +660,17 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 lastnamestring = response.data().getCustomer().getLastName();
                 emailstring = response.data().getCustomer().getEmail();
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        email.setText(emailstring);
-                        first_name.setText(firstnamestring);
-                        last_name.setText(lastnamestring);
-                    }
-                });
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            email.setText(emailstring);
+                            first_name.setText(firstnamestring);
+                            last_name.setText(lastnamestring);
+                        }
+                    });
 
+                }
             }
 
             @Override

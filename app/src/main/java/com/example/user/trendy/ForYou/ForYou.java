@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,6 +46,8 @@ import com.example.user.trendy.ForYou.TopCollection.TopCollectionAdapter;
 import com.example.user.trendy.ForYou.TopCollection.TopCollectionModel;
 import com.example.user.trendy.ForYou.TopSelling.TopSellingAdapter;
 import com.example.user.trendy.ForYou.TopSelling.TopSellingModel;
+import com.example.user.trendy.ForYou.ViewModel.ForYouViewModel;
+import com.example.user.trendy.ForYou.ViewModel.ForyouInterface;
 import com.example.user.trendy.Groceries.Groceries;
 import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
@@ -72,7 +75,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-public class ForYou extends Fragment implements ResultCallBackInterface {
+public class ForYou extends Fragment implements ResultCallBackInterface, ForyouInterface {
 
 
     private ArrayList<Object> objects = new ArrayList<>();
@@ -85,14 +88,6 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
     static ArrayList<TopCollectionModel> topCollectionModelArrayList = new ArrayList<>();
     static ArrayList<NewArrivalModel> newArrivalModelArrayList = new ArrayList<>();
     static ArrayList<GroceryHomeModel> GroceryHomeModels = new ArrayList<>();
-    TopSellingAdapter topSellingAdapter;
-    TopCollectionAdapter topCollectionAdapter;
-    String topsellingid = "Z2lkOi8vc2hvcGlmeS9Db2xsZWN0aW9uLzM0NTA2OTg5NA==";
-    String bestseller = "Z2lkOi8vc2hvcGlmeS9Db2xsZWN0aW9uLzMyMTgxNzI4Ng==";
-    String newproduct = "Z2lkOi8vc2hvcGlmeS9Db2xsZWN0aW9uLzMzMjM4MTIyNjE1";
-    String topsellingid1 = "345069894";
-    String bestseller1 = "321817286";
-    String newproduct1 = "33238122615";
     private RequestQueue mRequestQueue;
     MainAdapter adapter;
     AllCollectionAdapter allCollectionAdapter;
@@ -121,22 +116,18 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
     ArrayList<NewArrivalModel> newArrivalModelArray = new ArrayList<>();
     private ArrayList<GroceryHomeModel> GroceryHomeModelArrayList = new ArrayList<>();
     Toolbar toolbar;
-    private String converted="";
+    private String converted = "";
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.foryou, container, false);
 
         ((Navigation) getActivity()).getSupportActionBar().setTitle("Home");
 
-//String collectionids="345069894,321817286,33238122615";
+        ForYouViewModel forYouViewModel = new ForYouViewModel(getActivity(), this);
+
         topselling_recyclerview = view.findViewById(R.id.main_recyclerview);
         allcollection = view.findViewById(R.id.allcollection);
         resultCallBackInterface = (ResultCallBackInterface) this;
-//        grcery = view.findViewById(R.id.grocery);
-        String id = "58881703997";
-        String text = "gid://shopify/Collection/" + id.trim();
-         converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-        Log.e("coverted1", converted.trim());
 
 
         graphClient = GraphClient.builder(getActivity())
@@ -153,10 +144,8 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
 
         topselling_recyclerview.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         getObject().clear();
-        banner();
-        collectionList();
-        getCollection(converted.trim());
-        if (getTopSellingCollection() != null || getNewArrival() != null||getGroceryHomeModels()!=null) {
+
+        if (getTopSellingCollection() != null || getNewArrival() != null || getGroceryHomeModels() != null) {
             adapter = new MainAdapter(getActivity(), getObject(), getFragmentManager());
             topselling_recyclerview.setAdapter(adapter);
         }
@@ -219,6 +208,11 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
 
             @Override
             public void run() {
+                topSellingModelArrayList.clear();
+                topCollectionModelArrayList.clear();
+                newArrivalModelArrayList.clear();
+
+                Log.e("array1", String.valueOf(arrayList.size()));
                 for (int i = 0; i < arrayList.size(); i++) {
                     TopSellingModel topSellingModel = new TopSellingModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
                     topSellingModel.setCollectionid(arrayList.get(i).getCollectionid());
@@ -258,7 +252,8 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
 
     @Override
     public void grocery(ArrayList<GroceryHomeModel> arrayList) {
-        for (int i = 0; i <arrayList.size() ; i++) {
+        GroceryHomeModels.clear();
+        for (int i = 0; i < arrayList.size(); i++) {
             GroceryHomeModel GroceryHomeModel = new GroceryHomeModel();
             GroceryHomeModel.setProduct(arrayList.get(i).getProduct());
             GroceryHomeModel.setQty("1");
@@ -275,356 +270,6 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
         });
     }
 
-    private void getCollection(String trim) {
-        GroceryHomeModels.clear();
-        GroceryHomeModelArrayList.clear();
-        Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
-                .node(new ID(trim.trim()), nodeQuery -> nodeQuery
-                        .onCollection(collectionQuery -> collectionQuery
-                                .title()
-                                .products(arg -> arg.first(10), productConnectionQuery -> productConnectionQuery
-                                        .edges(productEdgeQuery -> productEdgeQuery
-                                                .node(productQuery -> productQuery
-                                                        .title()
-                                                        .productType()
-                                                        .description()
-                                                        .descriptionHtml()
-                                                        .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
-                                                                .edges(imageEdgeQuery -> imageEdgeQuery
-                                                                        .node(imageQuery -> imageQuery
-                                                                                .src()
-                                                                        )
-                                                                )
-                                                        )
-                                                        .tags()
-                                                        .options(option->option.name())
-                                                        .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
-                                                                .edges(variantEdgeQuery -> variantEdgeQuery
-                                                                        .node(productVariantQuery -> productVariantQuery
-                                                                                .price()
-                                                                                .title()
-                                                                                .image(args -> args.src())
-                                                                                .weight()
-                                                                                .weightUnit()
-                                                                                .available()
-                                                                        )
-                                                                )
-                                                        )
-                                                )
-                                        )
-
-
-                                ))));
-
-        graphClient.queryGraph(query).enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
-            @Override
-            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
-                Storefront.Collection product = (Storefront.Collection) response.data().getNode();
-
-                for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
-                    GroceryHomeModel GroceryHomeModel = new GroceryHomeModel();
-                    GroceryHomeModel.setProduct(productEdge.getNode());
-                    GroceryHomeModel.setTitle(product.getTitle());
-                    GroceryHomeModel.setQty("1");
-                    GroceryHomeModelArrayList.add(GroceryHomeModel);
-                }
-                resultCallBackInterface.grocery(GroceryHomeModelArrayList);
-                Log.e("GroceryHomeModelArrayList", String.valueOf(GroceryHomeModelArrayList.size()));
-                Log.e("GroceryHomeModelArrayList", String.valueOf(product.getProducts().getEdges().size()));
-                Log.e("productch", product.getProducts().getEdges().get(0).getNode().getTitle());
-                }
-
-            @Override
-            public void onFailure(@NonNull GraphError error) {
-
-            }
-        });
-    }
-
-    private void collectionList1() {
-
-        RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.collectionid,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-
-                            JSONObject obj = new JSONObject(response);
-                            topSellingModelArrayList.clear();
-                            topCollectionModelArrayList.clear();
-                            newArrivalModelArrayList.clear();
-                            topSellingModelArray.clear();
-                            topCollectionModelArray.clear();
-                            newArrivalModelArray.clear();
-
-
-
-                            Iterator keys = obj.keys();
-                            Log.e("Keys", "" + String.valueOf(keys));
-
-                            while (keys.hasNext()) {
-                                String dynamicKey = (String) keys.next();
-                                Log.d("Dynamic Key", "" + dynamicKey);
-
-                                JSONArray array = null;
-                                try {
-
-                                    array = obj.getJSONArray(dynamicKey);
-
-
-                                    for (int i = 0; i < array.length(); i++) {
-                                        Log.e("inti", String.valueOf(i));
-                                        JSONObject object1 = array.getJSONObject(i);
-                                        collectionid = object1.getString("id");
-                                        collectionname = object1.getString("title");
-                                        if(collectionname.trim().toLowerCase().equals("home page")){
-                                            collectionname="Trending";
-                                        }
-
-                                        JSONArray array1 = object1.getJSONArray("products");
-                                        for (int j = 0; j < array1.length(); j++) {
-                                            JSONObject objec = array1.getJSONObject(j);
-
-                                            title = objec.getString("title");
-                                            Log.e("title_h", title);
-                                            if(title.trim().toLowerCase().equals("home page")){
-                                                title="Treding";
-                                            }
-                                            JSONArray varientsarray = objec.getJSONArray("variants");
-                                            for (int k = 0; k < varientsarray.length(); k++) {
-                                                JSONObject objec1 = varientsarray.getJSONObject(k);
-
-                                                id = objec1.getString("product_id");
-                                                price = objec1.getString("price");
-
-                                            }
-                                            JSONArray array2 = objec.getJSONArray("images");
-                                            for (int l = 0; l < array2.length(); l++) {
-                                                JSONObject objec1 = array2.getJSONObject(l);
-                                                image = objec1.getString("src");
-                                            }
-                                            if (i == 0) {
-                                                TopSellingModel topSellingModel = new TopSellingModel(id, title, price, image, collectionname);
-                                                Log.e("product", title);
-                                                topSellingModel.setCollectionid(collectionid);
-                                                topSellingModelArray.add(topSellingModel);
-
-                                            } else if (i == 1) {
-                                                Log.e("iiii", String.valueOf(i));
-                                                TopCollectionModel topCollectionModel = new TopCollectionModel(id, title, price, image, collectionname);
-                                                Log.e("product", title);
-                                                topCollectionModel.setCollectionid(collectionid);
-                                                topCollectionModelArray.add(topCollectionModel);
-
-//                                                resultCallBackInterface.bestCollection(collectionid, id, title, price, image, collectionname);
-                                            } else if (i == 2) {
-                                                Log.e("iiii", String.valueOf(i));
-                                                NewArrivalModel newArrivalModel = new NewArrivalModel(id, title, price, image, collectionname);
-                                                Log.e("product", title);
-                                                newArrivalModel.setCollectionid(collectionid);
-                                                newArrivalModelArray.add(newArrivalModel);
-
-//                                                resultCallBackInterface.newArrivals(collectionid, id, title, price, image, collectionname);
-                                            }
-
-                                        }
-                                    }
-
-                                    resultCallBackInterface.topSelling(topSellingModelArray);
-                                    resultCallBackInterface.bestCollection(topCollectionModelArray);
-                                    resultCallBackInterface.newArrivals(newArrivalModelArray);
-                                    progressDialog.dismiss();
-                                } catch (JSONException e1) {
-                                    e1.printStackTrace();
-
-                                }
-                            }
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                    }
-                }) {
-
-        };
-        stringRequest.setTag("categories_page");
-        // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
-
-        int socketTimeout = 10000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        stringRequest.setRetryPolicy(policy);
-        mRequestQueue.add(stringRequest);
-
-    }
-
-
-    private void collectionList() {
-         progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setMessage("loading, please wait...");
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
-        mRequestQueue = Volley.newRequestQueue(getActivity());
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.navigation,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-
-
-                            JSONObject obj = new JSONObject(response);
-                            Log.e("response1", response);
-                            allCollectionModelArrayList.clear();
-                            JSONObject menu = obj.getJSONObject("menu");
-                            String title = menu.getString("title");
-                            JSONArray jsonarray = menu.getJSONArray("items");
-
-                            for (int i = 0; i < jsonarray.length(); i++) {
-                                JSONObject collectionobject = jsonarray.getJSONObject(i);
-
-
-                                String id = "" + collectionobject.getString("subject_id");
-                                String collectiontitle = collectionobject.getString("title");
-                                String nav = collectionobject.getString("type");
-
-
-                                Log.e("id", id);
-                                Log.e("collectiontitle", collectiontitle);
-
-                                if (id.trim().length() != 0) {
-                                    String text = "gid://shopify/Collection/" + id.trim();
-
-                                    String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-                                    Log.e("coverted", converted.trim());
-                                }
-
-                                if (nav.trim().equals("http") || nav.trim().equals("collection")) {
-
-
-                                    JSONArray jsonarray1 = collectionobject.getJSONArray("items");
-                                    Log.e("jsonarray1", String.valueOf(jsonarray1));
-                                    if (jsonarray1.length() != 0) {
-                                        for (int j = 0; j < jsonarray1.length(); j++) {
-                                            JSONObject subcollectionobject = jsonarray1.getJSONObject(j);
-
-                                            String subid = "" + subcollectionobject.getString("subject_id");
-                                            String subcollectiontitle = subcollectionobject.getString("title");
-                                            String type = subcollectionobject.getString("type");
-                                            if (type.trim().equals("collection")) {
-                                                String image1 = subcollectionobject.getString("image");
-                                                if (!subid.trim().equals("null")) {
-
-
-                                                    if (subid.trim().length() != 0) {
-                                                        String text = "gid://shopify/Collection/" + subid.trim();
-
-                                                        String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-                                                        Log.e("coverted", converted.trim());
-                                                    }
-
-                                                    AllCollectionModel allCollectionModel = new AllCollectionModel(subid, image1, subcollectiontitle);
-                                                    allCollectionModelArrayList.add(allCollectionModel);
-                                                }
-
-
-                                            }
-
-                                        }
-                                        allCollectionAdapter.notifyDataSetChanged();
-//
-                                    }
-
-                                }
-
-
-                            }
-                            collectionList1();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("error", ""+error.getMessage());
-                        progressDialog.dismiss();
-                    }
-                }) {
-
-            @Override
-            protected void deliverResponse(String response) {
-                Log.e("ree", " " + response);
-                super.deliverResponse(response);
-            }
-
-            @Override
-            protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                Log.e("reen", " " + response.headers);
-                return super.parseNetworkResponse(response);
-            }
-        };
-        stringRequest.setTag("categories_page");
-        // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
-
-        int socketTimeout = 10000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        stringRequest.setRetryPolicy(policy);
-        mRequestQueue.add(stringRequest);
-
-    }
-
-    private void banner() {
-
-        mRequestQueue = Volley.newRequestQueue(getActivity());
-
-
-        request = new JsonArrayRequest(Constants.banner,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray jsonArray) {
-                        bannerlist.clear();
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            try {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                String bannerimage = jsonObject.getString("image_src");
-                                bannerlist.add(bannerimage);
-                                init();
-
-
-                            } catch (JSONException e) {
-
-                            }
-                        }
-
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }) {
-
-        };
-        request.setTag("categories_page");
-        // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
-
-        int socketTimeout = 10000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(policy);
-        mRequestQueue.add(request);
-
-    }
 
     private void init() {
 
@@ -691,5 +336,36 @@ public class ForYou extends Fragment implements ResultCallBackInterface {
 
     }
 
+    @Override
+    public void allcollection(ArrayList<AllCollectionModel> allCollectionModelArrayList1) {
+        allCollectionModelArrayList.clear();
+        for (int i = 0; i < allCollectionModelArrayList1.size(); i++) {
+            AllCollectionModel allCollectionModel = new AllCollectionModel(allCollectionModelArrayList1.get(i).getId(), allCollectionModelArrayList1.get(i).getImage(), allCollectionModelArrayList1.get(i).getTitle());
+            allCollectionModelArrayList.add(allCollectionModel);
+        }
+        allCollectionAdapter.notifyDataSetChanged();
+    }
 
+    @Override
+    public void collectionlist(ArrayList<TopSellingModel> topSellingModelArrayList, ArrayList<TopCollectionModel> topCollectionModelArrayList, ArrayList<NewArrivalModel> newArrivalModelArrayList) {
+        resultCallBackInterface.topSelling(topSellingModelArrayList);
+        resultCallBackInterface.bestCollection(topCollectionModelArrayList);
+        resultCallBackInterface.newArrivals(newArrivalModelArrayList);
+    }
+
+    @Override
+    public void bannerlist(ArrayList<String> bannerlist1) {
+        bannerlist.clear();
+
+        for (int i = 0; i < bannerlist1.size(); i++) {
+            bannerlist.add(bannerlist1.get(i));
+        }
+        init();
+    }
+
+    @Override
+    public void grocerylist(ArrayList<GroceryHomeModel> arrayList) {
+        Log.e("arrr", String.valueOf(arrayList.size()));
+        resultCallBackInterface.grocery(arrayList);
+    }
 }

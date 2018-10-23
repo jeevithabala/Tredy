@@ -8,6 +8,8 @@ import android.content.IntentFilter;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.user.trendy.ForYou.ViewModel.ForYouViewModel;
+import com.example.user.trendy.ForYou.ViewModel.ForyouInterface;
 import com.example.user.trendy.Interface.OnNetworkCheckCallBack;
 import com.example.user.trendy.Navigation;
 
@@ -63,6 +65,7 @@ public class NetworkSchedulerService extends JobService implements
                 if (!MyApplication.isInterestingActivityVisible()) {
                         String message = isConnected ? "Internet Is Now Connected" : "Please Make Sure Internet Is Connected";
                         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                        ForYouViewModel forYouViewModel=new ForYouViewModel(getApplicationContext());
                 }
 
         }

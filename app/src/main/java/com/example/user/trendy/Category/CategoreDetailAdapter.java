@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.example.user.trendy.Groceries.Groceries;
 import com.example.user.trendy.Interface.FragmentRecyclerViewClick;
 import com.example.user.trendy.R;
 import com.example.user.trendy.databinding.CategoreyAdapterBinding;
@@ -69,14 +70,19 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
             binding.setItemclick(new FragmentRecyclerViewClick() {
                 @Override
                 public void onClickPostion() {
-
-                    if(itemsList.get(getAdapterPosition()).getSubCategoryModelArrayList()==null) {
+                    if(itemsList.get(getAdapterPosition()).getCollectiontitle().trim().toLowerCase().equals("grocery"))
+                    {
+                        FragmentTransaction transaction =fragmentManager.beginTransaction();
+                        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                        transaction.replace(R.id.home_container, new Groceries(), "grocery");
+                        transaction.addToBackStack("categories");
+                        transaction.commit();
+                    }else if(itemsList.get(getAdapterPosition()).getSubCategoryModelArrayList()==null) {
 
                         Fragment fragment = new CategoryProduct();
                         Bundle bundle = new Bundle();
                         bundle.putString("collection","api");
                         bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
-                        Log.e("iddddddd", itemsList.get(getAdapterPosition()).getId());
                         fragment.setArguments(bundle);
                         FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
                         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);

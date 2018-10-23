@@ -136,7 +136,7 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
                 @Override
                 public void click() {
                     Bundle bundle = new Bundle();
-                    bundle.putString("category", "grocery");
+                    bundle.putString("category", "groceryhome");
                     bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
                     Fragment fragment = new ProductView();
                     fragment.setArguments(bundle);

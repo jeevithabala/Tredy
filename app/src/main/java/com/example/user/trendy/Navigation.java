@@ -21,6 +21,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -41,6 +42,7 @@ import com.example.user.trendy.Interface.OnFilterDataCallBack;
 import com.example.user.trendy.Interface.OnNetworkCheckCallBack;
 import com.example.user.trendy.Login.LoginActiviy;
 import com.example.user.trendy.NetworkCheck.NetworkSchedulerService;
+import com.example.user.trendy.Search.Search;
 import com.example.user.trendy.Util.SharedPreference;
 import com.example.user.trendy.Whislist.Whislist;
 import com.facebook.AccessToken;
@@ -166,8 +168,16 @@ public class Navigation extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem menuItem = menu.findItem(R.id.bag);
         menuItem.setIcon(Converter.convertLayoutToImage(Navigation.this, cart_count, R.drawable.ic_shopping_bag));
+
+//        MenuItem searchItem = menu.findItem(R.id.searchBar);
+//
+//        SearchView searchView = (SearchView) searchItem.getActionView();
+//        searchView.setQueryHint("Search Product");
+//        searchView.setOnQueryTextListener((SearchView.OnQueryTextListener) this);
+//        searchView.setIconified(false);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -180,7 +190,7 @@ public class Navigation extends AppCompatActivity
 //        if (id == R.id.action_settings) {
 //            return true;
 //        } else
-        if (id == R.id.bag) {
+              if (id == R.id.bag) {
             FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
             transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
             transaction1.replace(R.id.home_container, new Bag(), "Bag");
@@ -188,6 +198,15 @@ public class Navigation extends AppCompatActivity
             transaction1.commit();
             return true;
         }
+       else if (id == R.id.searchBar) {
+            FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+            transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+            transaction1.replace(R.id.home_container, new Search(), "search");
+            transaction1.addToBackStack("ForYou");
+            transaction1.commit();
+            return true;
+        }
+
 
 
         return super.onOptionsItemSelected(item);

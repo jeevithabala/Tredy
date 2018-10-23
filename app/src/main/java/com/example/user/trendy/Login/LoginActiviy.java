@@ -231,17 +231,20 @@ public class LoginActiviy extends AppCompatActivity implements
         forgot_password.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                email = email_text.getText().toString().trim();
-                if (email.trim().length() != 0) {
-                    if (Validationemail.isEmailAddress(email_text, true)) {
-                        forgotpassword();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Please enter valid email", Toast.LENGTH_SHORT).show();
-                    }
+//                email = email_text.getText().toString().trim();
+//                if (email.trim().length() != 0) {
+//                    if (Validationemail.isEmailAddress(email_text, true)) {
+//                        forgotpassword();
+//                    } else {
+//                        Toast.makeText(getApplicationContext(), "Please enter valid email", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
+//                }
 
-                } else {
-                    Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
-                }
+                Intent i=new Intent(getApplicationContext(),ForgotPassword.class);
+                startActivity(i);
             }
         });
 
@@ -545,4 +548,5 @@ public class LoginActiviy extends AppCompatActivity implements
         });
 
     }
+
 }

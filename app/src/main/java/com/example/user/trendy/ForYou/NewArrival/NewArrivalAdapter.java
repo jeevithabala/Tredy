@@ -83,15 +83,7 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
                     Bundle bundle = new Bundle();
                     bundle.putString("category", "newarrival");
                     bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
-
-//                onItemClick.onClick(itemsList.get(getAdapterPosition()).getProduct_ID());
-//                    Storefront.CheckoutCreateInput input = new Storefront.CheckoutCreateInput()
-//                            .setLineItemsInput(Input.value(Arrays.asList(
-//                                    new Storefront.CheckoutLineItemInput(5, new ID(itemsList.get(getAdapterPosition()).getProduct_ID()))
-//                            )));
-////
                     Fragment fragment = new ProductView();
-
                     fragment.setArguments(bundle);
                     FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
