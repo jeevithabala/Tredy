@@ -79,13 +79,20 @@ public class CategoryModel extends BaseObservable implements Serializable {
     @BindingAdapter("image")
     public static void loadImage1(ImageView view, String imageUrl) {
 
-        Log.d("categoryimage", "" + imageUrl);
+        if(imageUrl!=null){
+//        Log.d("categoryimage", "" + imageUrl);
         if (imageUrl.trim().length()>0) {
             Picasso.with(view.getContext())
 
                     .load(imageUrl)
                     .placeholder(R.drawable.trendybanner)
                     .into(view);
+        } else {
+            Picasso.with(view.getContext())
+                    .load(R.drawable.trendybanner)
+                    //.transform(new CircleTransform())
+                    .into(view);
+        }
         } else {
             Picasso.with(view.getContext())
                     .load(R.drawable.trendybanner)

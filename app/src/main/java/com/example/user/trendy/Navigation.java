@@ -21,6 +21,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -56,7 +57,7 @@ import java.util.List;
 
 
 public class Navigation extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener{
 
     FragmentManager fragmentManager;
     private int cart_count = 0;
@@ -164,8 +165,16 @@ public class Navigation extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem menuItem = menu.findItem(R.id.bag);
         menuItem.setIcon(Converter.convertLayoutToImage(Navigation.this, cart_count, R.drawable.ic_shopping_bag));
+
+//        MenuItem searchItem = menu.findItem(R.id.searchBar);
+//
+//        SearchView searchView = (SearchView) searchItem.getActionView();
+//        searchView.setQueryHint("Search Product");
+//        searchView.setOnQueryTextListener((SearchView.OnQueryTextListener) this);
+//        searchView.setIconified(false);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

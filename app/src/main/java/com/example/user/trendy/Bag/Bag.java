@@ -126,6 +126,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
                 fragment.setArguments(bundle);
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                ft.addToBackStack("bag");
                 ft.commit();
             }
         });

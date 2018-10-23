@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.user.trendy.BuildConfig;
+import com.example.user.trendy.Groceries.Groceries;
 import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.Constants;
@@ -59,10 +61,11 @@ public class Categories extends Fragment {
     CategoreDetailAdapter categoreDetailAdapter;
     private RequestQueue mRequestQueue;
     String imageurl = "";
-    LinearLayout subcategory;
+    LinearLayout subcategory,grocery;
     String converted;
     private String image1 = "";
     private ProgressDialog progressDialog;
+    CategoryModel categoreDetail = new CategoryModel();
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.categories, container, false);
@@ -73,6 +76,8 @@ public class Categories extends Fragment {
         all.setVisibility(View.GONE);
         subcategory = view.findViewById(R.id.sublayout);
         subcategory.setVisibility(View.GONE);
+
+//        grocery=view.findViewById(R.id.grocery);
 
 
         recyclerView = view.findViewById(R.id.categories_recyclerview);
@@ -93,6 +98,7 @@ public class Categories extends Fragment {
         recyclerView.setAdapter(categoreDetailAdapter);
         // productlist();
         collectionList();
+
         return view;
     }
 
@@ -283,11 +289,12 @@ public class Categories extends Fragment {
                                     }
                                     categoryList.add(categoreDetail);
                                 }
-
-
                             }
 
+                           CategoryModel categoryModel1 = new CategoryModel();
+                            categoryModel1.setCollectiontitle("Grocery");
 
+                            categoryList.add(categoryModel1);
                             categoreDetailAdapter = new CategoreDetailAdapter(getActivity(), categoryList, getFragmentManager());
 
                             recyclerView.setAdapter(categoreDetailAdapter);

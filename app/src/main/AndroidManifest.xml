@@ -78,6 +78,7 @@
 
         <activity android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"/>
+        <activity android:name=".Login.ForgotPassword" />
 
         <receiver android:name=".CcAvenue.SmsReceiver" >
             <intent-filter>

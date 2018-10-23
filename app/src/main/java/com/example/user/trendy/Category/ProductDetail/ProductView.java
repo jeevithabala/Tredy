@@ -45,6 +45,7 @@ import com.example.user.trendy.Bag.Db.AddToCart_Model;
 import com.example.user.trendy.Bag.ShippingAddress;
 import com.example.user.trendy.BuildConfig;
 import com.example.user.trendy.Category.ProductModel;
+import com.example.user.trendy.ForYou.GroceryHome.GroceryHomeModel;
 import com.example.user.trendy.ForYou.NewArrival.NewArrivalModel;
 import com.example.user.trendy.ForYou.TopCollection.TopCollectionModel;
 import com.example.user.trendy.ForYou.TopSelling.TopSellingModel;
@@ -159,7 +160,9 @@ public class ProductView extends Fragment implements ProductClickInterface {
             GroceryModel detail = (GroceryModel) getArguments().getSerializable("category_id");
 //            itemModel.setProduct(detail.getProduct());
             id = detail.getProduct().getId().toString();
-            Log.e("idd", id);
+        } else if (product.trim().equals("groceryhome")) {
+            GroceryHomeModel detail = (GroceryHomeModel) getArguments().getSerializable("category_id");
+            id = detail.getProduct().getId().toString();
         } else if (product.trim().equals("bag")) {
             AddToCart_Model model = (AddToCart_Model) getArguments().getSerializable("category_id");
 
@@ -180,7 +183,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //            Log.e("descriptionhtml", "" + detail.getProduct().getDescriptionHtml().toString());
 //            mHtmlString = detail.getProduct().getDescriptionHtml().toString();
         }
-        if (product.trim().equals("grocery") || product.trim().equals("bag") || product.trim().equals("wishlist")) {
+        if (product.trim().equals("grocery") || product.trim().equals("bag") || product.trim().equals("wishlist") || product.trim().equals("groceryhome")) {
             getProductVariantID(id.trim());
         } else {
             String text = "gid://shopify/Product/" + id.trim();
@@ -222,7 +225,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                     if (selected == -1) {
                         Toast.makeText(getActivity(), "Please Select Size.", Toast.LENGTH_SHORT).show();
                     } else {
-                        if (product.trim().equals("grocery")) {
+                        if (product.trim().equals("grocery") ||product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist")) {
                             no_of_count = count.getText().toString();
                             byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
                             String val2 = new String(tmp2);
@@ -276,6 +279,8 @@ public class ProductView extends Fragment implements ProductClickInterface {
                                                         .weight()
                                                         .weightUnit()
                                                         .available()
+                                                        .selectedOptions(ar -> ar.value()
+                                                                .name())
                                                 )
                                         )
                                 )
@@ -293,7 +298,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                     Storefront.Product product = (Storefront.Product) response.data().getNode();
 //                    Log.e("titit", product.getTitle());
                     itemModel.setProduct(product);
-
+                    itemModel.setWeightname(product.getVariants().getEdges().get(0).getNode().getSelectedOptions().get(0).getName());
                     productViewBinding.setProductview(itemModel);
 
 //                    Log.e("title", itemModel.getProduct().getTitle());
@@ -402,7 +407,6 @@ public class ProductView extends Fragment implements ProductClickInterface {
 
             for (int i = 0; i < itemModel.getProduct().getVariants().getEdges().size(); i++) {
                 rbn = new RadioButton(getActivity());
-
                 rbn.setId(i);
 
                 String weightunit = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeightUnit().toString();
@@ -410,47 +414,56 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 if (weightunit.trim().equals("GRAMS")) {
                     weightunit = "g";
                 }
-                rbn.setText(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getWeight().toString() + " " + weightunit);
-                rbn.setTag(itemModel.getProduct().getVariants().getEdges().get(i));
-                rbn.setTextColor(Color.BLACK);
-                rbn.setBackgroundResource(R.drawable.radio_button_bg);
-                rbn.setPadding(20, 5, 20, 5);
-                rbn.setGravity(Gravity.CENTER_VERTICAL);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                params.setMargins(10, 5, 10, 5);
-                rbn.setLayoutParams(params);
-                productViewBinding.radiogroup.addView(rbn);
-
-                String finalWeightunit = weightunit;
-                productViewBinding.radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(RadioGroup radioGroup, int i) {
-
-                        selectedID = productViewBinding.radiogroup.getCheckedRadioButtonId();
+                for (int j = 0; j < itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().size(); j++) {
+                    if (!itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue().trim().equals("0")) {
+//                    rbn.setText(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getWeight().toString() + " " + weightunit);
+                        rbn.setText(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue());
+                        rbn.setTag(itemModel.getProduct().getVariants().getEdges().get(i));
                         rbn.setTextColor(Color.BLACK);
-                        rbn = (RadioButton) view.findViewById(selectedID);
-                        Log.e("selected id", String.valueOf(selectedID));
-                        Log.e("selected rdn id", itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getWeight().toString());
-                        Log.e("child count", String.valueOf(productViewBinding.radiogroup.getChildCount()));
-                        selectedweight = itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getWeight().toString() + " " + finalWeightunit;
+                        rbn.setBackgroundResource(R.drawable.radio_button_bg);
+                        rbn.setPadding(20, 5, 20, 5);
+                        rbn.setGravity(Gravity.CENTER_VERTICAL);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(10, 5, 10, 5);
+                        rbn.setLayoutParams(params);
+
+                        if (rbn.getParent() != null)
+                            ((ViewGroup) rbn.getParent()).removeView(rbn);
+
+                        productViewBinding.radiogroup.addView(rbn);
+
+                        String finalWeightunit = weightunit;
+                        productViewBinding.radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+
+                                selectedID = productViewBinding.radiogroup.getCheckedRadioButtonId();
+                                rbn.setTextColor(Color.BLACK);
+                                rbn = (RadioButton) view.findViewById(selectedID);
+                                Log.e("selected id", String.valueOf(selectedID));
+                                Log.e("selected rdn id", itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getWeight().toString());
+                                Log.e("child count", String.valueOf(productViewBinding.radiogroup.getChildCount()));
+                                selectedweight = itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getWeight().toString() + " " + finalWeightunit;
 //                    Toast.makeText(getActivity(), rbn.getText(), Toast.LENGTH_SHORT).show();
 //adapter.notifyItemChanged(selectedID);
-                        product_price.setText("$ " + itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getPrice().toString());
+                                product_price.setText("$ " + itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getPrice().toString());
 
-                        itemModel.setPrice(selectedID);
-                        itemModel.setProductid(String.valueOf(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getId()));
+                                itemModel.setPrice(selectedID);
+                                itemModel.setProductid(String.valueOf(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getId()));
 
 
-                        for (int j = 0; j < productViewBinding.radiogroup.getChildCount(); j++) {
-                            Log.e("id check", j + String.valueOf(selectedID));
-                            if (j == selectedID) {
-                                Log.e("check", "white");
-                                rbn.setTextColor(Color.WHITE);
+                                for (int j = 0; j < productViewBinding.radiogroup.getChildCount(); j++) {
+                                    Log.e("id check", j + String.valueOf(selectedID));
+                                    if (j == selectedID) {
+                                        Log.e("check", "white");
+                                        rbn.setTextColor(Color.WHITE);
+                                    }
+                                }
                             }
-                        }
+                        });
+                        radioGroup.check(0);
                     }
-                });
-                radioGroup.check(0);
+                }
             }
         }
 

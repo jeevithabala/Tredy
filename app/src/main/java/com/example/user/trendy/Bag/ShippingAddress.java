@@ -91,7 +91,10 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.shippingaddress, container, false);
 
-        ((Navigation) getActivity()).getSupportActionBar().setTitle("Shipping");
+        if(getActivity()!=null){
+            ((Navigation) getActivity()).getSupportActionBar().setTitle("Shipping");
+
+        }
 
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
@@ -657,15 +660,17 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 lastnamestring = response.data().getCustomer().getLastName();
                 emailstring = response.data().getCustomer().getEmail();
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        email.setText(emailstring);
-                        first_name.setText(firstnamestring);
-                        last_name.setText(lastnamestring);
-                    }
-                });
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            email.setText(emailstring);
+                            first_name.setText(firstnamestring);
+                            last_name.setText(lastnamestring);
+                        }
+                    });
 
+                }
             }
 
             @Override

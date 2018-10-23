@@ -13,6 +13,7 @@ public class Constants {
     public static final String shippingaddressfetch = "http://postalpincode.in/api/pincode/";
     public static final String postcreateorder = "https://order.tredyfoods.com/api/v1/order/create";
     public static final String getDiscount = Base_URL + "/api/v1/discounts/all";
+    public static final String search = Base_URL + "/api/v1/products/all?search=";
 
     public static final String postch = "https://67a5731832317f2f54b7942366d9ce54:5ec307570d980aaf7fb4aedfd07cc27e@tredyfoods.myshopify.com/admin/orders.json";
 }

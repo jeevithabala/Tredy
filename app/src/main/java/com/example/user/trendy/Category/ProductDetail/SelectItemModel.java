@@ -22,10 +22,19 @@ public class SelectItemModel extends BaseObservable {
     private Storefront.Product product;
     int price;
     String productid;
+    String weightname;
 
     private String count = "1";
     private int cost;
     private String ship;
+
+    public String getWeightname() {
+        return weightname;
+    }
+
+    public void setWeightname(String weightname) {
+        this.weightname = weightname;
+    }
 
     @Bindable
     public int getPrice() {
@@ -151,13 +160,13 @@ public class SelectItemModel extends BaseObservable {
     }
 
 
-    @BindingAdapter("desc")
-    public static void desc(TextView text, SelectItemModel desc) {
-        String mHtmlString = desc.selectItem.getProduct().getDescriptionHtml();
-        Log.e("desxc", mHtmlString);
-        text.setText(Html.fromHtml(Html.fromHtml(mHtmlString).toString()));
-
-    }
+//    @BindingAdapter("weightname")
+//    public static void weightname(TextView text, Storefront.Product product) {
+//        String mHtmlString = product.getVariants().getEdges().get(0).getNode().getSelectedOptions().get(0).getName();
+//        Log.e("desxc", mHtmlString);
+//        text.setText(Html.fromHtml(Html.fromHtml(mHtmlString).toString()));
+//
+//    }
 
 
 }

@@ -7,18 +7,18 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <TextView
-            android:fontFamily="@font/lucidasansregular"
             android:id="@+id/all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:fontFamily="@font/lucidasansregular"
             android:text="@string/title_categories"
             android:textColor="@color/white"
             android:textSize="18sp" />
@@ -31,11 +31,11 @@
             android:visibility="gone">
 
             <ImageView
-                android:layout_margin="5dp"
                 android:id="@+id/arrow"
-                android:layout_gravity="center"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
                 android:src="@drawable/ic_rightarrow" />
 
             <TextView
@@ -72,14 +72,19 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/categories_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical">
 
-    </android.support.v7.widget.RecyclerView>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/categories_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+            </android.support.v7.widget.RecyclerView>
+
+
+
+
 
 </LinearLayout>
