@@ -71,7 +71,7 @@ public class GroceryModel implements Serializable {
     @BindingAdapter("cost")
     public static void productcost(TextView textView,  Storefront.Product product) {
         if(product!=null) {
-            String cost = String.valueOf("Rs."+product.getVariants().getEdges().get(0).getNode().getPrice());
+            String cost = String.valueOf("₹ "+product.getVariants().getEdges().get(0).getNode().getPrice());
             textView.setText(cost);
         }
     }

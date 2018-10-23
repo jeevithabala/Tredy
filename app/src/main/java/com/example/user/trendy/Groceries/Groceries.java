@@ -97,7 +97,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
             add_to_cart.setVisibility(View.VISIBLE);
             itemCount.setText("Items : " + cart_size);
             cost = commanCartControler.getTotalPrice();
-            subTotal.setText("SubTotal : Rs. " + cost);
+            subTotal.setText("SubTotal : ₹ " + cost);
 
         }
 
@@ -400,7 +400,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
         cost = commanCartControler.getTotalPrice();
         int current_cost = (groceryModelArrayList.get(adapter_pos).getProduct().getVariants().getEdges().get(varient_pos).getNode().getPrice().intValue()) * qty;
         cost = cost + current_cost;
-        subTotal.setText("SubTotal : Rs. " + cost);
+        subTotal.setText("SubTotal : ₹ " + cost);
 
         int cart_size = addToCart_modelArrayList.size();
 

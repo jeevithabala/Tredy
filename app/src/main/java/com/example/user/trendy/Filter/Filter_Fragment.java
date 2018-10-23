@@ -229,7 +229,7 @@ public class Filter_Fragment extends Fragment {
                             pricelist.clear();
 
                             int splitvalue;
-                            splitvalue = Integer.parseInt(max_price) / 4;
+                            splitvalue = (Integer.parseInt(max_price)-Integer.parseInt(minprice)) / 4;
                             firstsplit = Math.round(Integer.parseInt(minprice) + splitvalue);
                             secondsplit = Math.round(firstsplit + splitvalue);
                             thirdsplit = Math.round(secondsplit + splitvalue);

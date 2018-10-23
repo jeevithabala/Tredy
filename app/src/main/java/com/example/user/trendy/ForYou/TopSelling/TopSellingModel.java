@@ -161,7 +161,7 @@ public class TopSellingModel extends BaseObservable implements Serializable {
 
     @BindingAdapter("price1")
     public static void price(TextView textView, String price) {
-        textView.setText("Rs." + price);
+        textView.setText("₹ " + price);
     }
 
     @BindingAdapter("imageUrl")
