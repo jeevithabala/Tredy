@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/title_layout"
@@ -16,11 +17,11 @@
         android:weightSum="2">
 
         <TextView
-            android:fontFamily="@font/lucidasansregular"
             android:id="@+id/category_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="@font/lucidasansregular"
             android:gravity="start"
             android:text="Title"
             android:textColor="@color/appcolor"
@@ -36,11 +37,11 @@
             android:gravity="end">
 
             <TextView
-                android:fontFamily="@font/lucidasansregular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
+                android:fontFamily="@font/lucidasansregular"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="See All"
@@ -52,47 +53,103 @@
 
     </LinearLayout>
 
-
-    <android.support.v7.widget.RecyclerView
-        android:layout_above="@+id/cart_frame"
-        android:layout_below="@+id/title_layout"
+    <LinearLayout
+        android:id="@+id/filter_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/grocery_recycler">
+        android:layout_below="@+id/title_layout"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@color/appcolor" />
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="4">
+
+
+
+            <TextView
+                android:id="@+id/filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/lucidasansdemiboldroman"
+                android:padding="10dp"
+                android:text="FILTER"
+                android:textColor="@color/appcolor"
+                android:textSize="11dp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:src="@drawable/ic_rightarrow" />
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@color/appcolor" />
+    </LinearLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/grocery_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/cart_frame"
+        android:layout_below="@+id/filter_layout">
 
     </android.support.v7.widget.RecyclerView>
 
     <RelativeLayout
-      android:layout_alignParentBottom="true"
         android:id="@+id/cart_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:visibility="gone">
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorAccent"/>
+            android:background="@color/colorAccent" />
 
         <TextView
             android:id="@+id/txt_items"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Items "
-            android:textColor="#000000"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"/>
+            android:text="Items "
+            android:textColor="#000000" />
 
         <TextView
             android:id="@+id/txt_subtotal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SubTotal "
-            android:textColor="#000000"
-            android:layout_marginTop="25dp"
-            android:layout_marginLeft="10dp"
             android:layout_below="@+id/txt_items"
-            />
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="25dp"
+            android:text="SubTotal "
+            android:textColor="#000000" />
 
         <LinearLayout
             android:id="@+id/continue_shopping"
@@ -121,11 +178,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_below="@+id/continue_shopping"
+            android:layout_marginBottom="15dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            android:background="@color/colorAccent"
-            android:layout_marginBottom="15dp"
-            android:layout_below="@+id/continue_shopping">
+            android:background="@color/colorAccent">
 
             <TextView
                 android:id="@+id/btn_checkout"
@@ -135,10 +192,8 @@
                 android:gravity="center"
                 android:text="Checkout →"
                 android:textColor="@color/white"
-                android:textSize="14dp"
-                />
+                android:textSize="14dp" />
         </LinearLayout>
-    </RelativeLayout
-     >
+    </RelativeLayout>
 
 </RelativeLayout>

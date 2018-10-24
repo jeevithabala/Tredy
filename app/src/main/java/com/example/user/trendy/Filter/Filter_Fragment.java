@@ -107,7 +107,6 @@ public class Filter_Fragment extends Fragment {
         type = view.findViewById(R.id.type);
 
 
-
         filterAdapter = new FilterAdapter(getActivity(), filterModelArrayList, getFragmentManager());
         filter_recycler.setAdapter(filterAdapter);
         filter_recycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -122,8 +121,7 @@ public class Filter_Fragment extends Fragment {
 
         selectedFilterList = new ArrayList<>();
 
-        if(selectedFilterList.size()>0)
-        {
+        if (selectedFilterList.size() > 0) {
             Toast.makeText(getActivity(), String.valueOf(selectedFilterList.size()), Toast.LENGTH_SHORT).show();
         }
         sortlist.clear();
@@ -158,20 +156,17 @@ public class Filter_Fragment extends Fragment {
                 }
 
                 if (selectedsortList.size() != 0) {
-                    Log.e("sortby",selectedsortList.get(0));
+                    Log.e("sortby", selectedsortList.get(0));
                     if (selectedsortList.get(0).trim().equals("Price : High to Low")) {
-                        sortlistkey = "sortBy=max_price&order=desc";
+                        sortlistkey = "sortBy=min_price&order=desc";
                     } else {
                         sortlistkey = "sortBy=min_price&order=asc";
                     }
                 }
 
 
-                OnFilterDataCallBack onFilterDataCallBack = (OnFilterDataCallBack)getActivity();
-                onFilterDataCallBack.onFilterValueSelectCallBack(min_price,max_price,sortlistkey,collectionid,selectedFilterList,dynamicKey);
-
-
-//
+                OnFilterDataCallBack onFilterDataCallBack = (OnFilterDataCallBack) getActivity();
+                onFilterDataCallBack.onFilterValueSelectCallBack(min_price, max_price, sortlistkey, collectionid, selectedFilterList, dynamicKey);
 
                 getActivity().onBackPressed();
 
@@ -225,21 +220,21 @@ public class Filter_Fragment extends Fragment {
 
                             }
 
-                            String minprice = obj.getString("min_price");
-                            Log.d(" minprice", minprice);
-                            String max_price = obj.getString("max_price");
+                            min_price = obj.getString("min_price");
+                            Log.d(" minprice", min_price);
+                            max_price = obj.getString("max_price");
                             Log.d(" max_price", max_price);
 
                             pricelist.clear();
 
                             int splitvalue;
-                            splitvalue = (Integer.parseInt(max_price)-Integer.parseInt(minprice)) / 4;
-                            firstsplit = Math.round(Integer.parseInt(minprice) + splitvalue);
+                            splitvalue = (Integer.parseInt(max_price) - Integer.parseInt(min_price)) / 4;
+                            firstsplit = Math.round(Integer.parseInt(min_price) + splitvalue);
                             secondsplit = Math.round(firstsplit + splitvalue);
                             thirdsplit = Math.round(secondsplit + splitvalue);
                             fourthsplit = Math.round(Integer.parseInt(max_price));
 
-                            String first = minprice + " - " + String.valueOf(firstsplit);
+                            String first = min_price + " - " + String.valueOf(firstsplit);
                             String second = String.valueOf(firstsplit + 1 + " - " + secondsplit);
                             String third = String.valueOf(secondsplit + 1 + " - " + thirdsplit);
                             String fourth = String.valueOf(thirdsplit + 1 + " - " + max_price);

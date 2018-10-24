@@ -363,9 +363,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
             JSONArray line_items = new JSONArray();
-            JSONObject items = new JSONObject();
             if (product_varientid.trim().length() == 0) {
                 for (int i = 0; i < cartlist.size(); i++) {
+                    JSONObject items = new JSONObject();
 
                     product_varientid = cartlist.get(i).getProduct_varient_id();
                     byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
@@ -381,6 +381,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     jsonBody.put("line_items", line_items);
                 }
             } else {
+                JSONObject items = new JSONObject();
 
 //                items.put("variant_id", "5823671107611");
                 items.put("variant_id", product_varientid.trim());
@@ -402,8 +403,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
             JSONObject shipping = new JSONObject();
-            shipping.put("first_name", firstname);
-            shipping.put("last_name", lastname);
+            shipping.put("first_name", "marmeto");
+            shipping.put("last_name", "test");
             shipping.put("address1", address1);
             shipping.put("phone", phone);
             shipping.put("city", city);
@@ -414,8 +415,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
             JSONObject billingaddress = new JSONObject();
-            billingaddress.put("first_name", bfirstname);
-            billingaddress.put("last_name", blastname);
+            billingaddress.put("first_name", "marmeto");
+            billingaddress.put("last_name", "test");
             billingaddress.put("address1", b_address1);
             billingaddress.put("phone", phone);
             billingaddress.put("city", b_city);

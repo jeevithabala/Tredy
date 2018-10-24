@@ -95,9 +95,9 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     public static int i = 0;
     public static boolean isViewWithCatalog = true;
     CategoryModel detail = new CategoryModel();
-    String id, title="";
+    String id, title = "";
     private RequestQueue mRequestQueue;
-    String min_price = "", max_price = "", dynamicKey,dynamicKey1;
+    String min_price = "", max_price = "", dynamicKey, dynamicKey1;
     ArrayList<String> selectedFilterList = new ArrayList<>();
     private String collectionname;
     CartController cartController;
@@ -106,7 +106,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     RequestQueue requestQueue;
     private String sortbykey;
 
-    private Boolean isFilterData=false;
+    private Boolean isFilterData = false;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -129,7 +129,6 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
 
         recyclerView = view.findViewById(R.id.product_recyclerview);
-
 
 
 //        isViewWithCatalog = !isViewWithCatalog;
@@ -182,11 +181,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             Log.e("iddc", id);
 
         }
-        if(title!=null){
-        if (title.trim().length() != 0) {
-            ((Navigation) getActivity()).getSupportActionBar().setTitle(title);
+        if (title != null) {
+            if (title.trim().length() != 0) {
+                ((Navigation) getActivity()).getSupportActionBar().setTitle(title);
 
-        }}else {
+            }
+        } else {
             ((Navigation) getActivity()).getSupportActionBar().setTitle("Categories");
 
         }
@@ -221,7 +221,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         recyclerView.setAdapter(productAdapter);
         productAdapter.notifyDataSetChanged();
 
-        if(isFilterData==true){
+        if (isFilterData == true) {
 
             productAdapter1 = new ProductAdapter(getActivity(), productDetalList1, getFragmentManager(), this);
             recyclerView.setAdapter(productAdapter1);
@@ -230,31 +230,29 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         }
 
 
-
         getData();
 
 
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
-                }
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
-                    if (isLastItemDisplaying(recyclerView)) {
-                        //Calling the method getdata again
-                        if(isFilterData==true)
-                        {
-                            postFilter();
-                        }else {
-                            getData();
-                        }
+                if (isLastItemDisplaying(recyclerView)) {
+                    //Calling the method getdata again
+                    if (isFilterData == true) {
+                        postFilter();
+                    } else {
+                        getData();
                     }
                 }
-            });
+            }
+        });
 
 
 //        }
@@ -262,15 +260,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
     }
 
-    public void getFilterData(String minprice,String maxprice,String sortby,String collectionid,ArrayList<String> selectedFilterLists ,String CollectionName    ){
+    public void getFilterData(String minprice, String maxprice, String sortby, String collectionid, ArrayList<String> selectedFilterLists, String CollectionName) {
 
 
+        requestCount1 = 1;
 
-
-
-
-
-        isFilterData=true;
+        isFilterData = true;
         min_price = minprice;
         max_price = maxprice;
         sortbykey = sortby;
@@ -278,7 +273,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         selectedFilterList = selectedFilterLists;
         dynamicKey1 = CollectionName;
 
-        productDetalList.clear();
+        productDetalList1.clear();
 //        productAdapter.notifyDataSetChanged();
         postFilter();
 //        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -299,8 +294,9 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 //        });
 
     }
+
     public void postFilter() {
-        isFilterData=true;
+        isFilterData = true;
         requestQueue.add(postfilter(id, requestCount1));
         Log.d("request counter1", String.valueOf(requestCount1));
         requestCount1++;
@@ -339,9 +335,9 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             final String requestBody = jsonBody.toString();
             String a;
             if (sortbykey.trim().length() == 0) {
-                a = "?page_size=10&page="+count;
+                a = "?page_size=10&page=" + count;
             } else {
-                a = "?" + sortbykey.trim() + "&page_size=10&page="+ count;
+                a = "?" + sortbykey.trim() + "&page_size=10&page=" + count;
             }
 
             stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + a, new Response.Listener<String>() {
@@ -351,7 +347,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                     try {
                         JSONObject obj = new JSONObject(response);
                         title = obj.getString("collection_name");
-                        category_title.setText(title);
+                        if (title.toLowerCase().equals("home page")) {
+                            category_title.setText("Trending");
+                        } else {
+                            category_title.setText(title);
+                        }
+
                         Log.e("title", "" + title);
                         Iterator keys = obj.keys();
                         Log.e("Keys", "" + String.valueOf(keys));
@@ -567,69 +568,6 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         return false;
     }
 
-    public void checkId() {
-        Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
-                        .node(new ID(checkoutId), nodeQuery -> nodeQuery
-                                        .onCheckoutLineItem(check -> check
-                                                .variant(as -> as
-                                                        .title()
-                                                        .product(pro -> pro
-                                                                .handle()
-                                                                .title()
-                                                                .tags()
-                                                                .productType()
-                                                                .vendor()
-                                                                .collections(arg -> arg.first(10), collectionConnectionQuery -> collectionConnectionQuery
-                                                                        .edges(collectionEdgeQuery -> collectionEdgeQuery
-                                                                                .node(collectionQuery -> collectionQuery
-                                                                                        .title()
-                                                                                        .handle()
-                                                                                        .image(args -> args.src())
-                                                                                        .products(arg -> arg.first(10), productConnectionQuery -> productConnectionQuery
-                                                                                                .edges(productEdgeQuery -> productEdgeQuery
-                                                                                                        .node(productQuery -> productQuery
-                                                                                                                .title()
-                                                                                                                .productType()
-                                                                                                                .description()
-                                                                                                        )
-                                                                                                )
-                                                                                        )
-                                                                                )
-                                                                        ))
-                                                        )
-                                                ))
-//                        .onCheckout(checkoutQuery -> checkoutQuery
-//                                .lineItems(args -> args
-//                                        .edges(args1 -> args1
-//                                                .node(nodeQuery1 -> nodeQuery1
-//                                                        .title()
-//                                                        .variant(varientQuery -> varientQuery
-//                                                                .title()
-//                                                        )
-//                                                )))
-//                        )
-                        )
-        );
-
-        graphClient.queryGraph(query).enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
-            @Override
-            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
-
-
-                List<Storefront.Product> products = new ArrayList<>();
-                Storefront.ProductVariant product = (Storefront.ProductVariant) response.data().getNode();
-
-
-            }
-
-            @Override
-            public void onFailure(@NonNull GraphError error) {
-
-            }
-        });
-
-
-    }
 
     @Override
     public void onClick(View view) {
@@ -656,11 +594,10 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "filter");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
 //                ft.addToBackStack(null);
-                if(getFragmentManager().findFragmentByTag("filter")==null) {
+                if (getFragmentManager().findFragmentByTag("filter") == null) {
                     ft.addToBackStack("filter");
                     ft.commit();
-                }
-                else {
+                } else {
                     ft.commit();
                 }
 
