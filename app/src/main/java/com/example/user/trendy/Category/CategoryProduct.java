@@ -141,8 +141,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         recyclerView.setLayoutManager(isViewWithCatalog ? new LinearLayoutManager(getActivity()) : new GridLayoutManager(getActivity(), 2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        productAdapter = new ProductAdapter(getActivity(), productDetalList, getFragmentManager(), this);
-        recyclerView.setAdapter(productAdapter);
+
 //        getProductByCollection(id.trim());
 
 
@@ -217,7 +216,23 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 //            requestCount=1;
 
 //            collectionList(id.trim(),requestCount);
-            getData();
+
+        productAdapter = new ProductAdapter(getActivity(), productDetalList, getFragmentManager(), this);
+        recyclerView.setAdapter(productAdapter);
+        productAdapter.notifyDataSetChanged();
+
+        if(isFilterData==true){
+
+            productAdapter1 = new ProductAdapter(getActivity(), productDetalList1, getFragmentManager(), this);
+            recyclerView.setAdapter(productAdapter1);
+            productAdapter1.notifyDataSetChanged();
+
+        }
+
+
+
+        getData();
+
 
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -250,10 +265,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     public void getFilterData(String minprice,String maxprice,String sortby,String collectionid,ArrayList<String> selectedFilterLists ,String CollectionName    ){
 
 
+
+
+
+
+
         isFilterData=true;
-
-        productDetalList1.clear();
-
         min_price = minprice;
         max_price = maxprice;
         sortbykey = sortby;
@@ -261,6 +278,8 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         selectedFilterList = selectedFilterLists;
         dynamicKey1 = CollectionName;
 
+        productDetalList.clear();
+//        productAdapter.notifyDataSetChanged();
         postFilter();
 //        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
@@ -358,14 +377,16 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                                         String imagesrc = object.getString("src");
                                         ProductModel productModel = new ProductModel(productidapi, min_price, title, imagesrc);
                                         Log.e("image", productidapi + imagesrc);
+//                                        productDetalList1.add(productModel);
                                         productDetalList1.add(productModel);
                                     }
 
 
                                 }
 
-                                productAdapter1 = new ProductAdapter(getActivity(), productDetalList1, getFragmentManager(), CategoryProduct.this);
-                                recyclerView.setAdapter(productAdapter1);
+//                                productAdapter1 = new ProductAdapter(getActivity(), productDetalList1, getFragmentManager(), CategoryProduct.this);
+//                                productAdapter = new ProductAdapter(getActivity(), productDetalList, getFragmentManager(), CategoryProduct.this);
+//                                recyclerView.setAdapter(productAdapter);
                                 productAdapter1.notifyDataSetChanged();
                             } catch (JSONException e1) {
                                 e1.printStackTrace();
