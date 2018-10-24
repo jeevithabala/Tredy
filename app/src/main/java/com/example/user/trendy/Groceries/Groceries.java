@@ -1,6 +1,8 @@
 package com.example.user.trendy.Groceries;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -41,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
+public class Groceries extends Fragment implements GroceryAdapter.CartDailog, View.OnClickListener {
     View view;
     int adapter_posi, varient_posi;
     GraphClient graphClient;
@@ -61,6 +63,9 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
     CommanCartControler commanCartControler;
     int cost;
     private ProgressDialog progressDialog;
+    private int check = 0;
+    private String sort_string = "TITLE";
+    TextView filter;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,6 +78,8 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
 
         grocery_recycler = view.findViewById(R.id.grocery_recycler);
         title_layout = view.findViewById(R.id.title_layout);
+        filter = view.findViewById(R.id.filter);
+
         title_layout.setVisibility(View.GONE);
         String id = "58881703997";
         String text = "gid://shopify/Collection/" + id.trim();
@@ -122,7 +129,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
         adapter = new GroceryAdapter(getActivity(), groceryModelArrayList, getFragmentManager(), this);
         grocery_recycler.setAdapter(adapter);
 
-        getCollection(converted.trim());
+        getCollection(converted.trim(), sort_string);
         adapter.notifyDataSetChanged();
 
         grocery_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -168,7 +175,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
                 ft.commit();
             }
         });
-
+        filter.setOnClickListener(this);
         return view;
     }
 
@@ -184,13 +191,14 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
 
     public void getNext() {
         if (productStringPageCursor.size() != 0) {
-            getCollectionCursur(converted.trim(), productStringPageCursor.get(productStringPageCursor.size() - 1));
+            getCollectionCursur(converted.trim(), productStringPageCursor.get(productStringPageCursor.size() - 1), sort_string);
         }
 
     }
 
 
-    private void getCollection(String trim) {
+    private void getCollection(String trim, String sort) {
+        groceryModelArrayList.clear();
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("loading, please wait...");
         progressDialog.setCanceledOnTouchOutside(false);
@@ -199,7 +207,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
                 .node(new ID(trim.trim()), nodeQuery -> nodeQuery
                         .onCollection(collectionQuery -> collectionQuery
                                 .title()
-                                .products(arg -> arg.first(10), productConnectionQuery -> productConnectionQuery
+                                .products(arg -> arg.first(10).sortKey(Storefront.ProductCollectionSortKeys.valueOf(sort)), productConnectionQuery -> productConnectionQuery
                                         .pageInfo(pageInfoQuery -> pageInfoQuery
                                                 .hasNextPage()
                                                 .hasPreviousPage()
@@ -260,10 +268,10 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
                         GroceryModel groceryModel = new GroceryModel();
                         groceryModel.setProduct(productEdge.getNode());
                         groceryModel.setQty("1");
-
+                        Log.e("product_name", productEdge.getNode().getTitle());
                         addToCart_modelArrayList.clear();
                         addToCart_modelArrayList = db.getCartList();
-                        Log.e("array", "" + db.getCartList());
+//                        Log.e("array", "" + db.getCartList());
                         for (int j = 0; j < addToCart_modelArrayList.size(); j++) {
                             if (addToCart_modelArrayList.get(j).getProduct_id().trim().equals(productEdge.getNode().getId().toString())) {
                                 groceryModel.setVisible("true");
@@ -273,20 +281,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
                         groceryModelArrayList.add(groceryModel);
                     }
 
-
-//                    if (hasNextProductPage) {
-//
-////                        getCollectionCursur(trim.trim(), productStringPageCursor.get(productStringPageCursor.size()-1));
-//                        getCollectionCursur(trim.trim(), productStringPageCursor.get(productStringPageCursor.size() - 1));
-//                    }
-
                 }
-
-
-//                Log.e("groceryModelArrayList", String.valueOf(groceryModelArrayList.size()));
-//                Log.e("groceryModelArrayList", String.valueOf(product.getProducts().getEdges().size()));
-//                Log.e("productch", ""+product.getProducts().getEdges().get(0).getNode().getOptions().get(0).getName());
-//
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -308,12 +303,12 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
         });
     }
 
-    private void getCollectionCursur(String trim, String productCursor) {
+    private void getCollectionCursur(String trim, String productCursor, String sort) {
         Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
                 .node(new ID(trim.trim()), nodeQuery -> nodeQuery
                         .onCollection(collectionQuery -> collectionQuery
                                 .title()
-                                .products(arg -> arg.first(10).after(productCursor), productConnectionQuery -> productConnectionQuery
+                                .products(arg -> arg.first(10).after(productCursor).sortKey(Storefront.ProductCollectionSortKeys.valueOf(sort)), productConnectionQuery -> productConnectionQuery
                                         .pageInfo(pageInfoQuery -> pageInfoQuery
                                                 .hasNextPage()
                                                 .hasPreviousPage()
@@ -443,4 +438,43 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
             itemCount.setText("Items : " + cart_size);
         }
     }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.filter:
+                final CharSequence[] relevance = new String[]{"Best Selling",  "Lowest Price", "Relevance", "Product Title A - Z", "Manual"};
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Select");
+                builder.setSingleChoiceItems(relevance, check, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                        if (i == 0) {
+                            sort_string = "BEST_SELLING";
+                        } else if (i == 1) {
+                            sort_string = "PRICE";
+                        } else if (i == 2) {
+                            sort_string = "RELEVANCE";
+                        } else if (i == 3) {
+                            sort_string = "TITLE";
+                        } else if (i == 4) {
+                            sort_string = "MANUAL";
+                        } else {
+                            sort_string = "BEST_SELLING";
+                        }
+                        //   sort_string = relevance[i].toString();
+                        check = i;
+                        Log.e("sort_string", sort_string);
+                        getCollection(converted.trim(), sort_string);
+
+                    }
+                });
+                AlertDialog alertDialog1 = builder.create();
+                alertDialog1.show();
+
+                break;
+        }
+    }
+
 }

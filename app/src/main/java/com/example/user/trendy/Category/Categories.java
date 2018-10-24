@@ -193,6 +193,7 @@ public class Categories extends Fragment {
     }
 
     private void collectionList() {
+        categoryList.clear();
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("loading, please wait...");
         progressDialog.setCanceledOnTouchOutside(false);

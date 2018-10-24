@@ -891,10 +891,10 @@ String finalhtml=" ";
 
 
             JSONArray line_items = new JSONArray();
-            JSONObject items = new JSONObject();
+
             if (product_varientid.trim().length() == 0) {
                 for (int i = 0; i < cartlist.size(); i++) {
-
+                    JSONObject items = new JSONObject();
                     product_varientid = cartlist.get(i).getProduct_varient_id();
                     byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
                     String val2 = new String(tmp2);
@@ -909,7 +909,7 @@ String finalhtml=" ";
                     jsonBody.put("line_items", line_items);
                 }
             } else {
-
+                JSONObject items = new JSONObject();
 //                items.put("variant_id", "5823671107611");
                 items.put("variant_id", product_varientid.trim());
                 items.put("quantity", product_qty);
