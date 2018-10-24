@@ -118,7 +118,8 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         checkoutbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                totalcosts=totalcost.getText().toString();
+                String[] str_totalCost=totalcost.getText().toString().split(" ");
+                totalcosts=str_totalCost[1];
                 Bundle bundle = new Bundle();
                 bundle.putString("collection", "allcollection");
                 bundle.putString("totalcost",totalcosts);
@@ -155,7 +156,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         CommanCartControler commanCartControler;
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
-        SharedPreference.saveData("total", String.valueOf(commanCartControler.getTotalPrice()), getActivity());
+        SharedPreference.saveData("total", Integer.toString(commanCartControler.getTotalPrice()), getActivity());
         totalcost.setText(getResources().getString(R.string.Rs) + " " + Integer.toString(commanCartControler.getTotalPrice()));
 
 

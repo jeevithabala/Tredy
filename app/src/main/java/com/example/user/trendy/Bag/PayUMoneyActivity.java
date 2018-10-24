@@ -130,7 +130,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         db = new DBHelper(this);
 
         cartlist = db.getCartList();
-        totalcost = SharedPreference.getData("total", getApplicationContext());
+//        totalcost = SharedPreference.getData("total", getApplicationContext());
         discount_recycler = findViewById(R.id.discount_recycler);
         recycler_layout = findViewById(R.id.recycler_layout);
         view_coupon = findViewById(R.id.view_coupon);
@@ -168,6 +168,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
         }
+
+//        Toast.makeText(this, totalcost, Toast.LENGTH_SHORT).show();
+
         totalamount = totalcost;
         if (totalamount != null) {
             String[] separated = totalamount.split(" ");
@@ -188,7 +191,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         view_coupon.setOnClickListener(this);
 
         emailedit.setText(emailstring);
-        amountedit.setText(totalcost);
+        amountedit.setText(getResources().getString(R.string.Rs) + " " + totalcost);
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         discount_recycler.setLayoutManager(layoutManager1);

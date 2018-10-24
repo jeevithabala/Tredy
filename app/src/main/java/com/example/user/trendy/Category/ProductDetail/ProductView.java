@@ -55,6 +55,7 @@ import com.example.user.trendy.Interface.CommanCartControler;
 import com.example.user.trendy.Interface.ProductClickInterface;
 import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
+import com.example.user.trendy.Search.SearchModel;
 import com.example.user.trendy.Whislist.AddWhislistModel;
 import com.example.user.trendy.databinding.ProductViewBinding;
 import com.shopify.buy3.GraphCall;
@@ -171,7 +172,8 @@ public class ProductView extends Fragment implements ProductClickInterface {
             AddWhislistModel model = (AddWhislistModel) getArguments().getSerializable("category_id");
 
             id = model.getProduct_id();
-
+        }else if(product.trim().equals("search")){
+            id = getArguments().getString("product_id");
         } else {
             ProductModel detail = (ProductModel) getArguments().getSerializable("category_id");
 //            itemModel.setProduct(detail.getProduct());
@@ -198,18 +200,32 @@ public class ProductView extends Fragment implements ProductClickInterface {
         buy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                no_of_count = count.getText().toString();
+
                 Bundle bundle = new Bundle();
                 bundle.putString("collection", "productview");
                 bundle.putString("productid", itemModel.getProductid());
                 bundle.putString("product_varientid", String.valueOf(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getId()));
-                bundle.putString("product_qty", itemModel.getCount());
+                bundle.putString("product_qty", no_of_count);
                 bundle.putString("totalcost", String.valueOf(itemModel.getCost()));
                 bundle.putString("tag", String.valueOf(itemModel.getProduct().getTags()));
-//                commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(itemModel.getCount()));
-                no_of_count = count.getText().toString();
-                String text = "gid://shopify/Product/" + id.trim();
-                String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-                commanCartControler.AddToCartGrocery(converted.trim(), selectedID, Integer.parseInt(no_of_count));
+
+                if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist")) {
+                    byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
+                    String val2 = new String(tmp2);
+                    String[] str = val2.split("/");
+                    Log.d("str value", str[4]);
+                    commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(no_of_count));
+//                    Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
+                } else {
+                    String text = "gid://shopify/Product/" + id.trim();
+                    String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
+                    Log.e("coverted", converted.trim());
+                    Log.e("id", id);
+                    commanCartControler.AddToCartGrocery(converted.trim(), selectedID, Integer.parseInt(no_of_count));
+//                    Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
+                }
+
                 Fragment fragment = new ShippingAddress();
                 fragment.setArguments(bundle);
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
@@ -230,7 +246,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                     if (selected == -1) {
                         Toast.makeText(getActivity(), "Please Select Size.", Toast.LENGTH_SHORT).show();
                     } else {
-                        if (product.trim().equals("grocery") ||product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist")) {
+                        if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist")) {
                             no_of_count = count.getText().toString();
                             byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
                             String val2 = new String(tmp2);
@@ -452,7 +468,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //                    Toast.makeText(getActivity(), rbn.getText(), Toast.LENGTH_SHORT).show();
 //adapter.notifyItemChanged(selectedID);
 
-                        product_price.setText(getResources().getString(R.string.Rs) + " " + itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getPrice().toString());
+                                product_price.setText(getResources().getString(R.string.Rs) + " " + itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getPrice().toString());
 
                                 itemModel.setPrice(selectedID);
                                 itemModel.setProductid(String.valueOf(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getId()));

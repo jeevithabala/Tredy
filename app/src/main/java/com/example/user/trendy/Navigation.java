@@ -76,8 +76,6 @@ public class Navigation extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-
         init();
 
     }
