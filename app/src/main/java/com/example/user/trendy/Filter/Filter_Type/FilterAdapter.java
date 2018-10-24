@@ -1,6 +1,7 @@
 package com.example.user.trendy.Filter.Filter_Type;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,8 +14,11 @@ import android.widget.TextView;
 
 import com.example.user.trendy.Interface.FragmentRecyclerViewClick;
 import com.example.user.trendy.R;
+import com.example.user.trendy.Util.FilterSharedPreference;
 
 import java.util.ArrayList;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder> {
 
@@ -51,7 +55,9 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
 
         viewHolder.Name.setText(itemsList.get(position).getTitle());
 
-        viewHolder.chkSelected.setChecked(itemsList.get(position).isChecked());
+        viewHolder.chkSelected.setChecked(getFromSP(itemsList.get(position).title));
+
+//        viewHolder.chkSelected.setChecked(getFromSP("cb1"));
 
         viewHolder.chkSelected.setTag(itemsList.get(position));
 
@@ -66,9 +72,15 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
 
                 if (cb.isChecked()) {
                     selectedList.add(itemsList.get(pos).getTitle());
+                    FilterSharedPreference.saveInSp(itemsList.get(pos).getTitle(),true,getApplicationContext());
+//                    saveInSp(itemsList.get(pos).getTitle(),true);
                     Log.e("added_type", String.valueOf(selectedList));
                 } else {
                     selectedList.remove(itemsList.get(pos).getTitle());
+                    FilterSharedPreference.saveInSp(itemsList.get(pos).getTitle(),false,getApplicationContext());
+
+//                    saveInSp(itemsList.get(pos).getTitle(),false);
+
                     Log.e("removed_tytpe", String.valueOf(selectedList));
                 }
 
@@ -81,6 +93,12 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
     public int getItemCount() {
         return itemsList.size();
     }
+
+    private boolean getFromSP(String key){
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("PROJECT_NAME", android.content.Context.MODE_PRIVATE);
+        return preferences.getBoolean(key, false);
+    }
+
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

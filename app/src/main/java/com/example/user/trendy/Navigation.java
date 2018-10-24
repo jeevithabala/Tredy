@@ -122,7 +122,12 @@ public class Navigation extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+
         }
+
+
+
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

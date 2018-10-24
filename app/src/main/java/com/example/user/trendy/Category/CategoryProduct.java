@@ -44,6 +44,7 @@ import com.example.user.trendy.Navigation;
 import com.example.user.trendy.Product.ProductListModel;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.Constants;
+import com.example.user.trendy.Util.FilterSharedPreference;
 import com.example.user.trendy.Util.SharedPreference;
 import com.example.user.trendy.Util.WordUtils;
 import com.google.zxing.common.StringUtils;
@@ -217,9 +218,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
 //            collectionList(id.trim(),requestCount);
 
-        productAdapter = new ProductAdapter(getActivity(), productDetalList, getFragmentManager(), this);
-        recyclerView.setAdapter(productAdapter);
-        productAdapter.notifyDataSetChanged();
+
 
         if(isFilterData==true){
 
@@ -227,6 +226,11 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             recyclerView.setAdapter(productAdapter1);
             productAdapter1.notifyDataSetChanged();
 
+        }else if(isFilterData==false) {
+            onBackPressed();
+            productAdapter = new ProductAdapter(getActivity(), productDetalList, getFragmentManager(), this);
+            recyclerView.setAdapter(productAdapter);
+            productAdapter.notifyDataSetChanged();
         }
 
 
@@ -269,6 +273,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
 
 
+        requestCount1 =1;
 
         isFilterData=true;
         min_price = minprice;
@@ -276,9 +281,10 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         sortbykey = sortby;
         id = collectionid;
         selectedFilterList = selectedFilterLists;
+        FilterSharedPreference.saveArrayList(selectedFilterList,"filter",getActivity());
         dynamicKey1 = CollectionName;
 
-        productDetalList.clear();
+        productDetalList1.clear();
 //        productAdapter.notifyDataSetChanged();
         postFilter();
 //        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -298,6 +304,17 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 //            }
 //        });
 
+    }
+
+
+    public void onBackPressed()
+    {
+
+        if(FilterSharedPreference.getArrayList("filter",getActivity())!=null) {
+            for (int i = 0; i < FilterSharedPreference.getArrayList("filter", getActivity()).size(); i++) {
+                FilterSharedPreference.saveInSp(FilterSharedPreference.getArrayList("filter", getActivity()).get(i), false, getActivity());
+            }
+        }
     }
     public void postFilter() {
         isFilterData=true;
