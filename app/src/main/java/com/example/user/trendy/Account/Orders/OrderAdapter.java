@@ -18,7 +18,7 @@ import com.example.user.trendy.R;
 
 import java.util.ArrayList;
 
-public class OrderAdapter  extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
+public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
 
     Context mContext;
     ArrayList<OrderModel> itemsList;
@@ -31,6 +31,7 @@ public class OrderAdapter  extends RecyclerView.Adapter<OrderAdapter.ViewHolder>
         this.itemsList = itemsList;
         this.fragmentManager = fragmentManager;
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -38,7 +39,7 @@ public class OrderAdapter  extends RecyclerView.Adapter<OrderAdapter.ViewHolder>
             layoutInflater = LayoutInflater.from(parent.getContext());
         }
 
-        OrderAdapterBinding orderAdapterBinding =  DataBindingUtil.inflate(layoutInflater, R.layout.order_adapter, parent, false);
+        OrderAdapterBinding orderAdapterBinding = DataBindingUtil.inflate(layoutInflater, R.layout.order_adapter, parent, false);
         return new ViewHolder(orderAdapterBinding);
     }
 
@@ -53,11 +54,9 @@ public class OrderAdapter  extends RecyclerView.Adapter<OrderAdapter.ViewHolder>
         return itemsList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder
-    {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private final OrderAdapterBinding binding;
-
 
 
         public ViewHolder(final OrderAdapterBinding itembinding) {
@@ -71,18 +70,22 @@ public class OrderAdapter  extends RecyclerView.Adapter<OrderAdapter.ViewHolder>
 
 
                     Log.e("itemlist", String.valueOf(itemsList.get(getAdapterPosition())));
-                    Log.e("orderetititle",itemsList.get(1).getOrderd().getLineItems().getEdges().get(1).getNode().getVariant().getProduct().getTitle());
+                    Log.e("orderetititle", itemsList.get(1).getOrderd().getLineItems().getEdges().get(1).getNode().getVariant().getProduct().getTitle());
 
                     Fragment fragment = new OrderList();
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("orderlist",itemsList.get(getAdapterPosition()));
+                    bundle.putSerializable("orderlist", itemsList.get(getAdapterPosition()));
                     fragment.setArguments(bundle);
 
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
                     transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                     transaction.replace(R.id.home_container, fragment, "account");
-//                    transaction.addToBackStack(null);
-                    transaction.commit();
+                    if (fragmentManager.findFragmentByTag("account") == null) {
+                        transaction.addToBackStack("account");
+                        transaction.commit();
+                    } else {
+                        transaction.commit();
+                    }
 
 
                 }

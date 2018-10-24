@@ -148,8 +148,12 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
                 Fragment fragment = new ForYou();
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "ForYou");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                ft.addToBackStack(null);
-                ft.commit();
+                if (getFragmentManager().findFragmentByTag("ForYou") == null) {
+                    ft.addToBackStack("ForYou");
+                    ft.commit();
+                } else {
+                    ft.commit();
+                }
             }
         });
 
@@ -164,8 +168,13 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
                 fragment.setArguments(bundle);
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                ft.addToBackStack("grocery");
-                ft.commit();
+                if (getFragmentManager().findFragmentByTag("fragment") == null) {
+                    ft.addToBackStack("fragment");
+                    ft.commit();
+                } else {
+                    ft.commit();
+                }
+
             }
         });
 

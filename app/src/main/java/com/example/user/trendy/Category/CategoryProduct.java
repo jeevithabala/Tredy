@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -95,9 +96,9 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     public static int i = 0;
     public static boolean isViewWithCatalog = true;
     CategoryModel detail = new CategoryModel();
-    String id, title="";
+    String id, title = "";
     private RequestQueue mRequestQueue;
-    String min_price = "", max_price = "", dynamicKey,dynamicKey1;
+    String min_price = "", max_price = "", dynamicKey, dynamicKey1;
     ArrayList<String> selectedFilterList = new ArrayList<>();
     private String collectionname;
     CartController cartController;
@@ -106,7 +107,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     RequestQueue requestQueue;
     private String sortbykey;
 
-    private Boolean isFilterData=false;
+    private Boolean isFilterData = false;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -129,7 +130,6 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
 
         recyclerView = view.findViewById(R.id.product_recyclerview);
-
 
 
 //        isViewWithCatalog = !isViewWithCatalog;
@@ -182,11 +182,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             Log.e("iddc", id);
 
         }
-        if(title!=null){
-        if (title.trim().length() != 0) {
-            ((Navigation) getActivity()).getSupportActionBar().setTitle(title);
+        if (title != null) {
+            if (title.trim().length() != 0) {
+                ((Navigation) getActivity()).getSupportActionBar().setTitle(title);
 
-        }}else {
+            }
+        } else {
             ((Navigation) getActivity()).getSupportActionBar().setTitle("Categories");
 
         }
@@ -221,7 +222,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         recyclerView.setAdapter(productAdapter);
         productAdapter.notifyDataSetChanged();
 
-        if(isFilterData==true){
+        if (isFilterData == true) {
 
             productAdapter1 = new ProductAdapter(getActivity(), productDetalList1, getFragmentManager(), this);
             recyclerView.setAdapter(productAdapter1);
@@ -230,31 +231,29 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         }
 
 
-
         getData();
 
 
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
-                }
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
-                    if (isLastItemDisplaying(recyclerView)) {
-                        //Calling the method getdata again
-                        if(isFilterData==true)
-                        {
-                            postFilter();
-                        }else {
-                            getData();
-                        }
+                if (isLastItemDisplaying(recyclerView)) {
+                    //Calling the method getdata again
+                    if (isFilterData == true) {
+                        postFilter();
+                    } else {
+                        getData();
                     }
                 }
-            });
+            }
+        });
 
 
 //        }
@@ -262,15 +261,10 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
     }
 
-    public void getFilterData(String minprice,String maxprice,String sortby,String collectionid,ArrayList<String> selectedFilterLists ,String CollectionName    ){
+    public void getFilterData(String minprice, String maxprice, String sortby, String collectionid, ArrayList<String> selectedFilterLists, String CollectionName) {
 
 
-
-
-
-
-
-        isFilterData=true;
+        isFilterData = true;
         min_price = minprice;
         max_price = maxprice;
         sortbykey = sortby;
@@ -299,8 +293,9 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 //        });
 
     }
+
     public void postFilter() {
-        isFilterData=true;
+        isFilterData = true;
         requestQueue.add(postfilter(id, requestCount1));
         Log.d("request counter1", String.valueOf(requestCount1));
         requestCount1++;
@@ -339,9 +334,9 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             final String requestBody = jsonBody.toString();
             String a;
             if (sortbykey.trim().length() == 0) {
-                a = "?page_size=10&page="+count;
+                a = "?page_size=10&page=" + count;
             } else {
-                a = "?" + sortbykey.trim() + "&page_size=10&page="+ count;
+                a = "?" + sortbykey.trim() + "&page_size=10&page=" + count;
             }
 
             stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + a, new Response.Listener<String>() {
@@ -656,11 +651,10 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "filter");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
 //                ft.addToBackStack(null);
-                if(getFragmentManager().findFragmentByTag("filter")==null) {
+                if (getFragmentManager().findFragmentByTag("filter") == null) {
                     ft.addToBackStack("filter");
                     ft.commit();
-                }
-                else {
+                } else {
                     ft.commit();
                 }
 
@@ -689,9 +683,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         fragment.setArguments(bundle);
         FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-        ft.addToBackStack("categoryproduct");
-        ft.commit();
-
+        if (getFragmentManager().findFragmentByTag("fragment") == null) {
+            ft.addToBackStack("fragment");
+            ft.commit();
+        } else {
+            ft.commit();
+        }
     }
 
     @Override

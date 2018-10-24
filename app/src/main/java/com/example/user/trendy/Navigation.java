@@ -188,18 +188,32 @@ public class Navigation extends AppCompatActivity
 //            return true;
 //        } else
         if (id == R.id.bag) {
+            Bag bag = new Bag();
+            FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
             transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-            transaction1.replace(R.id.home_container, new Bag(), "Bag");
-            transaction1.addToBackStack("ForYou");
-            transaction1.commit();
+            transaction1.replace(R.id.home_container, bag, "Bag");
+            if (fragmentManager.findFragmentByTag("Bag") == null) {
+                transaction1.addToBackStack("Bag");
+                transaction1.commit();
+            } else {
+                transaction1.commit();
+            }
+
+
             return true;
         } else if (id == R.id.searchBar) {
+            Search search = new Search();
+            FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
             transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-            transaction1.replace(R.id.home_container, new Search(), "search");
-            transaction1.addToBackStack("ForYou");
-            transaction1.commit();
+            transaction1.replace(R.id.home_container, search, "search");
+            if (fragmentManager.findFragmentByTag("search") == null) {
+                transaction1.addToBackStack("search");
+                transaction1.commit();
+            } else {
+                transaction1.commit();
+            }
             return true;
         }
 
@@ -227,31 +241,58 @@ public class Navigation extends AppCompatActivity
             if (fragmentManager.findFragmentById(R.id.home_container) instanceof Categories) {
 
             } else {
+                Categories categories =new Categories();
+                FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction.replace(R.id.home_container, new Categories(), "Categories");
-                transaction.addToBackStack("ForYou");
-                transaction.commit();
+                transaction.replace(R.id.home_container, categories, "Categories");
+                if(fragmentManager.findFragmentByTag("Categories")==null)
+                {
+                    transaction.addToBackStack("Categories");
+                    transaction.commit();
+                }
+                else
+                {
+                    transaction.commit();
+                }
+
             }
         } else if (id == R.id.wishlist) {
             if (fragmentManager.findFragmentById(R.id.home_container) instanceof Whislist) {
 
             } else {
+                Whislist whislist = new Whislist();
+                FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction wtransaction = getSupportFragmentManager().beginTransaction();
                 wtransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                wtransaction.replace(R.id.home_container, new Whislist(), "whislist");
-                wtransaction.addToBackStack("ForYou");
-                wtransaction.commit();
+                wtransaction.replace(R.id.home_container, whislist, "wishlist");
+                if(fragmentManager.findFragmentByTag("wishlist")==null)
+                {
+                    wtransaction.addToBackStack("wishlist");
+                    wtransaction.commit();
+                }
+                else
+                {
+                    wtransaction.commit();
+                }
+
             }
         } else if (id == R.id.account) {
             if (fragmentManager.findFragmentById(R.id.home_container) instanceof MyAccount) {
 
             } else {
+                MyAccount myAccount = new MyAccount();
+                FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
                 transaction2.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction2.replace(R.id.home_container, new MyAccount(), "account");
-                transaction2.addToBackStack("ForYou");
-                transaction2.commit();
+                transaction2.replace(R.id.home_container, myAccount, "account");
+                if (fragmentManager.findFragmentByTag("account") == null) {
+                    transaction2.addToBackStack("account");
+                    transaction2.commit();
+                } else {
+                    transaction2.commit();
+                }
+
             }
         } else if (id == R.id.logout) {
             noDialog();

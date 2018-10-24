@@ -48,7 +48,6 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
     private int pos1 = 0;
 
 
-
     public GroceryHomeAdapter(Context mContext, ArrayList<GroceryHomeModel> itemsList, FragmentManager fragmentManager) {
         this.mContext = mContext;
         this.itemsList = itemsList;
@@ -72,14 +71,12 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
         holder.binding.setGrocery1(itemsList.get(position));
 
 
-
     }
 
     @Override
     public int getItemCount() {
         return itemsList.size();
     }
-
 
 
     class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnItemSelectedListener {
@@ -101,11 +98,11 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
                 @Override
                 public void onClick(View view) {
                     pos1 = getAdapterPosition();
-                    Log.e( String.valueOf(pos1), String.valueOf(pos));
+                    Log.e(String.valueOf(pos1), String.valueOf(pos));
                     cartController = new CartController(mContext);
                     commanCartControler = (CommanCartControler) cartController;
                     commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
-                    Toast.makeText(mContext,"Added to cart",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Added to cart", Toast.LENGTH_SHORT).show();
                 }
             });
 //            spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) mContext);
@@ -142,8 +139,13 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
                     fragment.setArguments(bundle);
                     FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    ft.addToBackStack("ForYou");
-                    ft.commit();
+                    if (fragmentManager.findFragmentByTag("fragment") == null) {
+                        ft.addToBackStack("fragment");
+                        ft.commit();
+                    } else {
+                        ft.commit();
+                    }
+
                 }
             });
         }

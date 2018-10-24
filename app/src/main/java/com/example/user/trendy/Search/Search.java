@@ -161,8 +161,16 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
         fragment.setArguments(bundle);
         FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "search");
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-        ft.addToBackStack("ForYou");
-        ft.commit();
+        if(getFragmentManager().findFragmentByTag("search")==null)
+        {
+            ft.addToBackStack("search");
+            ft.commit();
+        }
+        else
+        {
+            ft.commit();
+        }
+
 
     }
 
