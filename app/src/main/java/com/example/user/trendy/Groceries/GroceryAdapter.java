@@ -168,18 +168,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
 //
             spinner.setOnItemSelectedListener(this);
 
-//            db = new DBHelper(mContext);
-//            addToCart_modelArrayList = db.getCartList();
-//            for (int i = 0; i <addToCart_modelArrayList.size() ; i++) {
-//                Log.e("size", String.valueOf(addToCart_modelArrayList.size()));
-//                Log.e("dbid",addToCart_modelArrayList.get(0).getProduct_id());
-//                Log.e("position", " "+String.valueOf(getAdapterPosition()));
-//                Log.e("position", " "+itemsList.get(getAdapterPosition()));
-//                Log.e("position_id"," "+itemsList.get(getAdapterPosition()).getProduct().getId());
-//                if(addToCart_modelArrayList.get(i).getProduct_id().trim().equals(itemsList.get(getAdapterPosition()).getProduct().getId().toString())){
-//                   add_to_cart.setVisibility(View.VISIBLE);
-//                }
-//            }
+//          z
 //            db=new DBHelper(mContext);
 
             addgrocery.setOnClickListener(new View.OnClickListener() {
