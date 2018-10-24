@@ -69,7 +69,7 @@ public class InitialActivity extends AppCompatActivity {
         if (product_varientid == null) {
             product_varientid = " ";
         }
-
+        amount.setText(totalamount);
 
     }
 

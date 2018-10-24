@@ -80,6 +80,9 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
         holder.binding.setGrocery(itemsList.get(position));
 
 
+
+
+
     }
 
     @Override
@@ -154,6 +157,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
         TextView textView, addgrocery, add_to_cart;
         Spinner spinner;
 
+
         public ViewHolder(final GroceryadapterBinding itembinding) {
             super(itembinding.getRoot());
             this.binding = itembinding;
@@ -163,6 +167,19 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
             add_to_cart = itemView.findViewById(R.id.add_to_cart);
 //
             spinner.setOnItemSelectedListener(this);
+
+//            db = new DBHelper(mContext);
+//            addToCart_modelArrayList = db.getCartList();
+//            for (int i = 0; i <addToCart_modelArrayList.size() ; i++) {
+//                Log.e("size", String.valueOf(addToCart_modelArrayList.size()));
+//                Log.e("dbid",addToCart_modelArrayList.get(0).getProduct_id());
+//                Log.e("position", " "+String.valueOf(getAdapterPosition()));
+//                Log.e("position", " "+itemsList.get(getAdapterPosition()));
+//                Log.e("position_id"," "+itemsList.get(getAdapterPosition()).getProduct().getId());
+//                if(addToCart_modelArrayList.get(i).getProduct_id().trim().equals(itemsList.get(getAdapterPosition()).getProduct().getId().toString())){
+//                   add_to_cart.setVisibility(View.VISIBLE);
+//                }
+//            }
 //            db=new DBHelper(mContext);
 
             addgrocery.setOnClickListener(new View.OnClickListener() {

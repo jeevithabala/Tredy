@@ -92,7 +92,12 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
         db = new DBHelper(getActivity());
         addToCart_modelArrayList = db.getCartList();
         Log.e("array", "" + db.getCartList());
-        int cart_size = addToCart_modelArrayList.size();
+
+        int cart_size = 0;
+        for (int i = 0; i < addToCart_modelArrayList.size(); i++) {
+            cart_size = cart_size + addToCart_modelArrayList.get(i).getQty();
+        }
+
         if (cart_size != 0) {
             add_to_cart.setVisibility(View.VISIBLE);
             itemCount.setText("Items : " + cart_size);
@@ -395,6 +400,12 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
         addToCart_modelArrayList.clear();
         addToCart_modelArrayList = db.getCartList();
         Log.e("array", "" + db.getCartList());
+        for (int j = 0; j < addToCart_modelArrayList.size(); j++) {
+            if (addToCart_modelArrayList.get(j).getProduct_id().equals(groceryModelArrayList.get(adapter_pos).getProduct().getId())) {
+
+            }
+
+        }
 
 
         cost = commanCartControler.getTotalPrice();
@@ -402,8 +413,15 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog {
         cost = cost + current_cost;
         subTotal.setText("SubTotal : ₹ " + cost);
 
-        int cart_size = addToCart_modelArrayList.size();
 
-        itemCount.setText("Items : " + cart_size);
+        int cart_size = 0;
+        for (int i = 0; i < addToCart_modelArrayList.size(); i++) {
+            cart_size = cart_size + addToCart_modelArrayList.get(i).getQty();
+        }
+
+        if (cart_size != 0) {
+            add_to_cart.setVisibility(View.VISIBLE);
+            itemCount.setText("Items : " + cart_size);
+        }
     }
 }
