@@ -49,7 +49,7 @@ public class AllCollectionModel implements Serializable {
                     .into(view);
         } else {
             Picasso.with(view.getContext())
-                    .load(R.drawable.ic_dashboard_black_24dp)
+                    .load(R.drawable.trendybanner)
                     //.transform(new CircleTransform())
                     .into(view);
         }
