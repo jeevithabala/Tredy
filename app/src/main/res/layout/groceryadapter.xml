@@ -102,10 +102,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:fontFamily="@font/lucidasansdemibold"
-                                android:text="Added to Cart"
                                 android:textColor="@color/red"
                                 android:textSize="12sp"
-                                android:visibility="gone" />
+                            android:text="Added to Cart"
+                                app:visible1="@{grocery.visible}" />
 
                         </LinearLayout>
 
