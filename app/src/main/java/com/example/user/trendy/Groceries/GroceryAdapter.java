@@ -195,7 +195,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
                         public void run() {
                             cartDailog.cart(pos1, pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
                         }
-                    }, 900);
+                    }, 1000);
 
 
 

@@ -188,19 +188,24 @@ public class Navigation extends AppCompatActivity
 //            return true;
 //        } else
         if (id == R.id.bag) {
-            FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
-            transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-            transaction1.replace(R.id.home_container, new Bag(), "Bag");
-            transaction1.addToBackStack("ForYou");
-            transaction1.commit();
+
+                FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                transaction1.replace(R.id.home_container, new Bag(), "Bag");
+                transaction1.addToBackStack("ForYou");
+                transaction1.commit();
             return true;
         } else if (id == R.id.searchBar) {
-            FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
-            transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-            transaction1.replace(R.id.home_container, new Search(), "search");
-            transaction1.addToBackStack("ForYou");
-            transaction1.commit();
-            return true;
+            if (fragmentManager.findFragmentById(R.id.home_container) instanceof Whislist) {
+            }
+            else {
+                FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                transaction1.replace(R.id.home_container, new Search(), "search");
+                transaction1.addToBackStack("ForYou");
+                transaction1.commit();
+                return true;
+            }
         }
 
 
