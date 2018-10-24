@@ -22,10 +22,19 @@ public class GroceryModel implements Serializable {
     public Storefront.Product product;
     public String qty;
     public String title;
+    public String visible;
 
 
     public GroceryModel() {
 
+    }
+
+    public String getVisible() {
+        return visible;
+    }
+
+    public void setVisible(String visible) {
+        this.visible = visible;
     }
 
     public String getTitle() {
@@ -137,6 +146,18 @@ public class GroceryModel implements Serializable {
 
 
     }
+    @BindingAdapter("visible1")
+    public static void visible2(TextView textView, String visible){
+        Log.e("visible", " "+visible);
+        if(visible!=null){
+            if (visible.equals("true")) {
+                textView.setText("Added to cart");
+                textView.setVisibility(View.VISIBLE);
+            }
+        }else {
+            textView.setVisibility(View.GONE);
+        }
 
+    }
 
 }

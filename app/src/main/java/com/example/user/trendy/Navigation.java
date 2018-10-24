@@ -60,7 +60,7 @@ import java.util.List;
 
 
 public class Navigation extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener,OnFilterDataCallBack {
+        implements NavigationView.OnNavigationItemSelectedListener, AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener, OnFilterDataCallBack {
 
     FragmentManager fragmentManager;
     private int cart_count = 0;
@@ -68,6 +68,7 @@ public class Navigation extends AppCompatActivity
     private List<AddToCart_Model> cartList = new ArrayList<>();
     private GoogleApiClient mGoogleApiClient;
     Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,8 +81,7 @@ public class Navigation extends AppCompatActivity
 
     }
 
-    public void init()
-    {
+    public void init() {
 
         scheduleJob();
         fragmentManager = getSupportFragmentManager();
@@ -108,10 +108,10 @@ public class Navigation extends AppCompatActivity
         db = new DBHelper(getApplicationContext());
         cartList = db.getCartList();
 //        cart_count = cartList.size();
-        cart_count=0;
-        for (int i = 0; i <cartList.size() ; i++) {
+        cart_count = 0;
+        for (int i = 0; i < cartList.size(); i++) {
             cartList.get(i).getQty();
-            cart_count=cart_count+  cartList.get(i).getQty();
+            cart_count = cart_count + cartList.get(i).getQty();
         }
     }
 
@@ -159,7 +159,6 @@ public class Navigation extends AppCompatActivity
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -188,23 +187,26 @@ public class Navigation extends AppCompatActivity
 //        if (id == R.id.action_settings) {
 //            return true;
 //        } else
-              if (id == R.id.bag) {
-            FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
-            transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-            transaction1.replace(R.id.home_container, new Bag(), "Bag");
-            transaction1.addToBackStack("ForYou");
-            transaction1.commit();
-            return true;
-        }
-       else if (id == R.id.searchBar) {
-            FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
-            transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-            transaction1.replace(R.id.home_container, new Search(), "search");
-            transaction1.addToBackStack("ForYou");
-            transaction1.commit();
-            return true;
-        }
+        if (id == R.id.bag) {
 
+                FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                transaction1.replace(R.id.home_container, new Bag(), "Bag");
+                transaction1.addToBackStack("ForYou");
+                transaction1.commit();
+            return true;
+        } else if (id == R.id.searchBar) {
+            if (fragmentManager.findFragmentById(R.id.home_container) instanceof Whislist) {
+            }
+            else {
+                FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                transaction1.replace(R.id.home_container, new Search(), "search");
+                transaction1.addToBackStack("ForYou");
+                transaction1.commit();
+                return true;
+            }
+        }
 
 
         return super.onOptionsItemSelected(item);
@@ -287,10 +289,10 @@ public class Navigation extends AppCompatActivity
     public void AddCartItem() {
         cartList.clear();
         cartList = db.getCartList();
-        cart_count=0;
-        for (int i = 0; i <cartList.size() ; i++) {
+        cart_count = 0;
+        for (int i = 0; i < cartList.size(); i++) {
             cartList.get(i).getQty();
-            cart_count=cart_count+  cartList.get(i).getQty();
+            cart_count = cart_count + cartList.get(i).getQty();
         }
         Log.e("countt", String.valueOf(cart_count));
 //        cart_count = cartList.size();
@@ -301,10 +303,10 @@ public class Navigation extends AppCompatActivity
     public void RemoveCartItem() {
         cartList.clear();
         cartList = db.getCartList();
-        cart_count=0;
-        for (int i = 0; i <cartList.size() ; i++) {
+        cart_count = 0;
+        for (int i = 0; i < cartList.size(); i++) {
             cartList.get(i).getQty();
-            cart_count=cart_count+  cartList.get(i).getQty();
+            cart_count = cart_count + cartList.get(i).getQty();
         }
 //        cart_count = cartList.size();
         Log.e("countt", String.valueOf(cart_count));
@@ -364,8 +366,7 @@ public class Navigation extends AppCompatActivity
 
     }
 
-    public  void refreshActivity()
-    {
+    public void refreshActivity() {
 
         Toast.makeText(this, "Main ACtivity", Toast.LENGTH_SHORT).show();
 
@@ -374,8 +375,8 @@ public class Navigation extends AppCompatActivity
 
     @Override
     public void onFilterValueSelectCallBack(String minprice, String maxprice, String sortby, String collectionid, ArrayList<String> selectedFilterLists, String CollectionName) {
-        CategoryProduct categoryProduct = (CategoryProduct)getSupportFragmentManager().findFragmentByTag("categoryproduct");
-        categoryProduct.getFilterData(minprice,maxprice,sortby,collectionid,selectedFilterLists,CollectionName);
+        CategoryProduct categoryProduct = (CategoryProduct) getSupportFragmentManager().findFragmentByTag("categoryproduct");
+        categoryProduct.getFilterData(minprice, maxprice, sortby, collectionid, selectedFilterLists, CollectionName);
 //
 //        if (categoryProduct == null) {
 //            categoryProduct = new CategoryProduct();

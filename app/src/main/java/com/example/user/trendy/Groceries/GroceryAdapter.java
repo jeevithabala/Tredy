@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -78,9 +79,6 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         holder.binding.setGrocery(itemsList.get(position));
-
-
-
 
 
     }
@@ -168,8 +166,6 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
 //
             spinner.setOnItemSelectedListener(this);
 
-//          z
-//            db=new DBHelper(mContext);
 
             addgrocery.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -178,27 +174,21 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
 //                    display();
                     cartController = new CartController(mContext);
                     commanCartControler = (CommanCartControler) cartController;
-                    commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos,Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
-//                    add_to_cart.setVisibility(View.VISIBLE);
-//                    addToCart_modelArrayList.clear();
-//                    addToCart_modelArrayList = db.getCartList();
-//                    for (int i = 0; i < addToCart_modelArrayList.size(); i++) {
-//                        if (db.checkProduct(addToCart_modelArrayList.get(i).getProduct_id())) {
-//                            add_to_cart.setVisibility(View.VISIBLE);
-//                            notifyDataSetChanged();
-//                        } else {
-//                            add_to_cart.setVisibility(View.GONE);
-//                            notifyDataSetChanged();
-//                        }
-//
-//                    }
+                    commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
+                    add_to_cart.setVisibility(View.VISIBLE);
 
-                    cartDailog.cart(pos1, pos,Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            cartDailog.cart(pos1, pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
+                        }
+                    }, 1000);
+
 
 
                 }
             });
-//            spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) mContext);
 
             binding.setCounter(new GroceryInterface() {
                 @Override
