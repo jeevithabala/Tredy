@@ -24,22 +24,12 @@
             android:icon="@drawable/ic_whislist"
             android:title="Wishlist" />
 
-
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/ic_logout"
+            android:title="Logout" />
     </group>
 
-    <item android:title="Others">
-        <menu>
-            <item
-                android:id="@+id/share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
 
-            <item
-                android:id="@+id/logout"
-                android:icon="@drawable/ic_logout"
-                android:title="Logout" />
-
-        </menu>
-    </item>
 
 </menu>

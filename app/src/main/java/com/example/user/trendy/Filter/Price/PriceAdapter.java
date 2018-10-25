@@ -88,7 +88,6 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> 
                     FilterSharedPreference.saveInSp_price(itemsList.get(pos).getTitle(), false, getApplicationContext());
                     Log.e("removed_tytpe", String.valueOf(selectedList));
                 }
-
             }
         });
 

@@ -301,13 +301,13 @@ public class Navigation extends AppCompatActivity
         } else if (id == R.id.logout) {
             noDialog();
 
-        } else if (id == R.id.share) {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            String shareBodyText = "Share the app to your loved ones";
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Subject/Title");
-            intent.putExtra(Intent.EXTRA_TEXT, shareBodyText + "\n" + "https://play.google.com/store/apps/details?id=" + "");
-            startActivity(Intent.createChooser(intent, "Share app via"));
+//        } else if (id == R.id.share) {
+//            Intent intent = new Intent(Intent.ACTION_SEND);
+//            intent.setType("text/plain");
+//            String shareBodyText = "Share the app to your loved ones";
+//            intent.putExtra(Intent.EXTRA_SUBJECT, "Subject/Title");
+//            intent.putExtra(Intent.EXTRA_TEXT, shareBodyText + "\n" + "https://play.google.com/store/apps/details?id=" + "");
+//            startActivity(Intent.createChooser(intent, "Share app via"));
 
         } else {
             Fragment fragment = new ForYou();
