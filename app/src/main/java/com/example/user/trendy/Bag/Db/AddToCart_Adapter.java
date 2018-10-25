@@ -128,8 +128,13 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
                     fragment.setArguments(bundle);
                     FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    ft.addToBackStack("Bag");
-                    ft.commit();
+                    if (fragmentManager.findFragmentByTag("fragment") == null) {
+                        ft.addToBackStack("fragment");
+                        ft.commit();
+                    } else {
+                        ft.commit();
+                    }
+
                 }
             });
 
@@ -143,8 +148,13 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
                     fragment.setArguments(bundle);
                     FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    ft.addToBackStack("Bag");
-                    ft.commit();
+                    if (fragmentManager.findFragmentByTag("fragment") == null) {
+                        ft.addToBackStack("fragment");
+                        ft.commit();
+                    } else {
+                        ft.commit();
+                    }
+
                 }
             });
 

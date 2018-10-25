@@ -41,7 +41,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class ProductList extends Fragment implements ProductClickInterface,View.OnClickListener {
+public class ProductList extends Fragment implements ProductClickInterface, View.OnClickListener {
     GraphClient graphClient;
     RecyclerView recyclerView;
     ArrayList<ProductListModel> productDetalList = new ArrayList<>();
@@ -57,9 +57,10 @@ public class ProductList extends Fragment implements ProductClickInterface,View.
     public static int i = 0;
     public static boolean isViewWithCatalog = true;
     CategoryModel detail = new CategoryModel();
-    String min_price="",max_price="",collectionid,dynamicKey;
-    ArrayList<String> selectedFilterList=new ArrayList<>();
-    String product_id,imagesrc;
+    String min_price = "", max_price = "", collectionid, dynamicKey;
+    ArrayList<String> selectedFilterList = new ArrayList<>();
+    String product_id, imagesrc;
+
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.category_product, container, false);
 
@@ -69,11 +70,11 @@ public class ProductList extends Fragment implements ProductClickInterface,View.
         filter.setOnClickListener(this);
         view1.setOnClickListener(this);
         recyclerView = view.findViewById(R.id.product_recyclerview);
-        min_price= getArguments().getString("min_price");
-        max_price= getArguments().getString("max_price");
-        collectionid= getArguments().getString("collectionid");
-        selectedFilterList=getArguments().getStringArrayList("selectedFilterList");
-        dynamicKey=getArguments().getString("dynamicKey");
+        min_price = getArguments().getString("min_price");
+        max_price = getArguments().getString("max_price");
+        collectionid = getArguments().getString("collectionid");
+        selectedFilterList = getArguments().getStringArrayList("selectedFilterList");
+        dynamicKey = getArguments().getString("dynamicKey");
         postFilter();
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -82,7 +83,7 @@ public class ProductList extends Fragment implements ProductClickInterface,View.
 
         productAdapter = new ProductListAdapter(getActivity(), productDetalList, getFragmentManager(), this);
         recyclerView.setAdapter(productAdapter);
-    return view;
+        return view;
     }
 
     public void postFilter() {
@@ -93,27 +94,25 @@ public class ProductList extends Fragment implements ProductClickInterface,View.
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("collection_id", collectionid);
 
-            JSONObject price= new JSONObject();
+            JSONObject price = new JSONObject();
             price.put("min_price", min_price);
             price.put("max_price", max_price);
-            jsonBody.put("price",price);
+            jsonBody.put("price", price);
 
-            JSONArray food= new JSONArray();
-            JSONObject food1= new JSONObject();
+            JSONArray food = new JSONArray();
+            JSONObject food1 = new JSONObject();
 
             for (int i = 0; i < selectedFilterList.size(); i++) {
                 String type = selectedFilterList.get(i).trim();
-                Log.e("type",type);
+                Log.e("type", type);
                 food1.put("name", dynamicKey);
-                food1.put("value", "Filter"+" "+dynamicKey+" "+type);
+                food1.put("value", "Filter" + " " + dynamicKey + " " + type);
             }
             food.put(food1);
-            jsonBody.put("food",food);
+            jsonBody.put("food", food);
 
 
-
-            Log.d("check JSON",jsonBody.toString());
-
+            Log.d("check JSON", jsonBody.toString());
 
 
             final String requestBody = jsonBody.toString();
@@ -138,21 +137,19 @@ public class ProductList extends Fragment implements ProductClickInterface,View.
 
                                 for (int i = 0; i < array.length(); i++) {
                                     JSONObject object1 = array.getJSONObject(i);
-                                    String title=object1.getString("title");
-                                    String min_price=object1.getString("min_price");
-                                    Log.e("image1",title+min_price);
+                                    String title = object1.getString("title");
+                                    String min_price = object1.getString("min_price");
+                                    Log.e("image1", title + min_price);
 
-                                    JSONArray array1=object1.getJSONArray("images");
+                                    JSONArray array1 = object1.getJSONArray("images");
                                     for (int j = 0; j < array1.length(); j++) {
                                         JSONObject object = array1.getJSONObject(j);
-                                         product_id=object.getString("product_id");
-                                         imagesrc=object.getString("src");
-                                        ProductListModel productListModel=new ProductListModel(product_id,imagesrc,min_price,title);
-                                        Log.e("image",product_id+imagesrc);
+                                        product_id = object.getString("product_id");
+                                        imagesrc = object.getString("src");
+                                        ProductListModel productListModel = new ProductListModel(product_id, imagesrc, min_price, title);
+                                        Log.e("image", product_id + imagesrc);
                                         productDetalList.add(productListModel);
                                     }
-
-
 
 
                                 }
@@ -164,7 +161,6 @@ public class ProductList extends Fragment implements ProductClickInterface,View.
 
 
                         }
-
 
 
                     } catch (JSONException e) {
@@ -192,6 +188,7 @@ public class ProductList extends Fragment implements ProductClickInterface,View.
                     return null;
 //                    }
                 }
+
                 @Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
@@ -215,6 +212,7 @@ public class ProductList extends Fragment implements ProductClickInterface,View.
             e.printStackTrace();
         }
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -239,8 +237,13 @@ public class ProductList extends Fragment implements ProductClickInterface,View.
                 fragment.setArguments(bundle);
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                ft.addToBackStack(null);
-                ft.commit();
+                if (getFragmentManager().findFragmentByTag("fragment") == null) {
+                    ft.addToBackStack("fragment");
+                    ft.commit();
+                } else {
+                    ft.commit();
+                }
+
 
                 break;
 

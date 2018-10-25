@@ -40,7 +40,7 @@ public class SubCategory extends Fragment {
     private RequestQueue mRequestQueue;
     String imageurl = "";
     LinearLayout subcategory;
-    TextView sublistname,all;
+    TextView sublistname, all;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -61,14 +61,19 @@ public class SubCategory extends Fragment {
         all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Categories categories = new Categories();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction.replace(R.id.home_container, new Categories(), "Categories");
-                transaction.addToBackStack("Categories");
-                transaction.commit();
+                transaction.replace(R.id.home_container, categories, "Categories");
+                if (getFragmentManager().findFragmentByTag("Categories") == null) {
+                    transaction.addToBackStack("Categories");
+                    transaction.commit();
+                } else {
+                    transaction.commit();
+                }
+
             }
         });
-
 
 
 //        Log.d("Selected Collection", String.valueOf(detail.getId()));
@@ -96,7 +101,7 @@ public class SubCategory extends Fragment {
         // productlist();
 
         CategoryModel detail = (CategoryModel) getArguments().getSerializable("category_id");
-        String title=detail.getCollectiontitle();
+        String title = detail.getCollectiontitle();
         sublistname.setText(title);
         subCategoryModelArrayList = detail.getSubCategoryModelArrayList();
         Log.e("subarray", "" + String.valueOf(subCategoryModelArrayList.size()));

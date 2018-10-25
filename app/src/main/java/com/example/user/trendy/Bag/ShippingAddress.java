@@ -344,8 +344,16 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     FragmentTransaction transaction1 = getFragmentManager().beginTransaction();
                     transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                     transaction1.replace(R.id.home_container, bag, "Bag");
-                    transaction1.addToBackStack("Bag");
-                    transaction1.commit();
+                    if(getFragmentManager().findFragmentByTag("Bag")==null)
+                    {
+                        transaction1.addToBackStack("Bag");
+                        transaction1.commit();
+                    }
+                    else
+                    {
+                        transaction1.commit();
+                    }
+
                 } else {
 
                 }

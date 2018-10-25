@@ -109,8 +109,16 @@ textView.setText(items.size()+" items");
                     fragment.setArguments(bundle);
                     FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "whislist");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    ft.addToBackStack("whislist");
-                    ft.commit();
+                    if(fragmentManager.findFragmentByTag("whislist")==null)
+                    {
+                        ft.addToBackStack("whislist");
+                        ft.commit();
+                    }
+                    else
+                    {
+                        ft.commit();
+                    }
+
                 }
             });
 

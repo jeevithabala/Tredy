@@ -102,14 +102,24 @@ public class SelectItemModel extends BaseObservable {
 
 
     public void increment() {
-        setCount(String.valueOf(Integer.parseInt(getCount()) + 1));
+        String count=getCount();
+        if(count.isEmpty())
+        {
+            count=String.valueOf(0);
+        }
+        setCount(String.valueOf(Integer.parseInt(count) + 1));
 //        setTotal(getCount()* selectItem.getProduct().getVariants().getEdges().get(0).getNode().getPrice().intValue());
 
     }
 
     public void decrement() {
-        if (Integer.parseInt(getCount()) != 0 && Integer.parseInt(getCount()) > 1) {
-            setCount(String.valueOf(Integer.parseInt(getCount()) - 1));
+        String count=getCount();
+        if(count.isEmpty())
+        {
+            count=String.valueOf(2);
+        }
+        if (Integer.parseInt(count) != 0 && Integer.parseInt(count) > 1) {
+            setCount(String.valueOf(Integer.parseInt(count) - 1));
 //            setTotal(getCount()* selectItem.getProduct().getVariants().getEdges().get(0).getNode().getPrice().intValue());
         }
 

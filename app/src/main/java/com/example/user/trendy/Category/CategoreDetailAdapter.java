@@ -33,6 +33,7 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
         this.itemsList = itemsList;
         this.fragmentManager = fragmentManager;
     }
+
     @Override
     public CategoreDetailAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -40,7 +41,7 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
             layoutInflater = LayoutInflater.from(parent.getContext());
         }
 
-        CategoreyAdapterBinding categoreyAdapterBinding =  DataBindingUtil.inflate(layoutInflater, R.layout.categorey_adapter, parent, false);
+        CategoreyAdapterBinding categoreyAdapterBinding = DataBindingUtil.inflate(layoutInflater, R.layout.categorey_adapter, parent, false);
         return new ViewHolder(categoreyAdapterBinding);
     }
 
@@ -55,11 +56,9 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
         return itemsList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder
-    {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private final CategoreyAdapterBinding binding;
-
 
 
         public ViewHolder(final CategoreyAdapterBinding itembinding) {
@@ -70,25 +69,35 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
             binding.setItemclick(new FragmentRecyclerViewClick() {
                 @Override
                 public void onClickPostion() {
-                    if(itemsList.get(getAdapterPosition()).getCollectiontitle().trim().toLowerCase().equals("grocery"))
-                    {
-                        FragmentTransaction transaction =fragmentManager.beginTransaction();
+                    if (itemsList.get(getAdapterPosition()).getCollectiontitle().trim().toLowerCase().equals("grocery")) {
+                        Groceries groceries = new Groceries();
+                        FragmentTransaction transaction = fragmentManager.beginTransaction();
                         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                        transaction.replace(R.id.home_container, new Groceries(), "grocery");
-                        transaction.addToBackStack("categories");
-                        transaction.commit();
-                    }else if(itemsList.get(getAdapterPosition()).getSubCategoryModelArrayList()==null) {
+                        transaction.replace(R.id.home_container, groceries, "grocery");
+                        if (fragmentManager.findFragmentByTag("grocery") == null) {
+                            transaction.addToBackStack("grocery");
+                            transaction.commit();
+                        } else {
+                            transaction.commit();
+                        }
+
+                    } else if (itemsList.get(getAdapterPosition()).getSubCategoryModelArrayList() == null) {
 
                         Fragment fragment = new CategoryProduct();
                         Bundle bundle = new Bundle();
-                        bundle.putString("collection","api");
+                        bundle.putString("collection", "api");
                         bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
                         fragment.setArguments(bundle);
                         FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
                         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                         ft.addToBackStack("ForYou");
-                        ft.commit();
-                    }else{
+                        if (fragmentManager.findFragmentByTag("categoryproduct") == null) {
+                            ft.addToBackStack("categoryproduct");
+                            ft.commit();
+                        } else {
+                            ft.commit();
+                        }
+
+                    } else {
 
                         Fragment fragment = new SubCategory();
                         Bundle bundle = new Bundle();
@@ -97,8 +106,13 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
                         fragment.setArguments(bundle);
                         FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
                         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                        ft.addToBackStack("ForYou");
-                        ft.commit();
+                        if (fragmentManager.findFragmentByTag("fragment") == null) {
+                            ft.addToBackStack("fragment");
+                            ft.commit();
+                        } else {
+                            ft.commit();
+                        }
+
 
                     }
 //

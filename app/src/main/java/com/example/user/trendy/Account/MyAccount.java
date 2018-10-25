@@ -85,8 +85,16 @@ public class MyAccount extends Fragment {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                 transaction.replace(R.id.home_container, fragment, "accountedit");
-                transaction.addToBackStack("account");
-                transaction.commit();
+                if(getFragmentManager().findFragmentByTag("accountedit")==null)
+                {
+                    transaction.addToBackStack("accountedit");
+                    transaction.commit();
+                }
+                else
+                {
+                    transaction.commit();
+                }
+
             }
         });
 

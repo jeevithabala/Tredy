@@ -118,8 +118,16 @@ public class NewMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                fragment.setArguments(bundle);
                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-               ft.addToBackStack("ForYou");
-               ft.commit();
+               if(fragmentManager.findFragmentByTag("categoryproduct")==null)
+               {
+                   ft.addToBackStack("categoryproduct");
+                   ft.commit();
+               }
+               else
+               {
+                   ft.commit();
+               }
+
            }
        });
     }

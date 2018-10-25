@@ -44,7 +44,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
     View view;
     TextView nobag;
     ArrayList<String> productlist = new ArrayList<>();
-    String state = "",totalcosts="";
+    String state = "", totalcosts = "";
     CartController cartController;
     CommanCartControler commanCartControler;
 
@@ -96,13 +96,12 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         bag_recyclerview.setItemAnimator(new DefaultItemAnimator());
 
 
-        adapter = new AddToCart_Adapter(cartList, getActivity(), this, binding.total,items,getFragmentManager());
+        adapter = new AddToCart_Adapter(cartList, getActivity(), this, binding.total, items, getFragmentManager());
         bag_recyclerview.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
 
 //adapter.notifyDataSetChanged();
-
 
 
 //        if (cartList.size() != 0) {
@@ -118,17 +117,22 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         checkoutbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String[] str_totalCost=totalcost.getText().toString().split(" ");
-                totalcosts=str_totalCost[1];
+                String[] str_totalCost = totalcost.getText().toString().split(" ");
+                totalcosts = str_totalCost[1];
                 Bundle bundle = new Bundle();
                 bundle.putString("collection", "allcollection");
-                bundle.putString("totalcost",totalcosts);
+                bundle.putString("totalcost", totalcosts);
                 Fragment fragment = new ShippingAddress();
                 fragment.setArguments(bundle);
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                ft.addToBackStack("bag");
-                ft.commit();
+                if (getFragmentManager().findFragmentByTag("fragment") == null) {
+                    ft.addToBackStack("fragment");
+                    ft.commit();
+                } else {
+                    ft.commit();
+                }
+
             }
         });
 

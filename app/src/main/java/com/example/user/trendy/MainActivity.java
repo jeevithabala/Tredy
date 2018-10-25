@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -47,28 +48,53 @@ public class MainActivity extends AppCompatActivity{
             switch (item.getItemId()) {
                 case R.id.navigation_you:
                     Fragment fragment = new ForYou();
+                    FragmentManager fragmentManager=getSupportFragmentManager();
                     FragmentTransaction transactioncal = getSupportFragmentManager().beginTransaction();
                     transactioncal.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                     transactioncal.replace(R.id.home_container, fragment, "ForYou");
-                    transactioncal.addToBackStack(null);
-                    transactioncal.commit();
-
+                    if(fragmentManager.findFragmentByTag("ForYou")==null)
+                    {
+                        transactioncal.addToBackStack("ForYou");
+                        transactioncal.commit();
+                    }
+                    else
+                    {
+                        transactioncal.commit();
+                    }
                     return true;
 
                 case R.id.navigation_categories:
+                    FragmentManager fragmentManager1 = getSupportFragmentManager();
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                     transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                     transaction.replace(R.id.home_container, new Categories(), "Categories");
-                    transaction.addToBackStack("Categories");
-                    transaction.commit();
+                    if(fragmentManager1.findFragmentByTag("Categories")==null)
+                    {
+                        transaction.addToBackStack("Categories");
+                        transaction.commit();
+                    }
+                    else
+                    {
+                        transaction.commit();
+                    }
+
 
                     return true;
                 case R.id.navigation_bag:
+                    FragmentManager fragmentManager2=getSupportFragmentManager();
                     FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
                     transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                     transaction1.replace(R.id.home_container, new Bag(), "Bag");
-//                    transaction1.addToBackStack("Bag");
-                    transaction1.commit();
+                    if(fragmentManager2.findFragmentByTag("Bag")==null)
+                    {
+                        transaction1.addToBackStack("Bag");
+                        transaction1.commit();
+                    }
+                    else
+                    {
+                        transaction1.commit();
+                    }
+
 
                     return true;
                 default:
