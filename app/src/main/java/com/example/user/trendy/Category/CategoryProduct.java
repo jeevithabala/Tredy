@@ -276,6 +276,15 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         id = collectionid;
         selectedFilterList = selectedFilterLists;
         FilterSharedPreference.saveArrayList(selectedFilterList,"filter",getActivity());
+        Log.e("sort_by", sortby);
+        if(sortby.equals("sortBy=min_price&order=desc")){
+            sortby="Price : High to Low";
+            FilterSharedPreference.saveData("sort",sortby,getActivity());
+        }else{
+            sortby="Price : Low to High";
+            FilterSharedPreference.saveData("sort",sortby,getActivity());
+        }
+
         dynamicKey1 = CollectionName;
 
         productDetalList1.clear();
@@ -300,7 +309,6 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
     }
 
-<<<<<<< HEAD
 
     public void onBackPressed()
     {
@@ -310,9 +318,13 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 FilterSharedPreference.saveInSp(FilterSharedPreference.getArrayList("filter", getActivity()).get(i), false, getActivity());
             }
         }
+
+        if(FilterSharedPreference.getData("sort",getActivity())!=null){
+            FilterSharedPreference.saveInSp_sort(FilterSharedPreference.getData("sort",getActivity()),false,getActivity());
+
     }
-=======
->>>>>>> master
+    }
+
     public void postFilter() {
         isFilterData = true;
         requestQueue.add(postfilter(id, requestCount1));

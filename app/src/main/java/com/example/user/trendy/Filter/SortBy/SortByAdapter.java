@@ -1,6 +1,7 @@
 package com.example.user.trendy.Filter.SortBy;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,8 +18,11 @@ import android.widget.TextView;
 
 import com.example.user.trendy.Interface.FragmentRecyclerViewClick;
 import com.example.user.trendy.R;
+import com.example.user.trendy.Util.FilterSharedPreference;
 
 import java.util.ArrayList;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class SortByAdapter extends RecyclerView.Adapter<SortByAdapter.ViewHolder> {
 
@@ -54,6 +58,7 @@ public class SortByAdapter extends RecyclerView.Adapter<SortByAdapter.ViewHolder
         final int pos = position;
 
         viewHolder.Name.setText(itemsList.get(position).getTitle());
+        viewHolder.chkSelected.setChecked(getFromSP(itemsList.get(position).title));
 
         viewHolder.chkSelected.setChecked(itemsList.get(position).isChecked());
 
@@ -80,9 +85,11 @@ public class SortByAdapter extends RecyclerView.Adapter<SortByAdapter.ViewHolder
 
                 if (cb.isChecked()) {
                     selectedList.add(itemsList.get(pos).getTitle());
-                    Log.e("added_type", String.valueOf(selectedList));
+                    FilterSharedPreference.saveInSp_sort(itemsList.get(pos).getTitle(),true,getApplicationContext());
+                    Log.e("added_type", itemsList.get(pos).getTitle());
                 } else {
                     selectedList.remove(itemsList.get(pos).getTitle());
+                    FilterSharedPreference.saveInSp_sort(itemsList.get(pos).getTitle(),false,getApplicationContext());
                     Log.e("removed_tytpe", String.valueOf(selectedList));
                 }
 
@@ -95,6 +102,11 @@ public class SortByAdapter extends RecyclerView.Adapter<SortByAdapter.ViewHolder
     public int getItemCount() {
         return itemsList.size();
     }
+    private boolean getFromSP(String key){
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("sort_by", android.content.Context.MODE_PRIVATE);
+        return preferences.getBoolean(key, false);
+    }
+
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

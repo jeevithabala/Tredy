@@ -14,16 +14,30 @@ import java.util.ArrayList;
 public class FilterSharedPreference {
 
 
+    public static final String Data = "hello";
 
-    public static boolean getFromSP(String key, Context context){
-        SharedPreferences preferences = context.getSharedPreferences("PROJECT_NAME", android.content.Context.MODE_PRIVATE);
-        return preferences.getBoolean(key, false);
-    }
     public static void saveInSp(String key,boolean value,Context context){
         SharedPreferences preferences = context.getSharedPreferences("PROJECT_NAME", android.content.Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(key, value);
         editor.commit();
+    }
+    public static void saveInSp_sort(String key,boolean value,Context context){
+        SharedPreferences preferences = context.getSharedPreferences("sort_by", android.content.Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    public static void saveData(String key, String value , Context context){
+        SharedPreferences.Editor editor = context.getSharedPreferences(Data, Activity.MODE_PRIVATE).edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    public static String getData(String key, Context context){
+        SharedPreferences prefs = context.getSharedPreferences(Data, Activity.MODE_PRIVATE);
+        return prefs.getString(key, "");
     }
 
     public static void saveArrayList(ArrayList<String> list, String key,Context context){
