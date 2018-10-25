@@ -1,7 +1,10 @@
 package com.example.user.trendy.Login;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
@@ -129,10 +132,12 @@ public class LoginActiviy extends AppCompatActivity implements
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-                startActivityForResult(signInIntent, RC_SIGN_IN);
-
+                if (isNetworkAvailable() == true) {
+                    Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+                    startActivityForResult(signInIntent, RC_SIGN_IN);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -223,46 +228,47 @@ public class LoginActiviy extends AppCompatActivity implements
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(LoginActiviy.this, SignupActivity.class);
-                startActivity(i);
+                if (isNetworkAvailable() == true) {
+                    Intent i = new Intent(LoginActiviy.this, SignupActivity.class);
+                    startActivity(i);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
         forgot_password.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                email = email_text.getText().toString().trim();
-//                if (email.trim().length() != 0) {
-//                    if (Validationemail.isEmailAddress(email_text, true)) {
-//                        forgotpassword();
-//                    } else {
-//                        Toast.makeText(getApplicationContext(), "Please enter valid email", Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                } else {
-//                    Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
-//                }
+                if (isNetworkAvailable() == true) {
+                    Intent i = new Intent(getApplicationContext(), ForgotPassword.class);
+                    startActivity(i);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                }
 
-                Intent i=new Intent(getApplicationContext(),ForgotPassword.class);
-                startActivity(i);
+
             }
         });
 
 
-        facebook.setOnClickListener(new View.OnClickListener()
-
-        {
+        facebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (AccessToken.getCurrentAccessToken() != null && com.facebook.Profile.getCurrentProfile() != null) {
-                    //Logged in so show the login button
+                if (isNetworkAvailable() == true) {
+                    if (AccessToken.getCurrentAccessToken() != null && com.facebook.Profile.getCurrentProfile() != null) {
+                        //Logged in so show the login button
 
-                    LoginManager.getInstance().logOut();
+                        LoginManager.getInstance().logOut();
 
-                    login_button.performClick();
+                        login_button.performClick();
 
+                    } else {
+                        login_button.performClick();
+                    }
                 } else {
-                    login_button.performClick();
+                    Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -271,23 +277,35 @@ public class LoginActiviy extends AppCompatActivity implements
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                email = email_text.getText().toString().trim();
-                password = etPassword.getText().toString().trim();
-                if (email.trim().length() != 0) {
-                    if (password.trim().length() != 0) {
-                        checkCustomer(email.trim(), password.trim());
+                if (isNetworkAvailable() == true) {
+                    email = email_text.getText().toString().trim();
+                    password = etPassword.getText().toString().trim();
+                    if (email.trim().length() != 0) {
+                        if (!email.matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
+                            Toast.makeText(LoginActiviy.this, "Please Enter Valid email", Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (password.trim().length() != 0) {
+                                checkCustomer(email.trim(), password.trim());
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Please enter password", Toast.LENGTH_SHORT).show();
+                            }
+                        }
                     } else {
-                        Toast.makeText(getApplicationContext(), "Please enter password", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
                 }
-
-
             }
         });
 
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override
@@ -456,7 +474,7 @@ public class LoginActiviy extends AppCompatActivity implements
                         Intent i = new Intent(getApplicationContext(), Navigation.class);
                         SharedPreference.saveData("login", "true", getApplicationContext());
                         startActivity(i);
-
+                        finish();
 
                         Log.e("token", "" + token);
                         Log.e("expire", "" + expire);

@@ -366,7 +366,7 @@ public class Navigation extends AppCompatActivity
                         }
                         SharedPreference.saveData("login", "", Navigation.this);
                         startActivity(new Intent(Navigation.this, LoginActiviy.class));
-
+                        finish();
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
