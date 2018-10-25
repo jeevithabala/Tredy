@@ -28,14 +28,15 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_PRICE = "price";
     private static final String COLUMN_IMAGE_URL = "image_url";
     private static final String COLUMN_QTY = "qty";
-    private static final String COLUMN_TAG= "tag";
-    private static final String COLUMN_SHIPPING= "shipping";
-    private static final String COLUMN_PRODUCT_ID= "product_id";
+    private static final String COLUMN_TAG = "tag";
+    private static final String COLUMN_SHIPPING = "shipping";
+    private static final String COLUMN_PRODUCT_ID = "product_id";
 
     private Context mContext;
 
     private String CREATE_ADD_TO_CARD = "CREATE TABLE " + TABLE_ADDTOCART + "("
-            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_PRODUCT_NAME + " TEXT,"
+            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + COLUMN_PRODUCT_NAME + " TEXT,"
             + COLUMN_PRODUCT_VARIENT_ID + " TEXT,"
             + COLUMN_PRICE + " REAL,"
             + COLUMN_PRODUCT_VARIENT_TITLE + " TEXT,"
@@ -72,7 +73,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public void insertToDo(String productid, Storefront.ProductVariant listItem, int qty, String Product_name, String tag ,String shipping) {
+    public void insertToDo(String productid, Storefront.ProductVariant listItem, int qty, String Product_name, String tag, String shipping) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -126,17 +127,17 @@ public class DBHelper extends SQLiteOpenHelper {
         String qty2 = "";
         SQLiteDatabase db = this.getWritableDatabase();
         String qty1 = "select qty from "
-                + TABLE_ADDTOCART        + " where "
-                + COLUMN_PRODUCT_VARIENT_ID      + " = "  + "'"   + id  + "'";
-        Cursor  cursor = db.rawQuery(qty1,null);
+                + TABLE_ADDTOCART + " where "
+                + COLUMN_PRODUCT_VARIENT_ID + " = " + "'" + id + "'";
+        Cursor cursor = db.rawQuery(qty1, null);
         if (cursor.moveToFirst()) {
-                 qty2 =  cursor.getString(cursor.getColumnIndex("qty"));
-                Log.e("qty2",""+qty2);
-                int quantity= Integer.parseInt(qty2)+qty;
+            qty2 = cursor.getString(cursor.getColumnIndex("qty"));
+            Log.e("qty2", "" + qty2);
+            int quantity = Integer.parseInt(qty2) + qty;
             ContentValues values = new ContentValues();
             values.put(COLUMN_QTY, quantity);
 
-            db.update(TABLE_ADDTOCART, values, COLUMN_PRODUCT_VARIENT_ID + "= '" + id+ "'", null);
+            db.update(TABLE_ADDTOCART, values, COLUMN_PRODUCT_VARIENT_ID + "= '" + id + "'", null);
         }
         db.close();
         ((AddRemoveCartItem) mContext).AddCartItem();
@@ -146,20 +147,20 @@ public class DBHelper extends SQLiteOpenHelper {
         String qty2 = "";
         SQLiteDatabase db = this.getWritableDatabase();
         String qty1 = "select shipping from "
-                + TABLE_ADDTOCART        + " where "
-                + COLUMN_PRODUCT_VARIENT_ID      + " = "  + "'"   + id  + "'";
-        Cursor  cursor = db.rawQuery(qty1,null);
+                + TABLE_ADDTOCART + " where "
+                + COLUMN_PRODUCT_VARIENT_ID + " = " + "'" + id + "'";
+        Cursor cursor = db.rawQuery(qty1, null);
         if (cursor.moveToFirst()) {
-            qty2 =  cursor.getString(cursor.getColumnIndex("shipping"));
+            qty2 = cursor.getString(cursor.getColumnIndex("shipping"));
 //            if (qty2.equals("true")){
 //                qty2="false";
 //            }
-            Log.e("value",""+qty2);
+            Log.e("value", "" + qty2);
 
             ContentValues values = new ContentValues();
             values.put(COLUMN_SHIPPING, ship);
 
-            db.update(TABLE_ADDTOCART, values, COLUMN_PRODUCT_VARIENT_ID + "= '" + id+ "'", null);
+            db.update(TABLE_ADDTOCART, values, COLUMN_PRODUCT_VARIENT_ID + "= '" + id + "'", null);
         }
         db.close();
     }
@@ -168,18 +169,18 @@ public class DBHelper extends SQLiteOpenHelper {
         String qty2 = "";
         SQLiteDatabase db = this.getWritableDatabase();
         String qty1 = "select qty from "
-                + TABLE_ADDTOCART        + " where "
-                + COLUMN_PRODUCT_VARIENT_ID      + " = "  + "'"   + id  + "'";
-        Cursor  cursor = db.rawQuery(qty1,null);
+                + TABLE_ADDTOCART + " where "
+                + COLUMN_PRODUCT_VARIENT_ID + " = " + "'" + id + "'";
+        Cursor cursor = db.rawQuery(qty1, null);
         if (cursor.moveToFirst()) {
-            qty2 =  cursor.getString(cursor.getColumnIndex("qty"));
-            Log.e("qty2",""+qty2);
-            if(Integer.parseInt(qty2)>1){
-                int quantity= Integer.parseInt(qty2)-1;
+            qty2 = cursor.getString(cursor.getColumnIndex("qty"));
+            Log.e("qty2", "" + qty2);
+            if (Integer.parseInt(qty2) > 1) {
+                int quantity = Integer.parseInt(qty2) - 1;
                 ContentValues values = new ContentValues();
                 values.put(COLUMN_QTY, quantity);
 
-                db.update(TABLE_ADDTOCART, values, COLUMN_PRODUCT_VARIENT_ID + "= '" + id+ "'", null);
+                db.update(TABLE_ADDTOCART, values, COLUMN_PRODUCT_VARIENT_ID + "= '" + id + "'", null);
             }
 
         }
@@ -192,9 +193,9 @@ public class DBHelper extends SQLiteOpenHelper {
         String qty2 = "";
         SQLiteDatabase db = this.getWritableDatabase();
         String qty1 = "select qty from "
-                + TABLE_ADDTOCART        + " where "
-                + COLUMN_PRODUCT_VARIENT_ID      + " = "  + "'"   + id  + "'";
-        Cursor  cursor = db.rawQuery(qty1,null);
+                + TABLE_ADDTOCART + " where "
+                + COLUMN_PRODUCT_VARIENT_ID + " = " + "'" + id + "'";
+        Cursor cursor = db.rawQuery(qty1, null);
         if (cursor.moveToFirst()) {
             qty2 = cursor.getString(cursor.getColumnIndex("qty"));
             Log.e("qty2", "" + qty2);
@@ -211,11 +212,10 @@ public class DBHelper extends SQLiteOpenHelper {
 //
 //    }
 
-    public boolean deleteRow(String name)
-    {
+    public boolean deleteRow(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        return db.delete(TABLE_ADDTOCART, COLUMN_PRODUCT_VARIENT_ID + "='" + name +"' ;", null) > 0;
+        return db.delete(TABLE_ADDTOCART, COLUMN_PRODUCT_VARIENT_ID + "='" + name + "' ;", null) > 0;
 
 
     }
