@@ -212,7 +212,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
                 topCollectionModelArrayList.clear();
                 newArrivalModelArrayList.clear();
 
-                Log.e("array1", String.valueOf(arrayList.size()));
+//                Log.e("array1", String.valueOf(arrayList.size()));
                 for (int i = 0; i < arrayList.size(); i++) {
                     TopSellingModel topSellingModel = new TopSellingModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
                     topSellingModel.setCollectionid(arrayList.get(i).getCollectionid());
@@ -363,7 +363,6 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
     @Override
     public void grocerylist(ArrayList<GroceryHomeModel> arrayList) {
-        Log.e("arrr", String.valueOf(arrayList.size()));
         resultCallBackInterface.grocery(arrayList);
     }
 }

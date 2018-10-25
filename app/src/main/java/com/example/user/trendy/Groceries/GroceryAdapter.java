@@ -183,7 +183,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
                         public void run() {
                             cartDailog.cart(pos1, pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
                         }
-                    }, 1000);
+                    }, 1500);
 
 
 
@@ -261,7 +261,6 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
             pos = i;
             String item = adapterView.getItemAtPosition(i).toString();
-            Log.e("itemselected", item);
         }
 
         @Override

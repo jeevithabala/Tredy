@@ -152,11 +152,11 @@ public class Filter_Fragment extends Fragment {
                     StringTokenizer tokens = new StringTokenizer(price, "-");
                     min_price = tokens.nextToken().trim();// this will contain "Fruit"
                     max_price = tokens.nextToken().trim();
-                    Log.e("pricec", "" + min_price + max_price);
+
                 }
 
                 if (selectedsortList.size() != 0) {
-                    Log.e("sortby", selectedsortList.get(0));
+
                     if (selectedsortList.get(0).trim().equals("Price : High to Low")) {
                         sortlistkey = "sortBy=min_price&order=desc";
                     } else {
@@ -196,35 +196,27 @@ public class Filter_Fragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
 
-
-                        Log.e("taga", response.toString());
-
                         try {
-                            Log.e("tag1", response.toString());
+
+
                             JSONObject obj = new JSONObject(response);
                             JSONObject obj1 = obj.getJSONObject("filters");
 
                             Iterator keys = obj1.keys();
-                            Log.e("Keys", "" + String.valueOf(keys));
 
                             while (keys.hasNext()) {
                                 dynamicKey = (String) keys.next();
-                                Log.d("Dynamic Key", "" + dynamicKey);
 
                                 JSONArray array = obj1.getJSONArray(dynamicKey);
                                 for (int i = 0; i < array.length(); i++) {
                                     producttag.add(array.getString(i));
-                                    Log.d("Array Value", array.getString(i));
                                 }
 
 
                             }
 
                             min_price = obj.getString("min_price");
-                            Log.d(" minprice", min_price);
                             max_price = obj.getString("max_price");
-                            Log.d(" max_price", max_price);
-
                             pricelist.clear();
 
                             int splitvalue;
@@ -251,7 +243,6 @@ public class Filter_Fragment extends Fragment {
                             }
 
 //
-                            Log.e("producttag", String.valueOf(producttag.size()));
                             for (String tag : producttag) {
 
                                 /* Create new FilterDefaultMultipleListModel object for brand and set array value to brand model {@model}
@@ -294,7 +285,7 @@ public class Filter_Fragment extends Fragment {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
 //                String insurance_id = SharedPreference.getData("insurance_id", getActivity());
-//                Log.e("insurance_id", String.valueOf(insurance_id));
+//
                 params.put("collection_id", collectionid.trim());
 
                 return params;

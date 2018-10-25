@@ -84,7 +84,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
         String id = "58881703997";
         String text = "gid://shopify/Collection/" + id.trim();
         converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-        Log.e("coverted", converted.trim());
+
 
         add_to_cart = view.findViewById(R.id.cart_frame);
         itemCount = view.findViewById(R.id.txt_items);
@@ -98,7 +98,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
         addToCart_modelArrayList.clear();
         db = new DBHelper(getActivity());
         addToCart_modelArrayList = db.getCartList();
-        Log.e("array", "" + db.getCartList());
+
 
         int cart_size = 0;
         for (int i = 0; i < addToCart_modelArrayList.size(); i++) {
@@ -277,7 +277,6 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                         GroceryModel groceryModel = new GroceryModel();
                         groceryModel.setProduct(productEdge.getNode());
                         groceryModel.setQty("1");
-                        Log.e("product_name", productEdge.getNode().getTitle());
                         addToCart_modelArrayList.clear();
                         addToCart_modelArrayList = db.getCartList();
 //                        Log.e("array", "" + db.getCartList());
@@ -474,7 +473,6 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                         }
                         //   sort_string = relevance[i].toString();
                         check = i;
-                        Log.e("sort_string", sort_string);
                         getCollection(converted.trim(), sort_string);
 
                     }

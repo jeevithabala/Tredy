@@ -265,7 +265,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        Log.e("item Sizemain", String.valueOf(items.size()));
         return items.size();
     }
 
