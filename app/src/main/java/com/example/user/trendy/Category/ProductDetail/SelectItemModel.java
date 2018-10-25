@@ -103,6 +103,10 @@ public class SelectItemModel extends BaseObservable {
 
     public void increment() {
         String count=getCount();
+        if(count.equals("999"))
+        {
+            count="998";
+        }
         if(count.isEmpty())
         {
             count=String.valueOf(0);

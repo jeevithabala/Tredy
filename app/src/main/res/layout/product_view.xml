@@ -302,6 +302,7 @@
                                         android:backgroundTint="@color/white"
                                         android:fontFamily="@font/lucidasansdemiboldroman"
                                         android:gravity="center"
+                                        android:maxLength="3"
                                         android:inputType="number"
                                         android:text="@={productview.count}"
                                         android:textColor="@color/textcolor"
