@@ -261,7 +261,6 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
             pos = i;
             String item = adapterView.getItemAtPosition(i).toString();
-            Log.e("itemselected", item);
         }
 
         @Override

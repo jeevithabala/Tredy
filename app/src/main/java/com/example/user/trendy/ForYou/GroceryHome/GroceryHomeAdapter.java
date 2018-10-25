@@ -98,7 +98,6 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
                 @Override
                 public void onClick(View view) {
                     pos1 = getAdapterPosition();
-                    Log.e(String.valueOf(pos1), String.valueOf(pos));
                     cartController = new CartController(mContext);
                     commanCartControler = (CommanCartControler) cartController;
                     commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
@@ -155,7 +154,6 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
             pos = i;
             String item = adapterView.getItemAtPosition(i).toString();
-            Log.e("itemselected", item);
         }
 
         @Override

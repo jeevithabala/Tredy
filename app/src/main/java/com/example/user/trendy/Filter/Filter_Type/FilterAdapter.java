@@ -61,7 +61,13 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
 
         viewHolder.chkSelected.setTag(itemsList.get(position));
 
-
+        selectedList.clear();
+        for (int i = 0; i <itemsList.size() ; i++) {
+            String value = String.valueOf(getFromSP(itemsList.get(i).title));
+        if(value.equals("true")){
+            selectedList.add(itemsList.get(i).getTitle());
+        }
+        }
         viewHolder.chkSelected.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 CheckBox cb = (CheckBox) v;
@@ -73,14 +79,11 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
                 if (cb.isChecked()) {
                     selectedList.add(itemsList.get(pos).getTitle());
 //                    saveInSp(itemsList.get(pos).getTitle(),true);
-                    Log.e("added_type", String.valueOf(selectedList));
                 } else {
                     selectedList.remove(itemsList.get(pos).getTitle());
                     FilterSharedPreference.saveInSp(itemsList.get(pos).getTitle(),false,getApplicationContext());
-
 //                    saveInSp(itemsList.get(pos).getTitle(),false);
 
-                    Log.e("removed_tytpe", String.valueOf(selectedList));
                 }
 
             }

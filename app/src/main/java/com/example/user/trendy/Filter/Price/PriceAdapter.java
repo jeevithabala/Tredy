@@ -60,6 +60,13 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> 
         viewHolder.chkSelected.setChecked(getFromSP(itemsList.get(position).title));
         viewHolder.chkSelected.setTag(itemsList.get(position));
 
+        selectedList.clear();
+        for (int i = 0; i <itemsList.size() ; i++) {
+            String value = String.valueOf(getFromSP(itemsList.get(i).title));
+            if(value.equals("true")){
+                selectedList.add(itemsList.get(i).getTitle());
+            }
+        }
 
         viewHolder.chkSelected.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -82,11 +89,11 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> 
                 if (cb.isChecked()) {
                     selectedList.add(itemsList.get(pos).getTitle());
                     FilterSharedPreference.saveInSp_price(itemsList.get(pos).getTitle(), true, getApplicationContext());
-                    Log.e("added_type", String.valueOf(selectedList));
+
                 } else {
                     selectedList.remove(itemsList.get(pos).getTitle());
                     FilterSharedPreference.saveInSp_price(itemsList.get(pos).getTitle(), false, getApplicationContext());
-                    Log.e("removed_tytpe", String.valueOf(selectedList));
+
                 }
             }
         });

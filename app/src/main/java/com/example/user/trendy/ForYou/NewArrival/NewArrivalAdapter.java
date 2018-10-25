@@ -64,7 +64,6 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
 
     @Override
     public int getItemCount() {
-        Log.e("itemsize1", String.valueOf(itemsList.size()));
         return itemsList.size();
     }
 
