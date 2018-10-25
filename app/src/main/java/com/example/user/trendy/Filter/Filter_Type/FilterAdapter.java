@@ -72,7 +72,6 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
 
                 if (cb.isChecked()) {
                     selectedList.add(itemsList.get(pos).getTitle());
-                    FilterSharedPreference.saveInSp(itemsList.get(pos).getTitle(),true,getApplicationContext());
 //                    saveInSp(itemsList.get(pos).getTitle(),true);
                     Log.e("added_type", String.valueOf(selectedList));
                 } else {

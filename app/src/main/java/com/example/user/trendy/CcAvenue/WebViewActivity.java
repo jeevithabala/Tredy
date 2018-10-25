@@ -878,11 +878,11 @@ String finalhtml=" ";
         }
         db = new DBHelper(this);
         cartlist = db.getCartList();
-        postOrder();
+//        postOrder();
     }
 
     public void postOrder() {
-
+        int costtotal= Integer.parseInt(totalamount.trim());
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             JSONObject jsonBody = new JSONObject();
@@ -959,7 +959,7 @@ String finalhtml=" ";
 
             costobject.put("kind", kind_transaction);
             costobject.put("status", "success");
-            costobject.put("amount", totalamount);
+            costobject.put("amount", costtotal);
 
             cost.put(costobject);
             jsonBody.put("transactions", cost);

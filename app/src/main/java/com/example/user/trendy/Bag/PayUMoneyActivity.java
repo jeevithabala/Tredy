@@ -40,6 +40,7 @@ import com.example.user.trendy.Bag.Db.AddToCart_Model;
 import com.example.user.trendy.Bag.Db.DBHelper;
 import com.example.user.trendy.BuildConfig;
 import com.example.user.trendy.CcAvenue.InitialActivity;
+import com.example.user.trendy.CcAvenue.WebViewActivity;
 import com.example.user.trendy.Login.Validationemail;
 import com.example.user.trendy.Login.Validationmobile;
 import com.example.user.trendy.MainActivity;
@@ -50,6 +51,8 @@ import com.example.user.trendy.Payu_Utility.MyApplication;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.Constants;
 import com.example.user.trendy.Util.SharedPreference;
+import com.example.user.trendy.Utility.AvenuesParams;
+import com.example.user.trendy.Utility.ServiceUtility;
 import com.google.gson.JsonObject;
 import com.payumoney.core.PayUmoneyConfig;
 import com.payumoney.core.PayUmoneyConstants;
@@ -107,7 +110,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     private GraphClient graphClient;
     private ProgressDialog progressDialog;
     ArrayList<OrderDetailModel> orderDetailModelArrayList=new ArrayList<>();
-
+    private String    orderId;
+    String accessCode,merchantId,currency,rsaKeyUrl,redirectUrl,cancelUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,6 +212,42 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
     }
 
+    private void init(){
+        accessCode ="AVML80FJ99AW34LMWA";
+        merchantId = "139259";
+        currency = "INR";
+//        amount = (EditText) findViewById(R.id.amount);
+        rsaKeyUrl = "http://52.66.204.219/GetRSA.php";
+        redirectUrl = "http://52.66.204.219/ccavResponseHandler.php";
+        cancelUrl ="http://52.66.204.219/ccavResponseHandler.php";
+
+        Integer randomNum = ServiceUtility.randInt(0, 9999999);
+        orderId  = randomNum.toString();
+
+        String vAccessCode = ServiceUtility.chkNull(accessCode).toString().trim();
+        String vMerchantId = ServiceUtility.chkNull(merchantId).toString().trim();
+        String vCurrency = ServiceUtility.chkNull(currency).toString().trim();
+        String vAmount = ServiceUtility.chkNull(totalcost).toString().trim();
+//        if(!vAccessCode.equals("") && !vMerchantId.equals("") && !vCurrency.equals("") && !vAmount.equals("")){
+            Intent intent = new Intent(this,WebViewActivity.class);
+            intent.putExtra(AvenuesParams.ACCESS_CODE, ServiceUtility.chkNull(accessCode).toString().trim());
+            intent.putExtra(AvenuesParams.MERCHANT_ID, ServiceUtility.chkNull(merchantId).toString().trim());
+            intent.putExtra(AvenuesParams.ORDER_ID, ServiceUtility.chkNull(orderId).toString().trim());
+            intent.putExtra(AvenuesParams.CURRENCY, ServiceUtility.chkNull(currency).toString().trim());
+            intent.putExtra(AvenuesParams.AMOUNT, ServiceUtility.chkNull(totalcost).toString().trim());
+
+            intent.putExtra(AvenuesParams.REDIRECT_URL, ServiceUtility.chkNull(redirectUrl).toString().trim());
+            intent.putExtra(AvenuesParams.CANCEL_URL, ServiceUtility.chkNull(cancelUrl).toString().trim());
+            intent.putExtra(AvenuesParams.RSA_KEY_URL, ServiceUtility.chkNull(rsaKeyUrl).toString().trim());
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("value", orderDetailModelArrayList.get(0));
+            intent.putExtras(bundle);
+            startActivity(intent);
+//        }else{
+//            Toast.makeText(this, "All parameters are mandatory.", Toast.LENGTH_SHORT).show();
+//        }
+
+    }
 
     @Override
     public void onClick(View v) {
@@ -301,11 +341,12 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                         OrderDetailModel orderDetailModel=new OrderDetailModel(emailstring,totalcost,firstname,lastname,bfirstname,blastname,address1,city,state,country,zip,phone,b_address1,b_city,b_state,b_country,b_zip, product_varientid,product_qty);
                         orderDetailModelArrayList.add(orderDetailModel);
 
-                        Intent i = new Intent(getApplicationContext(), InitialActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("value", orderDetailModelArrayList.get(0));
-                        i.putExtras(bundle);
-                        startActivity(i);
+                        init();
+//                        Intent i = new Intent(getApplicationContext(), InitialActivity.class);
+//                        Bundle bundle = new Bundle();
+//                        bundle.putSerializable("value", orderDetailModelArrayList.get(0));
+//                        i.putExtras(bundle);
+//                        startActivity(i);
                     } else {
                         cod = 1;
                         postOrder();
@@ -355,6 +396,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         phone = mobile.getText().toString().trim();
+        int costtotal= Integer.parseInt(totalcost.trim());
+
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             JSONObject jsonBody = new JSONObject();
@@ -403,8 +446,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
             JSONObject shipping = new JSONObject();
-            shipping.put("first_name", "marmeto");
-            shipping.put("last_name", "test");
+            shipping.put("first_name", firstname);
+            shipping.put("last_name", lastname);
             shipping.put("address1", address1);
             shipping.put("phone", phone);
             shipping.put("city", city);
@@ -415,8 +458,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
             JSONObject billingaddress = new JSONObject();
-            billingaddress.put("first_name", "marmeto");
-            billingaddress.put("last_name", "test");
+            billingaddress.put("first_name", blastname);
+            billingaddress.put("last_name", blastname);
             billingaddress.put("address1", b_address1);
             billingaddress.put("phone", phone);
             billingaddress.put("city", b_city);
@@ -432,9 +475,10 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             } else {
                 kind_transaction = "online";
             }
+
             costobject.put("kind", kind_transaction);
             costobject.put("status", "success");
-            costobject.put("amount", totalcost);
+            costobject.put("amount", costtotal);
 
             cost.put(costobject);
             jsonBody.put("transactions", cost);

@@ -28,7 +28,12 @@ public class FilterSharedPreference {
         editor.putBoolean(key, value);
         editor.commit();
     }
-
+    public static void saveInSp_price(String key,boolean value,Context context){
+        SharedPreferences preferences = context.getSharedPreferences("price", android.content.Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
     public static void saveData(String key, String value , Context context){
         SharedPreferences.Editor editor = context.getSharedPreferences(Data, Activity.MODE_PRIVATE).edit();
         editor.putString(key, value);

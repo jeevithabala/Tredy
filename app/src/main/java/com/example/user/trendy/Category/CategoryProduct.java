@@ -79,6 +79,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 public class CategoryProduct extends Fragment implements ProductAdapter.OnItemClick, View.OnClickListener, ProductClickInterface {
     GraphClient graphClient;
     RecyclerView recyclerView;
@@ -275,8 +277,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         sortbykey = sortby;
         id = collectionid;
         selectedFilterList = selectedFilterLists;
+        for(int i=0;i<selectedFilterLists.size();i++)
+        {
+            FilterSharedPreference.saveInSp(selectedFilterLists.get(i),true,getActivity());
+
+        }
         FilterSharedPreference.saveArrayList(selectedFilterList,"filter",getActivity());
-        Log.e("sort_by", sortby);
         if(sortby.equals("sortBy=min_price&order=desc")){
             sortby="Price : High to Low";
             FilterSharedPreference.saveData("sort",sortby,getActivity());
@@ -285,6 +291,9 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             FilterSharedPreference.saveData("sort",sortby,getActivity());
         }
 
+        String price=getResources().getString(R.string.Rs)+minprice+" - "+maxprice;
+        Log.e("price",price);
+        FilterSharedPreference.saveData("price",sortby,getActivity());
         dynamicKey1 = CollectionName;
 
         productDetalList1.clear();
@@ -321,8 +330,10 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
         if(FilterSharedPreference.getData("sort",getActivity())!=null){
             FilterSharedPreference.saveInSp_sort(FilterSharedPreference.getData("sort",getActivity()),false,getActivity());
-
     }
+        if(FilterSharedPreference.getData("price",getActivity())!=null){
+            FilterSharedPreference.saveInSp_price(FilterSharedPreference.getData("price",getActivity()),false,getActivity());
+        }
     }
 
     public void postFilter() {
@@ -347,15 +358,17 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             jsonBody.put("price", price);
 
             JSONArray food = new JSONArray();
-            JSONObject food1 = new JSONObject();
+
 
             for (int i = 0; i < selectedFilterList.size(); i++) {
+                JSONObject food1 = new JSONObject();
                 String type = selectedFilterList.get(i).trim();
                 Log.e("type", type);
                 food1.put("name", dynamicKey1);
                 food1.put("value", "Filter" + " " + dynamicKey1 + " " + type);
+                food.put(food1);
             }
-            food.put(food1);
+
             jsonBody.put("food", food);
 
 

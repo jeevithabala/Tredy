@@ -275,9 +275,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
 //Log.e("bannerlist", ""+String.valueOf(bannerlist.size()));
         ImagesArray.clear();
-        for (int i = 0; i < bannerlist.size(); i++)
-            ImagesArray.add(bannerlist.get(i));
-
+        ImagesArray.addAll(bannerlist);
 
         slidingImage_adapter = new SlidingImage_Adapter(getActivity(), ImagesArray);
         mPager.setAdapter(slidingImage_adapter);
