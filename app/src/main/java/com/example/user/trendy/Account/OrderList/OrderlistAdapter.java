@@ -48,7 +48,6 @@ public class OrderlistAdapter extends RecyclerView.Adapter<OrderlistAdapter.View
 
     @Override
     public int getItemCount() {
-        Log.e("itemsizeorder", String.valueOf(itemsList.size()));
         return itemsList.size();
     }
 

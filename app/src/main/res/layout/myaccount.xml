@@ -14,144 +14,147 @@
             android:layout_height="match_parent">
 
 
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="4">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_gravity="center"
-                android:background="@color/appcolor"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-
-                <com.example.user.trendy.Account.CircleImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="10dp"
-                    android:padding="3dp"
-                    android:src="@drawable/trendybanner"
-                    app:civ_border_color="#FFFF"
-                    app:civ_border_width="1dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_weight="0.6"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="name"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:textColor="@color/white"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/email"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="email"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:textColor="@color/grey"
-                            android:textSize="12sp" />
-
-                        <TextView
-                            android:id="@+id/mobile_number"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="9071129721"
-                            android:textColor="@color/grey"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/edit_profile"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="1.4">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_pencil_edit_button" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-
-            </LinearLayout>
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:weightSum="4"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/grey"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/order"
-                        android:layout_gravity="center"
-                        android:fontFamily="@font/lucidasansdemiboldroman"
-                        android:textSize="16dp"
-                        android:textColor="@color/textcolor"
-                        android:visibility="gone"
-                        android:gravity="center"
-                        android:text="Your Order list is empty" />
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:background="@color/appcolor"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
 
-                    <TextView
+                    <com.example.user.trendy.Account.CircleImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="10dp"
+                        android:padding="3dp"
+                        android:src="@drawable/trendybanner"
+                        app:civ_border_color="#FFFF"
+                        app:civ_border_width="1dp" />
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/lucidasansdemiboldroman"
-                        android:padding="10dp"
-                        android:text="Your Orders"
-                        android:textColor="@color/textcolor"
-                        android:textSize="14sp" />
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="0.6"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="name"
+                                android:textColor="@color/white"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="email"
+                                android:textColor="@color/grey"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/mobile_number"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="9071129721"
+                                android:textColor="@color/grey"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/edit_profile"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1.4">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_pencil_edit_button" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
 
                 </LinearLayout>
 
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/order_recyclerview"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                </android.support.v7.widget.RecyclerView>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/grey"
+                        android:orientation="vertical">
 
+                        <TextView
+                            android:id="@+id/order"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/lucidasansdemiboldroman"
+                            android:gravity="center"
+                            android:text="Your Order list is empty"
+                            android:textColor="@color/textcolor"
+                            android:textSize="16dp"
+                            android:visibility="gone" />
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lucidasansdemiboldroman"
+                            android:padding="10dp"
+                            android:text="Your Orders"
+                            android:textColor="@color/textcolor"
+                            android:textSize="14sp" />
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/order_recyclerview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp">
+
+                        </android.support.v7.widget.RecyclerView>
+
+
+                    </LinearLayout>
+
+
+
+
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

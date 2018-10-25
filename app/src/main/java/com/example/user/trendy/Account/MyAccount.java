@@ -256,6 +256,7 @@ public class MyAccount extends Fragment {
                                 order.setVisibility(View.VISIBLE);
 
                             } else {
+                                Log.e("came","inside");
                                 adapter.notifyDataSetChanged();
                             }
 

@@ -12,9 +12,10 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.example.user.trendy.Account.OrderList.OrderList;
-import com.example.user.trendy.databinding.OrderAdapterBinding;
+
 import com.example.user.trendy.Interface.FragmentRecyclerViewClick;
 import com.example.user.trendy.R;
+import com.example.user.trendy.databinding.OrderAdapterBinding;
 
 import java.util.ArrayList;
 
@@ -69,8 +70,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
                 public void onClickPostion() {
 
 
-                    Log.e("itemlist", String.valueOf(itemsList.get(getAdapterPosition())));
-                    Log.e("orderetititle", itemsList.get(1).getOrderd().getLineItems().getEdges().get(1).getNode().getVariant().getProduct().getTitle());
+//                    Log.e("itemlist", String.valueOf(itemsList.get(getAdapterPosition())));
+//                    Log.e("orderetititle", itemsList.get(1).getOrderd().getLineItems().getEdges().get(1).getNode().getVariant().getProduct().getTitle());
 
                     Fragment fragment = new OrderList();
                     Bundle bundle = new Bundle();
@@ -79,9 +80,9 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
                     transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    transaction.replace(R.id.home_container, fragment, "account");
-                    if (fragmentManager.findFragmentByTag("account") == null) {
-                        transaction.addToBackStack("account");
+                    transaction.replace(R.id.home_container, fragment, "orderlist");
+                    if (fragmentManager.findFragmentByTag("orderlist") == null) {
+                        transaction.addToBackStack("orderlist");
                         transaction.commit();
                     } else {
                         transaction.commit();

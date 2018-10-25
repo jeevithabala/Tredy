@@ -1,6 +1,7 @@
 package com.example.user.trendy.Filter.Price;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,8 +15,11 @@ import android.widget.TextView;
 import com.example.user.trendy.Filter.Filter_Type.FilterAdapter;
 import com.example.user.trendy.Filter.Filter_Type.FilterModel;
 import com.example.user.trendy.R;
+import com.example.user.trendy.Util.FilterSharedPreference;
 
 import java.util.ArrayList;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> {
 
@@ -35,12 +39,12 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> 
     // Create new views
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                       int viewType) {
+                                         int viewType) {
         // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.pricebyadapter, null);
 
-      ViewHolder viewHolder = new ViewHolder(itemLayoutView);
+        ViewHolder viewHolder = new ViewHolder(itemLayoutView);
 
         return viewHolder;
     }
@@ -50,10 +54,10 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> 
 
         final int pos = position;
 
-        viewHolder.Name.setText("\u20B9"+ itemsList.get(position).getTitle());
+        viewHolder.Name.setText("\u20B9" + itemsList.get(position).getTitle());
 
-        viewHolder.chkSelected.setChecked(itemsList.get(position).isChecked());
-
+//        viewHolder.chkSelected.setChecked(itemsList.get(position).isChecked());
+        viewHolder.chkSelected.setChecked(getFromSP(itemsList.get(position).title));
         viewHolder.chkSelected.setTag(itemsList.get(position));
 
 
@@ -66,6 +70,7 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> 
 
                 for (int i = 0; i < itemsList.size(); i++) {
                     itemsList.get(i).setChecked(false);
+                    FilterSharedPreference.saveInSp_price(itemsList.get(i).getTitle(), false, getApplicationContext());
                     selectedList.remove(itemsList.get(i).getTitle());
                 }
                 notifyDataSetChanged();
@@ -76,9 +81,11 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> 
 
                 if (cb.isChecked()) {
                     selectedList.add(itemsList.get(pos).getTitle());
+                    FilterSharedPreference.saveInSp_price(itemsList.get(pos).getTitle(), true, getApplicationContext());
                     Log.e("added_type", String.valueOf(selectedList));
                 } else {
                     selectedList.remove(itemsList.get(pos).getTitle());
+                    FilterSharedPreference.saveInSp_price(itemsList.get(pos).getTitle(), false, getApplicationContext());
                     Log.e("removed_tytpe", String.valueOf(selectedList));
                 }
 
@@ -90,6 +97,11 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         return itemsList.size();
+    }
+
+    private boolean getFromSP(String key) {
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("price", android.content.Context.MODE_PRIVATE);
+        return preferences.getBoolean(key, false);
     }
 
 

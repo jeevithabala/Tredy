@@ -58,10 +58,9 @@ public class SortByAdapter extends RecyclerView.Adapter<SortByAdapter.ViewHolder
         final int pos = position;
 
         viewHolder.Name.setText(itemsList.get(position).getTitle());
+
+//        viewHolder.chkSelected.setChecked(itemsList.get(position).isChecked());
         viewHolder.chkSelected.setChecked(getFromSP(itemsList.get(position).title));
-
-        viewHolder.chkSelected.setChecked(itemsList.get(position).isChecked());
-
         viewHolder.chkSelected.setTag(itemsList.get(position));
 
 
@@ -74,6 +73,7 @@ public class SortByAdapter extends RecyclerView.Adapter<SortByAdapter.ViewHolder
 
                 for (int i = 0; i < itemsList.size(); i++) {
                     itemsList.get(i).setChecked(false);
+                    FilterSharedPreference.saveInSp_sort(itemsList.get(i).getTitle(),false,getApplicationContext());
 //                    viewHolder.chkSelected.setVisibility(View.GONE);
                     selectedList.remove(itemsList.get(i).getTitle());
                 }

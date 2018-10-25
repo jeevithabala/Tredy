@@ -270,15 +270,16 @@ public class Filter_Fragment extends Fragment {
                             filterAdapter.notifyDataSetChanged();
                             priceAdapter.notifyDataSetChanged();
 
-                            getActivity().runOnUiThread(new Runnable() {
+                            if(getActivity()!=null) {
+                                getActivity().runOnUiThread(new Runnable() {
 
-                                @Override
-                                public void run() {
-                                    type.setText(dynamicKey);
-                                }
-                            });
+                                    @Override
+                                    public void run() {
+                                        type.setText(dynamicKey);
+                                    }
+                                });
 
-
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
