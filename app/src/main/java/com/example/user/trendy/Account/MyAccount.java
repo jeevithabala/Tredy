@@ -44,6 +44,9 @@ public class MyAccount extends Fragment {
     RecyclerView order_recyclerview;
     ArrayList<OrderModel> orderModelArrayList = new ArrayList<>();
     OrderAdapter adapter;
+    ArrayList<String> productStringPageCursor = new ArrayList<>();
+    private String productPageCursor = "";
+    private int i = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.myaccount, container, false);
@@ -85,13 +88,10 @@ public class MyAccount extends Fragment {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                 transaction.replace(R.id.home_container, fragment, "accountedit");
-                if(getFragmentManager().findFragmentByTag("accountedit")==null)
-                {
+                if (getFragmentManager().findFragmentByTag("accountedit") == null) {
                     transaction.addToBackStack("accountedit");
                     transaction.commit();
-                }
-                else
-                {
+                } else {
                     transaction.commit();
                 }
 
@@ -111,9 +111,45 @@ public class MyAccount extends Fragment {
         order_recyclerview.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+
+        order_recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (isLastItemDisplaying(recyclerView)) {
+                    //Calling the method getdata again
+                    getNext();
+                }
+            }
+        });
+
         return view;
 
     }
+
+    private boolean isLastItemDisplaying(RecyclerView recyclerView) {
+        if (recyclerView.getAdapter().getItemCount() != 0) {
+            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1)
+                return true;
+        }
+        return false;
+    }
+
+
+    public void getNext() {
+        if (productStringPageCursor.size() != 0) {
+            getNextOrders(accessToken.trim(), productStringPageCursor.get(productStringPageCursor.size() - 1));
+        }
+
+    }
+
 
     public void getEmailId() {
         Storefront.QueryRootQuery query = Storefront.query(root -> root
@@ -180,7 +216,12 @@ public class MyAccount extends Fragment {
         Storefront.QueryRootQuery query = Storefront.query(root -> root
                         .customer(accessToken, customer -> customer
                                         .orders(arg -> arg.first(10), connection -> connection
+                                                        .pageInfo(pageInfoQuery -> pageInfoQuery
+                                                                .hasNextPage()
+                                                                .hasPreviousPage()
+                                                        )
                                                         .edges(edge -> edge
+                                                                        .cursor()
                                                                         .node(node -> node
 
                                                                                         .totalPrice()
@@ -241,11 +282,20 @@ public class MyAccount extends Fragment {
 
                 if (response.data().getCustomer().getOrders() != null) {
 
+
                     for (Storefront.OrderEdge order : response.data().getCustomer().getOrders().getEdges()) {
-                        OrderModel orderModel = new OrderModel();
-                        orderModel.setOrderd(order.getNode());
-                        orderModel.setLineitemsize(order.getNode().getLineItems().getEdges().size());
-                        orderModelArrayList.add(orderModel);
+                        if (i == 0) {
+                            for (int i = 0; i < order.getNode().getLineItems().getEdges().size(); i++) {
+                                productPageCursor = order.getCursor().toString();
+
+                                productStringPageCursor.add(productPageCursor);
+                            }
+                            OrderModel orderModel = new OrderModel();
+                            orderModel.setOrderd(order.getNode());
+                            orderModel.setLineitemsize(order.getNode().getLineItems().getEdges().size());
+                            orderModelArrayList.add(orderModel);
+                        }
+
                     }
 
                     Log.e("orderModelArrayList", String.valueOf(orderModelArrayList.size()));
@@ -256,7 +306,7 @@ public class MyAccount extends Fragment {
                                 order.setVisibility(View.VISIBLE);
 
                             } else {
-                                Log.e("came","inside");
+                                Log.e("came", "inside");
                                 adapter.notifyDataSetChanged();
                             }
 
@@ -277,5 +327,115 @@ public class MyAccount extends Fragment {
 
 
     }
+
+    private void getNextOrders(String accessToken, String productCursor) {
+        orderModelArrayList.clear();
+        Storefront.QueryRootQuery query = Storefront.query(root -> root
+                        .customer(accessToken, customer -> customer
+                                        .orders(arg -> arg.first(10).after(productCursor), connection -> connection
+                                                        .pageInfo(pageInfoQuery -> pageInfoQuery
+                                                                .hasNextPage()
+                                                                .hasPreviousPage()
+                                                        )
+                                                        .edges(edge -> edge
+                                                                        .node(node -> node
+
+                                                                                        .totalPrice()
+                                                                                        .processedAt()
+                                                                                        .orderNumber()
+                                                                                        .totalPrice()
+                                                                                        .email()
+                                                                                        .processedAt()
+                                                                                        .totalShippingPrice()
+                                                                                        .subtotalPrice()
+                                                                                        .shippingAddress(address -> address
+                                                                                                .address1()
+                                                                                                .address2()
+                                                                                                .city()
+                                                                                                .country()
+                                                                                                .firstName()
+                                                                                                .lastName())
+                                                                                        .lineItems(args -> args.first(10), lineItemsArguments -> lineItemsArguments
+                                                                                                        .edges(orderLineItemEdgeQuery -> orderLineItemEdgeQuery
+                                                                                                                        .node(orderLineItemQuery -> orderLineItemQuery
+                                                                                                                                        .quantity()
+                                                                                                                                        .customAttributes(attributeQuery -> attributeQuery.key().value())
+                                                                                                                                        .variant(productVariantQuery -> productVariantQuery
+                                                                                                                                                        .title()
+                                                                                                                                                        .price()
+                                                                                                                                                        .sku()
+                                                                                                                                                        .weight()
+                                                                                                                                                        .weightUnit()
+                                                                                                                                                        .image(image -> image.src())
+                                                                                                                                                        .product(produt1 -> produt1
+                                                                                                                                                                .title()
+                                                                                                                                                        )
+//                                                                                        .tags()
+//                                                                                        .images(image->image
+//                                                                                        .edges(imageedge->imageedge
+//                                                                                        .node(imagenode->imagenode
+//                                                                                        .src()
+//                                                                                        .id())))
+
+                                                                                                                                        )
+                                                                                                                        )
+                                                                                                        )
+                                                                                        )
+                                                                        )
+                                                        )
+                                        )
+                        )
+        );
+        QueryGraphCall call = graphClient.queryGraph(query);
+
+        call.enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
+            @Override
+            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
+//
+                if (response.data().getCustomer().getOrders() != null) {
+
+                    productStringPageCursor.clear();
+                    Log.e("pagincursur", " " + productCursor);
+                    boolean hasNextProductPage = response.data().getCustomer().getOrders().getPageInfo().getHasNextPage().booleanValue();
+                    Log.e("hasNextProductPage", " " + hasNextProductPage);
+
+                    for (Storefront.OrderEdge order : response.data().getCustomer().getOrders().getEdges()) {
+                        if (hasNextProductPage) {
+                            for (int i = 0; i < order.getNode().getLineItems().getEdges().size(); i++) {
+                                productPageCursor = order.getCursor().toString();
+
+                                productStringPageCursor.add(productPageCursor);
+                            }
+                            i = 1;
+                        }
+
+                        OrderModel orderModel = new OrderModel();
+                        orderModel.setOrderd(order.getNode());
+                        orderModel.setLineitemsize(order.getNode().getLineItems().getEdges().size());
+                        orderModelArrayList.add(orderModel);
+                    }
+                }
+
+                Log.e("orderModelArrayList", String.valueOf(orderModelArrayList.size()));
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        adapter.notifyDataSetChanged();
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(@NonNull GraphError error) {
+                Log.e("TAG", "Failed to execute query", error);
+            }
+        });
+
+
+    }
+
 
 }
