@@ -122,6 +122,16 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
         return selectedList;
     }
 
+    public void typeclear() {
+        for (int i = 0; i < itemsList.size(); i++) {
+
+            itemsList.get(i).setChecked(false);
+            FilterSharedPreference.saveInSp(itemsList.get(i).getTitle(),false,getApplicationContext());
+//                    viewHolder.chkSelected.setVisibility(View.GONE);
+            selectedList.remove(itemsList.get(i).getTitle());
+        }
+        notifyDataSetChanged();
+    }
 
 }
 

@@ -130,6 +130,18 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> 
         return selectedList;
     }
 
+    public void priceclear() {
+        for (int i = 0; i < itemsList.size(); i++) {
+            Log.e("selected", String.valueOf(selectedList.size()));
+
+            itemsList.get(i).setChecked(false);
+            FilterSharedPreference.saveInSp_price(itemsList.get(i).getTitle(),false,getApplicationContext());
+//                    viewHolder.chkSelected.setVisibility(View.GONE);
+            selectedList.remove(itemsList.get(i).getTitle());
+            Log.e("selected1", String.valueOf(selectedList.size()));
+        }
+        notifyDataSetChanged();
+    }
 
 }
 

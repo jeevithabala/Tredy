@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
-import com.example.user.trendy.MainActivity;
 import com.example.user.trendy.Navigation;
 
 public class MyApplication extends Application implements Application.ActivityLifecycleCallbacks {

@@ -61,6 +61,18 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         totalcost = view.findViewById(R.id.total);
         nobag = view.findViewById(R.id.nobag);
 
+
+
+
+        return view;
+
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
         db = new DBHelper(getActivity());
@@ -135,10 +147,6 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
 
             }
         });
-
-        return view;
-
-
     }
 
     @SuppressLint("SetTextI18n")

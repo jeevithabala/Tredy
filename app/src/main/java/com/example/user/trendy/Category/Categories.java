@@ -91,6 +91,14 @@ public class Categories extends Fragment {
 
 
         //    LinearLayoutManager layoutManager1 = new GridLayoutManager(getApplicationContext(), 2, LinearLayoutManager.VERTICAL, false);
+
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager1);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -98,8 +106,6 @@ public class Categories extends Fragment {
         recyclerView.setAdapter(categoreDetailAdapter);
         // productlist();
         collectionList();
-
-        return view;
     }
 
     public void productlist() {

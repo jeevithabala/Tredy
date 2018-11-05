@@ -207,16 +207,20 @@ public class Navigation extends AppCompatActivity
             return true;
 
         } else if (id == R.id.searchBar) {
-            Search search = new Search();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
-            transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-            transaction1.replace(R.id.home_container, search, "search");
-            if (fragmentManager.findFragmentByTag("search") == null) {
-                transaction1.addToBackStack("search");
-                transaction1.commit();
-            } else {
-                transaction1.commit();
+            if (fragmentManager.findFragmentById(R.id.home_container) instanceof Search) {
+
+            }else {
+                Search search = new Search();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                transaction1.replace(R.id.home_container, search, "search");
+                if (fragmentManager.findFragmentByTag("search") == null) {
+                    transaction1.addToBackStack("search");
+                    transaction1.commit();
+                } else {
+                    transaction1.commit();
+                }
             }
             return true;
         }

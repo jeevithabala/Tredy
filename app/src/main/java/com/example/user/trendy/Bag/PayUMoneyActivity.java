@@ -43,7 +43,6 @@ import com.example.user.trendy.CcAvenue.InitialActivity;
 import com.example.user.trendy.CcAvenue.WebViewActivity;
 import com.example.user.trendy.Login.Validationemail;
 import com.example.user.trendy.Login.Validationmobile;
-import com.example.user.trendy.MainActivity;
 import com.example.user.trendy.Navigation;
 import com.example.user.trendy.Payu_Utility.AppEnvironment;
 import com.example.user.trendy.Payu_Utility.AppPreference;

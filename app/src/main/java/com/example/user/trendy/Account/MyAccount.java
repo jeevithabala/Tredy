@@ -69,6 +69,16 @@ public class MyAccount extends Fragment {
                 .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
                 .build();
 
+
+
+        return view;
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         if (accessToken != null) {
             getEmailId();
         }
@@ -128,9 +138,6 @@ public class MyAccount extends Fragment {
                 }
             }
         });
-
-        return view;
-
     }
 
     private boolean isLastItemDisplaying(RecyclerView recyclerView) {

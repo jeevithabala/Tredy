@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
@@ -132,6 +133,14 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //        count.addTextChangedListener(this);
 //        productViewBinding.setCount(new CountModel());
 
+
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         String product = getArguments().getString("category");
         Log.e("topsellingcheck", "" + product);
         if (product.trim().equals("topselling")) {
@@ -275,8 +284,6 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 }
             }
         });
-
-        return view;
     }
 
     public void getProductVariantID(String productID) {

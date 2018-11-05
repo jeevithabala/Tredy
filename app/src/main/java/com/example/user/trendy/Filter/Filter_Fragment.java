@@ -46,7 +46,6 @@ import com.example.user.trendy.Filter.SortBy.SortByAdapter;
 import com.example.user.trendy.Filter.SortBy.SortByModel;
 import com.example.user.trendy.Interface.OnFilterDataCallBack;
 import com.example.user.trendy.Navigation;
-import com.example.user.trendy.Product.ProductList;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.Constants;
 
@@ -76,7 +75,7 @@ public class Filter_Fragment extends Fragment {
     ArrayList<String> producttag = new ArrayList<>();
     private String collectionid;
     ArrayList<String> selectedarray = new ArrayList<>();
-    Button btn_filter;
+    Button btn_filter, btn_clear;
     private ArrayList<String> selectedFilterList;
     private ArrayList<String> selectedsortList;
     private ArrayList<String> selectedpriceList;
@@ -104,6 +103,7 @@ public class Filter_Fragment extends Fragment {
         filter_recycler = view.findViewById(R.id.filter_recycler);
         price_recycler = view.findViewById(R.id.price_recycler);
         btn_filter = view.findViewById(R.id.btn_filter1);
+        btn_clear = view.findViewById(R.id.btn_clearall);
         type = view.findViewById(R.id.type);
 
 
@@ -176,7 +176,22 @@ public class Filter_Fragment extends Fragment {
 
             }
         });
+        btn_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                selectedFilterList.clear();
+//                selectedsortList.clear();
+//                selectedpriceList.clear();
+//                ((FilterAdapter) filterAdapter).getSelectedContactList().clear();
+//                ((SortByAdapter) sortByAdapter).getSelectedSortList().clear();
+//                ((PriceAdapter) priceAdapter).getSelectedPriceList().clear();
 
+                ((SortByAdapter) sortByAdapter).sortclear();
+                ((FilterAdapter) filterAdapter).typeclear();
+                ((PriceAdapter) priceAdapter).priceclear();
+                filterAdapter.notifyDataSetChanged();
+            }
+        });
 
         filterAdapter.notifyDataSetChanged();
 
@@ -261,7 +276,7 @@ public class Filter_Fragment extends Fragment {
                             filterAdapter.notifyDataSetChanged();
                             priceAdapter.notifyDataSetChanged();
 
-                            if(getActivity()!=null) {
+                            if (getActivity() != null) {
                                 getActivity().runOnUiThread(new Runnable() {
 
                                     @Override
@@ -301,5 +316,7 @@ public class Filter_Fragment extends Fragment {
 
 
     }
+
+
 
 }

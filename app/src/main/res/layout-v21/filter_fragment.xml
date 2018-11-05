@@ -94,17 +94,37 @@
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/colorAccent">
+        android:layout_alignParentBottom="true">
 
-        <Button
-            android:id="@+id/btn_filter1"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            android:fontFamily="@font/lucidasansdemiboldroman"
-            android:text="apply"
-            android:textColor="@color/white"
-            android:textSize="14dp" />
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btn_clearall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:layout_weight="1"
+                android:background="@color/colorAccent"
+                android:fontFamily="@font/lucidasansdemiboldroman"
+                android:text="clear all"
+                android:textColor="@color/white"
+                android:textSize="14dp" />
+
+            <Button
+                android:id="@+id/btn_filter1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:layout_weight="1"
+                android:background="@color/colorAccent"
+                android:fontFamily="@font/lucidasansdemiboldroman"
+                android:text="apply"
+                android:textColor="@color/white"
+                android:textSize="14dp" />
+        </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

@@ -10,7 +10,18 @@
         android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Search" />
+        android:hint="Eg: Halwa, Laddu" />
+
+    <TextView
+        android:id="@+id/no_product"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/lucidasansdemiboldroman"
+        android:gravity="center"
+        android:text="Searched Product not Found"
+        android:textColor="@color/appcolor"
+        android:visibility="gone" />
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/search_recycler"

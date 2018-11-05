@@ -31,7 +31,6 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.user.trendy.BuildConfig;
-import com.example.user.trendy.Category.ProductDetail.Filter.Filter1;
 import com.example.user.trendy.Category.ProductDetail.ProductView;
 import com.example.user.trendy.Filter.Filter_Fragment;
 import com.example.user.trendy.ForYou.AllCollection.AllCollectionModel;
@@ -42,7 +41,6 @@ import com.example.user.trendy.Interface.CartController;
 import com.example.user.trendy.Interface.CommanCartControler;
 import com.example.user.trendy.Interface.ProductClickInterface;
 import com.example.user.trendy.Navigation;
-import com.example.user.trendy.Product.ProductListModel;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.Constants;
 import com.example.user.trendy.Util.FilterSharedPreference;
@@ -109,7 +107,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     private int requestCount = 1, requestCount1 = 1;
     RequestQueue requestQueue;
     private String sortbykey;
-
+    TextView noproduct;
     private Boolean isFilterData = false;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -124,6 +122,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 .build();
 
         category_title = view.findViewById(R.id.category_title);
+        noproduct = view.findViewById(R.id.no_product);
         filter = view.findViewById(R.id.filter);
         view1 = view.findViewById(R.id.view);
         filter.setOnClickListener(this);
@@ -228,7 +227,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             recyclerView.setAdapter(productAdapter1);
             productAdapter1.notifyDataSetChanged();
 
-        }else if(isFilterData==false) {
+        } else if (isFilterData == false) {
             onBackPressed();
             productAdapter = new ProductAdapter(getActivity(), productDetalList, getFragmentManager(), this);
             recyclerView.setAdapter(productAdapter);
@@ -277,23 +276,23 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         sortbykey = sortby;
         id = collectionid;
         selectedFilterList = selectedFilterLists;
-        for(int i=0;i<selectedFilterLists.size();i++)
-        {
-            FilterSharedPreference.saveInSp(selectedFilterLists.get(i),true,getActivity());
+        for (int i = 0; i < selectedFilterLists.size(); i++) {
+            FilterSharedPreference.saveInSp(selectedFilterLists.get(i), true, getActivity());
 
         }
-        FilterSharedPreference.saveArrayList(selectedFilterList,"filter",getActivity());
-        if(sortby.equals("sortBy=min_price&order=desc")){
-            sortby="Price : High to Low";
-            FilterSharedPreference.saveData("sort",sortby,getActivity());
-        }else{
-            sortby="Price : Low to High";
-            FilterSharedPreference.saveData("sort",sortby,getActivity());
+        FilterSharedPreference.saveArrayList(selectedFilterList, "filter", getActivity());
+        if (sortby.equals("sortBy=min_price&order=desc")) {
+            sortby = "Price : High to Low";
+            FilterSharedPreference.saveData("sort", sortby, getActivity());
+        } else {
+            sortby = "Price : Low to High";
+            FilterSharedPreference.saveData("sort", sortby, getActivity());
         }
 
-        String price=getResources().getString(R.string.Rs)+minprice+" - "+maxprice;
-        Log.e("price",price);
-        FilterSharedPreference.saveData("price",sortby,getActivity());
+//        String price=getResources().getString(R.string.Rs)+minprice+" - "+maxprice;
+        String price = minprice + " - " + maxprice;
+        Log.e("price", price);
+        FilterSharedPreference.saveData("price", price, getActivity());
         dynamicKey1 = CollectionName;
 
         productDetalList1.clear();
@@ -319,20 +318,19 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     }
 
 
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
 
-        if(FilterSharedPreference.getArrayList("filter",getActivity())!=null) {
+        if (FilterSharedPreference.getArrayList("filter", getActivity()) != null) {
             for (int i = 0; i < FilterSharedPreference.getArrayList("filter", getActivity()).size(); i++) {
                 FilterSharedPreference.saveInSp(FilterSharedPreference.getArrayList("filter", getActivity()).get(i), false, getActivity());
             }
         }
 
-        if(FilterSharedPreference.getData("sort",getActivity())!=null){
-            FilterSharedPreference.saveInSp_sort(FilterSharedPreference.getData("sort",getActivity()),false,getActivity());
-    }
-        if(FilterSharedPreference.getData("price",getActivity())!=null){
-            FilterSharedPreference.saveInSp_price(FilterSharedPreference.getData("price",getActivity()),false,getActivity());
+        if (FilterSharedPreference.getData("sort", getActivity()) != null) {
+            FilterSharedPreference.saveInSp_sort(FilterSharedPreference.getData("sort", getActivity()), false, getActivity());
+        }
+        if (FilterSharedPreference.getData("price", getActivity()) != null) {
+            FilterSharedPreference.saveInSp_price(FilterSharedPreference.getData("price", getActivity()), false, getActivity());
         }
     }
 
@@ -432,6 +430,11 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 //                                productAdapter = new ProductAdapter(getActivity(), productDetalList, getFragmentManager(), CategoryProduct.this);
 //                                recyclerView.setAdapter(productAdapter);
                                 productAdapter1.notifyDataSetChanged();
+                                if (productDetalList1.size() == 0) {
+                                    noproduct.setVisibility(View.VISIBLE);
+                                } else {
+                                    noproduct.setVisibility(View.GONE);
+                                }
                             } catch (JSONException e1) {
                                 e1.printStackTrace();
 

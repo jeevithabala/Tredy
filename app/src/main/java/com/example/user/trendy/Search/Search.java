@@ -13,7 +13,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -56,6 +58,7 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
     private String src;
     CartController cartController;
     CommanCartControler commanCartControler;
+    TextView noproduct;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.search, container, false);
@@ -65,6 +68,8 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
         search_recycler = view.findViewById(R.id.search_recycler);
         search = view.findViewById(R.id.search);
         search.onActionViewExpanded();
+
+        noproduct=view.findViewById(R.id.no_product);
 
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -107,6 +112,7 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
                             Log.e("response", response);
 
                             JSONArray array = obj.getJSONArray("products");
+
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject object1 = array.getJSONObject(i);
                                 String title = object1.getString("title");
@@ -124,7 +130,11 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
                             }
 
                             adapter.notifyDataSetChanged();
-
+                            if (searchlist.size() == 0) {
+                                noproduct.setVisibility(View.VISIBLE);
+                            } else {
+                                noproduct.setVisibility(View.GONE);
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();

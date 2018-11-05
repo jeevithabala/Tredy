@@ -37,7 +37,7 @@
         <!-- Fullscreen -->
 
 
-        <item name="android:windowBackground">@drawable/tredylogo_splash</item>
+        <item name="android:windowBackground">@mipmap/tredysplash</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>

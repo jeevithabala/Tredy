@@ -6,7 +6,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/for_you"
-            android:icon="@drawable/foryou"
+            android:icon="@drawable/foryou1"
             android:checked="true"
             android:title="For You" />
         <item
@@ -16,12 +16,12 @@
 
         <item
             android:id="@+id/account"
-            android:icon="@drawable/user"
+            android:icon="@drawable/foryou1"
             android:title="Account" />
 
         <item
             android:id="@+id/wishlist"
-            android:icon="@drawable/ic_whislist"
+            android:icon="@drawable/ic_whish"
             android:title="Wishlist" />
 
         <item

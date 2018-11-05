@@ -77,8 +77,6 @@
             android:name="io.fabric.ApiKey"
             android:value="05aa485592c738eae971569c1dd704eca8c47b79" />
 
-        <activity android:name=".MainActivity"
-            android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"/>
         <activity android:name=".Login.ForgotPassword" />
 
         <receiver android:name=".CcAvenue.SmsReceiver" >

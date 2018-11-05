@@ -72,6 +72,14 @@ public class MyAccountEdit extends Fragment {
 
 
 
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,8 +113,6 @@ public class MyAccountEdit extends Fragment {
                 }
             }
         });
-
-        return view;
     }
 
     public void update(String accessToken) {

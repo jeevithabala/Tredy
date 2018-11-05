@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -121,6 +122,13 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                 .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
                 .build();
 
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         grocery_recycler.setLayoutManager(layoutManager1);
@@ -185,7 +193,6 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
             }
         });
         filter.setOnClickListener(this);
-        return view;
     }
 
     private boolean isLastItemDisplaying(RecyclerView recyclerView) {
@@ -248,6 +255,8 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                                                                                 .weight()
                                                                                 .weightUnit()
                                                                                 .available()
+                                                                                .sku()
+                                                                                .availableForSale()
                                                                         )
                                                                 )
                                                         )

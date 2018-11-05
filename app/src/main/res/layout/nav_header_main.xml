@@ -25,5 +25,5 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:fontFamily="@font/lucidasansdemibold"
-        android:textSize="14sp"/>
+        android:textSize="16sp"/>
 </LinearLayout>

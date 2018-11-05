@@ -16,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 
+import com.example.user.trendy.Filter.Filter_Fragment;
 import com.example.user.trendy.Interface.FragmentRecyclerViewClick;
 import com.example.user.trendy.R;
 import com.example.user.trendy.Util.FilterSharedPreference;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
-public class SortByAdapter extends RecyclerView.Adapter<SortByAdapter.ViewHolder> {
+public class SortByAdapter extends RecyclerView.Adapter<SortByAdapter.ViewHolder>  {
 
     Context mContext;
     ArrayList<SortByModel> itemsList;
@@ -112,6 +113,17 @@ public class SortByAdapter extends RecyclerView.Adapter<SortByAdapter.ViewHolder
         return preferences.getBoolean(key, false);
     }
 
+
+    public void sortclear() {
+        for (int i = 0; i < itemsList.size(); i++) {
+
+            itemsList.get(i).setChecked(false);
+            FilterSharedPreference.saveInSp_sort(itemsList.get(i).getTitle(),false,getApplicationContext());
+//                    viewHolder.chkSelected.setVisibility(View.GONE);
+            selectedList.remove(itemsList.get(i).getTitle());
+        }
+        notifyDataSetChanged();
+    }
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
