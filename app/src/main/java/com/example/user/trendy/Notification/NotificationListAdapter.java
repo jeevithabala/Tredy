@@ -77,9 +77,8 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         public ViewHolder(View view) {
             super(view);
-            name = (TextView) view.findViewById(R.id.name);
             title = (TextView) view.findViewById(R.id.title);
-            imgProfile = (ImageView) view.findViewById(R.id.icon_profile);
+//            imgProfile = (ImageView) view.findViewById(R.id.icon_profile);
             //  iconText = (TextView) view.findViewById(R.id.icon_text);
             date = (TextView) view.findViewById(R.id.icon_star);
             notification = (LinearLayout) view.findViewById(R.id.notificationp);
@@ -137,44 +136,44 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             ViewHolder viewHolder = (ViewHolder) holder;
             viewHolder.title.setText(customerlist.get(position).getTitle());
-            if (pnew.equals("null")) {
+            if (!pnew.equals("null")) {
 //                viewHolder.name.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
 //                viewHolder.title.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
 //                viewHolder.date.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
-                viewHolder.name.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
-                viewHolder.name.setTypeface(null, Typeface.NORMAL);
+//                viewHolder.name.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
+//                viewHolder.name.setTypeface(null, Typeface.NORMAL);
                 viewHolder.title.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
                 viewHolder.title.setTypeface(null, Typeface.NORMAL);
                 viewHolder.date.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
                 viewHolder.date.setTypeface(null, Typeface.NORMAL);
             } else {
-                viewHolder.name.setTextColor(context.getResources().getColor(R.color.ntificationtextnuread));
-                viewHolder.name.setTypeface(null, Typeface.BOLD);
+//                viewHolder.name.setTextColor(context.getResources().getColor(R.color.ntificationtextnuread));
+//                viewHolder.name.setTypeface(null, Typeface.BOLD);
                 viewHolder.title.setTextColor(context.getResources().getColor(R.color.ntificationtextnuread));
                 viewHolder.title.setTypeface(null, Typeface.BOLD);
                 viewHolder.date.setTextColor(context.getResources().getColor(R.color.ntificationtextnuread));
                 viewHolder.date.setTypeface(null, Typeface.BOLD);
             }
 
-            if (!pnew.equals("null"))
-
-            {
-                if (Internet.isConnected(context)) {
-                    registperp(id);
-                } else {
-                    Toast.makeText(context, "Please check your internet connection", Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
+//            if (!pnew.equals("null"))
+//
+//            {
+//                if (Internet.isConnected(context)) {
+//                    registperp(id);
+//                } else {
+//                    Toast.makeText(context, "Please check your internet connection", Toast.LENGTH_SHORT).show();
+//                }
+//
+//
+//            }
 
             viewHolder.notification.setOnClickListener(new View.OnClickListener()
 
             {
                 @Override
                 public void onClick(View view) {
-                    viewHolder.name.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
-                    viewHolder.name.setTypeface(null, Typeface.NORMAL);
+//                    viewHolder.name.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
+//                    viewHolder.name.setTypeface(null, Typeface.NORMAL);
                     viewHolder.title.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
                     viewHolder.title.setTypeface(null, Typeface.NORMAL);
                     viewHolder.date.setTextColor(context.getResources().getColor(R.color.ntificationtextread));

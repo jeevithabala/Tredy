@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_margin="10dp"
+             
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/aboutus"/>
+
+            <TextView
+                android:layout_margin="10dp"
+             
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/aboutus1"/>
+
+            <TextView
+                android:layout_margin="10dp"
+             
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/aboutus2"/>
+
+            <TextView
+                android:layout_margin="10dp"
+             
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/aboutus3"/>
+
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+
+
+    <TextView
+        android:layout_margin="10dp"
+        android:fontFamily="@font/lucidasansdemiboldroman"
+        android:textSize="14sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="128 A Siddhar Koil Main Road"/>
+
+    <TextView
+        android:layout_margin="5dp"
+        android:fontFamily="@font/lucidasansdemiboldroman"
+        android:textSize="14sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" Kandampatty By-pass,  Salem"/>
+    <TextView
+        android:layout_margin="5dp"
+        android:fontFamily="@font/lucidasansdemiboldroman"
+        android:textSize="14sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" Tamilnadu,  India"/>
+
+    <TextView
+        android:layout_margin="5dp"
+        android:fontFamily="@font/lucidasansdemiboldroman"
+        android:textSize="14sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" Email :  customercare@tredyfoods.com"/>
+
+    <TextView
+        android:layout_margin="5dp"
+        android:fontFamily="@font/lucidasansdemiboldroman"
+        android:textSize="14sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" Contact Number : +919787266666"/>
+
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:src="@drawable/facebook_icon"
+        />
+
+
+
+</LinearLayout>

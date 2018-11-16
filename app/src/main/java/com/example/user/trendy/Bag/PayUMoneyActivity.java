@@ -108,9 +108,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     String accessToken;
     private GraphClient graphClient;
     private ProgressDialog progressDialog;
-    ArrayList<OrderDetailModel> orderDetailModelArrayList=new ArrayList<>();
-    private String    orderId;
-    String accessCode,merchantId,currency,rsaKeyUrl,redirectUrl,cancelUrl;
+    ArrayList<OrderDetailModel> orderDetailModelArrayList = new ArrayList<>();
+    private String orderId;
+    String accessCode, merchantId, currency, rsaKeyUrl, redirectUrl, cancelUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,40 +208,39 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         discountAdapter.notifyDataSetChanged();
 
 
-
     }
 
-    private void init(){
-        accessCode ="AVML80FJ99AW34LMWA";
+    private void init() {
+        accessCode = "AVML80FJ99AW34LMWA";
         merchantId = "139259";
         currency = "INR";
 //        amount = (EditText) findViewById(R.id.amount);
         rsaKeyUrl = "http://52.66.204.219/GetRSA.php";
         redirectUrl = "http://52.66.204.219/ccavResponseHandler.php";
-        cancelUrl ="http://52.66.204.219/ccavResponseHandler.php";
+        cancelUrl = "http://52.66.204.219/ccavResponseHandler.php";
 
         Integer randomNum = ServiceUtility.randInt(0, 9999999);
-        orderId  = randomNum.toString();
+        orderId = randomNum.toString();
 
         String vAccessCode = ServiceUtility.chkNull(accessCode).toString().trim();
         String vMerchantId = ServiceUtility.chkNull(merchantId).toString().trim();
         String vCurrency = ServiceUtility.chkNull(currency).toString().trim();
         String vAmount = ServiceUtility.chkNull(totalcost).toString().trim();
 //        if(!vAccessCode.equals("") && !vMerchantId.equals("") && !vCurrency.equals("") && !vAmount.equals("")){
-            Intent intent = new Intent(this,WebViewActivity.class);
-            intent.putExtra(AvenuesParams.ACCESS_CODE, ServiceUtility.chkNull(accessCode).toString().trim());
-            intent.putExtra(AvenuesParams.MERCHANT_ID, ServiceUtility.chkNull(merchantId).toString().trim());
-            intent.putExtra(AvenuesParams.ORDER_ID, ServiceUtility.chkNull(orderId).toString().trim());
-            intent.putExtra(AvenuesParams.CURRENCY, ServiceUtility.chkNull(currency).toString().trim());
-            intent.putExtra(AvenuesParams.AMOUNT, ServiceUtility.chkNull(totalcost).toString().trim());
+        Intent intent = new Intent(this, WebViewActivity.class);
+        intent.putExtra(AvenuesParams.ACCESS_CODE, ServiceUtility.chkNull(accessCode).toString().trim());
+        intent.putExtra(AvenuesParams.MERCHANT_ID, ServiceUtility.chkNull(merchantId).toString().trim());
+        intent.putExtra(AvenuesParams.ORDER_ID, ServiceUtility.chkNull(orderId).toString().trim());
+        intent.putExtra(AvenuesParams.CURRENCY, ServiceUtility.chkNull(currency).toString().trim());
+        intent.putExtra(AvenuesParams.AMOUNT, ServiceUtility.chkNull(totalcost).toString().trim());
 
-            intent.putExtra(AvenuesParams.REDIRECT_URL, ServiceUtility.chkNull(redirectUrl).toString().trim());
-            intent.putExtra(AvenuesParams.CANCEL_URL, ServiceUtility.chkNull(cancelUrl).toString().trim());
-            intent.putExtra(AvenuesParams.RSA_KEY_URL, ServiceUtility.chkNull(rsaKeyUrl).toString().trim());
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("value", orderDetailModelArrayList.get(0));
-            intent.putExtras(bundle);
-            startActivity(intent);
+        intent.putExtra(AvenuesParams.REDIRECT_URL, ServiceUtility.chkNull(redirectUrl).toString().trim());
+        intent.putExtra(AvenuesParams.CANCEL_URL, ServiceUtility.chkNull(cancelUrl).toString().trim());
+        intent.putExtra(AvenuesParams.RSA_KEY_URL, ServiceUtility.chkNull(rsaKeyUrl).toString().trim());
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("value", orderDetailModelArrayList.get(0));
+        intent.putExtras(bundle);
+        startActivity(intent);
 //        }else{
 //            Toast.makeText(this, "All parameters are mandatory.", Toast.LENGTH_SHORT).show();
 //        }
@@ -337,7 +336,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     if (btnradonline.isChecked()) {
                         cod = 0;
 
-                        OrderDetailModel orderDetailModel=new OrderDetailModel(emailstring,totalcost,firstname,lastname,bfirstname,blastname,address1,city,state,country,zip,phone,b_address1,b_city,b_state,b_country,b_zip, product_varientid,product_qty);
+                        OrderDetailModel orderDetailModel = new OrderDetailModel(emailstring, totalcost, firstname, lastname, bfirstname, blastname, address1, city, state, country, zip, phone, b_address1, b_city, b_state, b_country, b_zip, product_varientid, product_qty);
                         orderDetailModelArrayList.add(orderDetailModel);
 
                         init();
@@ -368,7 +367,10 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog1, int id) {
+
                                 dialog.dismiss();
+                                abandandCheckout();
+
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -395,7 +397,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         phone = mobile.getText().toString().trim();
-        int costtotal= Integer.parseInt(totalcost.trim());
+        int costtotal = Integer.parseInt(totalcost.trim());
 
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -732,6 +734,174 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             }
         });
 
+    }
+
+    public void abandandCheckout() {
+        Integer randomNum = ServiceUtility.randInt(0, 9999999);
+        orderId = randomNum.toString();
+
+        phone = mobile.getText().toString().trim();
+        int costtotal = Integer.parseInt(totalcost.trim());
+        String customerid = SharedPreference.getData("customerid", getApplicationContext());
+
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("email", emailstring);
+            jsonBody.put("id", orderId);
+            jsonBody.put("total_price",costtotal);
+
+
+            JSONArray line_items = new JSONArray();
+            if (product_varientid.trim().length() == 0) {
+                for (int i = 0; i < cartlist.size(); i++) {
+                    JSONObject items = new JSONObject();
+
+                    product_varientid = cartlist.get(i).getProduct_varient_id();
+                    byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
+                    String val2 = new String(tmp2);
+                    String[] str = val2.split("/");
+                    product_varientid = str[4];
+
+                    Integer quantity = cartlist.get(i).getQty();
+//                    items.put("variant_id", "5823671107611");
+                    items.put("product_id", product_varientid.trim());
+                    items.put("quantity", quantity);
+                    line_items.put(items);
+                    jsonBody.put("line_items", line_items);
+                }
+            } else {
+                JSONObject items = new JSONObject();
+
+//                items.put("variant_id", "5823671107611");
+                items.put("product_id", product_varientid.trim());
+                items.put("quantity", product_qty);
+                line_items.put(items);
+                jsonBody.put("line_items", line_items);
+
+            }
+
+
+//            JSONArray note = new JSONArray();
+//            JSONObject notes = new JSONObject();
+//
+//            notes.put("name", "paypal");
+//            notes.put("value", "78233011");
+//
+//            note.put(notes);
+//            jsonBody.put("note_attributes", note);
+
+
+            JSONObject shipping = new JSONObject();
+            shipping.put("first_name", firstname);
+            shipping.put("last_name", lastname);
+            shipping.put("address1", address1);
+            shipping.put("phone", phone);
+            shipping.put("city", city);
+            shipping.put("province", state);
+            shipping.put("country", country);
+            shipping.put("zip", zip);
+            jsonBody.put("shipping_address", shipping);
+
+
+            JSONObject billingaddress = new JSONObject();
+            billingaddress.put("first_name", blastname);
+            billingaddress.put("last_name", blastname);
+            billingaddress.put("address1", b_address1);
+            billingaddress.put("phone", phone);
+            billingaddress.put("city", b_city);
+            billingaddress.put("province", b_state);
+            billingaddress.put("country", b_country);
+            billingaddress.put("zip", b_zip);
+            jsonBody.put("billing_address", billingaddress);
+
+
+            JSONObject customer = new JSONObject();
+            customer.put("id", customerid);
+            customer.put("first_name", firstname);
+            customer.put("last_name", lastname);
+            customer.put("email", emailstring);
+            customer.put("phone", phone);
+            customer.put("city", city);
+            JSONObject default_address = new JSONObject();
+            default_address.put("first_name", firstname);
+            default_address.put("last_name", lastname);
+            default_address.put("address1", address1);
+            default_address.put("phone", phone);
+            default_address.put("city", city);
+            default_address.put("country", country);
+            default_address.put("zip", zip);
+            customer.put("default_address", default_address);
+
+            jsonBody.put("customer", customer);
+
+
+
+
+
+            Log.d("check JSON", jsonBody.toString());
+
+
+            final String requestBody = jsonBody.toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.createabandoned, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("VOLLEY", response);
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                       String msg=obj.getString("msg");
+                       Log.e("msg"," "+msg);
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("VOLLEY", error.toString());
+                }
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    try {
+                        return requestBody == null ? null : requestBody.getBytes("utf-8");
+//                        return requestBody == null;
+                    } catch (UnsupportedEncodingException uee) {
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                        return null;
+                    }
+                }
+
+                @Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
+                    String statusCode = String.valueOf(response.statusCode);
+                    //Handling logic
+                    return super.parseNetworkResponse(response);
+                }
+//                @Override
+//                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+//                    String responseString = "";
+//                    if (response != null) {
+//                        responseString = String.valueOf(response.statusCode);
+//                        // can get more details such as response.headers
+//                    }
+//                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+//                }
+            };
+
+            requestQueue.add(stringRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 }

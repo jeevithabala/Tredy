@@ -282,10 +282,10 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     private void init() {
 
 //Log.e("bannerlist", ""+String.valueOf(bannerlist.size()));
-        ImagesArray.clear();
-        ImagesArray.addAll(bannerlist);
 
-        slidingImage_adapter = new SlidingImage_Adapter(getActivity(), ImagesArray);
+//        ImagesArray.clear();
+//        ImagesArray.addAll(bannerlist);
+        slidingImage_adapter = new SlidingImage_Adapter(getActivity(), bannerlist);
         mPager.setAdapter(slidingImage_adapter);
 
 
@@ -299,7 +299,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
         indicator.setRadius(3 * density);
 
 
-        NUM_PAGES = ImagesArray.size();
+        NUM_PAGES = bannerlist.size();
 
 
         // Auto start of viewpager

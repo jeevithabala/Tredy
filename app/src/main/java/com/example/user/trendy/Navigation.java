@@ -355,6 +355,42 @@ public class Navigation extends AppCompatActivity
                 }
 
             }
+
+        } else if (id == R.id.aboutus) {
+            if (fragmentManager.findFragmentById(R.id.home_container) instanceof Aboutus) {
+
+            } else {
+                Aboutus aboutus = new Aboutus();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
+                transaction2.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                transaction2.replace(R.id.home_container, aboutus, "aboutus");
+                if (fragmentManager.findFragmentByTag("aboutus") == null) {
+                    transaction2.addToBackStack("aboutus");
+                    transaction2.commit();
+                } else {
+                    transaction2.commit();
+                }
+
+            }
+
+        } else if (id == R.id.contactus) {
+            if (fragmentManager.findFragmentById(R.id.home_container) instanceof ContactUs) {
+
+            } else {
+                ContactUs contactUs = new ContactUs();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
+                transaction2.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                transaction2.replace(R.id.home_container, contactUs, "contactUs");
+                if (fragmentManager.findFragmentByTag("contactUs") == null) {
+                    transaction2.addToBackStack("contactUs");
+                    transaction2.commit();
+                } else {
+                    transaction2.commit();
+                }
+
+            }
         } else if (id == R.id.logout) {
             noDialog();
 

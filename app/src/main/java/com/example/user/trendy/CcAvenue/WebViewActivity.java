@@ -43,6 +43,8 @@ import com.example.user.trendy.Bag.OrderDetailModel;
 import com.example.user.trendy.Bag.PayUMoneyActivity;
 import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
+import com.example.user.trendy.Util.Internet;
+import com.example.user.trendy.Util.SharedPreference;
 import com.example.user.trendy.Utility.AvenuesParams;
 import com.example.user.trendy.Utility.Constants;
 import com.example.user.trendy.Utility.LoadingDialog;
@@ -84,6 +86,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
     int MyDeviceAPI;
     String emailstring, totalamount, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "", product_varientid, product_qty;
 String finalhtml=" ";
+    int costtotal=0;
     /**
      * Async task class to get json by making HTTP call
      */
@@ -226,7 +229,7 @@ String finalhtml=" ";
         MyDeviceAPI = Build.VERSION.SDK_INT;
         //get rsa key method
         get_RSA_key(mainIntent.getStringExtra(AvenuesParams.ACCESS_CODE), mainIntent.getStringExtra(AvenuesParams.ORDER_ID));
-
+        getpreviousData();
     }
 
     // Method to start Timer for 30 sec. delay
@@ -878,11 +881,11 @@ String finalhtml=" ";
         }
         db = new DBHelper(this);
         cartlist = db.getCartList();
-//        postOrder();
+        postOrder();
     }
 
     public void postOrder() {
-        int costtotal= Integer.parseInt(totalamount.trim());
+         costtotal= Integer.parseInt(totalamount.trim());
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             JSONObject jsonBody = new JSONObject();
@@ -1036,6 +1039,227 @@ String finalhtml=" ";
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(getApplicationContext()!=null) {
+            if (Internet.isConnected(getApplicationContext())) {
+                abandandCheckout();
+            }
+        }
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(getApplicationContext()!=null) {
+            if (Internet.isConnected(getApplicationContext())) {
+                abandandCheckout();
+            }
+        }
+    }
+
+    public void abandandCheckout() {
+
+
+        Integer randomNum = ServiceUtility.randInt(0, 9999999);
+      String  orderId = randomNum.toString();
+        String customerid = SharedPreference.getData("customerid", getApplicationContext());
+
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("email", emailstring);
+            jsonBody.put("id", orderId);
+            jsonBody.put("total_price",costtotal);
+
+
+            JSONArray line_items = new JSONArray();
+            if (product_varientid.trim().length() == 0) {
+                for (int i = 0; i < cartlist.size(); i++) {
+                    JSONObject items = new JSONObject();
+
+                    product_varientid = cartlist.get(i).getProduct_varient_id();
+                    byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
+                    String val2 = new String(tmp2);
+                    String[] str = val2.split("/");
+                    product_varientid = str[4];
+
+                    Integer quantity = cartlist.get(i).getQty();
+//                    items.put("variant_id", "5823671107611");
+                    items.put("product_id", product_varientid.trim());
+                    items.put("quantity", quantity);
+                    line_items.put(items);
+                    jsonBody.put("line_items", line_items);
+                }
+            } else {
+                JSONObject items = new JSONObject();
+
+//                items.put("variant_id", "5823671107611");
+                items.put("product_id", product_varientid.trim());
+                items.put("quantity", product_qty);
+                line_items.put(items);
+                jsonBody.put("line_items", line_items);
+
+            }
+
+
+//            JSONArray note = new JSONArray();
+//            JSONObject notes = new JSONObject();
+//
+//            notes.put("name", "paypal");
+//            notes.put("value", "78233011");
+//
+//            note.put(notes);
+//            jsonBody.put("note_attributes", note);
+
+
+            JSONObject shipping = new JSONObject();
+            shipping.put("first_name", firstname);
+            shipping.put("last_name", lastname);
+            shipping.put("address1", address1);
+            shipping.put("phone", phone);
+            shipping.put("city", city);
+            shipping.put("province", state);
+            shipping.put("country", country);
+            shipping.put("zip", zip);
+            jsonBody.put("shipping_address", shipping);
+
+
+            JSONObject billingaddress = new JSONObject();
+            billingaddress.put("first_name", blastname);
+            billingaddress.put("last_name", blastname);
+            billingaddress.put("address1", b_address1);
+            billingaddress.put("phone", phone);
+            billingaddress.put("city", b_city);
+            billingaddress.put("province", b_state);
+            billingaddress.put("country", b_country);
+            billingaddress.put("zip", b_zip);
+            jsonBody.put("billing_address", billingaddress);
+
+
+            JSONObject customer = new JSONObject();
+            customer.put("id", customerid);
+            customer.put("first_name", firstname);
+            customer.put("last_name", lastname);
+            customer.put("email", emailstring);
+            customer.put("phone", phone);
+            customer.put("city", city);
+            JSONObject default_address = new JSONObject();
+            default_address.put("first_name", firstname);
+            default_address.put("last_name", lastname);
+            default_address.put("address1", address1);
+            default_address.put("phone", phone);
+            default_address.put("city", city);
+            default_address.put("country", country);
+            default_address.put("zip", zip);
+            customer.put("default_address", default_address);
+
+            jsonBody.put("customer", customer);
+
+
+
+
+
+            Log.d("check JSON", jsonBody.toString());
+
+
+            final String requestBody = jsonBody.toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, com.example.user.trendy.Util.Constants.createabandoned, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("VOLLEY", response);
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        String msg=obj.getString("msg");
+                        Log.e("msg"," "+msg);
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("VOLLEY", error.toString());
+                }
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    try {
+                        return requestBody == null ? null : requestBody.getBytes("utf-8");
+//                        return requestBody == null;
+                    } catch (UnsupportedEncodingException uee) {
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                        return null;
+                    }
+                }
+
+                @Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
+                    String statusCode = String.valueOf(response.statusCode);
+                    //Handling logic
+                    return super.parseNetworkResponse(response);
+                }
+//                @Override
+//                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+//                    String responseString = "";
+//                    if (response != null) {
+//                        responseString = String.valueOf(response.statusCode);
+//                        // can get more details such as response.headers
+//                    }
+//                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+//                }
+            };
+
+            requestQueue.add(stringRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getpreviousData(){
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
+
+        OrderDetailModel detail = (OrderDetailModel) bundle.getSerializable("value");
+//        OrderDetailModel detail=new OrderDetailModel();
+        emailstring = detail.getEmailstring();
+        Log.e("email", " "+emailstring);
+        totalamount = detail.getTotalamount();
+        firstname = detail.getFirstname();
+        lastname = detail.getLastname();
+        bfirstname = detail.getBfirstname();
+        blastname = detail.getBlastname();
+        address1 = detail.getLastname();
+        city = detail.getCity();
+        state = detail.getState();
+        country = detail.getCountry();
+        zip = detail.getZip();
+        phone = detail.getPhone();
+        b_address1 = detail.getB_address1();
+        b_city = detail.getCity();
+        b_state = detail.getB_state();
+        b_country = detail.getB_country();
+        b_zip = detail.getB_zip();
+        product_qty = detail.getQty();
+        product_varientid = detail.getVarientid();
+        if (product_varientid == null) {
+            product_varientid = " ";
+        }
+        db = new DBHelper(this);
+        cartlist = db.getCartList();
     }
 
 }
