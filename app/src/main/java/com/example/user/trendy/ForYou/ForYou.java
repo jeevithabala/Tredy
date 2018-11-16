@@ -86,7 +86,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     RecyclerView topselling_recyclerview, topcollection_recyclerview, new_arrivals_recyclerview, allcollection;
     GraphClient graphClient;
     static ArrayList<TopSellingModel> topSellingModelArrayList = new ArrayList<>();
-    static ArrayList<TopCollectionModel> topCollectionModelArrayList = new ArrayList<>();
+//    static ArrayList<TopCollectionModel> topCollectionModelArrayList = new ArrayList<>();
     static ArrayList<NewArrivalModel> newArrivalModelArrayList = new ArrayList<>();
     static ArrayList<GroceryHomeModel> GroceryHomeModels = new ArrayList<>();
     private RequestQueue mRequestQueue;
@@ -170,9 +170,9 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
         return topSellingModelArrayList;
     }
 
-    public static ArrayList<TopCollectionModel> getBestCollection() {
-        return topCollectionModelArrayList;
-    }
+//    public static ArrayList<TopCollectionModel> getBestCollection() {
+//        return topCollectionModelArrayList;
+//    }
 
     public static ArrayList<NewArrivalModel> getNewArrival() {
         return newArrivalModelArrayList;
@@ -188,26 +188,26 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
     }
 
-    @Override
-    public void bestCollection(ArrayList<TopCollectionModel> arrayList) {
-        getActivity().runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                for (int i = 0; i < arrayList.size(); i++) {
-                    TopCollectionModel topCollectionModel = new TopCollectionModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
-
-                    topCollectionModel.setCollectionid(arrayList.get(i).getCollectionid());
-                    topCollectionModelArrayList.add(topCollectionModel);
-                }
-
-                getObject().add(topCollectionModelArrayList.get(0));
-                adapter.notifyDataSetChanged();
-
-
-            }
-        });
-    }
+//    @Override
+//    public void bestCollection(ArrayList<TopCollectionModel> arrayList) {
+//        getActivity().runOnUiThread(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                for (int i = 0; i < arrayList.size(); i++) {
+//                    TopCollectionModel topCollectionModel = new TopCollectionModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
+//
+//                    topCollectionModel.setCollectionid(arrayList.get(i).getCollectionid());
+//                    topCollectionModelArrayList.add(topCollectionModel);
+//                }
+//
+//                getObject().add(topCollectionModelArrayList.get(0));
+//                adapter.notifyDataSetChanged();
+//
+//
+//            }
+//        });
+//    }
 
     @Override
     public void topSelling(ArrayList<TopSellingModel> arrayList) {
@@ -216,8 +216,8 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
             @Override
             public void run() {
                 topSellingModelArrayList.clear();
-                topCollectionModelArrayList.clear();
-                newArrivalModelArrayList.clear();
+//                topCollectionModelArrayList.clear();
+//                newArrivalModelArrayList.clear();
 
 //                Log.e("array1", String.valueOf(arrayList.size()));
                 for (int i = 0; i < arrayList.size(); i++) {
@@ -242,6 +242,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
             @Override
             public void run() {
+                newArrivalModelArrayList.clear();
 
 
                 for (int i = 0; i < arrayList.size(); i++) {
@@ -352,9 +353,9 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     }
 
     @Override
-    public void collectionlist(ArrayList<TopSellingModel> topSellingModelArrayList, ArrayList<TopCollectionModel> topCollectionModelArrayList, ArrayList<NewArrivalModel> newArrivalModelArrayList) {
+    public void collectionlist(ArrayList<TopSellingModel> topSellingModelArrayList, ArrayList<NewArrivalModel> newArrivalModelArrayList) {
         resultCallBackInterface.topSelling(topSellingModelArrayList);
-        resultCallBackInterface.bestCollection(topCollectionModelArrayList);
+//        resultCallBackInterface.bestCollection(topCollectionModelArrayList);
         resultCallBackInterface.newArrivals(newArrivalModelArrayList);
     }
 

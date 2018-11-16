@@ -14,7 +14,7 @@ public interface ResultCallBackInterface {
 //    public void topSelling(String collectionid,String id, String title, String price, String image, String collectionname);
 //    public void newArrivals(String collectionid,String id, String title, String price, String image, String collectionname);
 
-    public void bestCollection(ArrayList<TopCollectionModel> arrayList);
+//    public void bestCollection(ArrayList<TopCollectionModel> arrayList);
     public void topSelling(ArrayList<TopSellingModel> arrayList);
     public void newArrivals(ArrayList<NewArrivalModel> arrayList);
     public void grocery(ArrayList<GroceryHomeModel> arrayList);

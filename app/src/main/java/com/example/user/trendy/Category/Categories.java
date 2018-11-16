@@ -61,7 +61,7 @@ public class Categories extends Fragment {
     CategoreDetailAdapter categoreDetailAdapter;
     private RequestQueue mRequestQueue;
     String imageurl = "";
-    LinearLayout subcategory,grocery;
+    LinearLayout subcategory, grocery;
     String converted;
     private String image1 = "";
     private ProgressDialog progressDialog;
@@ -297,11 +297,24 @@ public class Categories extends Fragment {
                                     categoryList.add(categoreDetail);
                                 }
                             }
+                            ArrayList<String> extra = new ArrayList<>();
+                            extra.add("Grocery");
+                            extra.add("All Products");
 
-                           CategoryModel categoryModel1 = new CategoryModel();
-                            categoryModel1.setCollectiontitle("Grocery");
+                            for (int i = 0; i < extra.size(); i++) {
+                                CategoryModel categoryModel1 = new CategoryModel();
+                                categoryModel1.setCollectiontitle(extra.get(i));
+                                categoryList.add(categoryModel1);
 
-                            categoryList.add(categoryModel1);
+                            }
+//                           CategoryModel categoryModel1 = new CategoryModel();
+//                            categoryModel1.setCollectiontitle("Grocery");
+//                            categoryList.add(categoryModel1);
+//
+//                            CategoryModel categoryModel2 = new CategoryModel();
+//                            categoryModel1.setCollectiontitle("All Products");
+//                            categoryList.add(categoryModel2);
+
                             categoreDetailAdapter = new CategoreDetailAdapter(getActivity(), categoryList, getFragmentManager());
 
                             recyclerView.setAdapter(categoreDetailAdapter);

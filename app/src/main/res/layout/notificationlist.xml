@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp">
+
+
+        <!--<LinearLayout-->
+            <!--android:id="@+id/notification_lp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_above="@+id/pagination_progress_bar">-->
+
+            <!--<com.example.user.trendy.Notification.CustomSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+                <!--xmlns:swiperefresh="http://schemas.android.com/apk/res-auto"-->
+                <!--android:id="@+id/swipe_container"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--swiperefresh:enable_top_progress_bar="true"-->
+                <!--swiperefresh:keep_refresh_head="true"-->
+                <!--swiperefresh:refresh_mode="pull_mode"-->
+                <!--swiperefresh:return_to_header_duration="500"-->
+                <!--swiperefresh:return_to_top_duration="500"-->
+                <!--swiperefresh:time_out_refresh_complete="2000"-->
+                <!--swiperefresh:time_out_return_to_top="1000"-->
+                <!--swiperefresh:top_progress_bar_color_1="@color/common_red"-->
+                <!--swiperefresh:top_progress_bar_color_2="#ee5522"-->
+                <!--swiperefresh:top_progress_bar_color_3="#ffa600"-->
+                <!--swiperefresh:top_progress_bar_color_4="@color/common_yellow">-->
+
+
+                <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    tools:context=".Fragment.Team"
+                    tools:listitem="@layout/notificationlistadapter"></android.support.v7.widget.RecyclerView>
+
+            <!--</com.example.user.trendy.Notification.CustomSwipeRefreshLayout>-->
+        <!--</LinearLayout>-->
+
+        <LinearLayout
+            android:id="@+id/linearProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <ProgressBar
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/pagination_progress_bar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"
+            />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/notification_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></FrameLayout>
+</RelativeLayout>

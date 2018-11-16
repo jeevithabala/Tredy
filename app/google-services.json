@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "401722226273",
-    "firebase_url": "https://tredyfoods-218114.firebaseio.com",
-    "project_id": "tredyfoods-218114",
-    "storage_bucket": "tredyfoods-218114.appspot.com"
+    "project_number": "971728730613",
+    "firebase_url": "https://tredyfood-796f1.firebaseio.com",
+    "project_id": "tredyfood-796f1",
+    "storage_bucket": "tredyfood-796f1.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:401722226273:android:1d44b2ad1721c3b0",
+        "mobilesdk_app_id": "1:971728730613:android:1d44b2ad1721c3b0",
         "android_client_info": {
           "package_name": "com.example.user.trendy"
         }
       },
       "oauth_client": [
         {
-          "client_id": "401722226273-08oc658872p2jqab1l5h5ivq5fqgt299.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.user.trendy",
-            "certificate_hash": "30914eb72ab0b0549133d82fd4cb613479fb2cc2"
-          }
-        },
-        {
-          "client_id": "401722226273-0idfakp8pgi4thub6t0r8t4fcf21tjse.apps.googleusercontent.com",
+          "client_id": "971728730613-gdiej5bia60npci8inki0g7mf45skb39.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCko8Hb2U8HU9SlayzcrkzaaM2bBi_dkDk"
+          "current_key": "AIzaSyA4L7e2EoGzDDUDG0Si9l9M5gLkTg_bkRk"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "401722226273-0idfakp8pgi4thub6t0r8t4fcf21tjse.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

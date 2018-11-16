@@ -170,7 +170,7 @@ public class ProductModel extends BaseObservable implements Serializable {
         if(imageUrl!=null) {
                 Picasso.with(view.getContext())
                         .load(imageUrl)
-                        .placeholder(R.drawable.trendybanner)
+//                        .placeholder(R.drawable.trendybanner)
                         .error(R.drawable.trendybanner)
                         .resize(200,200)
                         .into(view);

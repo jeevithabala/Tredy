@@ -52,6 +52,7 @@ public class YourOrders extends Fragment {
 
         Storefront.QueryRootQuery query = Storefront.query(root -> root
                 .customer(accessToken, customer -> customer
+                        .id()
                         .orders(arg -> arg.first(10), connection -> connection
                                 .edges(edge -> edge
                                         .node(node -> node

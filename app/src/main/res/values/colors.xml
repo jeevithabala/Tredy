@@ -14,4 +14,8 @@
     <color name="textcolor">#614D4B</color>
     <color name="cost">#4B473F</color>
     <color name="colorAccentlight">#cf3368</color>
+    <color name="ntificationtextread">#6e6b6b</color>
+    <color name="ntificationtextnuread">#000000</color>
+    <color name="common_red">#f4121e</color>
+    <color name="common_yellow">#c6bf42</color>
 </resources>

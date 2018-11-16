@@ -217,9 +217,9 @@ public class ForYouViewModel extends ViewModel {
                                             JSONObject objec = array1.getJSONObject(j);
 
                                             title = objec.getString("title");
-                                            if (title.trim().toLowerCase().equals("home page")) {
-                                                title = "Treding";
-                                            }
+//                                            if (title.trim().toLowerCase().equals("home page")) {
+//                                                title = "Treding";
+//                                            }
                                             JSONArray varientsarray = objec.getJSONArray("variants");
                                             for (int k = 0; k < varientsarray.length(); k++) {
                                                 JSONObject objec1 = varientsarray.getJSONObject(k);
@@ -234,19 +234,23 @@ public class ForYouViewModel extends ViewModel {
                                                 image = objec1.getString("src");
                                             }
                                             if (i == 0) {
+//                                                TopCollectionModel topCollectionModel = new TopCollectionModel(id, title, price, image, collectionname);
+//                                                Log.e("product", title);
+//                                                topCollectionModel.setCollectionid(collectionid);
+//                                                topCollectionModelArray.add(topCollectionModel);
+
+                                            } else if (i == 1) {
+
+
                                                 TopSellingModel topSellingModel = new TopSellingModel(id, title, price, image, collectionname);
                                                 Log.e("product", title);
                                                 topSellingModel.setCollectionid(collectionid);
                                                 topSellingModelArray.add(topSellingModel);
 
-                                            } else if (i == 1) {
-                                                TopCollectionModel topCollectionModel = new TopCollectionModel(id, title, price, image, collectionname);
-                                                topCollectionModel.setCollectionid(collectionid);
-                                                topCollectionModelArray.add(topCollectionModel);
-
 //                                                resultCallBackInterface.bestCollection(collectionid, id, title, price, image, collectionname);
                                             } else if (i == 2) {
                                                 NewArrivalModel newArrivalModel = new NewArrivalModel(id, title, price, image, collectionname);
+                                                Log.e("product", title);
                                                 newArrivalModel.setCollectionid(collectionid);
                                                 newArrivalModelArray.add(newArrivalModel);
 
@@ -255,7 +259,7 @@ public class ForYouViewModel extends ViewModel {
 
                                         }
                                     }
-                                    foryouInterface.collectionlist(topSellingModelArray, topCollectionModelArray, newArrivalModelArray);
+                                    foryouInterface.collectionlist(topSellingModelArray, newArrivalModelArray);
 //                                    resultCallBackInterface.topSelling(topSellingModelArray);
 //                                    resultCallBackInterface.bestCollection(topCollectionModelArray);
 //                                    resultCallBackInterface.newArrivals(newArrivalModelArray);

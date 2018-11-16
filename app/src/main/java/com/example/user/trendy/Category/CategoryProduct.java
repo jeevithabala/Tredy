@@ -92,7 +92,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     String productid = "", productidapi = "", price = "";
     String checkoutId;
     TextView category_title;
-    TextView view1, subcategory, filter;
+    TextView view1,grid, subcategory, filter;
     TextView sublistname, all;
     public static int i = 0;
     public static boolean isViewWithCatalog = true;
@@ -124,9 +124,11 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         category_title = view.findViewById(R.id.category_title);
         noproduct = view.findViewById(R.id.no_product);
         filter = view.findViewById(R.id.filter);
-        view1 = view.findViewById(R.id.view);
+        view1 = view.findViewById(R.id.list);
+        grid = view.findViewById(R.id.grid);
         filter.setOnClickListener(this);
         view1.setOnClickListener(this);
+        grid.setOnClickListener(this);
 
         requestQueue = Volley.newRequestQueue(getActivity());
 
@@ -170,6 +172,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             Log.e("iud", detail.getId());
             id = detail.getId().trim();
             title = detail.getCollectiontitle();
+        }else if(category.trim().equals("allproduct")){
+           id = "349437318";
+//            String text = "gid://shopify/Collection/" + id1.trim();
+//            String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
+//            id=converted.trim();
+            title="All Products";
         } else if (category.trim().equals("allcollection")) {
             AllCollectionModel allCollectionModel = (AllCollectionModel) getArguments().getSerializable("category_id");
             id = allCollectionModel.getId().trim();
@@ -650,10 +658,23 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
                 break;
 
-            case R.id.view:
-                isViewWithCatalog = !isViewWithCatalog;
+            case R.id.list:
+                isViewWithCatalog=true;
+//                isViewWithCatalog = !isViewWithCatalog;
+                LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                recyclerView.setLayoutManager(layoutManager1);
+                recyclerView.setAdapter(productAdapter);
 
-                recyclerView.setLayoutManager(isViewWithCatalog ? new LinearLayoutManager(getActivity()) : new GridLayoutManager(getActivity(), 2));
+//                recyclerView.setLayoutManager(isViewWithCatalog ? new LinearLayoutManager(getActivity()) : new GridLayoutManager(getActivity(), 2));
+//                recyclerView.setAdapter(productAdapter);
+
+                break;
+
+            case R.id.grid:
+                isViewWithCatalog=false;
+//                isViewWithCatalog = !isViewWithCatalog;
+                LinearLayoutManager layoutManager2 = new GridLayoutManager(getApplicationContext(), 2, LinearLayoutManager.VERTICAL, false);
+                recyclerView.setLayoutManager(layoutManager2);
                 recyclerView.setAdapter(productAdapter);
 
                 break;

@@ -8,7 +8,7 @@
             android:id="@+id/for_you"
             android:icon="@drawable/foryou1"
             android:checked="true"
-            android:title="For You" />
+            android:title="Home Page" />
         <item
             android:id="@+id/category"
             android:icon="@drawable/categories"

@@ -81,6 +81,21 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
                             transaction.commit();
                         }
 
+                    }   else if (itemsList.get(getAdapterPosition()).getCollectiontitle().trim().toLowerCase().equals("all products")) {
+                        Fragment fragment = new CategoryProduct();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("collection", "allproduct");
+//                        bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
+                        fragment.setArguments(bundle);
+                        FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
+                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                        if (fragmentManager.findFragmentByTag("categoryproduct") == null) {
+                            ft.addToBackStack("categoryproduct");
+                            ft.commit();
+                        } else {
+                            ft.commit();
+                        }
+
                     } else if (itemsList.get(getAdapterPosition()).getSubCategoryModelArrayList() == null) {
 
                         Fragment fragment = new CategoryProduct();

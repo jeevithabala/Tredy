@@ -30,8 +30,6 @@ import com.example.user.trendy.Groceries.GroceryAdapter;
 import com.example.user.trendy.R;
 
 import java.util.ArrayList;
-
-import static com.example.user.trendy.ForYou.ForYou.getBestCollection;
 import static com.example.user.trendy.ForYou.ForYou.getGroceryHomeModels;
 import static com.example.user.trendy.ForYou.ForYou.getNewArrival;
 import static com.example.user.trendy.ForYou.ForYou.getTopSellingCollection;
@@ -42,9 +40,9 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private ArrayList<Object> items;
     private final int HORIZONTAL = 0;
-    private final int VERTICAL = 1;
-    private final int HORIZONTAL1 = 2;
-    private final int Grocery = 3;
+//    private final int VERTICAL = 1;
+    private final int HORIZONTAL1 = 1;
+    private final int Grocery = 2;
     private FragmentManager fragmentManager;
 
 
@@ -69,10 +67,10 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 holder = new HorizontalViewHolder(view);
                 break;
 
-            case VERTICAL:
-                view = inflater.inflate(R.layout.bestcollection_recycler, parent, false);
-                holder = new VerticalViewHolder(view);
-                break;
+//            case VERTICAL:
+//                view = inflater.inflate(R.layout.bestcollection_recycler, parent, false);
+//                holder = new VerticalViewHolder(view);
+//                break;
 
             case HORIZONTAL1:
                 view = inflater.inflate(R.layout.newarrival_recycler, parent, false);
@@ -86,9 +84,11 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 break;
 
             default:
-                view = inflater.inflate(R.layout.bestcollection_recycler, parent, false);
-                holder = new VerticalViewHolder(view);
+//                view = inflater.inflate(R.layout.bestcollection_recycler, parent, false);
+//                holder = new VerticalViewHolder(view);
 
+                view = inflater.inflate(R.layout.topselling_recycler, parent, false);
+                holder = new HorizontalViewHolder(view);
                 break;
         }
 
@@ -104,8 +104,8 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (holder.getItemViewType() == HORIZONTAL)
             topSelling((HorizontalViewHolder) holder);
 
-        else if (holder.getItemViewType() == VERTICAL)
-            bestCollection((VerticalViewHolder) holder);
+//        else if (holder.getItemViewType() == VERTICAL)
+//            bestCollection((VerticalViewHolder) holder);
 
         else if (holder.getItemViewType() == HORIZONTAL1)
             newArrival((NewArrivalViewHolder) holder);
@@ -116,44 +116,44 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
-    private void bestCollection(VerticalViewHolder holder) {
-
-
-        Log.d("Adapter", "come");
-
-        TopCollectionAdapter adapter1 = new TopCollectionAdapter(getBestCollection(), fragmentManager);
-        holder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-        holder.recyclerView.setAdapter(adapter1);
-
-        if (getBestCollection().size() != 0) {
-            holder.bestselling.setText(getBestCollection().get(0).getCollectionTitle());
-//            Log.d("collectiontitle", "" + getBestCollection().get(0).getCollectionTitle());
-        }
-        holder.seall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = new CategoryProduct();
-                Bundle bundle = new Bundle();
-                bundle.putString("collection", "bestcollection");
-                bundle.putSerializable("category_id", getBestCollection().get(0));
-//                Log.e("iddddddd", getBestCollection().get(0).getCollectionTitle());
-                fragment.setArguments(bundle);
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
-                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                if(fragmentManager.findFragmentByTag("categoryproduct")==null)
-                {
-                    ft.addToBackStack("categoryproduct");
-                    ft.commit();
-                }
-                else
-                {
-                    ft.commit();
-                }
-
-            }
-        });
-
-    }
+//    private void bestCollection(VerticalViewHolder holder) {
+//
+//
+//        Log.d("Adapter", "come");
+//
+//        TopCollectionAdapter adapter1 = new TopCollectionAdapter(getBestCollection(), fragmentManager);
+//        holder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+//        holder.recyclerView.setAdapter(adapter1);
+//
+//        if (getBestCollection().size() != 0) {
+//            holder.bestselling.setText(getBestCollection().get(0).getCollectionTitle());
+////            Log.d("collectiontitle", "" + getBestCollection().get(0).getCollectionTitle());
+//        }
+//        holder.seall.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Fragment fragment = new CategoryProduct();
+//                Bundle bundle = new Bundle();
+//                bundle.putString("collection", "bestcollection");
+//                bundle.putSerializable("category_id", getBestCollection().get(0));
+////                Log.e("iddddddd", getBestCollection().get(0).getCollectionTitle());
+//                fragment.setArguments(bundle);
+//                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
+//                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+//                if(fragmentManager.findFragmentByTag("categoryproduct")==null)
+//                {
+//                    ft.addToBackStack("categoryproduct");
+//                    ft.commit();
+//                }
+//                else
+//                {
+//                    ft.commit();
+//                }
+//
+//            }
+//        });
+//
+//    }
 
     //
     private void topSelling(HorizontalViewHolder holder) {
@@ -272,9 +272,9 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int getItemViewType(int position) {
         if (position == 0)
             return HORIZONTAL;
-        else if (position == 1)
-            return VERTICAL;
-        else if (position == 3)
+//        else if (position == 1)
+//            return VERTICAL;
+        else if (position == 2)
             return Grocery;
         else
             return HORIZONTAL1;

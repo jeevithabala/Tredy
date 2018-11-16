@@ -2,12 +2,14 @@ package com.example.user.trendy.Login;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -18,8 +20,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.user.trendy.Bag.PayUMoneyActivity;
 import com.example.user.trendy.BuildConfig;
 import com.example.user.trendy.Navigation;
+import com.example.user.trendy.Util.Constants;
+import com.example.user.trendy.Util.FilterSharedPreference;
 import com.example.user.trendy.Util.SharedPreference;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -43,12 +57,16 @@ import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.GraphError;
 import com.shopify.buy3.HttpCachePolicy;
+import com.shopify.buy3.QueryGraphCall;
 import com.shopify.buy3.Storefront;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 public class LoginActiviy extends AppCompatActivity implements
@@ -59,6 +77,7 @@ public class LoginActiviy extends AppCompatActivity implements
     CallbackManager callbackManager;
     LoginButton login_button;
     String firstname = "", lastname = "", email = "", password;
+    public  String customerid="";
     private GraphClient graphClient;
     Button facebook, google, btnSignIn;
     TextView signin, signup, forgot_password;
@@ -470,11 +489,10 @@ public class LoginActiviy extends AppCompatActivity implements
                         String token = "" + response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getAccessToken().toString();
                         String expire = response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getExpiresAt().toString();
                         SharedPreference.saveData("accesstoken", token.trim(), getApplicationContext());
+                        getId(token);
 
-                        Intent i = new Intent(getApplicationContext(), Navigation.class);
-                        SharedPreference.saveData("login", "true", getApplicationContext());
-                        startActivity(i);
-                        finish();
+
+//
 
                         Log.e("token", "" + token);
                         Log.e("expire", "" + expire);
@@ -486,7 +504,8 @@ public class LoginActiviy extends AppCompatActivity implements
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(), "The email or password you entered is incorrect.", Toast.LENGTH_LONG).show();
+                                dialog("The email or password you entered is incorrect.");
+//                                Toast.makeText(getApplicationContext(), "The email or password you entered is incorrect.", Toast.LENGTH_LONG).show();
                                 if (mGoogleApiClient.isConnected()) {
                                     Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                                 }
@@ -542,7 +561,8 @@ public class LoginActiviy extends AppCompatActivity implements
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(), "Password reset link is sent to your email ID", Toast.LENGTH_LONG).show();
+                                dialog("Password reset link is sent to your registered email ID");
+//                                Toast.makeText(getApplicationContext(), "Password reset link is sent to your email ID", Toast.LENGTH_LONG).show();
                             }
                         });
                         if (response.data().getCustomerRecover().getUserErrors() != null) {
@@ -566,5 +586,146 @@ public class LoginActiviy extends AppCompatActivity implements
         });
 
     }
+
+    public void dialog(String poptext) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setTitle("Success");
+        builder.setMessage(poptext)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+//            alert.getWindow().setBackgroundDrawableResource(android.R.color.white)
+    }
+
+    public void saveToken() {
+        String token = FilterSharedPreference.getData("firebasetoken", getApplicationContext());
+        Log.e("tokennn", " " + token);
+
+
+        byte[] data = Base64.decode(customerid, Base64.DEFAULT);
+        try {
+             customerid = new String(data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String[] separated = customerid.split("/");
+       customerid= separated[4]; // this will contain "Customer id"
+       Log.e("customer_id"," "+customerid);
+SharedPreference.saveData("customerid",customerid,getApplicationContext());
+
+
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("customer_id", customerid.trim());
+            jsonBody.put("registration_token", token);
+
+
+            Log.d("check JSON", jsonBody.toString());
+
+
+            final String requestBody = jsonBody.toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.savetoken, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.e("tokenresponse", response);
+                    try {
+                        JSONObject obj = new JSONObject(response);
+
+                        Intent i = new Intent(getApplicationContext(), Navigation.class);
+                        SharedPreference.saveData("login", "true", getApplicationContext());
+                        startActivity(i);
+                        finish();
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("VOLLEY", " " + error.toString());
+
+                }
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    try {
+                        return requestBody == null ? null : requestBody.getBytes("utf-8");
+//                        return requestBody == null;
+                    } catch (UnsupportedEncodingException uee) {
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                        return null;
+                    }
+                }
+
+                @Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
+                    String statusCode = String.valueOf(response.statusCode);
+                    //Handling logic
+                    return super.parseNetworkResponse(response);
+                }
+//                @Override
+//                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+//                    String responseString = "";
+//                    if (response != null) {
+//                        responseString = String.valueOf(response.statusCode);
+//                        // can get more details such as response.headers
+//                    }
+//                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+//                }
+            };
+
+            requestQueue.add(stringRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getId(String token) {
+
+        Storefront.QueryRootQuery query = Storefront.query(root -> root
+                .customer(token, customer -> customer
+                        .id()
+                )
+        );
+        QueryGraphCall call = graphClient.queryGraph(query);
+
+        call.enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
+            @Override
+            public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.QueryRoot> response) {
+                Log.e("data", "user..." + response.data().getCustomer().getId());
+                if(response.data()!=null){
+                    customerid= response.data().getCustomer().getId().toString();
+                    saveToken();
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(@NonNull GraphError error) {
+                Log.e("TAG", "Failed to execute query", error);
+            }
+        });
+
+
+    }
+
 
 }

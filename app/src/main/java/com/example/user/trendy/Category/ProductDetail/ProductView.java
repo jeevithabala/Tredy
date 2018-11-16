@@ -3,6 +3,7 @@ package com.example.user.trendy.Category.ProductDetail;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.databinding.BaseObservable;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -12,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -245,7 +247,8 @@ public class ProductView extends Fragment implements ProductClickInterface {
                         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                         ft.commit();
                     } else {
-                        Toast.makeText(getActivity(), "Entered Quantity should be less than 100", Toast.LENGTH_SHORT).show();
+                        dialog("Entered Quantity should be less than 100");
+//                        Toast.makeText(getActivity(), "Entered Quantity should be less than 100", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -527,4 +530,22 @@ public class ProductView extends Fragment implements ProductClickInterface {
     public void OnclickWhislilst(String productid) {
 
     }
+
+    public void dialog(String poptext) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//            builder.setTitle("Success");
+        builder.setMessage(poptext)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+//            alert.getWindow().setBackgroundDrawableResource(android.R.color.white)
+    }
+
 }

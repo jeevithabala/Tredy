@@ -78,7 +78,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
-                            android:drawableLeft="@drawable/nearcost"
+
                             android:fontFamily="@font/lucidasansdemiboldroman"
                             android:gravity="center"
                             android:text="1"
@@ -87,6 +87,7 @@
                             android:textStyle="bold"
                             app:position="@{productview.price}"
                             app:productPrice="@{productview.product}" />
+                        <!--android:drawableLeft="@drawable/nearcost"-->
                     </LinearLayout>
 
                     <LinearLayout

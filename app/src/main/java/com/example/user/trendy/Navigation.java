@@ -11,9 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -21,14 +19,22 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.user.trendy.Account.MyAccount;
 import com.example.user.trendy.Bag.Bag;
 import com.example.user.trendy.Bag.Db.AddToCart_Model;
@@ -37,12 +43,14 @@ import com.example.user.trendy.Category.Categories;
 import com.example.user.trendy.Category.CategoryProduct;
 import com.example.user.trendy.ForYou.ForYou;
 import com.example.user.trendy.Interface.AddRemoveCartItem;
-import com.example.user.trendy.Interface.CartController;
 import com.example.user.trendy.Interface.OnFilterDataCallBack;
-import com.example.user.trendy.Interface.OnNetworkCheckCallBack;
 import com.example.user.trendy.Login.LoginActiviy;
 import com.example.user.trendy.NetworkCheck.NetworkSchedulerService;
+import com.example.user.trendy.Notification.NotificationsListFragment;
 import com.example.user.trendy.Search.Search;
+import com.example.user.trendy.Search.SearchModel;
+import com.example.user.trendy.Util.Constants;
+import com.example.user.trendy.Util.Internet;
 import com.example.user.trendy.Util.SharedPreference;
 import com.example.user.trendy.Whislist.Whislist;
 import com.facebook.AccessToken;
@@ -55,6 +63,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +76,7 @@ public class Navigation extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener, OnFilterDataCallBack {
 
     FragmentManager fragmentManager;
-    private int cart_count = 0;
+    private int cart_count = 0, noti_counnt=0;
     DBHelper db;
     private List<AddToCart_Model> cartList = new ArrayList<>();
     private GoogleApiClient mGoogleApiClient;
@@ -78,6 +91,7 @@ public class Navigation extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         init();
+
 
     }
 
@@ -113,6 +127,12 @@ public class Navigation extends AppCompatActivity
             cartList.get(i).getQty();
             cart_count = cart_count + cartList.get(i).getQty();
         }
+
+        if(Internet.isConnected(this)){
+            getNotiCount();
+        }else {
+            Toast.makeText(getApplicationContext(),"Please check your Internet connection", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -129,6 +149,20 @@ public class Navigation extends AppCompatActivity
 
 
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null) {
+            String actionFragment = intent.getStringExtra("action_fragment");
+            Log.e("action_fragment3", "" + actionFragment);
+            if (actionFragment != null) {
+                if (actionFragment.equals("Notification"))
+                    getSupportFragmentManager().beginTransaction().replace(R.id.home_container, new NotificationsListFragment()).addToBackStack(null).commit();
+            }
+        }
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void scheduleJob() {
@@ -171,6 +205,9 @@ public class Navigation extends AppCompatActivity
         MenuItem menuItem = menu.findItem(R.id.bag);
         menuItem.setIcon(Converter.convertLayoutToImage(Navigation.this, cart_count, R.drawable.ic_shopping_bag));
 
+        MenuItem notificationcount = menu.findItem(R.id.action_notificaton);
+        notificationcount.setIcon(Converter.convertLayoutToImage(Navigation.this, noti_counnt, R.drawable.ic_notifications_black_24dp));
+
 //        MenuItem searchItem = menu.findItem(R.id.searchBar);
 //
 //        SearchView searchView = (SearchView) searchItem.getActionView();
@@ -205,7 +242,23 @@ public class Navigation extends AppCompatActivity
                 transaction1.commit();
             }
             return true;
+        }else if(id == R.id.action_notificaton){
+            if (fragmentManager.findFragmentById(R.id.home_container) instanceof NotificationsListFragment) {
 
+            }else {
+                NotificationsListFragment notificationsListFragment = new NotificationsListFragment();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                transaction1.replace(R.id.home_container, notificationsListFragment, "notification");
+                if (fragmentManager.findFragmentByTag("notification") == null) {
+                    transaction1.addToBackStack("notification");
+                    transaction1.commit();
+                } else {
+                    transaction1.commit();
+                }
+            }
+            return true;
         } else if (id == R.id.searchBar) {
             if (fragmentManager.findFragmentById(R.id.home_container) instanceof Search) {
 
@@ -432,5 +485,44 @@ public class Navigation extends AppCompatActivity
 //        ft.commit();
 
     }
+
+    public void getNotiCount(){
+        String customerid= SharedPreference.getData("customerid", getApplicationContext());
+
+        RequestQueue mRequestQueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.unreadcount+customerid.trim(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+
+                            JSONObject obj = new JSONObject(response);
+                            Log.e("response", response);
+                            String count=obj.getString("count");
+                            noti_counnt= Integer.parseInt(count);
+                            invalidateOptionsMenu();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+
+        };
+        stringRequest.setTag("noti");
+        // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
+
+        int socketTimeout = 10000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        mRequestQueue.add(stringRequest);
+
+    }
+
 }
 

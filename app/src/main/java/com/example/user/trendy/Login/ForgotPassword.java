@@ -1,9 +1,11 @@
 package com.example.user.trendy.Login;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -98,7 +100,8 @@ public class ForgotPassword extends AppCompatActivity {
                             @Override
                             public void run() {
                                 progressDialog.dismiss();
-                                Toast.makeText(getApplicationContext(), "Password reset link is sent to your email ID", Toast.LENGTH_LONG).show();
+                                dialog("Password reset link is sent to your registered email ID");
+//                                Toast.makeText(getApplicationContext(), "Password reset link is sent to your email ID", Toast.LENGTH_LONG).show();
                                 finish();
                             }
                         });
@@ -124,5 +127,21 @@ public class ForgotPassword extends AppCompatActivity {
 
     }
 
+    public void dialog(String poptext) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setTitle("Success");
+        builder.setMessage(poptext)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+//            alert.getWindow().setBackgroundDrawableResource(android.R.color.white)
+    }
 
 }

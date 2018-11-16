@@ -102,12 +102,12 @@
                     android:layout_marginRight="15dp"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:weightSum="3">
+                    android:weightSum="4">
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_weight="1"
+                        android:layout_weight="1.5"
                         android:background="@color/appcolor" />
 
                     <LinearLayout
@@ -119,13 +119,30 @@
                         android:weightSum="4">
 
                         <TextView
-                            android:id="@+id/view"
+                            android:id="@+id/list"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:fontFamily="@font/lucidasansdemiboldroman"
                             android:padding="10dp"
-                            android:text="VIEW"
+                            android:text="LIST"
+                            android:textColor="@color/appcolor"
+                            android:textSize="11dp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="10dp"
+                            android:layout_gravity="center"
+                            android:background="@color/appcolor" />
+                        <TextView
+                            android:id="@+id/grid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/lucidasansdemiboldroman"
+                            android:padding="10dp"
+                            android:text="GRID"
                             android:textColor="@color/appcolor"
                             android:textSize="11dp"
                             android:textStyle="bold" />
@@ -160,7 +177,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_weight="1"
+                        android:layout_weight="1.5"
                         android:background="@color/appcolor" />
                 </LinearLayout>
 

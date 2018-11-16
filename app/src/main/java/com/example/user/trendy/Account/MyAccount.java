@@ -1,5 +1,6 @@
 package com.example.user.trendy.Account;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,6 +48,7 @@ public class MyAccount extends Fragment {
     ArrayList<String> productStringPageCursor = new ArrayList<>();
     private String productPageCursor = "";
     private int i = 0;
+    private ProgressDialog progressDialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.myaccount, container, false);
@@ -57,8 +59,8 @@ public class MyAccount extends Fragment {
         email = view.findViewById(R.id.email);
         mobile_number = view.findViewById(R.id.mobile_number);
         edit_profile = view.findViewById(R.id.edit_profile);
-        order_recyclerview = view.findViewById(R.id.order_recyclerview);
-        order = view.findViewById(R.id.order);
+//        order_recyclerview = view.findViewById(R.id.order_recyclerview);
+//        order = view.findViewById(R.id.order);
 
         accessToken = SharedPreference.getData("accesstoken", getActivity());
         Log.e("accestoken", "" + accessToken);
@@ -80,6 +82,7 @@ public class MyAccount extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         if (accessToken != null) {
+
             getEmailId();
         }
 
@@ -109,44 +112,44 @@ public class MyAccount extends Fragment {
         });
 
 
-        if (accessToken != null) {
-            getOrders();
-        }
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        order_recyclerview.setLayoutManager(layoutManager1);
-        order_recyclerview.setItemAnimator(new DefaultItemAnimator());
-
-
-        adapter = new OrderAdapter(getActivity(), orderModelArrayList, getFragmentManager());
-        order_recyclerview.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
-
-        order_recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                if (isLastItemDisplaying(recyclerView)) {
-                    //Calling the method getdata again
-                    getNext();
-                }
-            }
-        });
-    }
-
-    private boolean isLastItemDisplaying(RecyclerView recyclerView) {
-        if (recyclerView.getAdapter().getItemCount() != 0) {
-            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1)
-                return true;
-        }
-        return false;
+//        if (accessToken != null) {
+//            getOrders();
+//        }
+//        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+//        order_recyclerview.setLayoutManager(layoutManager1);
+//        order_recyclerview.setItemAnimator(new DefaultItemAnimator());
+//
+//
+//        adapter = new OrderAdapter(getActivity(), orderModelArrayList, getFragmentManager());
+//        order_recyclerview.setAdapter(adapter);
+//        adapter.notifyDataSetChanged();
+//
+//
+//        order_recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//            }
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//
+//                if (isLastItemDisplaying(recyclerView)) {
+//                    //Calling the method getdata again
+//                    getNext();
+//                }
+//            }
+//        });
+//    }
+//
+//    private boolean isLastItemDisplaying(RecyclerView recyclerView) {
+//        if (recyclerView.getAdapter().getItemCount() != 0) {
+//            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+//            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1)
+//                return true;
+//        }
+//        return false;
     }
 
 
@@ -159,6 +162,7 @@ public class MyAccount extends Fragment {
 
 
     public void getEmailId() {
+
         Storefront.QueryRootQuery query = Storefront.query(root -> root
                 .customer(accessToken, customer -> customer
                         .firstName()
@@ -194,6 +198,7 @@ public class MyAccount extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
                         if (nametext != null) {
                             name.setText(firstname + " " + lastname);
                             email.setText(emailtext.trim());
@@ -212,6 +217,7 @@ public class MyAccount extends Fragment {
 
             @Override
             public void onFailure(@NonNull GraphError error) {
+                progressDialog.dismiss();
                 Log.e("TAG", "Failed to execute query", error);
             }
         });

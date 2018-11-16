@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Tredy Foods</string>
-    <string name="title_you">For You</string>
+    <string name="title_you">Home Page</string>
     <string name="title_categories">Categories</string>
     <string name="title_bag">Bag</string>
     <string name="title_whishlist">Wishlist</string>
@@ -44,5 +44,16 @@
     <string name="rsa_url">RSA Key Url</string>
     <string name="access_code">Access Code</string>
     <string name="title_activity_status">CCAvenueMobile</string>
+
+    <string name="channel_name">PushNotification</string>
+    <string name="channel_description">Regarding push notification</string>
+
+
+    <string name="csr_text_state_normal">Swipe  to  refresh </string>
+    <string name="csr_text_state_ready">Release to refresh </string>
+    <string name="csr_text_state_refresh">Refreshing  ...   </string>
+    <string name="csr_text_state_complete">Refreshing complete </string>
+    <string name="csr_text_last_refresh">last update:  </string>
+
 
 </resources>
