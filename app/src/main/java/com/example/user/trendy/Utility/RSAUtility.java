@@ -1,4 +1,4 @@
-package com.example.user.trendy.Utility;
+package com.example.user.trendy.utility;
 
 import android.util.Base64;
 

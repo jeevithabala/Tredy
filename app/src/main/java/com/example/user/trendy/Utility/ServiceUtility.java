@@ -1,4 +1,4 @@
-package com.example.user.trendy.Utility;
+package com.example.user.trendy.utility;
 
 import java.io.IOException;
 import java.util.ArrayList;

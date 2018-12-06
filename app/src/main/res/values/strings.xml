@@ -2,7 +2,7 @@
     <string name="app_name">Tredy Foods</string>
     <string name="title_you">Home Page</string>
     <string name="title_categories">Categories</string>
-    <string name="title_bag">Bag</string>
+    <string name="title_bag">Cart</string>
     <string name="title_whishlist">Wishlist</string>
     <string name="dollar">$</string>
     <string name="facebook_app_id">259137058253282</string>

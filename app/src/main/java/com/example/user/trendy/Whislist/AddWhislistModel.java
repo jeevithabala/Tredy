@@ -1,4 +1,4 @@
-package com.example.user.trendy.Whislist;
+package com.example.user.trendy.whislist;
 
 import android.databinding.BindingAdapter;
 import android.widget.ImageView;

@@ -1,4 +1,4 @@
-package com.example.user.trendy.Whislist;
+package com.example.user.trendy.whislist;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -15,17 +15,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.user.trendy.Category.ProductDetail.ProductView;
-import com.example.user.trendy.Interface.CartController;
-import com.example.user.trendy.Interface.CommanCartControler;
-import com.example.user.trendy.Interface.FragmentRecyclerViewClick;
+import com.example.user.trendy.category.productDetail.ProductView;
+import com.example.user.trendy.callback.CartController;
+import com.example.user.trendy.callback.CommanCartControler;
+import com.example.user.trendy.callback.FragmentRecyclerViewClick;
 import com.example.user.trendy.R;
-import com.example.user.trendy.Whislist.WhislistDB.DBWhislist;
+import com.example.user.trendy.whislist.whislistDB.DBWhislist;
 import com.example.user.trendy.databinding.WhislistAdapterBinding;
 
 import java.util.List;
 
-public class WhislistAdapter extends   RecyclerView.Adapter<WhislistAdapter.ViewHolder> {
+public class WhislistAdapter extends RecyclerView.Adapter<WhislistAdapter.ViewHolder> {
 
     List<AddWhislistModel> items;
     Context mContext;
@@ -35,7 +35,6 @@ public class WhislistAdapter extends   RecyclerView.Adapter<WhislistAdapter.View
     FragmentManager fragmentManager;
     TextView textView;
     GetTotalCost getTotalCost;
-    String state;
 
     public WhislistAdapter(List<AddWhislistModel> items, Context mContext) {
         this.items = items;
@@ -45,9 +44,9 @@ public class WhislistAdapter extends   RecyclerView.Adapter<WhislistAdapter.View
     public WhislistAdapter(List<AddWhislistModel> items, Context mContext, GetTotalCost getTotalCost, FragmentManager fragmentManager, TextView textView) {
         this.items = items;
         this.mContext = mContext;
-        this.getTotalCost=getTotalCost;
+        this.getTotalCost = getTotalCost;
         this.fragmentManager = fragmentManager;
-        this.textView=textView;
+        this.textView = textView;
     }
 
     @Override
@@ -69,7 +68,7 @@ public class WhislistAdapter extends   RecyclerView.Adapter<WhislistAdapter.View
 
         holder.binding.setWhislistitem(items.get(position));
         Log.d("Product varient id ", items.get(position).getProduct_varient_id());
-textView.setText(items.size()+" items");
+        textView.setText(items.size() + " items");
     }
 
     @Override
@@ -85,7 +84,7 @@ textView.setText(items.size()+" items");
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView remove, shipping_visibility;
-        LinearLayout decrease, increase,addcart;
+        LinearLayout decrease, increase, addcart;
         DBWhislist db = new DBWhislist(mContext);
 
         private final WhislistAdapterBinding binding;
@@ -109,13 +108,10 @@ textView.setText(items.size()+" items");
                     fragment.setArguments(bundle);
                     FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "whislist");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    if(fragmentManager.findFragmentByTag("whislist")==null)
-                    {
+                    if (fragmentManager.findFragmentByTag("whislist") == null) {
                         ft.addToBackStack("whislist");
                         ft.commit();
-                    }
-                    else
-                    {
+                    } else {
                         ft.commit();
                     }
 
@@ -143,9 +139,9 @@ textView.setText(items.size()+" items");
                 @Override
                 public void onClick(View view) {
                     cartController = new CartController(mContext);
-                    commanCartControler = (CommanCartControler)cartController;
-                    commanCartControler.AddToCartGrocery(items.get(getAdapterPosition()).getProduct_id().trim(),0,1);
-                    Toast.makeText(mContext,"Added to cart",Toast.LENGTH_SHORT).show();
+                    commanCartControler = (CommanCartControler) cartController;
+                    commanCartControler.AddToCartGrocery(items.get(getAdapterPosition()).getProduct_id().trim(), 0, 1);
+                    Toast.makeText(mContext, "Added to cart", Toast.LENGTH_SHORT).show();
                 }
             });
 

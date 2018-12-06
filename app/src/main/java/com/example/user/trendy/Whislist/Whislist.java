@@ -1,4 +1,4 @@
-package com.example.user.trendy.Whislist;
+package com.example.user.trendy.whislist;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,13 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.user.trendy.Bag.Cart;
-import com.example.user.trendy.Bag.Db.AddToCart_Adapter;
-import com.example.user.trendy.Bag.Db.DBHelper;
 import com.example.user.trendy.BuildConfig;
 import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
-import com.example.user.trendy.Whislist.WhislistDB.DBWhislist;
+import com.example.user.trendy.whislist.whislistDB.DBWhislist;
 import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.HttpCachePolicy;
 
@@ -38,7 +35,7 @@ public class Whislist extends Fragment implements WhislistAdapter.GetTotalCost {
     WhislistAdapter adapter;
     TextView items;
     private TextView nobag;
-Toolbar toolbar;
+    Toolbar toolbar;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.whislist, container, false);
@@ -51,6 +48,8 @@ Toolbar toolbar;
         items.setVisibility(View.VISIBLE);
 
         db = new DBWhislist(getActivity());
+        db.deletDuplicates();
+        cartList.clear();
         cartList = db.getCartList();
         Collections.reverse(cartList);
         graphClient = GraphClient.builder(getActivity())
@@ -72,7 +71,7 @@ Toolbar toolbar;
         whislist.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
-visibilityCheck();
+        visibilityCheck();
 
         return view;
     }

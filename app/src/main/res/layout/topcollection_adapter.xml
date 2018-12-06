@@ -5,13 +5,13 @@
 
         <variable
             name="topcollection"
-            type="com.example.user.trendy.ForYou.TopCollection.TopCollectionModel">
+            type="com.example.user.trendy.foryou.topcollection.TopCollectionModel">
 
         </variable>
 
         <variable
             name="itemclick"
-            type="com.example.user.trendy.Interface.FragmentRecyclerViewClick" />
+            type="com.example.user.trendy.callback.FragmentRecyclerViewClick" />
 
     </data>
 
@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                android:scaleType="fitXY"
+                android:scaleType="center"
                 app:imageUrl="@{topcollection.imageUrl}" />
 
             <android.support.v7.widget.CardView

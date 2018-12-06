@@ -6,7 +6,7 @@
 
         <variable
             name="grocery"
-            type="com.example.user.trendy.Groceries.GroceryModel">
+            type="com.example.user.trendy.groceries.GroceryModel">
 
         </variable>
         <!--<variable-->
@@ -14,7 +14,7 @@
         <!--type="com.example.user.trendy.Interface.FragmentRecyclerViewClick" />-->
         <variable
             name="counter"
-            type="com.example.user.trendy.Groceries.GroceryInterface" />
+            type="com.example.user.trendy.groceries.GroceryInterface" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

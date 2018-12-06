@@ -5,16 +5,16 @@
 
         <variable
             name="newarrival"
-            type="com.example.user.trendy.ForYou.NewArrival.NewArrivalModel">
+            type="com.example.user.trendy.foryou.newarrival.NewArrivalModel">
 
         </variable>
 
         <variable
             name="itemclick"
-            type="com.example.user.trendy.Interface.FragmentRecyclerViewClick" />
+            type="com.example.user.trendy.callback.FragmentRecyclerViewClick" />
         <variable
             name="onitemclickplus"
-            type="com.example.user.trendy.ForYou.TopSelling.Plus" />
+            type="com.example.user.trendy.foryou.topselling.Plus" />
     </data>
 
     <android.support.v7.widget.CardView
@@ -38,7 +38,7 @@
                 android:id="@+id/product_image"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:scaleType="fitXY"
+                android:scaleType="center"
                 app:imageUrl="@{newarrival.imageUrl}" />
 
             <TextView

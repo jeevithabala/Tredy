@@ -5,13 +5,13 @@
 
         <variable
             name="product"
-            type="com.example.user.trendy.Category.ProductModel">
+            type="com.example.user.trendy.category.ProductModel">
 
         </variable>
 
         <variable
             name="itemclick"
-            type="com.example.user.trendy.Interface.ProductClickInterface" />
+            type="com.example.user.trendy.callback.ProductClickInterface" />
     </data>
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -42,8 +42,8 @@
                     android:id="@+id/product_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="fitXY"
-                    app:imageUrl1="@{product.imageUrl}" />
+                    android:scaleType="fitCenter"
+                    app:imageplace="@{product.imageUrl}" />
             </android.support.v7.widget.CardView>
 
             <LinearLayout

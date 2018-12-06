@@ -20,11 +20,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -35,24 +33,24 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.user.trendy.Account.MyAccount;
-import com.example.user.trendy.Bag.Bag;
-import com.example.user.trendy.Bag.Db.AddToCart_Model;
-import com.example.user.trendy.Bag.Db.DBHelper;
-import com.example.user.trendy.Category.Categories;
-import com.example.user.trendy.Category.CategoryProduct;
-import com.example.user.trendy.ForYou.ForYou;
-import com.example.user.trendy.Interface.AddRemoveCartItem;
-import com.example.user.trendy.Interface.OnFilterDataCallBack;
-import com.example.user.trendy.Login.LoginActiviy;
-import com.example.user.trendy.NetworkCheck.NetworkSchedulerService;
-import com.example.user.trendy.Notification.NotificationsListFragment;
-import com.example.user.trendy.Search.Search;
-import com.example.user.trendy.Search.SearchModel;
-import com.example.user.trendy.Util.Constants;
-import com.example.user.trendy.Util.Internet;
-import com.example.user.trendy.Util.SharedPreference;
-import com.example.user.trendy.Whislist.Whislist;
+import com.example.user.trendy.account.MyAccount;
+import com.example.user.trendy.bag.Bag;
+import com.example.user.trendy.bag.cartdatabase.AddToCart_Model;
+import com.example.user.trendy.bag.cartdatabase.DBHelper;
+import com.example.user.trendy.category.Categories;
+import com.example.user.trendy.category.CategoryProduct;
+import com.example.user.trendy.foryou.ForYou;
+import com.example.user.trendy.callback.AddRemoveCartItem;
+import com.example.user.trendy.callback.OnFilterDataCallBack;
+import com.example.user.trendy.login.LoginActiviy;
+import com.example.user.trendy.networkCheck.NetworkSchedulerService;
+import com.example.user.trendy.notification.NotificationsListFragment;
+import com.example.user.trendy.search.Search;
+import com.example.user.trendy.util.Constants;
+import com.example.user.trendy.util.Internet;
+import com.example.user.trendy.util.SharedPreference;
+import com.example.user.trendy.Utility.Converter;
+import com.example.user.trendy.whislist.Whislist;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -63,12 +61,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -76,7 +75,8 @@ public class Navigation extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener, OnFilterDataCallBack {
 
     FragmentManager fragmentManager;
-    private int cart_count = 0, noti_counnt=0;
+    private int cart_count = 0;
+    public static int noti_counnt = 0;
     DBHelper db;
     private List<AddToCart_Model> cartList = new ArrayList<>();
     private GoogleApiClient mGoogleApiClient;
@@ -128,10 +128,10 @@ public class Navigation extends AppCompatActivity
             cart_count = cart_count + cartList.get(i).getQty();
         }
 
-        if(Internet.isConnected(this)){
+        if (Internet.isConnected(this)) {
             getNotiCount();
-        }else {
-            Toast.makeText(getApplicationContext(),"Please check your Internet connection", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -144,8 +144,6 @@ public class Navigation extends AppCompatActivity
             super.onBackPressed();
 
         }
-
-
 
 
     }
@@ -206,7 +204,7 @@ public class Navigation extends AppCompatActivity
         menuItem.setIcon(Converter.convertLayoutToImage(Navigation.this, cart_count, R.drawable.ic_shopping_bag));
 
         MenuItem notificationcount = menu.findItem(R.id.action_notificaton);
-        notificationcount.setIcon(Converter.convertLayoutToImage(Navigation.this, noti_counnt, R.drawable.ic_notifications_black_24dp));
+        notificationcount.setIcon(Converter.convertLayoutToImage1(Navigation.this, noti_counnt, R.drawable.ic_notifications_black_24dp));
 
 //        MenuItem searchItem = menu.findItem(R.id.searchBar);
 //
@@ -242,10 +240,10 @@ public class Navigation extends AppCompatActivity
                 transaction1.commit();
             }
             return true;
-        }else if(id == R.id.action_notificaton){
+        } else if (id == R.id.action_notificaton) {
             if (fragmentManager.findFragmentById(R.id.home_container) instanceof NotificationsListFragment) {
 
-            }else {
+            } else {
                 NotificationsListFragment notificationsListFragment = new NotificationsListFragment();
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
@@ -262,7 +260,7 @@ public class Navigation extends AppCompatActivity
         } else if (id == R.id.searchBar) {
             if (fragmentManager.findFragmentById(R.id.home_container) instanceof Search) {
 
-            }else {
+            } else {
                 Search search = new Search();
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
@@ -302,18 +300,15 @@ public class Navigation extends AppCompatActivity
             if (fragmentManager.findFragmentById(R.id.home_container) instanceof Categories) {
 
             } else {
-                Categories categories =new Categories();
+                Categories categories = new Categories();
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                 transaction.replace(R.id.home_container, categories, "Categories");
-                if(fragmentManager.findFragmentByTag("Categories")==null)
-                {
+                if (fragmentManager.findFragmentByTag("Categories") == null) {
                     transaction.addToBackStack("Categories");
                     transaction.commit();
-                }
-                else
-                {
+                } else {
                     transaction.commit();
                 }
 
@@ -327,13 +322,10 @@ public class Navigation extends AppCompatActivity
                 FragmentTransaction wtransaction = getSupportFragmentManager().beginTransaction();
                 wtransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                 wtransaction.replace(R.id.home_container, whislist, "wishlist");
-                if(fragmentManager.findFragmentByTag("wishlist")==null)
-                {
+                if (fragmentManager.findFragmentByTag("wishlist") == null) {
                     wtransaction.addToBackStack("wishlist");
                     wtransaction.commit();
-                }
-                else
-                {
+                } else {
                     wtransaction.commit();
                 }
 
@@ -447,6 +439,8 @@ public class Navigation extends AppCompatActivity
     }
 
 
+
+
     public void noDialog() {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
@@ -521,12 +515,21 @@ public class Navigation extends AppCompatActivity
 //        ft.commit();
 
     }
+    public static String getCalculatedDate(String dateFormat, int days) {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat s = new SimpleDateFormat(dateFormat);
+        cal.add(Calendar.DAY_OF_YEAR, days);
+        return s.format(new Date(cal.getTimeInMillis()));
+    }
 
-    public void getNotiCount(){
-        String customerid= SharedPreference.getData("customerid", getApplicationContext());
+
+    public void getNotiCount() {
+        String customerid = SharedPreference.getData("customerid",this);
+        String minusdatet=getCalculatedDate( "MM/dd/yyyy", -10);
+
 
         RequestQueue mRequestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.unreadcount+customerid.trim(),
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.unreadcount + customerid.trim()+"?from="+minusdatet,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -534,8 +537,8 @@ public class Navigation extends AppCompatActivity
 
                             JSONObject obj = new JSONObject(response);
                             Log.e("response", response);
-                            String count=obj.getString("count");
-                            noti_counnt= Integer.parseInt(count);
+                            String count = obj.getString("count");
+                            noti_counnt = Integer.parseInt(count);
                             invalidateOptionsMenu();
 
                         } catch (JSONException e) {

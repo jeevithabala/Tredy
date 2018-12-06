@@ -7,10 +7,10 @@
 
         <variable
             name="whislistitem"
-            type="com.example.user.trendy.Whislist.AddWhislistModel" />
+            type="com.example.user.trendy.whislist.AddWhislistModel" />
         <variable
             name="itemclick"
-            type="com.example.user.trendy.Interface.FragmentRecyclerViewClick" />
+            type="com.example.user.trendy.callback.FragmentRecyclerViewClick" />
     </data>
 
     <android.support.v7.widget.CardView

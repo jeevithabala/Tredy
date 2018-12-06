@@ -5,13 +5,13 @@
 
         <variable
             name="searchproduct"
-            type="com.example.user.trendy.Search.SearchModel">
+            type="com.example.user.trendy.search.SearchModel">
 
         </variable>
 
         <variable
             name="itemclick"
-            type="com.example.user.trendy.Interface.ProductClickInterface" />
+            type="com.example.user.trendy.callback.ProductClickInterface" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

@@ -5,11 +5,11 @@
 
         <variable
             name="orderlist"
-            type="com.example.user.trendy.Account.OrderList.OrderListModel" />
+            type="com.example.user.trendy.account.orderList.OrderListModel" />
 
         <variable
             name="itemclick"
-            type="com.example.user.trendy.Interface.FragmentRecyclerViewClick" />
+            type="com.example.user.trendy.callback.FragmentRecyclerViewClick" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

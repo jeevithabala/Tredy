@@ -13,9 +13,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.user.trendy.Navigation;
-import com.example.user.trendy.Notification.NotificationsListFragment;
+import com.example.user.trendy.notification.NotificationsListFragment;
 import com.example.user.trendy.R;
-import com.example.user.trendy.Util.Config;
+import com.example.user.trendy.util.Config;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 

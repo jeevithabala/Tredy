@@ -7,10 +7,10 @@
 
         <variable
             name="cartitem"
-            type="com.example.user.trendy.Bag.Db.AddToCart_Model" />
+            type="com.example.user.trendy.bag.cartdatabase.AddToCart_Model" />
         <variable
             name="itemclick"
-            type="com.example.user.trendy.Interface.FragmentRecyclerViewClick" />
+            type="com.example.user.trendy.callback.FragmentRecyclerViewClick" />
     </data>
 
     <android.support.v7.widget.CardView
@@ -199,7 +199,7 @@
                         android:gravity="center"
                         android:text="@{cartitem.product_varient_title}"
                         android:textColor="@color/cost"
-                        android:textSize="14dp" />
+                        android:textSize="13sp" />
 
                     <ImageView
                         android:layout_width="match_parent"

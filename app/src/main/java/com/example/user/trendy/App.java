@@ -11,6 +11,7 @@ public class App extends Application {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
 
+
         registerActivityLifecycleCallbacks(new SplashScreenHelper());
 
     }

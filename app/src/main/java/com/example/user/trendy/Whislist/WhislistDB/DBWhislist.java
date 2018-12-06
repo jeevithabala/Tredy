@@ -1,4 +1,4 @@
-package com.example.user.trendy.Whislist.WhislistDB;
+package com.example.user.trendy.whislist.whislistDB;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,8 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.user.trendy.Bag.Db.AddToCart_Model;
-import com.example.user.trendy.Whislist.AddWhislistModel;
+import com.example.user.trendy.whislist.AddWhislistModel;
 import com.shopify.buy3.Storefront;
 
 import java.util.ArrayList;
@@ -110,6 +109,9 @@ public class DBWhislist   extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return userList;
+    }
+    public void deletDuplicates(){
+        getWritableDatabase().execSQL("delete from addtowhislist where id not in (SELECT MIN(id ) FROM addtowhislist GROUP BY product_varient_id)");
     }
 
     public void update(String id, int qty) {

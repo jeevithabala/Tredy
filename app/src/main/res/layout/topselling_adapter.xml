@@ -5,17 +5,17 @@
 
         <variable
             name="topselling"
-            type="com.example.user.trendy.ForYou.TopSelling.TopSellingModel">
+            type="com.example.user.trendy.foryou.topselling.TopSellingModel">
 
         </variable>
 
         <variable
             name="onitemclick"
-            type="com.example.user.trendy.Interface.TopSellingInterface" />
+            type="com.example.user.trendy.callback.TopSellingInterface" />
 
         <variable
             name="onitemclickplus"
-            type="com.example.user.trendy.ForYou.TopSelling.Plus" />
+            type="com.example.user.trendy.foryou.topselling.Plus" />
     </data>
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -43,7 +43,7 @@
                     android:id="@+id/product_image"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
-                    android:scaleType="fitXY"
+                    android:scaleType="center"
                     app:imageUrl="@{topselling.imageUrl}" />
 
             </android.support.v7.widget.CardView>

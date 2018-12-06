@@ -5,13 +5,13 @@
 
         <variable
             name="category"
-            type="com.example.user.trendy.Category.CategoryModel">
+            type="com.example.user.trendy.category.CategoryModel">
 
         </variable>
 
         <variable
             name="itemclick"
-            type="com.example.user.trendy.Interface.FragmentRecyclerViewClick" />
+            type="com.example.user.trendy.callback.FragmentRecyclerViewClick" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -40,7 +40,7 @@
                     android:layout_height="match_parent"
                     android:background="@color/white"
                     android:scaleType="centerCrop"
-                    app:image="@{category.imageurl}"
+                    app:imageu="@{category.imageurl}"
                />
                 <!--app:imageUrl="@{@allcollection.collection}"-->
             </android.support.v7.widget.CardView>
