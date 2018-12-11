@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -296,8 +297,6 @@ public class Categories extends Fragment {
 //                                                    categoreDetail.setImageurl(imageurl);
                                             }
 
-                                            Log.e("subid", subid);
-                                            Log.e("subcollectiontitle", subcollectiontitle);
                                         }
 //                                    } else {
 //                                        categoryList.add(categoreDetail);
@@ -329,7 +328,7 @@ public class Categories extends Fragment {
                             categoreDetailAdapter.notifyDataSetChanged();
                             progressDialog.dismiss();
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                        Toast.makeText(getActivity()," "+e.getMessage(),Toast.LENGTH_SHORT).show();
                         }
                     }
                 },

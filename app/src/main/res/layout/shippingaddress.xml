@@ -41,26 +41,6 @@
                     android:orientation="vertical">
 
 
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/email_input_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_weight="1"
-                        android:paddingTop="5dp">
-
-                        <EditText
-                            android:id="@+id/email"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/edt_bg_selector"
-                            android:fontFamily="@font/lucidasansdemibold"
-                            android:hint="Email"
-                            android:singleLine="true"
-                            android:textSize="12sp" />
-
-                    </android.support.design.widget.TextInputLayout>
 
                     <TextView
                         android:layout_width="match_parent"
@@ -122,6 +102,48 @@
                         </android.support.design.widget.TextInputLayout>
 
                     </LinearLayout>
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/email_input_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:paddingTop="5dp">
+
+                        <EditText
+                            android:id="@+id/email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/edt_bg_selector"
+                            android:fontFamily="@font/lucidasansdemibold"
+                            android:hint="Email"
+                            android:singleLine="true"
+                            android:textSize="12sp" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/phone_input_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:paddingTop="5dp">
+
+                        <EditText
+                            android:id="@+id/mobilenumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/edt_bg_selector"
+                            android:fontFamily="@font/lucidasansdemibold"
+                            android:hint="Mobile Number"
+                            android:singleLine="true"
+                            android:textSize="12sp" />
+
+                    </android.support.design.widget.TextInputLayout>
+
 
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/shipping_door_street_input_layout"
@@ -421,6 +443,49 @@
                             </android.support.design.widget.TextInputLayout>
 
                         </LinearLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/billing_email_input_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight="1"
+                            android:paddingTop="5dp">
+
+                            <EditText
+                                android:id="@+id/billing_email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/edt_bg_selector"
+                                android:fontFamily="@font/lucidasansdemibold"
+                                android:hint="Email"
+                                android:singleLine="true"
+                                android:textSize="12sp" />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/billing_phone_input_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight="1"
+                            android:paddingTop="5dp">
+
+                            <EditText
+                                android:id="@+id/billing_mobilenumber"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/edt_bg_selector"
+                                android:fontFamily="@font/lucidasansdemibold"
+                                android:hint="Mobile Number"
+                                android:singleLine="true"
+                                android:textSize="12sp" />
+
+                        </android.support.design.widget.TextInputLayout>
+
 
 
                         <android.support.design.widget.TextInputLayout

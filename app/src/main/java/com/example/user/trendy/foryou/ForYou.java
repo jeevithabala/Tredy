@@ -76,7 +76,6 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
                 .build();
 
 
-
         return view;
     }
 
@@ -276,5 +275,11 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     @Override
     public void grocerylist(ArrayList<GroceryHomeModel> arrayList) {
         resultCallBackInterface.grocery(arrayList);
+    }
+
+    @Override
+    public void getcount(int count) {
+        Navigation.noti_counnt = count;
+        getActivity().invalidateOptionsMenu();
     }
 }

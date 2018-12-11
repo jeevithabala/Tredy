@@ -32,8 +32,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 
 public class NotificationDataFragment extends AppCompatActivity {
@@ -41,21 +39,6 @@ public class NotificationDataFragment extends AppCompatActivity {
     String title, dec = "", date = "", name, id, pnew, pread;
     ImageView imageView;
     TextView textView, pdtitle;
-    TextView pdate, pd_time;
-    private FragmentManager fragmentManager;
-    TextView pdec;
-    String userid;
-    private Toolbar toolbar;
-    String image = "";
-    ImageView imagenot;
-    SimpleDateFormat simpleDateFormatinput = new SimpleDateFormat("yyyy-mm-dd");
-    SimpleDateFormat simpleDateFormatoutput = new SimpleDateFormat("dd-mm-yyyy");
-    AddRemoveCartItem addRemoveCartItem;
-
-    @Nullable
-//    @Override
-//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        View view = inflater.inflate(R.layout.notificationdata, container, false);
 
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,92 +49,10 @@ public class NotificationDataFragment extends AppCompatActivity {
 
         id = intent.getStringExtra("id");
         pnew = intent.getStringExtra("pnew");
-        Log.e("gj", pnew);
-//        pread = intent.getStringExtra("pread");
-//        name = intent.getStringExtra("name");
         title = intent.getStringExtra("title");
-//        dec = intent.getStringExtra("dec");
-//        date = intent.getStringExtra("date");
-//        image = intent.getStringExtra("image");
-
-
-//        id = getArguments().getString("id");
-//        pnew = getArguments().getString("pnew");
-//        pread = getArguments().getString("pread");
-//        name = getArguments().getString("name");
-//        title = getArguments().getString("title");
-//        dec = getArguments().getString("dec");
-//        date = getArguments().getString("date");
-//        image = getArguments().getString("image");
-//        Log.e("imageabc", "" + image);
-//        imagenot = findViewById(R.id.imagenot);
-//        if (image != null) {
-//            if (image.trim().length() != 0) {
-//                Picasso.with(this)
-//                        .load(image)
-//                        .noFade()
-//                        .into(imagenot);
-//            }
-//        }
-//        addRemoveCartItem  = (AddRemoveCartItem) this;
-
         pdtitle = (TextView) findViewById(R.id.pd_title);
         pdtitle.setText(title);
-//        pdate = (TextView) findViewById(R.id.pd_date);
-//        pd_time = (TextView) findViewById(R.id.pd_time);
-//        // pdate.setText(date);
-//        pdec = (TextView) findViewById(R.id.residencial_desc_text);
-//        if (dec != null) {
-//            pdec.setText(dec);
-//        }
 
-//        String[] split = date.split(" ");
-//        String dately = split[0];
-//        String time = split[1];
-//
-//
-//        if (date.length() != 0) {
-//            Date date1 = null;  // <---  yyyy-mm-dd
-//            try {
-//                date1 = simpleDateFormatinput.parse(dately);
-//                dately = simpleDateFormatoutput.format(date1);
-//            } catch (ParseException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        pdate.setText(dately);
-//
-//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        ParsePosition pos = new ParsePosition(0);
-//        long then = formatter.parse(date, pos).getTime();
-//        long now = new Date().getTime();
-//
-//        long seconds = (now - then) / 1000;
-//        long minutes = seconds / 60;
-//        long hours = minutes / 60;
-//        long days = hours / 24;
-//
-//        String friendly = null;
-//        long num = 0;
-//        if (days > 0) {
-//            num = days;
-//            friendly = days + " day";
-//        } else if (hours > 0) {
-//            num = hours;
-//            friendly = hours + " hour";
-//        } else if (minutes > 0) {
-//            num = minutes;
-//            friendly = minutes + " minute";
-//        } else {
-//            num = seconds;
-//            friendly = seconds + " second";
-//        }
-//        if (num > 1) {
-//            friendly += "s";
-//        }
-//        String createdAt = friendly + " ago";
-//        Log.e("TotalTime>>", "abc" + createdAt);
-//        pd_time.setText("Updated " + createdAt);
         if (pnew.equals("null")) {
 
             if (Internet.isConnected(getApplicationContext())) {
@@ -159,7 +60,6 @@ public class NotificationDataFragment extends AppCompatActivity {
             } else {
                 Toast.makeText(getApplicationContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
             }
-
         }
     }
 
@@ -172,9 +72,6 @@ public class NotificationDataFragment extends AppCompatActivity {
                         try {
 
                             JSONObject obj = new JSONObject(response);
-                            Log.e("response", response);
-
-                            getNotiCount();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -209,53 +106,4 @@ public class NotificationDataFragment extends AppCompatActivity {
 
         }
     }
-
-    public static String getCalculatedDate(String dateFormat, int days) {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat s = new SimpleDateFormat(dateFormat);
-        cal.add(Calendar.DAY_OF_YEAR, days);
-        return s.format(new Date(cal.getTimeInMillis()));
-    }
-
-
-    public void getNotiCount() {
-        String customerid = SharedPreference.getData("customerid", this);
-        String minusdatet = getCalculatedDate("MM/dd/yyyy", -10);
-
-
-        RequestQueue mRequestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.unreadcount + customerid.trim() + "?from=" + minusdatet,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-
-                            JSONObject obj = new JSONObject(response);
-                            Log.e("response", response);
-                            String count = obj.getString("count");
-                            Navigation.noti_counnt = Integer.parseInt(count);
-                            invalidateOptionsMenu();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                    }
-                }) {
-
-        };
-        stringRequest.setTag("noti");
-        // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
-
-        int socketTimeout = 10000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        stringRequest.setRetryPolicy(policy);
-        mRequestQueue.add(stringRequest);
-
-    }
-
 }

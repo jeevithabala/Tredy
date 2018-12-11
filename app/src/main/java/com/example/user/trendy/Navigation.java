@@ -42,6 +42,11 @@ import com.example.user.trendy.category.CategoryProduct;
 import com.example.user.trendy.foryou.ForYou;
 import com.example.user.trendy.callback.AddRemoveCartItem;
 import com.example.user.trendy.callback.OnFilterDataCallBack;
+import com.example.user.trendy.foryou.allcollection.AllCollectionModel;
+import com.example.user.trendy.foryou.groceryhome.GroceryHomeModel;
+import com.example.user.trendy.foryou.newarrival.NewArrivalModel;
+import com.example.user.trendy.foryou.topselling.TopSellingModel;
+import com.example.user.trendy.foryou.viewmodel.ForyouInterface;
 import com.example.user.trendy.login.LoginActiviy;
 import com.example.user.trendy.networkCheck.NetworkSchedulerService;
 import com.example.user.trendy.notification.NotificationsListFragment;
@@ -72,7 +77,7 @@ import java.util.List;
 
 
 public class Navigation extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener, OnFilterDataCallBack {
+        implements NavigationView.OnNavigationItemSelectedListener, AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener, OnFilterDataCallBack, ForyouInterface {
 
     FragmentManager fragmentManager;
     private int cart_count = 0;
@@ -439,8 +444,6 @@ public class Navigation extends AppCompatActivity
     }
 
 
-
-
     public void noDialog() {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
@@ -515,6 +518,7 @@ public class Navigation extends AppCompatActivity
 //        ft.commit();
 
     }
+
     public static String getCalculatedDate(String dateFormat, int days) {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat s = new SimpleDateFormat(dateFormat);
@@ -524,12 +528,12 @@ public class Navigation extends AppCompatActivity
 
 
     public void getNotiCount() {
-        String customerid = SharedPreference.getData("customerid",this);
-        String minusdatet=getCalculatedDate( "MM/dd/yyyy", -10);
+        String customerid = SharedPreference.getData("customerid", this);
+        String minusdatet = getCalculatedDate("MM/dd/yyyy", -10);
 
 
         RequestQueue mRequestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.unreadcount + customerid.trim()+"?from="+minusdatet,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.unreadcount + customerid.trim() + "?from=" + minusdatet,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -563,5 +567,30 @@ public class Navigation extends AppCompatActivity
 
     }
 
+    @Override
+    public void allcollection(ArrayList<AllCollectionModel> allCollectionModelArrayList) {
+
+    }
+
+    @Override
+    public void collectionlist(ArrayList<TopSellingModel> topSellingModelArrayList, ArrayList<NewArrivalModel> newArrivalModelArrayList) {
+
+    }
+
+    @Override
+    public void bannerlist(ArrayList<String> bannerlist) {
+
+    }
+
+    @Override
+    public void grocerylist(ArrayList<GroceryHomeModel> arrayList) {
+
+    }
+
+    @Override
+    public void getcount(int count) {
+        noti_counnt = count;
+        invalidateOptionsMenu();
+    }
 }
 

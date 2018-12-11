@@ -15,4 +15,6 @@ public interface ForyouInterface {
     public void bannerlist(ArrayList<String> bannerlist);
 
     public void grocerylist(ArrayList<GroceryHomeModel> arrayList);
+
+    public void getcount(int count);
 }

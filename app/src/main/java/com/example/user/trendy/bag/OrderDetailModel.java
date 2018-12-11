@@ -5,11 +5,11 @@ import java.io.Serializable;
 public class OrderDetailModel  implements Serializable{
 
     String emailstring, totalamount, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "", varientid,qty, discounted_price, discount_coupon;
-
+String s_mobile,b_email,b_mobile;
     public OrderDetailModel() {
     }
 
-    public OrderDetailModel(String emailstring, String totalamount, String firstname, String lastname, String bfirstname, String blastname, String address1, String city, String state, String country, String zip, String phone, String b_address1, String b_city, String b_state, String b_country, String b_zip, String varientid, String qty,String discounted_price,String discount_coupon) {
+    public OrderDetailModel(String emailstring, String totalamount, String firstname, String lastname, String bfirstname, String blastname, String address1, String city, String state, String country, String zip, String phone, String b_address1, String b_city, String b_state, String b_country, String b_zip, String varientid, String qty,String discounted_price,String discount_coupon,String s_mobile,String b_mobile,String b_email) {
         this.emailstring = emailstring;
         this.totalamount = totalamount;
         this.firstname = firstname;
@@ -31,6 +31,9 @@ public class OrderDetailModel  implements Serializable{
         this.qty = qty;
         this.discounted_price=discounted_price;
         this.discount_coupon=discount_coupon;
+        this.s_mobile=s_mobile;
+        this.b_mobile=b_mobile;
+        this.b_email=b_email;
     }
 
     public String getDiscounted_price() {
@@ -116,5 +119,17 @@ public class OrderDetailModel  implements Serializable{
 
     public String getQty() {
         return qty;
+    }
+
+    public String getS_mobile() {
+        return s_mobile;
+    }
+
+    public String getB_email() {
+        return b_email;
+    }
+
+    public String getB_mobile() {
+        return b_mobile;
     }
 }

@@ -86,17 +86,9 @@ public class ForgotPassword extends AppCompatActivity {
         graphClient.mutateGraph(mutationQuery).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
 
 
-            //            @Override
             public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
-//                Log.e("response", response.toString());
-
                 if (response.data() != null) {
-
-
                     if (response.data().getCustomerRecover() != null) {
-
-
-//                        if (response.data().getCustomerRecover().getUserErrors() != null) {
                         if (response.data().getCustomerRecover().getUserErrors().size() > 0) {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -105,16 +97,11 @@ public class ForgotPassword extends AppCompatActivity {
 
                                 }
                             });
-
-//                                Toast.makeText(getApplicationContext(), response.data().getCustomerRecover().getUserErrors().get(0).getMessage(), Toast.LENGTH_LONG).show();
-
                         } else {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     dialog("Password reset link is sent to your registered email ID");
-//                                Toast.makeText(getApplicationContext(), "Password reset link is sent to your email ID", Toast.LENGTH_LONG).show();
-//                                finish();
                                 }
                             });
 

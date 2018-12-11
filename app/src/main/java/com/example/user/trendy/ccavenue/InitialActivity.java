@@ -22,6 +22,7 @@ public class InitialActivity extends AppCompatActivity {
     private EditText   amount, orderId;
     String accessCode,merchantId,currency,rsaKeyUrl,redirectUrl,cancelUrl;
     String emailstring, totalamount, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "", product_varientid, product_qty, discounted_price, discount_coupon;
+   String s_mobile,b_mobile,b_email;
     private ArrayList<OrderDetailModel> orderDetailModelArrayList=new ArrayList<>();
 
 
@@ -68,6 +69,9 @@ public class InitialActivity extends AppCompatActivity {
         product_qty = detail.getQty();
         discounted_price=detail.getDiscounted_price();
         discount_coupon=detail.getDiscount_coupon();
+        s_mobile=detail.getS_mobile();
+        b_mobile=detail.getB_mobile();
+        b_email=detail.getB_email();
 
         if (discount_coupon == null) {
             discounted_price = "";
@@ -83,7 +87,7 @@ public class InitialActivity extends AppCompatActivity {
 
 
     public void onClick(View view) {
-        OrderDetailModel orderDetailModel=new OrderDetailModel(emailstring,totalamount,firstname,lastname,bfirstname,blastname,address1,city,state,country,zip,phone,b_address1,b_city,b_state,b_country,b_zip, product_varientid,product_qty,discounted_price,discount_coupon);
+        OrderDetailModel orderDetailModel=new OrderDetailModel(emailstring,totalamount,firstname,lastname,bfirstname,blastname,address1,city,state,country,zip,phone,b_address1,b_city,b_state,b_country,b_zip, product_varientid,product_qty,discounted_price,discount_coupon,s_mobile,b_mobile,b_email);
         orderDetailModelArrayList.add(orderDetailModel);
 
         String vAccessCode = ServiceUtility.chkNull(accessCode).toString().trim();

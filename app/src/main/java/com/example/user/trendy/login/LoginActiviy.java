@@ -31,6 +31,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.user.trendy.BuildConfig;
 import com.example.user.trendy.Navigation;
+import com.example.user.trendy.util.Config;
 import com.example.user.trendy.util.Constants;
 import com.example.user.trendy.util.FilterSharedPreference;
 import com.example.user.trendy.util.SharedPreference;
@@ -73,7 +74,7 @@ public class LoginActiviy extends AppCompatActivity implements
     CallbackManager callbackManager;
     LoginButton login_button;
     String firstname = "", lastname = "", email = "", password;
-    public  String customerid="";
+    public String customerid = "";
     private GraphClient graphClient;
     Button facebook, google, btnSignIn;
     TextView signin, signup, forgot_password;
@@ -373,88 +374,15 @@ public class LoginActiviy extends AppCompatActivity implements
         }
     }
 
-//    public void create(String email,String password) {
-////
-////        StringTokenizer st = new StringTokenizer(name, " "); //pass comma as delimeter
-////        String firstname = st.nextToken();
-////        String lastname = st.nextToken();
-////        Log.e("firstname", firstname);
-////        Log.e("lastname", lastname);
-//
-////        String password1 = email.trim();
-////
-////        String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
-////        Log.e("coverted1", password.trim());
-//
-//        Storefront.CustomerCreateInput input = new Storefront.CustomerCreateInput(email.trim(), password.trim())
-//                .setFirstName(firstname)
-//                .setLastName(lastname)
-//                .setAcceptsMarketing(true);
-//        //  .setPhone(Input.value("1-123-456-7890"));
-//
-//        Storefront.MutationQuery mutationQuery = Storefront.mutation(mutation -> mutation
-//                .customerCreate(input, query -> query
-//                        .customer(customer -> customer
-//                                .id()
-//                                .email()
-//                                .firstName()
-//
-//                        )
-//                        .userErrors(userError -> userError
-//                                .field()
-//                                .message()
-//                        )
-//                )
-//        );
-//
-//
-//        graphClient.mutateGraph(mutationQuery).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
-//
-//
-//            @Override
-//            public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
-////                Log.e("response", response.toString());
-//
-//                if (response.data().getCustomerCreate() != null) {
-//
-//                    String id = response.data().getCustomerCreate().getCustomer().getId().toString();
-//                    String email = response.data().getCustomerCreate().getCustomer().getEmail();
-//                    Log.d("em", "Create Customer Info:" + email + ":" + id);
-//
-//                    if (id != null) {
-////                        if (progressDoalog != null) {
-////                            progressDoalog.dismiss();
-////                        }
-//                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-//                        SharedPreference.saveData("login", "true", getApplicationContext());
-//                        startActivity(i);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull GraphError error) {
-////                if (progressDoalog != null) {
-////                    progressDoalog.dismiss();
-////                }
-//                Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
-//
-//            }
-//
-//
-//        });
-//
-//
-//    }
 
     public void checkCustomer(String email, String password) {
-//        if (progressDoalog != null) {
-//            progressDoalog = new ProgressDialog(LoginActiviy.this);
-//            progressDoalog.setMessage("loading....");
-//            progressDoalog.setTitle("Processing");
-//            progressDoalog.setCancelable(true);
-//            progressDoalog.show();
-//        }
+
+        progressDoalog = new ProgressDialog(LoginActiviy.this);
+        progressDoalog.setMessage("loading....");
+        progressDoalog.setTitle("Processing");
+        progressDoalog.setCanceledOnTouchOutside(false);
+        progressDoalog.show();
+//
         Storefront.CustomerAccessTokenCreateInput input1 = new Storefront.CustomerAccessTokenCreateInput(email.trim(), password.trim());
         Storefront.MutationQuery mutationQuery1 = Storefront.mutation(mutation -> mutation
                 .customerAccessTokenCreate(input1, query -> query
@@ -483,45 +411,45 @@ public class LoginActiviy extends AppCompatActivity implements
 
 
                     if (response.data().getCustomerAccessTokenCreate().getCustomerAccessToken() != null) {
-                        //                        if (progressDoalog != null) {
-                        //                            progressDoalog.dismiss();
-                        //                        }
+
                         String token = "" + response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getAccessToken().toString();
                         String expire = response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getExpiresAt().toString();
                         SharedPreference.saveData("accesstoken", token.trim(), getApplicationContext());
                         getId(token);
 
-
-//
-
-                        Log.e("token", "" + token);
-                        Log.e("expire", "" + expire);
-                        //                    String id = response.data().getCustomerCreate().getCustomer().getId().toString();
-                        //                    String email = response.data().getCustomerCreate().getCustomer().getEmail();
-                        //  Log.d("em", "Create Customer Info:" + email + ":" + id);
                     } else {
-                        Log.e("token", "" + "empty");
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                progressDoalog.dismiss();
                                 dialog("The email or password you entered is incorrect.");
-//                                Toast.makeText(getApplicationContext(), "The email or password you entered is incorrect.", Toast.LENGTH_LONG).show();
                                 if (mGoogleApiClient.isConnected()) {
                                     Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                                 }
                             }
                         });
-//                        create(email,password);
                     }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDoalog.dismiss();
+                            Config.Dialog("Please try again later", LoginActiviy.this);
+                        }
+                    });
+
                 }
 
             }
 
             @Override
             public void onFailure(@NonNull GraphError error) {
-//                if (progressDoalog != null) {
-//                    progressDoalog.dismiss();
-//                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDoalog.dismiss();
+                    }
+                });
                 Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
 
             }
@@ -536,56 +464,6 @@ public class LoginActiviy extends AppCompatActivity implements
 
     }
 
-    public void forgotpassword() {
-        Storefront.MutationQuery mutationQuery = Storefront.mutation(mutation -> mutation
-                .customerRecover(email.trim(), query -> query
-                        .userErrors(userError -> userError
-                                .field()
-                                .message()
-                        )
-                )
-        );
-
-        graphClient.mutateGraph(mutationQuery).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
-
-
-            @Override
-            public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
-//                Log.e("response", response.toString());
-
-                if (response.data() != null) {
-
-
-                    if (response.data().getCustomerRecover() != null) {
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                dialog("Password reset link is sent to your registered email ID");
-//                                Toast.makeText(getApplicationContext(), "Password reset link is sent to your email ID", Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        if (response.data().getCustomerRecover().getUserErrors() != null) {
-//                           Log.e("errorr"," "+response.data().getCustomerRecover().getUserErrors().get(0).getMessage());
-                        }
-
-
-                    }
-                }
-
-            }
-
-            @Override
-            public void onFailure(@NonNull GraphError error) {
-
-                Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
-
-            }
-
-
-        });
-
-    }
 
     public void dialog(String poptext) {
 
@@ -611,14 +489,14 @@ public class LoginActiviy extends AppCompatActivity implements
 
         byte[] data = Base64.decode(customerid, Base64.DEFAULT);
         try {
-             customerid = new String(data, "UTF-8");
+            customerid = new String(data, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         String[] separated = customerid.split("/");
-       customerid= separated[4]; // this will contain "Customer id"
-       Log.e("customer_id"," "+customerid);
-SharedPreference.saveData("customerid",customerid,getApplicationContext());
+        customerid = separated[4]; // this will contain "Customer id"
+        Log.e("customer_id", " " + customerid);
+        SharedPreference.saveData("customerid", customerid, getApplicationContext());
 
 
         try {
@@ -702,6 +580,7 @@ SharedPreference.saveData("customerid",customerid,getApplicationContext());
         Storefront.QueryRootQuery query = Storefront.query(root -> root
                 .customer(token, customer -> customer
                         .id()
+
                 )
         );
         QueryGraphCall call = graphClient.queryGraph(query);
@@ -710,9 +589,24 @@ SharedPreference.saveData("customerid",customerid,getApplicationContext());
             @Override
             public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.QueryRoot> response) {
                 Log.e("data", "user..." + response.data().getCustomer().getId());
-                if(response.data()!=null){
-                    customerid= response.data().getCustomer().getId().toString();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDoalog.dismiss();
+                    }
+                });
+                if (response.data() != null && response.data().getCustomer() != null) {
+                    customerid = response.data().getCustomer().getId().toString();
                     saveToken();
+                } else {
+                    if (response.data().getCustomer() == null) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Config.Dialog("Please try again later", LoginActiviy.this);
+                            }
+                        });
+                    }
                 }
 
 
@@ -720,6 +614,13 @@ SharedPreference.saveData("customerid",customerid,getApplicationContext());
 
             @Override
             public void onFailure(@NonNull GraphError error) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDoalog.dismiss();
+                    }
+                });
+
                 Log.e("TAG", "Failed to execute query", error);
             }
         });

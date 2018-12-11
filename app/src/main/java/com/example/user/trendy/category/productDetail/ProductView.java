@@ -122,7 +122,6 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //        productViewBinding.setCount(new CountModel());
 
 
-
         return view;
     }
 
@@ -199,8 +198,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 if (no_of_count.isEmpty()) {
 
                     Toast.makeText(getActivity(), "Please Enter Quantity.", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     if (Integer.parseInt(no_of_count) <= 100) {
                         Bundle bundle = new Bundle();
                         bundle.putString("collection", "productview");
@@ -248,8 +246,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                     dialog("Please Enter Quantity.");
 
 //                    Toast.makeText(getActivity(), "Please Enter Quantity.", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     if (Integer.parseInt(no_of_count) <= 100) {
                         if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist")) {
                             no_of_count = count.getText().toString();
@@ -322,23 +319,39 @@ public class ProductView extends Fragment implements ProductClickInterface {
 
 
                 if (response.data() != null) {
-                    Storefront.Product product = (Storefront.Product) response.data().getNode();
+                    if (response.data().getNode() != null) {
+                        Storefront.Product product = (Storefront.Product) response.data().getNode();
 //                    Log.e("titit", product.getTitle());
-                    itemModel.setProduct(product);
-                    itemModel.setWeightname(product.getVariants().getEdges().get(0).getNode().getSelectedOptions().get(0).getName());
-                    productViewBinding.setProductview(itemModel);
+                        itemModel.setProduct(product);
+                        itemModel.setWeightname(product.getVariants().getEdges().get(0).getNode().getSelectedOptions().get(0).getName());
+                        productViewBinding.setProductview(itemModel);
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    getData();
+                                    progressDialog.dismiss();
+                                }
+                            });
+                        }
 
-//                    Log.e("title", itemModel.getProduct().getTitle());
-//                    getData();
+                    } else {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                            }
+                        });
+                    }
+                } else {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
 
                 }
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        getData();
-                        progressDialog.dismiss();
-                    }
-                });
                 return;
 
             }
@@ -410,7 +423,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
             }
 
             adapter.notifyDataSetChanged();
-            if (itemModel.getProduct().getTags() != null) {
+            if (itemModel.getProduct().getTags() != null && itemModel.getProduct().getTags().size() > 0) {
                 String product_tag = itemModel.getProduct().getTags().get(0);
                 StringTokenizer st = new StringTokenizer(product_tag, ","); //pass comma as delimeter
 

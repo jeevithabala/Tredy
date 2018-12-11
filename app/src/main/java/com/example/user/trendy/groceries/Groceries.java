@@ -298,13 +298,15 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                     }
 
                 }
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDialog.dismiss();
-                        adapter.notifyDataSetChanged();
-                    }
-                });
+                if(getActivity()!=null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
             }
 
             @Override

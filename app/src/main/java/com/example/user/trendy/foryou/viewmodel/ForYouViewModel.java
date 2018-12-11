@@ -17,12 +17,14 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.user.trendy.BuildConfig;
+import com.example.user.trendy.Navigation;
 import com.example.user.trendy.foryou.allcollection.AllCollectionModel;
 import com.example.user.trendy.foryou.groceryhome.GroceryHomeModel;
 import com.example.user.trendy.foryou.newarrival.NewArrivalModel;
 import com.example.user.trendy.foryou.topcollection.TopCollectionModel;
 import com.example.user.trendy.foryou.topselling.TopSellingModel;
 import com.example.user.trendy.util.Constants;
+import com.example.user.trendy.util.SharedPreference;
 import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.GraphError;
@@ -36,7 +38,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
@@ -62,6 +67,7 @@ public class ForYouViewModel extends ViewModel {
         collectionList();
         collectionList1();
         getCollection();
+        getNotiCount();
     }
 
     public ForYouViewModel(Context mContext) {
@@ -406,5 +412,56 @@ public class ForYouViewModel extends ViewModel {
             }
         });
     }
+
+    public static String getCalculatedDate(String dateFormat, int days) {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat s = new SimpleDateFormat(dateFormat);
+        cal.add(Calendar.DAY_OF_YEAR, days);
+        return s.format(new Date(cal.getTimeInMillis()));
+    }
+
+
+    public void getNotiCount() {
+        String customerid = SharedPreference.getData("customerid", mContext);
+        String minusdatet = getCalculatedDate("MM/dd/yyyy", -10);
+
+
+        RequestQueue mRequestQueue = Volley.newRequestQueue(mContext);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.unreadcount + customerid.trim() + "?from=" + minusdatet,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+
+                            JSONObject obj = new JSONObject(response);
+                            Log.e("response", response);
+                            String count = obj.getString("count");
+                            int noti_counnt = Integer.parseInt(count);
+                            foryouInterface.getcount(noti_counnt);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+
+        };
+        stringRequest.setTag("noti");
+        // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
+
+        int socketTimeout = 10000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        mRequestQueue.add(stringRequest);
+
+
+
+    }
+
 
 }

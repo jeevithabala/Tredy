@@ -73,6 +73,8 @@
                         android:background="@drawable/edt_bg_selector"
                         android:focusable="true"
                         android:fontFamily="@font/lucidasansdemibold"
+                        android:inputType="phone"
+                        android:maxLength="13"
                         android:hint="Mobile Number"
                         android:singleLine="true"
                         android:textSize="12sp" />

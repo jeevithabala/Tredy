@@ -34,6 +34,7 @@ import com.example.user.trendy.callback.CommanCartControler;
 import com.example.user.trendy.login.Validationemail;
 import com.example.user.trendy.Navigation;
 import com.example.user.trendy.R;
+import com.example.user.trendy.login.Validationmobile;
 import com.example.user.trendy.util.Config;
 import com.example.user.trendy.util.Constants;
 import com.example.user.trendy.util.Internet;
@@ -56,10 +57,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ShippingAddress extends Fragment implements TextWatcher {
-    String emailstring, firstnamestring, lastnamestring, bfirstnamestring, blastnamestring, pincode, area, state, city, country, check_ship_bill = "", s_pincode, s_area, s_state, s_city, s_country, include_state = "", exclude_state = "", product_id = " ";
-    String b_area, b_city, b_state, b_country, b_pincode;
-    EditText email, first_name, last_name, shipping_door_street_input, shipping_pin_input, shipping_city_input, shipping_state_input, shipping_country_input;
-    EditText bfirst_name, blast_name, billing_door_street_input, billing_city, billing_state, billing_country, billing_pin;
+    String s_mobile, emailstring, firstnamestring, lastnamestring, bfirstnamestring, blastnamestring, pincode, area, state, city, country, check_ship_bill = "", s_pincode, s_area, s_state, s_city, s_country, include_state = "", exclude_state = "", product_id = " ";
+    String b_mobile, b_email, b_area, b_city, b_state, b_country, b_pincode;
+    EditText email, first_name, last_name, mobilenumber, shipping_door_street_input, shipping_pin_input, shipping_city_input, shipping_state_input, shipping_country_input;
+    EditText bfirst_name, blast_name, billing_email, b_mobilenumber, billing_door_street_input, billing_city, billing_state, billing_country, billing_pin;
     CheckBox same;
     private RequestQueue mRequestQueue;
     ArrayList<String> citylist = new ArrayList<>();
@@ -78,19 +79,11 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     private String check = " ", remove_cod = "";
     int placing_checkin = 0, product_view = 0;
     String accessToken;
+    private View view;
 
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.shippingaddress, container, false);
-
-        if (getActivity() != null) {
-            ((Navigation) getActivity()).getSupportActionBar().setTitle("Shipping");
-
-        }
-
-        cartController = new CartController(getActivity());
-        commanCartControler = (CommanCartControler) cartController;
-
-
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             check = getArguments().getString("collection");
             if (check.equals("productview")) {
@@ -108,6 +101,33 @@ public class ShippingAddress extends Fragment implements TextWatcher {
             }
         }
 
+    }
+
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.shippingaddress, container, false);
+
+
+        init();
+
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() != null) {
+            ((Navigation) getActivity()).getSupportActionBar().setTitle("Shipping");
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        cartController = new CartController(getActivity());
+        commanCartControler = (CommanCartControler) cartController;
+
         accessToken = SharedPreference.getData("accesstoken", getActivity());
 
         graphClient = GraphClient.builder(getActivity())
@@ -121,57 +141,9 @@ public class ShippingAddress extends Fragment implements TextWatcher {
             getEmailId();
         }
 
-//        emailstring = SharedPreference.getData("email", getActivity());
-//        firstnamestring = SharedPreference.getData("firstname", getActivity());
-//        lastnamestring = SharedPreference.getData("lastname", getActivity());
-
-//        Toast.makeText(getActivity(), emailstring, Toast.LENGTH_SHORT).show();
-
-        email = view.findViewById(R.id.email);
-        first_name = view.findViewById(R.id.first_name);
-        last_name = view.findViewById(R.id.last_name);
-        bfirst_name = view.findViewById(R.id.b_first_name);
-        blast_name = view.findViewById(R.id.b_last_name);
-        shipping_door_street_input = view.findViewById(R.id.shipping_door_street_input);
-        shipping_pin_input = view.findViewById(R.id.shipping_pin_input);
-        shipping_city_input = view.findViewById(R.id.shipping_city_input);
-        shipping_state_input = view.findViewById(R.id.shipping_state_input);
-        shipping_country_input = view.findViewById(R.id.shipping_country_input);
-
-        billing_door_street_input = view.findViewById(R.id.billing_door_street_input);
-        billing_city = view.findViewById(R.id.billing_city);
-        billing_state = view.findViewById(R.id.billing_state);
-        billing_country = view.findViewById(R.id.billing_country);
-        billing_pin = view.findViewById(R.id.billing_pin);
-        placing = view.findViewById(R.id.placing);
-        placing1 = view.findViewById(R.id.placing1);
-        layout_placing = view.findViewById(R.id.layout_placing);
-
-        payment_section = view.findViewById(R.id.payment_section);
-        same = view.findViewById(R.id.same_address);
-        layout_same = view.findViewById(R.id.layout_same);
 
         s_pincode = shipping_pin_input.getText().toString();
-//        email.setText(emailstring);
-//        first_name.setText(firstnamestring);
-//        last_name.setText(lastnamestring);
-//        shipping_city_input.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
-//                mBuilder.setTitle("City");
-//                mBuilder.setSingleChoiceItems(citylist.toArray(new String[citylist.size()]), -1, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        shipping_city_input.setText(citylist.get(i));
-//                        dialogInterface.dismiss();
-//                    }
-//                });
-//
-//                AlertDialog mDialog = mBuilder.create();
-//                mDialog.show();
-//            }
-//        });
+
         shipping_pin_input.addTextChangedListener(this);
         billing_pin.addTextChangedListener(this);
         if (Internet.isConnected(getActivity())) {
@@ -234,7 +206,12 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     s_state = shipping_state_input.getText().toString();
                     s_country = shipping_country_input.getText().toString();
                     s_pincode = shipping_pin_input.getText().toString();
+                    s_mobile = mobilenumber.getText().toString();
+                    emailstring = email.getText().toString();
 
+                    if (s_mobile.contains("+91")) {
+                        s_mobile = s_mobile.substring(3, 13);
+                    }
                     bfirstnamestring = firstnamestring;
                     blastnamestring = lastnamestring;
                     b_area = s_area;
@@ -242,6 +219,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     b_state = s_state;
                     b_country = s_country;
                     b_pincode = s_pincode;
+                    b_mobile = s_mobile;
+                    b_email = emailstring;
 
                     bfirst_name.setText(firstnamestring);
                     blast_name.setText(blastnamestring);
@@ -250,6 +229,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     billing_state.setText(b_state);
                     billing_country.setText(b_country);
                     billing_pin.setText(b_pincode);
+                    b_mobilenumber.setText(b_mobile);
+                    billing_email.setText(b_email);
 
 
                     layout_same.setVisibility(View.GONE);
@@ -259,61 +240,64 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 s_state = shipping_state_input.getText().toString().trim();
                 s_city = shipping_city_input.getText().toString().trim();
                 s_country = shipping_country_input.getText().toString().trim();
+                s_mobile = mobilenumber.getText().toString();
+                emailstring = email.getText().toString().trim();
+
                 b_pincode = billing_pin.getText().toString().trim();
                 b_area = billing_door_street_input.getText().toString().trim();
                 b_state = billing_state.getText().toString().trim();
                 b_city = billing_city.getText().toString().trim();
                 b_country = billing_country.getText().toString().trim();
-                emailstring = email.getText().toString().trim();
                 firstnamestring = first_name.getText().toString().trim();
                 lastnamestring = last_name.getText().toString().trim();
                 bfirstnamestring = bfirst_name.getText().toString().trim();
                 blastnamestring = blast_name.getText().toString().trim();
+                b_email = billing_email.getText().toString().trim();
+                b_mobile=b_mobilenumber.getText().toString().trim();
+
+                if (b_mobile.contains("+91")) {
+                    b_mobile = b_mobile.substring(3, 13);
+                    b_mobilenumber.setText(b_mobile);
+                }
+                if (s_mobile.contains("+91")) {
+                    s_mobile = s_mobile.substring(3, 13);
+                    mobilenumber.setText(s_mobile);
+                }
 
                 if (s_pincode.trim().length() == 0) {
                     Config.Dialog("Please enter your shipping address pin-code", getActivity());
-
-//                    Toast.makeText(getActivity(), "Please enter your shipping address pin-code", Toast.LENGTH_SHORT).show();
                 } else if (b_pincode.trim().length() == 0) {
                     Config.Dialog("Please enter your billing address pin-code", getActivity());
-
-//                    Toast.makeText(getActivity(), "Please enter your billing address pin-code", Toast.LENGTH_SHORT).show();
                 } else if (emailstring.trim().length() == 0) {
                     Config.Dialog("Please enter your email", getActivity());
-//                    Toast.makeText(getActivity(), "Please enter your email", Toast.LENGTH_SHORT).show();
-                } else if (!Validationemail.isEmailAddress(email, true)) {
+                } else if (b_email.trim().length() == 0) {
+                    Config.Dialog("Please enter your  billing email", getActivity());
+                } else if (!Validationemail.isEmailAddress(email, true) && !Validationemail.isEmailAddress(billing_email, true)) {
                     Config.Dialog("Please enter your valid email", getActivity());
-
-//                    Toast.makeText(getActivity(), "Please enter your valid email", Toast.LENGTH_SHORT).show();
+                } else if (s_mobile.trim().length() == 0) {
+                    Config.Dialog("Please enter your shipping phone number", getActivity());
+                } else if (b_mobile.trim().length() == 0) {
+                    Config.Dialog("Please enter your billing phone number", getActivity());
+                } else if (!Validationmobile.isPhoneNumber(mobilenumber, true) && !Validationmobile.isPhoneNumber(mobilenumber, true)) {
+                    Config.Dialog("Please enter your valid phone number", getActivity());
                 } else if (s_pincode.trim().length() < 6) {
                     Config.Dialog("Please enter your valid pin-code", getActivity());
-
-//                    Toast.makeText(getActivity(), "Please enter your valid pin-code", Toast.LENGTH_SHORT).show();
                 } else if (firstnamestring.trim().length() == 0) {
                     Config.Dialog("Please enter your shipping address first name", getActivity());
-
-//                    Toast.makeText(getActivity(), "Please enter your shipping address first name", Toast.LENGTH_SHORT).show();
                 } else if (lastnamestring.trim().length() == 0) {
                     Config.Dialog("Please enter your shipping address last name", getActivity());
-//                    Toast.makeText(getActivity(), "Please enter your shipping address last name", Toast.LENGTH_SHORT).show();
                 } else if (s_area.trim().length() == 0) {
                     Config.Dialog("Please enter your shipping address door number & area", getActivity());
-//                    Toast.makeText(getActivity(), "Please enter your shipping address address", Toast.LENGTH_SHORT).show();
                 } else if (s_state.trim().length() == 0) {
                     Config.Dialog("Please enter your valid shipping address pin-code", getActivity());
-//                    Toast.makeText(getActivity(), "Please enter your valid shipping address pin-code", Toast.LENGTH_SHORT).show();
                 } else if (bfirstnamestring.trim().length() == 0) {
                     Config.Dialog("Please enter your billing address first name", getActivity());
-//                    Toast.makeText(getActivity(), "Please enter your billing address first name", Toast.LENGTH_SHORT).show();
                 } else if (blastnamestring.trim().length() == 0) {
                     Config.Dialog("Please enter your billing address last name", getActivity());
-//                    Toast.makeText(getActivity(), "Please enter your billing address last name", Toast.LENGTH_SHORT).show();
                 } else if (b_area.trim().length() == 0) {
                     Config.Dialog("Please enter your billing address door number & area", getActivity());
-//                    Toast.makeText(getActivity(), "Please enter your billing address address", Toast.LENGTH_SHORT).show();
                 } else if (b_country.trim().length() == 0) {
                     Config.Dialog("Please enter your valid billing address pin-code", getActivity());
-//                    Toast.makeText(getActivity(), "Please enter your valid billing address pin-code", Toast.LENGTH_SHORT).show();
                 } else {
                     if (block.equals("false")) {
                         Intent intent = new Intent(getActivity(), PayUMoneyActivity.class);
@@ -325,6 +309,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         intent.putExtra("s_state", s_state);
                         intent.putExtra("s_country", s_country);
                         intent.putExtra("s_pincode", s_pincode);
+                        intent.putExtra("s_mobile",s_mobile);
+
 //
                         intent.putExtra("bfirstname", bfirstnamestring);
                         intent.putExtra("blastname", blastnamestring);
@@ -338,6 +324,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         intent.putExtra("product_qty", product_qty);
                         intent.putExtra("totalcost", " " + totalcost);
                         intent.putExtra("tag", tag);
+                        intent.putExtra("b_mobile",b_mobile);
+                        intent.putExtra("b_email",b_email);
                         startActivity(intent);
                     } else {
                         payment_section.setEnabled(false);
@@ -371,7 +359,39 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 }
             }
         });
-        return view;
+    }
+
+    public void init() {
+        email = view.findViewById(R.id.email);
+        billing_email = view.findViewById(R.id.billing_email);
+
+        first_name = view.findViewById(R.id.first_name);
+        last_name = view.findViewById(R.id.last_name);
+        bfirst_name = view.findViewById(R.id.b_first_name);
+        blast_name = view.findViewById(R.id.b_last_name);
+
+        mobilenumber = view.findViewById(R.id.mobilenumber);
+        b_mobilenumber = view.findViewById(R.id.billing_mobilenumber);
+
+        shipping_door_street_input = view.findViewById(R.id.shipping_door_street_input);
+        shipping_pin_input = view.findViewById(R.id.shipping_pin_input);
+        shipping_city_input = view.findViewById(R.id.shipping_city_input);
+        shipping_state_input = view.findViewById(R.id.shipping_state_input);
+        shipping_country_input = view.findViewById(R.id.shipping_country_input);
+
+        billing_door_street_input = view.findViewById(R.id.billing_door_street_input);
+        billing_city = view.findViewById(R.id.billing_city);
+        billing_state = view.findViewById(R.id.billing_state);
+        billing_country = view.findViewById(R.id.billing_country);
+        billing_pin = view.findViewById(R.id.billing_pin);
+        placing = view.findViewById(R.id.placing);
+        placing1 = view.findViewById(R.id.placing1);
+        layout_placing = view.findViewById(R.id.layout_placing);
+
+        payment_section = view.findViewById(R.id.payment_section);
+        same = view.findViewById(R.id.same_address);
+        layout_same = view.findViewById(R.id.layout_same);
+
     }
 
 
@@ -669,27 +689,26 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         call.enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
             @Override
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
-                Log.e("data", "user..." + response.data().getCustomer().getFirstName());
-                Log.e("data", "user..." + response.data().getCustomer().getLastName());
-                Log.e("data", "user..." + response.data().getCustomer().getEmail());
-                Log.e("data", "user..." + response.data().getCustomer().getPhone());
-                Log.e("data", "user..." + response.data().getCustomer().getDisplayName());
-                Log.e("data", "user..." + response.data().getCustomer().getId());
+                if (response.data() != null && response.data().getCustomer() != null) {
 
-                firstnamestring = response.data().getCustomer().getFirstName();
-                lastnamestring = response.data().getCustomer().getLastName();
-                emailstring = response.data().getCustomer().getEmail();
+                    firstnamestring = response.data().getCustomer().getFirstName();
+                    lastnamestring = response.data().getCustomer().getLastName();
+                    emailstring = response.data().getCustomer().getEmail();
 
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            email.setText(emailstring);
-                            first_name.setText(firstnamestring);
-                            last_name.setText(lastnamestring);
-                        }
-                    });
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                email.setText(emailstring);
+                                first_name.setText(firstnamestring);
+                                last_name.setText(lastnamestring);
+                                if (response.data().getCustomer().getPhone() != null) {
+                                    mobilenumber.setText(response.data().getCustomer().getPhone());
+                                }
+                            }
+                        });
 
+                    }
                 }
             }
 

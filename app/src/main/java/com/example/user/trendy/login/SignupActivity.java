@@ -1,6 +1,7 @@
 package com.example.user.trendy.login;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,6 +38,7 @@ public class SignupActivity extends Activity implements TextWatcher {
     Button submit_btn;
     String firstname, lastname, mobilenumber, email, password;
     private GraphClient graphClient;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,19 +55,20 @@ public class SignupActivity extends Activity implements TextWatcher {
 
         final String PHONE_REGEX = "^[0-9][0-9]{9}$";
 
-        first_name= findViewById(R.id.first_name);
-        last_name=findViewById(R.id.last_name);
-        mobile=findViewById(R.id.number);
-        email_id=findViewById(R.id.email_id);
-        create_password=findViewById(R.id.create_password);
+        first_name = findViewById(R.id.first_name);
+        last_name = findViewById(R.id.last_name);
+        mobile = findViewById(R.id.number);
+        email_id = findViewById(R.id.email_id);
+        create_password = findViewById(R.id.create_password);
 
-        firstNameInputLayout=findViewById(R.id.first_name_input_layout);
-        lastNameInputLayout = findViewById(R.id.last_name_input_layout);;
+        firstNameInputLayout = findViewById(R.id.first_name_input_layout);
+        lastNameInputLayout = findViewById(R.id.last_name_input_layout);
+        ;
         mobileInputLayout = findViewById(R.id.mobile_input_layout);
         emailInputLayout = findViewById(R.id.email_input_layout);
         passwordInputLayout = findViewById(R.id.password_input_layout);
 
-        submit_btn=(Button)findViewById(R.id.signup);
+        submit_btn = (Button) findViewById(R.id.signup);
 
         first_name.addTextChangedListener(this);
         last_name.addTextChangedListener(this);
@@ -76,8 +79,7 @@ public class SignupActivity extends Activity implements TextWatcher {
         submit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isValid()==true)
-                {
+                if (isValid() == true) {
 //                    Toast.makeText(SignupActivity.this,"GOT",Toast.LENGTH_SHORT).show();
                     firstname = first_name.getText().toString().trim();
                     lastname = last_name.getText().toString().trim();
@@ -86,9 +88,7 @@ public class SignupActivity extends Activity implements TextWatcher {
                     password = create_password.getText().toString().trim();
 
                     signingUpUser();
-                }
-                else
-                {
+                } else {
 //                    Toast.makeText(SignupActivity.this,"Not GOT",Toast.LENGTH_SHORT).show();
                 }
             }
@@ -122,19 +122,16 @@ public class SignupActivity extends Activity implements TextWatcher {
             } else {
                 emailInputLayout.setError(null);
             }
-        }
-        else if (charSequence.hashCode() == mobile.getText().hashCode()) {
+        } else if (charSequence.hashCode() == mobile.getText().hashCode()) {
             if (mobile.getText().toString().isEmpty()) {
                 mobileInputLayout.setError("Enter mobile no");
-                if(mobile.getText().toString().length()==0)
-                {
+                if (mobile.getText().toString().length() == 0) {
                     mobileInputLayout.setError(null);
                 }
             } else {
                 mobileInputLayout.setError(null);
             }
-        }
-        else {
+        } else {
             if (create_password.getText().toString().isEmpty()) {
                 passwordInputLayout.setError("Minimum 5 character is required");
             } else {
@@ -149,38 +146,30 @@ public class SignupActivity extends Activity implements TextWatcher {
     }
 
     private boolean isValid() {
-        boolean check=true;
+        boolean check = true;
 
-        if(first_name.getText().toString().isEmpty())
-        {
+        if (first_name.getText().toString().isEmpty()) {
             firstNameInputLayout.setError("Please Enter First Name");
             return false;
         }
 
-        if(last_name.getText().toString().isEmpty())
-        {
+        if (last_name.getText().toString().isEmpty()) {
             lastNameInputLayout.setError("Please Enter Last Name");
             return false;
         }
 
-        if(email_id.getText().toString().isEmpty())
-        {
+        if (email_id.getText().toString().isEmpty()) {
             emailInputLayout.setError("Please Enter Email");
             return false;
         }
 
-        if(create_password.getText().toString().isEmpty())
-        {
+        if (create_password.getText().toString().isEmpty()) {
             passwordInputLayout.setError("Minimum 5 character is required");
             return false;
-        }
-        else
-        {
-            if(create_password.getText().toString().length()>=5)
-            {
-                check=isValidPassword(create_password.getText().toString());
-            }
-            else {
+        } else {
+            if (create_password.getText().toString().length() >= 5) {
+                check = isValidPassword(create_password.getText().toString());
+            } else {
                 passwordInputLayout.setError("Minimum 5 character is required");
                 return false;
             }
@@ -188,30 +177,21 @@ public class SignupActivity extends Activity implements TextWatcher {
 
         }
 
-        if(mobile.getText().toString().length()!=0)
-        {
-            if(mobile.getText().toString().length()==10)
-            {
-                check=isValidMobile(mobile.getText().toString());
-            }
-            else
-            {
+        if (mobile.getText().toString().length() != 0) {
+            if (mobile.getText().toString().length() == 10) {
+                check = isValidMobile(mobile.getText().toString());
+            } else {
                 mobileInputLayout.setError("Please Enter 10 Digit Mobile Number");
                 return false;
             }
+        } else if (mobile.getText().toString().length() == 0) {
+            check = true;
         }
-        else if(mobile.getText().toString().length()==0)
-            {
-                check=true;
-            }
 
 
-        if(isValidMail(email_id.getText().toString()))
-        {
-            check=true;
-        }
-        else
-        {
+        if (isValidMail(email_id.getText().toString())) {
+            check = true;
+        } else {
             emailInputLayout.setError("Please Enter Email");
             return false;
         }
@@ -224,9 +204,9 @@ public class SignupActivity extends Activity implements TextWatcher {
     }
 
     private boolean isValidMobile(String phone) {
-        boolean check=false;
-        if(!Pattern.matches("[a-zA-Z]+", phone)) {
-            if(phone.length() < 1) {
+        boolean check = false;
+        if (!Pattern.matches("[a-zA-Z]+", phone)) {
+            if (phone.length() < 1) {
                 // if(phone.length() != 10) {
                 check = false;
                 mobileInputLayout.setError("Not Valid Number");
@@ -234,18 +214,17 @@ public class SignupActivity extends Activity implements TextWatcher {
                 check = true;
             }
         } else {
-            check=false;
+            check = false;
         }
         return check;
     }
 
-    private boolean isValidPassword(String pass)
-    {
-        boolean check=false;
-        if(pass.length()>=5){
-            check=true;
+    private boolean isValidPassword(String pass) {
+        boolean check = false;
+        if (pass.length() >= 5) {
+            check = true;
         } else {
-            check=false;
+            check = false;
         }
         return check;
     }
@@ -257,14 +236,10 @@ public class SignupActivity extends Activity implements TextWatcher {
 
 
     public void checkCustomer(String email, String password) {
-//        if (progressDoalog != null) {
-//            progressDoalog = new ProgressDialog(LoginActiviy.this);
-//            progressDoalog.setMessage("loading....");
-//            progressDoalog.setTitle("Processing");
-//            progressDoalog.setCancelable(true);
-//            progressDoalog.show();
-//        }
-
+        progressDialog = new ProgressDialog(SignupActivity.this);
+        progressDialog.setMessage("loading, please wait...");
+        progressDialog.setCanceledOnTouchOutside(true);
+        progressDialog.show();
 
         Storefront.CustomerAccessTokenCreateInput input1 = new Storefront.CustomerAccessTokenCreateInput(email.trim(), password.trim());
         Storefront.MutationQuery mutationQuery1 = Storefront.mutation(mutation -> mutation
@@ -288,7 +263,12 @@ public class SignupActivity extends Activity implements TextWatcher {
             public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
 
                 if (response.data() != null) {
-
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
 
                     if (response.data().getCustomerAccessTokenCreate().getCustomerAccessToken() != null) {
 
@@ -304,6 +284,7 @@ public class SignupActivity extends Activity implements TextWatcher {
                         SharedPreference.saveData("login", "true", getApplicationContext());
                         startActivity(i);
                     } else {
+
                         create();
                     }
 
@@ -313,7 +294,7 @@ public class SignupActivity extends Activity implements TextWatcher {
 
             @Override
             public void onFailure(@NonNull GraphError error) {
-              }
+            }
 
 
         });
@@ -324,17 +305,7 @@ public class SignupActivity extends Activity implements TextWatcher {
         SharedPreference.saveData("email", email.trim(), getApplicationContext());
         SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
         SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
-//
-//        StringTokenizer st = new StringTokenizer(name, " "); //pass comma as delimeter
-//        String firstname = st.nextToken();
-//        String lastname = st.nextToken();
-//        Log.e("firstname", firstname);
-//        Log.e("lastname", lastname);
 
-//            String password1 = email.trim();
-//
-//            String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
-//            Log.e("coverted1", password.trim());
         if (mobilenumber.trim().length() == 0) {
 
 
@@ -366,29 +337,56 @@ public class SignupActivity extends Activity implements TextWatcher {
 
                 @Override
                 public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
-//                Log.e("response", response.toString());
 
                     if (response.data().getCustomerCreate() != null) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                            }
+                        });
+                        if (response.data().getCustomerCreate().getUserErrors() != null && response.data().getCustomerCreate().getUserErrors().size() != 0) {
+                            String error = response.data().getCustomerCreate().getUserErrors().get(0).getMessage();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Config.Dialog(error, SignupActivity.this);
+                                }
+                            });
 
-                        String id = response.data().getCustomerCreate().getCustomer().getId().toString();
-                        String email = response.data().getCustomerCreate().getCustomer().getEmail();
-                        Log.d("em", "Create Customer Info:" + email + ":" + id);
+                        } else {
 
-                        if (id != null) {
-//                        if (progressDoalog != null) {
-//                            progressDoalog.dismiss();
-//                        }
-                            Intent i = new Intent(getApplicationContext(), Navigation.class);
-                            SharedPreference.saveData("login", "true", getApplicationContext());
-                            startActivity(i);
+                            String id = response.data().getCustomerCreate().getCustomer().getId().toString();
+                            String email = response.data().getCustomerCreate().getCustomer().getEmail();
+
+                            if (id != null) {
+                                Intent i = new Intent(getApplicationContext(), Navigation.class);
+                                SharedPreference.saveData("login", "true", getApplicationContext());
+                                startActivity(i);
+                            } else {
+                            }
                         }
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                                Config.Dialog("Try Again Later", SignupActivity.this);
+                            }
+                        });
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull GraphError error) {
 //
-
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                            Config.Dialog("Try Again Later", SignupActivity.this);
+                        }
+                    });
                 }
 
 
@@ -439,44 +437,51 @@ public class SignupActivity extends Activity implements TextWatcher {
 //                Log.e("response", response.toString());
 
                     if (response.data().getCustomerCreate() != null) {
-                        if(response.data().getCustomerCreate().getCustomer()==null||response.data().getCheckoutCreate()==null){
-                        if (response.data().getCustomerCreate().getUserErrors() != null) {
-                            String message = response.data().getCustomerCreate().getUserErrors().get(0).getMessage();
-                           runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Config.Dialog(message,SignupActivity.this);
-//                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                            }
+                        });
+                        if (response.data().getCustomerCreate().getCustomer() == null || response.data().getCheckoutCreate() == null) {
+                            if (response.data().getCustomerCreate().getUserErrors().size() != 0) {
+                                String message = response.data().getCustomerCreate().getUserErrors().get(0).getMessage();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Config.Dialog(message, SignupActivity.this);
+                                    }
+                                });
+                            }
                         } else {
 
                             String id = response.data().getCustomerCreate().getCustomer().getId().toString();
                             String email = response.data().getCustomerCreate().getCustomer().getEmail();
 
                             if (id != null) {
-//                        if (progressDoalog != null) {
-//                            progressDoalog.dismiss();
-
-
-//                        }
                                 Intent i = new Intent(getApplicationContext(), Navigation.class);
                                 SharedPreference.saveData("login", "true", getApplicationContext());
                                 startActivity(i);
                             }
                         }
-                    }else {
+                    } else {
                         if (response.data() == null) {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Config.Dialog("Try again Later",SignupActivity.this);
-
-//                                    Toast.makeText(getApplicationContext(), "Try again Later", Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                    Config.Dialog("Please try again later.", SignupActivity.this);
                                 }
                             });
-                        }else{
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (progressDialog.isShowing())
+                                        progressDialog.dismiss();
+                                    Config.Dialog("Please try again later.", SignupActivity.this);
+                                }
+                            });
                         }
                     }
 
@@ -484,9 +489,13 @@ public class SignupActivity extends Activity implements TextWatcher {
 
                 @Override
                 public void onFailure(@NonNull GraphError error) {
-//                if (progressDoalog != null) {
-//                    progressDoalog.dismiss();
-//                }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                            Config.Dialog("Try Again Later", SignupActivity.this);
+                        }
+                    });
 
                 }
 

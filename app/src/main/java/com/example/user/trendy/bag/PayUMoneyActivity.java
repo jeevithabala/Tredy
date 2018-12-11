@@ -77,6 +77,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     Button btnsubmit1, btncancel;
     RadioButton btnradonline, btnradcod;
     String emailstring, totalamount, coupon, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "";
+   String s_mobile="",b_mobile="",b_email="";
     TextView txtpayamount, t_pay, discount_price, apply_coupon;
     CardView apply_discount;
     LinearLayout discount_layout;
@@ -99,7 +100,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     ArrayList<OrderDetailModel> orderDetailModelArrayList = new ArrayList<>();
     private String orderId, discounted_price, discount_coupon;
     String accessCode, merchantId, currency, rsaKeyUrl, redirectUrl, cancelUrl;
-    int buynow=0;
+    int buynow = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,9 +116,6 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
                 .build();
 
-        if (accessToken != null) {
-            getEmailId();
-        }
 
         db = new DBHelper(this);
 
@@ -149,6 +147,10 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             product_qty = getIntent().getStringExtra("product_qty");
             totalcost = getIntent().getStringExtra("totalcost");
             tag = getIntent().getStringExtra("tag");
+            s_mobile=getIntent().getStringExtra("s_mobile");
+            b_mobile=getIntent().getStringExtra("b_mobile");
+            b_email=getIntent().getStringExtra("b_email");
+
             if (product_varientid != null) {
                 if (product_varientid.trim().length() != 0) {
                     byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
@@ -183,6 +185,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         view_coupon.setOnClickListener(this);
 
         emailedit.setText(emailstring);
+        mobile.setText(s_mobile);
         amountedit.setText(getResources().getString(R.string.Rs) + " " + totalcost);
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
@@ -195,7 +198,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         getDiscount();
 
         discountAdapter.notifyDataSetChanged();
-
+//        if (accessToken != null) {
+//            getEmailId();
+//        }
 
     }
 
@@ -230,11 +235,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         bundle.putSerializable("value", orderDetailModelArrayList.get(0));
         intent.putExtras(bundle);
         startActivity(intent);
-//        }else{
-//            Toast.makeText(this, "All parameters are mandatory.", Toast.LENGTH_SHORT).show();
-//        }
-
     }
+
 
     @Override
     public void onClick(View v) {
@@ -252,13 +254,13 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 phone = mobile.getText().toString();
                 if (!Validationemail.isEmailAddress(emailedit, true)) {
 //                    Toast.makeText(PayUMoneyActivity.this, "Please enter your valid email", Toast.LENGTH_SHORT).show();
-                    Config.Dialog("Please enter your valid email",PayUMoneyActivity.this);
+                    Config.Dialog("Please enter your valid email", PayUMoneyActivity.this);
                 } else if (phone.trim().length() == 0) {
-                    Config.Dialog("Please enter your phone number",PayUMoneyActivity.this);
+                    Config.Dialog("Please enter your phone number", PayUMoneyActivity.this);
 
 //                    Toast.makeText(getApplicationContext(), "Please enter your phone number", Toast.LENGTH_SHORT).show();
                 } else if (!Validationmobile.isPhoneNumber(mobile, true)) {
-                    Config.Dialog("Please enter your valid phone number",PayUMoneyActivity.this);
+                    Config.Dialog("Please enter your valid phone number", PayUMoneyActivity.this);
 
 //                    Toast.makeText(getApplicationContext(), "Please enter your valid phone number", Toast.LENGTH_SHORT).show();
 
@@ -329,7 +331,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     if (btnradonline.isChecked()) {
                         cod = 0;
 
-                        OrderDetailModel orderDetailModel = new OrderDetailModel(emailstring, totalcost, firstname, lastname, bfirstname, blastname, address1, city, state, country, zip, phone, b_address1, b_city, b_state, b_country, b_zip, product_varientid, product_qty, discounted_price, discount_coupon);
+                        OrderDetailModel orderDetailModel = new OrderDetailModel(emailstring, totalcost, firstname, lastname, bfirstname, blastname, address1, city, state, country, zip, phone, b_address1, b_city, b_state, b_country, b_zip, product_varientid, product_qty, discounted_price, discount_coupon,s_mobile,b_mobile,b_email);
                         orderDetailModelArrayList.add(orderDetailModel);
 
                         init();
@@ -347,7 +349,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                         noDialog();
                     }
                 } else {
-                    Config.Dialog("Select the payment method",PayUMoneyActivity.this);
+                    Config.Dialog("Select the payment method", PayUMoneyActivity.this);
 
 //                    Toast.makeText(PayUMoneyActivity.this, "Select the payment method", Toast.LENGTH_SHORT).show();
                 }
@@ -427,7 +429,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 }
             } else {
                 JSONObject items = new JSONObject();
-buynow=1;
+                buynow = 1;
 //                items.put("variant_id", "5823671107611");
                 items.put("variant_id", product_varientid.trim());
                 items.put("quantity", product_qty);
@@ -473,7 +475,7 @@ buynow=1;
             billingaddress.put("first_name", blastname);
             billingaddress.put("last_name", blastname);
             billingaddress.put("address1", b_address1);
-            billingaddress.put("phone", phone);
+            billingaddress.put("phone", b_mobile);
             billingaddress.put("city", b_city);
             billingaddress.put("province", b_state);
             billingaddress.put("country", b_country);
@@ -525,10 +527,10 @@ buynow=1;
                                 }
                             }
                             progressDialog.dismiss();
-                            if(buynow!=1){
+                            if (buynow != 1) {
                                 db.deleteCart(getApplicationContext());
                             }
-                            Config.Dialog("Your Order Placed Sucessfully",PayUMoneyActivity.this);
+                            Config.Dialog("Your Order Placed Sucessfully", PayUMoneyActivity.this);
 
 //                            Toast.makeText(PayUMoneyActivity.this, "Your Order Placed Sucessfully", Toast.LENGTH_SHORT).show();
                             Intent i = new Intent(PayUMoneyActivity.this, Navigation.class);
@@ -720,33 +722,32 @@ buynow=1;
         call.enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
             @Override
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
-                Log.e("data", "user..." + response.data().getCustomer().getFirstName());
-                Log.e("data", "user..." + response.data().getCustomer().getLastName());
-                Log.e("data", "user..." + response.data().getCustomer().getEmail());
-                Log.e("data", "user..." + response.data().getCustomer().getPhone());
-                Log.e("data", "user..." + response.data().getCustomer().getDisplayName());
-                Log.e("data", "user..." + response.data().getCustomer().getId());
+                if (response.data() != null && response.data().getCustomer() != null) {
 
-                phone = response.data().getCustomer().getPhone();
+                    phone = response.data().getCustomer().getPhone();
 
-                PayUMoneyActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(phone!=null){
-                            if (phone.length() != 0) {
-                                if (phone.contains("+91")) {
-                                    phone = phone.substring(3, 13);
-                                    mobile.setText(phone);
-                                } else {
-                                    mobile.setText(phone);
+                    PayUMoneyActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (phone != null) {
+                                if (phone.length() != 0) {
+                                    if (phone.contains("+91")) {
+                                        phone = phone.substring(3, 13);
+                                        mobile.setText(phone);
+                                    } else {
+                                        mobile.setText(phone);
+                                    }
                                 }
+
+                            } else {
+                                phone = "";
+                                mobile.setText(phone);
                             }
 
                         }
+                    });
 
-                    }
-                });
-
+                }
             }
 
             @Override
@@ -801,18 +802,6 @@ buynow=1;
 
             }
 
-
-//            JSONArray note = new JSONArray();
-//            JSONObject notes = new JSONObject();
-//
-//            notes.put("code", discount_coupon);
-//            notes.put("amount", discounted_price);
-//            notes.put("type", "fixed_amount");
-//
-//            note.put(notes);
-//            jsonBody.put("discount_codes", note);
-
-
             JSONObject shipping = new JSONObject();
             shipping.put("first_name", firstname);
             shipping.put("last_name", lastname);
@@ -829,7 +818,7 @@ buynow=1;
             billingaddress.put("first_name", blastname);
             billingaddress.put("last_name", blastname);
             billingaddress.put("address1", b_address1);
-            billingaddress.put("phone", phone);
+            billingaddress.put("phone", b_mobile);
             billingaddress.put("city", b_city);
             billingaddress.put("province", b_state);
             billingaddress.put("country", b_country);

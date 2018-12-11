@@ -84,9 +84,10 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
     String html, encVal, transaction_id;
     int MyDeviceAPI;
     String emailstring, totalamount, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "", product_varientid, product_qty, discounted_price, discount_coupon;
-    String finalhtml = " ";
+    String finalhtml = " ", b_phone="";
     int costtotal = 0;
     private int buynow = 0;
+    OrderDetailModel model;
 
     /**
      * Async task class to get json by making HTTP call
@@ -205,7 +206,26 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
             });
 
             try {
-                String postData = AvenuesParams.ACCESS_CODE + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.ACCESS_CODE), "UTF-8") + "&" + AvenuesParams.MERCHANT_ID + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.MERCHANT_ID), "UTF-8") + "&" + AvenuesParams.ORDER_ID + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.ORDER_ID), "UTF-8") + "&" + AvenuesParams.REDIRECT_URL + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.REDIRECT_URL), "UTF-8") + "&" + AvenuesParams.CANCEL_URL + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.CANCEL_URL), "UTF-8") + "&" + AvenuesParams.ENC_VAL + "=" + URLEncoder.encode(encVal, "UTF-8");
+                String postData = AvenuesParams.ACCESS_CODE + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.ACCESS_CODE), "UTF-8") + "&" + AvenuesParams.MERCHANT_ID + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.MERCHANT_ID), "UTF-8") + "&" + AvenuesParams.ORDER_ID + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.ORDER_ID), "UTF-8") + "&" + AvenuesParams.REDIRECT_URL + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.REDIRECT_URL), "UTF-8") + "&" + AvenuesParams.CANCEL_URL + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.CANCEL_URL), "UTF-8") + "&" + AvenuesParams.ENC_VAL + "=" + URLEncoder.encode(encVal, "UTF-8")
+                        + "&" + AvenuesParams.BILLING_NAME + "=" + URLEncoder.encode(model.getBfirstname(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_ADDRESS + "=" + URLEncoder.encode(model.getB_address1(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_CITY + "=" + URLEncoder.encode(model.getB_city(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_STATE + "=" + URLEncoder.encode(model.getB_state(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_ZIP + "=" + URLEncoder.encode(model.getB_zip(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_COUNTRY + "=" + URLEncoder.encode(model.getB_country(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_EMAIL + "=" + URLEncoder.encode(model.getB_email(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_MOBILENUMBER + "=" + URLEncoder.encode(model.getB_mobile(), "UTF-8")
+
+                        + "&" + AvenuesParams.DELIVERY_NAME + "=" + URLEncoder.encode(model.getFirstname(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_ADDRESS + "=" + URLEncoder.encode(model.getAddress1(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_CITY + "=" + URLEncoder.encode(model.getCity(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_STATE + "=" + URLEncoder.encode(model.getState(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_ZIP + "=" + URLEncoder.encode(model.getZip(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_COUNTRY + "=" + URLEncoder.encode(model.getCountry(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_EMAIL + "=" + URLEncoder.encode(model.getEmailstring(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_MOBILENUMBER + "=" + URLEncoder.encode(model.getS_mobile(), "UTF-8");
+
+
                 myBrowser.postUrl(Constants.TRANS_URL, postData.getBytes());
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -222,6 +242,10 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
         setContentView(R.layout.web);
         mainIntent = getIntent();
         manager = getFragmentManager();
+
+        Bundle bundle = mainIntent.getExtras();
+
+        model = (OrderDetailModel) bundle.getSerializable("value");
 
         myBrowser = (WebView) findViewById(R.id.webView);
         webSettings = myBrowser.getSettings();
@@ -882,6 +906,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
         if (product_varientid == null) {
             product_varientid = " ";
         }
+        b_phone=detail.getB_mobile();
         db = new DBHelper(this);
         cartlist = db.getCartList();
         postOrder();
@@ -962,7 +987,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
             billingaddress.put("first_name", blastname);
             billingaddress.put("last_name", blastname);
             billingaddress.put("address1", b_address1);
-            billingaddress.put("phone", phone);
+            billingaddress.put("phone", b_phone);
             billingaddress.put("city", b_city);
             billingaddress.put("province", b_state);
             billingaddress.put("country", b_country);
@@ -1151,7 +1176,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
             billingaddress.put("first_name", blastname);
             billingaddress.put("last_name", blastname);
             billingaddress.put("address1", b_address1);
-            billingaddress.put("phone", phone);
+            billingaddress.put("phone", b_phone);
             billingaddress.put("city", b_city);
             billingaddress.put("province", b_state);
             billingaddress.put("country", b_country);
