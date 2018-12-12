@@ -7,10 +7,10 @@
 
         <variable
             name="cartitem"
-            type="com.example.user.trendy.bag.cartdatabase.AddToCart_Model" />
+            type="com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model" />
         <variable
             name="itemclick"
-            type="com.example.user.trendy.callback.FragmentRecyclerViewClick" />
+            type="com.marmeto.user.tredy.callback.FragmentRecyclerViewClick" />
     </data>
 
     <android.support.v7.widget.CardView

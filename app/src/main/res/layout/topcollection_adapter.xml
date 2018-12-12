@@ -5,13 +5,13 @@
 
         <variable
             name="topcollection"
-            type="com.example.user.trendy.foryou.topcollection.TopCollectionModel">
+            type="com.marmeto.user.tredy.foryou.topcollection.TopCollectionModel">
 
         </variable>
 
         <variable
             name="itemclick"
-            type="com.example.user.trendy.callback.FragmentRecyclerViewClick" />
+            type="com.marmeto.user.tredy.callback.FragmentRecyclerViewClick" />
 
     </data>
 

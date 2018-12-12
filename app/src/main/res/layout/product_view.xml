@@ -6,11 +6,11 @@
 
         <variable
             name="productview"
-            type="com.example.user.trendy.category.productDetail.SelectItemModel"></variable>
+            type="com.marmeto.user.tredy.category.productDetail.SelectItemModel"></variable>
 
         <variable
             name="itemclick"
-            type="com.example.user.trendy.callback.ProductClickInterface" />
+            type="com.marmeto.user.tredy.callback.ProductClickInterface" />
 
 
     </data>

@@ -7,7 +7,7 @@
 
         <variable
             name="bag"
-            type="com.example.user.trendy.bag.cartdatabase.AddToCart_Model" />
+            type="com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model" />
     </data>
 
     <RelativeLayout

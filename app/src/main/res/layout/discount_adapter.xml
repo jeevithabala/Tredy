@@ -6,11 +6,11 @@
 
         <variable
             name="discount"
-            type="com.example.user.trendy.bag.DiscountModel" />
+            type="com.marmeto.user.tredy.bag.DiscountModel" />
 
         <variable
             name="itemclick"
-            type="com.example.user.trendy.callback.FragmentRecyclerViewClick" />
+            type="com.marmeto.user.tredy.callback.FragmentRecyclerViewClick" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

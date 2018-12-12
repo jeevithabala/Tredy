@@ -5,16 +5,16 @@
 
         <variable
             name="newarrival"
-            type="com.example.user.trendy.foryou.newarrival.NewArrivalModel">
+            type="com.marmeto.user.tredy.foryou.newarrival.NewArrivalModel">
 
         </variable>
 
         <variable
             name="itemclick"
-            type="com.example.user.trendy.callback.FragmentRecyclerViewClick" />
+            type="com.marmeto.user.tredy.callback.FragmentRecyclerViewClick" />
         <variable
             name="onitemclickplus"
-            type="com.example.user.trendy.foryou.topselling.Plus" />
+            type="com.marmeto.user.tredy.foryou.topselling.Plus" />
     </data>
 
     <android.support.v7.widget.CardView

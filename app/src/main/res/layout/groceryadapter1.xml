@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#ffffff">
+    >
 
     <data>
 
         <variable
             name="grocery1"
-            type="com.example.user.trendy.foryou.groceryhome.GroceryHomeModel">
+            type="com.marmeto.user.tredy.foryou.groceryhome.GroceryHomeModel">
 
         </variable>
         <!--<variable-->
@@ -14,21 +14,23 @@
         <!--type="com.example.user.trendy.Interface.FragmentRecyclerViewClick" />-->
         <variable
             name="counter"
-            type="com.example.user.trendy.groceries.GroceryInterface" />
+            type="com.marmeto.user.tredy.groceries.GroceryInterface" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="300dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:onClick="@{(v)->counter.click()}"
+        android:background="#ffffff"
         android:orientation="vertical">
 
         <android.support.v7.widget.CardView
 
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
             app:cardCornerRadius="5dp">
 
@@ -74,6 +76,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:maxLines="1"
                             android:fontFamily="@font/lucidasansdemibold"
                             android:textColor="@color/textcolor"
                             android:textSize="14sp"
@@ -113,8 +116,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginLeft="40dp"
-                            android:layout_marginRight="40dp"
+                          android:layout_marginStart="30dp"
                             android:fontFamily="@font/lucidasansdemibold"
                             android:textColor="@color/cost"
                             android:textSize="12sp"
@@ -163,7 +165,7 @@
                             <!--android:layout_marginLeft="5dp"-->
                             <!--android:src="@drawable/ic_downarrow" />-->
                             <TextView
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/lucidasansdemibold"
                                 android:gravity="center"
@@ -174,7 +176,7 @@
                             <View
                                 android:layout_width="1dp"
                                 android:layout_height="match_parent"
-                                android:layout_marginLeft="10dp"
+                                android:layout_marginLeft="5dp"
                                 android:background="@color/grey" />
 
 
@@ -183,15 +185,14 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_weight="1"
-                            android:gravity="center">
+                            android:layout_weight="1">
 
                             <TextView
                                 android:id="@+id/qty"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_margin="5dp"
+                                android:gravity="center"
                                 android:fontFamily="@font/lucidasansdemibold"
                                 android:text="@{grocery1.qty}"
                                 android:textColor="@color/cost"
@@ -210,11 +211,11 @@
                             <View
                                 android:layout_width="1dp"
                                 android:layout_height="match_parent"
-                                android:layout_marginRight="10dp"
+                                android:layout_marginRight="5dp"
                                 android:background="@color/grey" />
 
                             <TextView
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/lucidasansdemibold"
                                 android:gravity="center"
@@ -237,7 +238,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:layout_marginLeft="5dp"
-                        android:layout_weight="1"
+                        android:layout_weight="0.9"
                         android:background="@drawable/see"
                         android:orientation="horizontal">
 
@@ -260,19 +261,22 @@
                             android:id="@+id/options"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:textSize="10dp"
-                            app:spinner1="@{grocery1.product}"></Spinner>
+                            android:textAlignment="center"
+                            android:textSize="12sp"
+                            app:spinner1="@{grocery1.product}">
+
+                        </Spinner>
 
 
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/add"
+                        android:layout_marginLeft="2dp"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="20dp"
-                        android:layout_weight="1"
+                        android:layout_weight="1.1"
                         android:background="@color/colorAccent">
 
                         <TextView

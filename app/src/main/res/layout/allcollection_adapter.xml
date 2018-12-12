@@ -5,18 +5,18 @@
 
         <variable
             name="allcollection"
-            type="com.example.user.trendy.foryou.allcollection.AllCollectionModel">
+            type="com.marmeto.user.tredy.foryou.allcollection.AllCollectionModel">
 
         </variable>
 
         <variable
             name="itemclick"
-            type="com.example.user.trendy.callback.FragmentRecyclerViewClick" />
+            type="com.marmeto.user.tredy.callback.FragmentRecyclerViewClick" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="85dp"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         android:layout_margin="3dp"
         android:onClick="@{(v)->itemclick.onClickPostion()}"
         android:orientation="vertical">
