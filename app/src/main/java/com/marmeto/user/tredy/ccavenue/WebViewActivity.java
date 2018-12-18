@@ -208,7 +208,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                 @Override
                 public void onPageStarted(WebView view, String url, Bitmap favicon) {
                     super.onPageStarted(view, url, favicon);
-                    LoadingDialog.showLoadingDialog(WebViewActivity.this, "Loading...");
+//                    LoadingDialog.showLoadingDialog(WebViewActivity.this, "Loading...");
                 }
             });
 

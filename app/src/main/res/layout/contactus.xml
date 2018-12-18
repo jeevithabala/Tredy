@@ -7,6 +7,13 @@
     android:clickable="true">
 
 
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <TextView
         android:layout_margin="10dp"
@@ -48,6 +55,7 @@
         android:text=" Contact Number : +919787266666"/>
 
     <ImageView
+        android:id="@+id/facebook"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
@@ -57,5 +65,8 @@
         />
 
 
+
+    </LinearLayout>
+</ScrollView>
 
 </LinearLayout>

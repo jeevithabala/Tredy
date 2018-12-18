@@ -187,7 +187,6 @@ public class LoginActiviy extends AppCompatActivity implements
                                 new GraphRequest.GraphJSONObjectCallback() {
                                     @Override
                                     public void onCompleted(JSONObject object, GraphResponse response) {
-                                        Log.e("LoginActivity", response.toString());
                                         try {
 
                                             // Bundle bFacebookData = getFacebookData(object);
@@ -195,7 +194,9 @@ public class LoginActiviy extends AppCompatActivity implements
                                             firstname = object.getString("first_name");
                                             lastname = object.getString("last_name");
                                             email = object.getString("email");
-                                            Log.e("name", "" + firstname + email);
+                                            String id = object.getString("id");
+                                            Log.e("LoginActivity", id);
+
 //                                            gender = object.getString("gender");
 //                                            birthday = object.getString("birthday");
 
@@ -203,6 +204,7 @@ public class LoginActiviy extends AppCompatActivity implements
 //                                            i.putExtra("name", name);
 //                                            i.putExtra("email", email);
 //                                            startActivity(i);
+                                            SharedPreference.saveData("facebookid",id.trim(),getApplicationContext());
                                             SharedPreference.saveData("email", email.trim(), getApplicationContext());
                                             SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
                                             SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
