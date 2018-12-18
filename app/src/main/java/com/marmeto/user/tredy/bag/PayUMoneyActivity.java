@@ -2,6 +2,7 @@ package com.marmeto.user.tredy.bag;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -451,8 +452,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             JSONArray note = new JSONArray();
             JSONObject notes = new JSONObject();
 
-            notes.put("name", "ccavenue");
-            notes.put("value", "78233011");
+            notes.put("name", "Cash on Delivery");
+            notes.put("value", "");
 
             note.put(notes);
             jsonBody.put("note_attributes", note);
@@ -471,7 +472,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
             JSONObject billingaddress = new JSONObject();
-            billingaddress.put("first_name", blastname);
+            billingaddress.put("first_name", bfirstname);
             billingaddress.put("last_name", blastname);
             billingaddress.put("address1", b_address1);
             billingaddress.put("phone", b_mobile);
@@ -529,11 +530,10 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                             if (buynow != 1) {
                                 db.deleteCart(getApplicationContext());
                             }
-                            Config.Dialog("Your Order Placed Sucessfully", PayUMoneyActivity.this);
+                            Dialog("Your Order Placed Successfully");
 
 //                            Toast.makeText(PayUMoneyActivity.this, "Your Order Placed Sucessfully", Toast.LENGTH_SHORT).show();
-                            Intent i = new Intent(PayUMoneyActivity.this, Navigation.class);
-                            startActivity(i);
+
                         }
 
 
@@ -636,7 +636,6 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("error", error.getMessage());
 
                     }
                 }) {
@@ -931,5 +930,32 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 .setNegativeButton("No", dialogClickListener).show();
 
     }
+
+    public void Dialog(String poptext){
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(PayUMoneyActivity.this, R.style.AlertDialogStyle);
+        builder.setTitle("Message");
+        builder.setMessage(poptext)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.dismiss();
+
+                        Intent i = new Intent(PayUMoneyActivity.this, Navigation.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+
+
+    }
+
 
 }

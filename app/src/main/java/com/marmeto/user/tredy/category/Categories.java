@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.category;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +48,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class Categories extends Fragment {
@@ -75,6 +79,7 @@ public class Categories extends Fragment {
 
         ((Navigation) getActivity()).getSupportActionBar().setTitle("Categories");
 
+
         all = view.findViewById(R.id.all);
         all.setVisibility(View.GONE);
         subcategory = view.findViewById(R.id.sublayout);
@@ -102,15 +107,22 @@ public class Categories extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager1);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         categoreDetailAdapter = new CategoreDetailAdapter(getActivity(), categoryList, getFragmentManager());
         recyclerView.setAdapter(categoreDetailAdapter);
         // productlist();
+
         collectionList(Constants.navigation);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Objects.requireNonNull(getActivity()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
 
     public void productlist() {
         categoryList.clear();

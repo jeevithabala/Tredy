@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.foryou;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.marmeto.user.tredy.BuildConfig;
 import com.marmeto.user.tredy.foryou.allcollection.AllCollectionAdapter;
@@ -27,6 +29,7 @@ import com.viewpagerindicator.CirclePageIndicator;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -120,47 +123,51 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
     @Override
     public void topSelling(ArrayList<TopSellingModel> arrayList) {
-        getActivity().runOnUiThread(new Runnable() {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                topSellingModelArrayList.clear();
-                for (int i = 0; i < arrayList.size(); i++) {
-                    TopSellingModel topSellingModel = new TopSellingModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
-                    topSellingModel.setCollectionid(arrayList.get(i).getCollectionid());
-                    topSellingModelArrayList.add(topSellingModel);
+                @Override
+                public void run() {
+                    topSellingModelArrayList.clear();
+                    for (int i = 0; i < arrayList.size(); i++) {
+                        TopSellingModel topSellingModel = new TopSellingModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
+                        topSellingModel.setCollectionid(arrayList.get(i).getCollectionid());
+                        topSellingModelArrayList.add(topSellingModel);
+                    }
+
+
+                    getObject().add(topSellingModelArrayList.get(0));
+                    adapter.notifyDataSetChanged();
+
+
                 }
-
-
-                getObject().add(topSellingModelArrayList.get(0));
-                adapter.notifyDataSetChanged();
-
-
-            }
-        });
+            });
+        }
 
     }
 
     @Override
     public void newArrivals(ArrayList<NewArrivalModel> arrayList) {
-        getActivity().runOnUiThread(new Runnable() {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                newArrivalModelArrayList.clear();
+                @Override
+                public void run() {
+                    newArrivalModelArrayList.clear();
 
 
-                for (int i = 0; i < arrayList.size(); i++) {
-                    NewArrivalModel newArrivalModel = new NewArrivalModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
-                    newArrivalModel.setCollectionid(arrayList.get(i).getCollectionid());
-                    newArrivalModelArrayList.add(newArrivalModel);
+                    for (int i = 0; i < arrayList.size(); i++) {
+                        NewArrivalModel newArrivalModel = new NewArrivalModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
+                        newArrivalModel.setCollectionid(arrayList.get(i).getCollectionid());
+                        newArrivalModelArrayList.add(newArrivalModel);
+                    }
+                    getObject().add(newArrivalModelArrayList.get(0));
+                    adapter.notifyDataSetChanged();
+
+
                 }
-                getObject().add(newArrivalModelArrayList.get(0));
-                adapter.notifyDataSetChanged();
-
-
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -174,13 +181,16 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
             GroceryHomeModels.add(GroceryHomeModel);
         }
         getObject().add(GroceryHomeModels.get(0));
-        getActivity().runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                adapter.notifyDataSetChanged();
-            }
-        });
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 
 
@@ -263,9 +273,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     public void bannerlist(ArrayList<String> bannerlist1) {
         bannerlist.clear();
 
-        for (int i = 0; i < bannerlist1.size(); i++) {
-            bannerlist.add(bannerlist1.get(i));
-        }
+        bannerlist.addAll(bannerlist1);
         init();
     }
 
@@ -277,6 +285,18 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     @Override
     public void getcount(int count) {
         Navigation.noti_counnt = count;
-        getActivity().invalidateOptionsMenu();
+        if (getActivity() != null) {
+            getActivity().invalidateOptionsMenu();
+        }
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+//        InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(Activity.INPUT_METHOD_SERVICE);
+//        if (imm != null) {
+//            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+//        }
     }
 }

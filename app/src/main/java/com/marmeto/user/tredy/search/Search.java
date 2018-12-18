@@ -123,9 +123,14 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
 
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        search.clearFocus();
+    }
+
     private void getData() {
         requestQueue.add(collectionList(searchtext, requestCount));
-        Log.d("request counter", String.valueOf(requestCount));
         requestCount++;
     }
 
@@ -140,7 +145,7 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
 
     @Override
     public boolean onQueryTextSubmit(String s) {
-        searchtext = s;
+        searchtext = s.trim();
         requestCount = 1;
         searchlist.clear();
         if (s.trim().length() != 0) {
@@ -155,7 +160,7 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
         i = 0;
         searchlist.clear();
         requestCount = 1;
-        searchtext = s;
+        searchtext = s.trim();
         if (s.trim().length() == 0) {
             adapter.notifyDataSetChanged();
             if (searchlist.size() == 0) {

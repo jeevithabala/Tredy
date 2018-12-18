@@ -621,7 +621,6 @@ public class LoginActiviy extends AppCompatActivity implements
                     }
                 });
 
-                Log.e("TAG", "Failed to execute query", error);
             }
         });
 

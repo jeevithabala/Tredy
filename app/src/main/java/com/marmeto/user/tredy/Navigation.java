@@ -59,7 +59,7 @@ import com.marmeto.user.tredy.search.Search;
 import com.marmeto.user.tredy.util.Constants;
 import com.marmeto.user.tredy.util.Internet;
 import com.marmeto.user.tredy.util.SharedPreference;
-import com.marmeto.user.tredy.Utility.Converter;
+import com.marmeto.user.tredy.utility.Converter;
 import com.marmeto.user.tredy.whislist.Whislist;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -110,7 +110,9 @@ public class Navigation extends AppCompatActivity
 
     public void init() {
 
-        scheduleJob();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            scheduleJob();
+        }
         fragmentManager = getSupportFragmentManager();
 
 
@@ -463,6 +465,7 @@ public class Navigation extends AppCompatActivity
                             Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                         }
                         SharedPreference.saveData("login", "", Navigation.this);
+                        SharedPreference.saveData("accesstoken", "", getApplicationContext());
                         startActivity(new Intent(Navigation.this, LoginActiviy.class));
                         finish();
                         break;
@@ -617,7 +620,7 @@ public class Navigation extends AppCompatActivity
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                finish();
+                               dialog.dismiss();
                             }
                         }).create();
         dialog.show();
@@ -628,4 +631,5 @@ public class Navigation extends AppCompatActivity
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
 }

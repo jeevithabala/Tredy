@@ -261,14 +261,15 @@ public class SignupActivity extends Activity implements TextWatcher {
             public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
 
                 if (response.data() != null) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressDialog.dismiss();
-                        }
-                    });
+
 
                     if (response.data().getCustomerAccessTokenCreate().getCustomerAccessToken() != null) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                            }
+                        });
 
                         String token = "" + response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getAccessToken().toString();
                         String expire = response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getExpiresAt().toString();
@@ -292,6 +293,12 @@ public class SignupActivity extends Activity implements TextWatcher {
 
             @Override
             public void onFailure(@NonNull GraphError error) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                    }
+                });
             }
 
 

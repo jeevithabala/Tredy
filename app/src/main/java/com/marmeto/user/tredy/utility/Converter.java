@@ -1,4 +1,4 @@
-package com.marmeto.user.tredy.Utility;
+package com.marmeto.user.tredy.utility;
 
 import android.content.Context;
 import android.graphics.Bitmap;

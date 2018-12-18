@@ -30,6 +30,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.marmeto.user.tredy.Navigation;
 import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.util.Constants;
@@ -139,6 +140,8 @@ public class NotificationsListFragment extends Fragment  {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        ((Navigation) getActivity()).getSupportActionBar().setTitle("Notification");
+
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager1);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

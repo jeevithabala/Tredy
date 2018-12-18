@@ -153,30 +153,34 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TopSellingAdapter adapter = new TopSellingAdapter(context, getTopSellingCollection(), fragmentManager);
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         holder.recyclerView.setAdapter(adapter);
-        if (getTopSellingCollection().size() != 0) {
+        if (getTopSellingCollection().size() >0) {
             holder.topselling.setText(String.valueOf(getTopSellingCollection().get(0).getCollectionTitle()));
 //            Log.d("collectiontitle", "" + getTopSellingCollection().get(0).getCollectionTitle());
         }
         holder.seall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = new CategoryProduct();
-                Bundle bundle = new Bundle();
-                bundle.putString("collection", "topselling");
-                bundle.putSerializable("category_id", getTopSellingCollection().get(0));
+                if (getTopSellingCollection().size() >0) {
+                    Fragment fragment = new CategoryProduct();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("collection", "topselling");
+                    bundle.putSerializable("category_id", getTopSellingCollection().get(0));
 //                Log.e("iddddddd", getTopSellingCollection().get(0).getCollectionTitle());
-                fragment.setArguments(bundle);
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
-                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                if(fragmentManager.findFragmentByTag("categoryproduct")==null)
-                {
-                    ft.addToBackStack("categoryproduct");
-                    ft.commit();
+                    fragment.setArguments(bundle);
+                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
+                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    if(fragmentManager.findFragmentByTag("categoryproduct")==null)
+                    {
+                        ft.addToBackStack("categoryproduct");
+                        ft.commit();
+                    }
+                    else
+                    {
+                        ft.commit();
+                    }
+
                 }
-                else
-                {
-                    ft.commit();
-                }
+
 
             }
         });

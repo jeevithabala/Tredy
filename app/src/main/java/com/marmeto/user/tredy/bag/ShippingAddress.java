@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -54,6 +55,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class ShippingAddress extends Fragment implements TextWatcher {
@@ -168,6 +170,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 //                    b_state = s_state;
 //                    b_country = s_country;
 //                    b_pincode = s_pincode;
+
 //
 //
 //                    billing_door_street_input.setText(b_area);
@@ -176,6 +179,25 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 //                    billing_country.setText(b_country);
 //                    billing_pin.setText(b_pincode);
 
+                    bfirstnamestring = firstnamestring;
+                    blastnamestring = "";
+                    b_area = "";
+                    b_city = "";
+                    b_state = "";
+                    b_country = "";
+                    b_pincode = "";
+                    b_mobile = "";
+                    b_email = "";
+
+                    billing_door_street_input.setText("");
+                    billing_city.setText("");
+                    billing_state.setText("");
+                    billing_country.setText("");
+                    billing_pin.setText("");
+                    bfirst_name.setText("");
+                    blast_name.setText("");
+                    b_mobilenumber.setText("");
+                    billing_email.setText("");
 
                     layout_same.setVisibility(View.GONE);
                 } else {
@@ -199,38 +221,47 @@ public class ShippingAddress extends Fragment implements TextWatcher {
             @Override
             public void onClick(View view) {
                 if (same.isChecked()) {
-                    firstnamestring = first_name.getText().toString().trim();
-                    lastnamestring = last_name.getText().toString().trim();
-                    s_area = shipping_door_street_input.getText().toString();
-                    s_city = shipping_city_input.getText().toString();
-                    s_state = shipping_state_input.getText().toString();
-                    s_country = shipping_country_input.getText().toString();
-                    s_pincode = shipping_pin_input.getText().toString();
-                    s_mobile = mobilenumber.getText().toString();
-                    emailstring = email.getText().toString();
-
-                    if (s_mobile.contains("+91")) {
-                        s_mobile = s_mobile.substring(3, 13);
-                    }
+//                    firstnamestring = first_name.getText().toString().trim();
+//                    lastnamestring = last_name.getText().toString().trim();
+//                    s_area = shipping_door_street_input.getText().toString();
+//                    s_city = shipping_city_input.getText().toString();
+//                    s_state = shipping_state_input.getText().toString();
+//                    s_country = shipping_country_input.getText().toString();
+//                    s_pincode = shipping_pin_input.getText().toString();
+//                    s_mobile = mobilenumber.getText().toString();
+//                    emailstring = email.getText().toString();
+//
+//                    if (s_mobile.contains("+91")) {
+//                        s_mobile = s_mobile.substring(3, 13);
+//                    }
+//                    bfirstnamestring = firstnamestring;
+//                    blastnamestring = lastnamestring;
+//                    b_area = s_area;
+//                    b_city = s_city;
+//                    b_state = s_state;
+//                    b_country = s_country;
+//                    b_pincode = s_pincode;
+//                    b_mobile = s_mobile;
+//                    b_email = emailstring;
+//
+//                    bfirst_name.setText(firstnamestring);
+//                    blast_name.setText(blastnamestring);
+//                    billing_door_street_input.setText(b_area);
+//                    billing_city.setText(b_city);
+//                    billing_state.setText(b_state);
+//                    billing_country.setText(b_country);
+//                    billing_pin.setText(b_pincode);
+//                    b_mobilenumber.setText(b_mobile);
+//                    billing_email.setText(b_email);
                     bfirstnamestring = firstnamestring;
-                    blastnamestring = lastnamestring;
-                    b_area = s_area;
-                    b_city = s_city;
-                    b_state = s_state;
-                    b_country = s_country;
-                    b_pincode = s_pincode;
-                    b_mobile = s_mobile;
-                    b_email = emailstring;
-
-                    bfirst_name.setText(firstnamestring);
-                    blast_name.setText(blastnamestring);
-                    billing_door_street_input.setText(b_area);
-                    billing_city.setText(b_city);
-                    billing_state.setText(b_state);
-                    billing_country.setText(b_country);
-                    billing_pin.setText(b_pincode);
-                    b_mobilenumber.setText(b_mobile);
-                    billing_email.setText(b_email);
+                    blastnamestring = "";
+                    b_area = "";
+                    b_city = "";
+                    b_state = "";
+                    b_country = "";
+                    b_pincode = "";
+                    b_mobile = "";
+                    b_email = "";
 
 
                     layout_same.setVisibility(View.GONE);
@@ -253,33 +284,31 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 bfirstnamestring = bfirst_name.getText().toString().trim();
                 blastnamestring = blast_name.getText().toString().trim();
                 b_email = billing_email.getText().toString().trim();
-                b_mobile=b_mobilenumber.getText().toString().trim();
+                b_mobile = b_mobilenumber.getText().toString().trim();
 
-                if (b_mobile.contains("+91")) {
-                    b_mobile = b_mobile.substring(3, 13);
+                if (b_mobile.trim().length() != 0) {
+                    if (b_mobile.contains("+91")) {
+                        b_mobile = b_mobile.substring(3, 13);
+                    }
                     b_mobilenumber.setText(b_mobile);
                 }
-                if (s_mobile.contains("+91")) {
-                    s_mobile = s_mobile.substring(3, 13);
-                    mobilenumber.setText(s_mobile);
+                if (s_mobile.trim().length() != 0) {
+                    if (s_mobile.contains("+91")) {
+                        s_mobile = s_mobile.substring(3, 13);
+                        mobilenumber.setText(s_mobile);
+                    }
                 }
 
                 if (s_pincode.trim().length() == 0) {
                     Config.Dialog("Please enter your shipping address pin-code", getActivity());
-                } else if (b_pincode.trim().length() == 0) {
-                    Config.Dialog("Please enter your billing address pin-code", getActivity());
                 } else if (emailstring.trim().length() == 0) {
                     Config.Dialog("Please enter your email", getActivity());
-                } else if (b_email.trim().length() == 0) {
-                    Config.Dialog("Please enter your  billing email", getActivity());
-                } else if (!Validationemail.isEmailAddress(email, true) && !Validationemail.isEmailAddress(billing_email, true)) {
+                } else if (!Validationemail.isEmailAddress(email, true)) {
                     Config.Dialog("Please enter your valid email", getActivity());
                 } else if (s_mobile.trim().length() == 0) {
                     Config.Dialog("Please enter your shipping phone number", getActivity());
-                } else if (b_mobile.trim().length() == 0) {
-                    Config.Dialog("Please enter your billing phone number", getActivity());
-                } else if (!Validationmobile.isPhoneNumber(mobilenumber, true) && !Validationmobile.isPhoneNumber(mobilenumber, true)) {
-                    Config.Dialog("Please enter your valid phone number", getActivity());
+                } else if (!Validationmobile.isPhoneNumber(mobilenumber, true)) {
+                    Config.Dialog("Please enter your valid shipping phone number", getActivity());
                 } else if (s_pincode.trim().length() < 6) {
                     Config.Dialog("Please enter your valid pin-code", getActivity());
                 } else if (firstnamestring.trim().length() == 0) {
@@ -290,14 +319,61 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     Config.Dialog("Please enter your shipping address door number & area", getActivity());
                 } else if (s_state.trim().length() == 0) {
                     Config.Dialog("Please enter your valid shipping address pin-code", getActivity());
-                } else if (bfirstnamestring.trim().length() == 0) {
-                    Config.Dialog("Please enter your billing address first name", getActivity());
-                } else if (blastnamestring.trim().length() == 0) {
-                    Config.Dialog("Please enter your billing address last name", getActivity());
-                } else if (b_area.trim().length() == 0) {
-                    Config.Dialog("Please enter your billing address door number & area", getActivity());
-                } else if (b_country.trim().length() == 0) {
-                    Config.Dialog("Please enter your valid billing address pin-code", getActivity());
+                } else if (!same.isChecked()) {
+                    if (b_pincode.trim().length() == 0) {
+                        Config.Dialog("Please enter your billing address pin-code", getActivity());
+                    } else if (b_pincode.trim().length() < 0) {
+                        Config.Dialog("Please enter your valid billing address pin-code", getActivity());
+                    } else if (b_mobile.trim().length() == 0) {
+                        Config.Dialog("Please enter your billing phone number", getActivity());
+                    } else if (!Validationmobile.isPhoneNumber(b_mobilenumber, true)) {
+                        Config.Dialog("Please enter your valid billing phone number", getActivity());
+                    } else if (bfirstnamestring.trim().length() == 0) {
+                        Config.Dialog("Please enter your billing address first name", getActivity());
+                    } else if (blastnamestring.trim().length() == 0) {
+                        Config.Dialog("Please enter your billing address last name", getActivity());
+                    } else if (b_area.trim().length() == 0) {
+                        Config.Dialog("Please enter your billing address door number & area", getActivity());
+                    } else if (b_email.trim().length() == 0) {
+                        Config.Dialog("Please enter your  billing email", getActivity());
+                    } else if (!Validationemail.isEmailAddress(billing_email, true)) {
+                        Config.Dialog("Please enter your valid billing email", getActivity());
+
+                    } else {
+                        if (block.equals("false")) {
+                            Intent intent = new Intent(getActivity(), PayUMoneyActivity.class);
+                            intent.putExtra("firstname", firstnamestring);
+                            intent.putExtra("lastname", lastnamestring);
+                            intent.putExtra("email", emailstring);
+                            intent.putExtra("s_area", s_area);
+                            intent.putExtra("s_city", s_city);
+                            intent.putExtra("s_state", s_state);
+                            intent.putExtra("s_country", s_country);
+                            intent.putExtra("s_pincode", s_pincode);
+                            intent.putExtra("s_mobile", s_mobile);
+
+//
+                            intent.putExtra("bfirstname", bfirstnamestring);
+                            intent.putExtra("blastname", blastnamestring);
+                            intent.putExtra("b_pincode", b_pincode);
+                            intent.putExtra("b_area", b_area);
+                            intent.putExtra("b_state", b_state);
+                            intent.putExtra("b_city", b_city);
+                            intent.putExtra("b_country", b_country);
+                            intent.putExtra("remove_cod", remove_cod);
+                            intent.putExtra("product_varientid", product_varientid);
+                            intent.putExtra("product_qty", product_qty);
+                            intent.putExtra("totalcost", " " + totalcost);
+                            intent.putExtra("tag", tag);
+                            intent.putExtra("b_mobile", b_mobile);
+                            intent.putExtra("b_email", b_email);
+                            startActivity(intent);
+                        } else {
+                            payment_section.setEnabled(false);
+                            layout_placing.findFocus();
+                        }
+                    }
+
                 } else {
                     if (block.equals("false")) {
                         Intent intent = new Intent(getActivity(), PayUMoneyActivity.class);
@@ -309,7 +385,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         intent.putExtra("s_state", s_state);
                         intent.putExtra("s_country", s_country);
                         intent.putExtra("s_pincode", s_pincode);
-                        intent.putExtra("s_mobile",s_mobile);
+                        intent.putExtra("s_mobile", s_mobile);
 
 //
                         intent.putExtra("bfirstname", bfirstnamestring);
@@ -324,8 +400,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         intent.putExtra("product_qty", product_qty);
                         intent.putExtra("totalcost", " " + totalcost);
                         intent.putExtra("tag", tag);
-                        intent.putExtra("b_mobile",b_mobile);
-                        intent.putExtra("b_email",b_email);
+                        intent.putExtra("b_mobile", b_mobile);
+                        intent.putExtra("b_email", b_email);
                         startActivity(intent);
                     } else {
                         payment_section.setEnabled(false);
@@ -515,90 +591,95 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         block = "false";
         productlist.clear();
         cartList.clear();
-        DBHelper db = new DBHelper(getActivity());
-        cartList = db.getCartList();
-        for (int i = 0; i < cartList.size(); i++) {
-            String tag = cartList.get(i).getTag();
-            Log.e("tag", "" + cartList.get(i).getTag());
-            if (tag.trim().toLowerCase().contains("remove_cod")) {
-                remove_cod = "remove_cod";
-            }
-            String tagcheck = "EXCLUDES:" + state;
-            String exclude = "EXCLUDES";
-            String include = "INCLUDES";
-            String includecheck = "INCLUDES:" + state;
-            if (tag.toLowerCase().contains(exclude.toLowerCase())) {
+        if(getActivity()!=null){
+            DBHelper db = new DBHelper(getActivity());
+            cartList = db.getCartList();
+        }
 
-                getInclude.clear();
-                productlist.add(cartList.get(i).getProduct_varient_id().trim());
-
-
-                String[] items1 = tag.split(",");
-                for (String item : items1) {
-                    getInclude.add(item);
+        if (cartList.size() > 0) {
+            for (int i = 0; i < cartList.size(); i++) {
+                String tag = cartList.get(i).getTag();
+                Log.e("tag", "" + cartList.get(i).getTag());
+                if (tag.trim().toLowerCase().contains("remove_cod")) {
+                    remove_cod = "remove_cod";
                 }
-                Log.d("getsize", String.valueOf(getInclude.size()));
-                for (int j = 0; j < getInclude.size(); j++) {
-                    if (getInclude.get(j).toLowerCase().contains(exclude.toLowerCase())) {
-                        String[] item = getInclude.get(j).split(":");
-                        exclude_state = item[1];
-                        Log.d("exclude_state", exclude_state);
+                String tagcheck = "EXCLUDES:" + state;
+                String exclude = "EXCLUDES";
+                String include = "INCLUDES";
+                String includecheck = "INCLUDES:" + state;
+                if (tag.toLowerCase().contains(exclude.toLowerCase())) {
+
+                    getInclude.clear();
+                    productlist.add(cartList.get(i).getProduct_varient_id().trim());
+
+
+                    String[] items1 = tag.split(",");
+                    for (String item : items1) {
+                        getInclude.add(item);
                     }
-                    Log.d("state", state.trim().toLowerCase());
-                    Log.d("exclude", " " + exclude_state.trim().toLowerCase());
-                    String excludespace = exclude_state.replace(" ", "");
-                    String statespace = state.replace(" ", "");
+                    Log.d("getsize", String.valueOf(getInclude.size()));
+                    for (int j = 0; j < getInclude.size(); j++) {
+                        if (getInclude.get(j).toLowerCase().contains(exclude.toLowerCase())) {
+                            String[] item = getInclude.get(j).split(":");
+                            exclude_state = item[1];
+                            Log.d("exclude_state", exclude_state);
+                        }
+                        Log.d("state", state.trim().toLowerCase());
+                        Log.d("exclude", " " + exclude_state.trim().toLowerCase());
+                        String excludespace = exclude_state.replace(" ", "");
+                        String statespace = state.replace(" ", "");
 //                if (tag.toLowerCase().contains(tagcheck.toLowerCase())) {
-                    if (excludespace.trim().toLowerCase().contains(statespace.trim().toLowerCase())) {
-                        block = "true";
-                        commanCartControler.UpdateShipping(cartList.get(i).getProduct_varient_id().trim(), "false");
-                        layout_placing.setVisibility(View.VISIBLE);
-                        //placing.setText("Few of the products in your cart cannot be shipped to your given " + state + ".");
-                        placing1.setText(getResources().getText(R.string.link));
-                    } else {
-                        Log.e("tag", "not there");
-                        layout_placing.setVisibility(View.GONE);
+                        if (excludespace.trim().toLowerCase().contains(statespace.trim().toLowerCase())) {
+                            block = "true";
+                            commanCartControler.UpdateShipping(cartList.get(i).getProduct_varient_id().trim(), "false");
+                            layout_placing.setVisibility(View.VISIBLE);
+                            //placing.setText("Few of the products in your cart cannot be shipped to your given " + state + ".");
+                            placing1.setText(getResources().getText(R.string.link));
+                        } else {
+                            Log.e("tag", "not there");
+                            layout_placing.setVisibility(View.GONE);
+                        }
                     }
-                }
 
-            }
-            if (tag.toLowerCase().contains(include.toLowerCase())) {
+                }
+                if (tag.toLowerCase().contains(include.toLowerCase())) {
 
 //                productlist.add(cartList.get(i).getProduct_varient_id());
-                getInclude.clear();
-                productlist.add(cartList.get(i).getProduct_varient_id().trim());
+                    getInclude.clear();
+                    productlist.add(cartList.get(i).getProduct_varient_id().trim());
 
-                String[] items = tag.split(",");
-                for (String item : items) {
-                    getInclude.add(item);
-                }
-                for (int j = 0; j < getInclude.size(); j++) {
-                    if (getInclude.get(j).toLowerCase().contains(include.toLowerCase())) {
-                        String[] item = getInclude.get(j).split(":");
-                        include_state = item[1];
-                        Log.d("include_state", include_state);
+                    String[] items = tag.split(",");
+                    for (String item : items) {
+                        getInclude.add(item);
+                    }
+                    for (int j = 0; j < getInclude.size(); j++) {
+                        if (getInclude.get(j).toLowerCase().contains(include.toLowerCase())) {
+                            String[] item = getInclude.get(j).split(":");
+                            include_state = item[1];
+                            Log.d("include_state", include_state);
+                        }
+
+                    }
+                    String excludespace = include_state.replace(" ", "");
+                    String statespace = state.replace(" ", "");
+
+//                    if (tag.toLowerCase().contains(includecheck.toLowerCase())) {
+                    if (excludespace.trim().toLowerCase().contains(statespace.trim().toLowerCase())) {
+                        layout_placing.setVisibility(View.GONE);
+
+                    } else {
+                        block = "true";
+                        commanCartControler.UpdateShipping(cartList.get(i).getProduct_varient_id().trim(), "false");
+//                    cartList.get(i).setShip("false");
+                        layout_placing.setVisibility(View.VISIBLE);
+                        placing.setText("Few of the products in your cart cannot be shipped to your given " + state + "." + " Few Products can be Shipped only in" + " " + include_state + ".");
+                        placing1.setText(R.string.link);
                     }
 
                 }
-                String excludespace = include_state.replace(" ", "");
-                String statespace = state.replace(" ", "");
 
-//                    if (tag.toLowerCase().contains(includecheck.toLowerCase())) {
-                if (excludespace.trim().toLowerCase().contains(statespace.trim().toLowerCase())) {
-                    layout_placing.setVisibility(View.GONE);
-
-                } else {
-                    block = "true";
-                    commanCartControler.UpdateShipping(cartList.get(i).getProduct_varient_id().trim(), "false");
-//                    cartList.get(i).setShip("false");
-                    layout_placing.setVisibility(View.VISIBLE);
-                    placing.setText("Few of the products in your cart cannot be shipped to your given " + state + "." + " Few Products can be Shipped only in" + " " + include_state + ".");
-                    placing1.setText(R.string.link);
-                }
 
             }
-
-
         }
 //        }
 //        else {
@@ -714,7 +795,6 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 
             @Override
             public void onFailure(@NonNull GraphError error) {
-                Log.e("TAG", "Failed to execute query", error);
             }
         });
     }
@@ -736,6 +816,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                             JSONObject object1 = object.getJSONObject("default_address");
                             String address1 = object1.getString("address1");
                             String pincode = object1.getString("zip");
+                            String phone=object1.getString("phone");
                             Log.e("pincodeeee", " " + pincode);
                             if (pincode != null) {
                                 if (pincode.trim().length() != 0) {
@@ -744,6 +825,11 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 
                                     }
                                     shipping_pin_input.setText(pincode);
+                                }
+                            }
+                            if(phone!=null) {
+                                if (phone.trim().length() != 0) {
+                                    mobilenumber.setText(phone);
                                 }
                             }
 
@@ -768,5 +854,6 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         mRequestQueue.add(stringRequest);
 
     }
+
 
 }

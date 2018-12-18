@@ -36,6 +36,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.marmeto.user.tredy.Navigation;
+import com.marmeto.user.tredy.bag.PayUMoneyActivity;
 import com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model;
 import com.marmeto.user.tredy.bag.cartdatabase.DBHelper;
 import com.marmeto.user.tredy.bag.OrderDetailModel;
@@ -83,10 +85,11 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
     String html, encVal, transaction_id;
     int MyDeviceAPI;
     String emailstring, totalamount, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "", product_varientid, product_qty, discounted_price, discount_coupon;
-    String finalhtml = " ", b_phone="";
+    String finalhtml = " ", b_phone = "";
     int costtotal = 0;
     private int buynow = 0;
     OrderDetailModel model;
+    boolean orderonce = true;
 
     /**
      * Async task class to get json by making HTTP call
@@ -134,17 +137,22 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                         } else if (html.indexOf("Success") != -1) {
                             status = "Transaction Successful!";
                             finalhtml = html;
-                            getData();
+                            if (orderonce == true) {
+                                getData();
+                            }
                         } else if (html.indexOf("Aborted") != -1) {
                             status = "Transaction Cancelled!";
                         } else {
                             status = "Status Not Known!";
                         }
-                        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
-
-//                        Intent intent = new Intent(getApplicationContext(), StatusActivity.class);
-//                        intent.putExtra("transStatus", status);
-//                        startActivity(intent);
+//                        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
+                        if (!status.equals("Transaction Successful!")) {
+                            Intent intent = new Intent(getApplicationContext(), StatusActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra("transStatus", status);
+                            startActivity(intent);
+                            finish();
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.v("Logs", "-------------- Error : " + e);
@@ -206,23 +214,32 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
 
             try {
                 String postData = AvenuesParams.ACCESS_CODE + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.ACCESS_CODE), "UTF-8") + "&" + AvenuesParams.MERCHANT_ID + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.MERCHANT_ID), "UTF-8") + "&" + AvenuesParams.ORDER_ID + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.ORDER_ID), "UTF-8") + "&" + AvenuesParams.REDIRECT_URL + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.REDIRECT_URL), "UTF-8") + "&" + AvenuesParams.CANCEL_URL + "=" + URLEncoder.encode(mainIntent.getStringExtra(AvenuesParams.CANCEL_URL), "UTF-8") + "&" + AvenuesParams.ENC_VAL + "=" + URLEncoder.encode(encVal, "UTF-8")
-                        + "&" + AvenuesParams.BILLING_NAME + "=" + URLEncoder.encode(model.getBfirstname(), "UTF-8")
-                        + "&" + AvenuesParams.BILLING_ADDRESS + "=" + URLEncoder.encode(model.getB_address1(), "UTF-8")
-                        + "&" + AvenuesParams.BILLING_CITY + "=" + URLEncoder.encode(model.getB_city(), "UTF-8")
-                        + "&" + AvenuesParams.BILLING_STATE + "=" + URLEncoder.encode(model.getB_state(), "UTF-8")
-                        + "&" + AvenuesParams.BILLING_ZIP + "=" + URLEncoder.encode(model.getB_zip(), "UTF-8")
-                        + "&" + AvenuesParams.BILLING_COUNTRY + "=" + URLEncoder.encode(model.getB_country(), "UTF-8")
-                        + "&" + AvenuesParams.BILLING_EMAIL + "=" + URLEncoder.encode(model.getB_email(), "UTF-8")
-                        + "&" + AvenuesParams.BILLING_MOBILENUMBER + "=" + URLEncoder.encode(model.getB_mobile(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_NAME + "=" + URLEncoder.encode(model.getFirstname(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_ADDRESS + "=" + URLEncoder.encode(model.getAddress1(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_CITY + "=" + URLEncoder.encode(model.getCity(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_STATE + "=" + URLEncoder.encode(model.getState(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_ZIP + "=" + URLEncoder.encode(model.getZip(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_COUNTRY + "=" + URLEncoder.encode(model.getCountry(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_EMAIL + "=" + URLEncoder.encode(model.getEmailstring(), "UTF-8")
+                        + "&" + AvenuesParams.BILLING_MOBILENUMBER + "=" + URLEncoder.encode(model.getS_mobile(), "UTF-8")
 
-                        + "&" + AvenuesParams.DELIVERY_NAME + "=" + URLEncoder.encode(model.getFirstname(), "UTF-8")
-                        + "&" + AvenuesParams.DELIVERY_ADDRESS + "=" + URLEncoder.encode(model.getAddress1(), "UTF-8")
-                        + "&" + AvenuesParams.DELIVERY_CITY + "=" + URLEncoder.encode(model.getCity(), "UTF-8")
-                        + "&" + AvenuesParams.DELIVERY_STATE + "=" + URLEncoder.encode(model.getState(), "UTF-8")
-                        + "&" + AvenuesParams.DELIVERY_ZIP + "=" + URLEncoder.encode(model.getZip(), "UTF-8")
-                        + "&" + AvenuesParams.DELIVERY_COUNTRY + "=" + URLEncoder.encode(model.getCountry(), "UTF-8")
-                        + "&" + AvenuesParams.DELIVERY_EMAIL + "=" + URLEncoder.encode(model.getEmailstring(), "UTF-8")
-                        + "&" + AvenuesParams.DELIVERY_MOBILENUMBER + "=" + URLEncoder.encode(model.getS_mobile(), "UTF-8");
+                        + "&" + AvenuesParams.DELIVERY_NAME + "=" + URLEncoder.encode(model.getBfirstname(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_ADDRESS + "=" + URLEncoder.encode(model.getB_address1(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_CITY + "=" + URLEncoder.encode(model.getB_city(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_STATE + "=" + URLEncoder.encode(model.getB_state(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_ZIP + "=" + URLEncoder.encode(model.getB_zip(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_COUNTRY + "=" + URLEncoder.encode(model.getB_country(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_EMAIL + "=" + URLEncoder.encode(model.getB_email(), "UTF-8")
+                        + "&" + AvenuesParams.DELIVERY_MOBILENUMBER + "=" + URLEncoder.encode(model.getB_mobile(), "UTF-8");
+//
+//                + "&" + AvenuesParams.BILLING_NAME + "=" + URLEncoder.encode(model.getBfirstname(), "UTF-8")
+//                        + "&" + AvenuesParams.BILLING_ADDRESS + "=" + URLEncoder.encode(model.getB_address1(), "UTF-8")
+//                        + "&" + AvenuesParams.BILLING_CITY + "=" + URLEncoder.encode(model.getB_city(), "UTF-8")
+//                        + "&" + AvenuesParams.BILLING_STATE + "=" + URLEncoder.encode(model.getB_state(), "UTF-8")
+//                        + "&" + AvenuesParams.BILLING_ZIP + "=" + URLEncoder.encode(model.getB_zip(), "UTF-8")
+//                        + "&" + AvenuesParams.BILLING_COUNTRY + "=" + URLEncoder.encode(model.getB_country(), "UTF-8")
+//                        + "&" + AvenuesParams.BILLING_EMAIL + "=" + URLEncoder.encode(model.getB_email(), "UTF-8")
+//                        + "&" + AvenuesParams.BILLING_MOBILENUMBER + "=" + URLEncoder.encode(model.getB_mobile(), "UTF-8")
 
 
                 myBrowser.postUrl(Constants.TRANS_URL, postData.getBytes());
@@ -864,7 +881,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
     }
 
     public void getData() {
-
+        orderonce = false;
 
         String[] separated = finalhtml.split("<td>");
         transaction_id = separated[6];
@@ -905,7 +922,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
         if (product_varientid == null) {
             product_varientid = " ";
         }
-        b_phone=detail.getB_mobile();
+        b_phone = detail.getB_mobile();
         db = new DBHelper(this);
         cartlist = db.getCartList();
         postOrder();
@@ -964,7 +981,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
             JSONObject notes = new JSONObject();
 
             notes.put("name", "ccavenue");
-            notes.put("value", "78233011");
+            notes.put("value", transaction_id);
 
             note.put(notes);
             jsonBody.put("note_attributes", note);
@@ -996,11 +1013,12 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
             JSONArray cost = new JSONArray();
             JSONObject costobject = new JSONObject();
 
-            String kind_transaction = "online";
+            String kind_transaction = "sale";
 
             costobject.put("kind", kind_transaction);
             costobject.put("status", "success");
             costobject.put("amount", costtotal);
+            costobject.put("gateway", "ccavenue");
 
             cost.put(costobject);
             jsonBody.put("transactions", cost);
@@ -1036,7 +1054,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                             if (buynow != 1) {
                                 db.deleteCart(getApplicationContext());
                             }
-                            Config.Dialog("Your Order Placed Sucessfully", WebViewActivity.this);
+                            Dialog("Your Order Placed Successfully");
 
                         }
 
@@ -1080,6 +1098,32 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void Dialog(String poptext) {
+
+
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(WebViewActivity.this, R.style.AlertDialogStyle);
+        builder.setTitle("Success");
+        builder.setMessage(poptext)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.dismiss();
+
+                        Intent i = new Intent(WebViewActivity.this, Navigation.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                        finish();
+                    }
+                });
+        android.support.v7.app.AlertDialog alert = builder.create();
+        alert.show();
+
+        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+
+
     }
 
 

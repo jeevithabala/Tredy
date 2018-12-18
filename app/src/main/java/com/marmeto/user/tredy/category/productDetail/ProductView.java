@@ -413,11 +413,11 @@ public class ProductView extends Fragment implements ProductClickInterface {
             recyclerView.setAdapter(adapter);
 
 
-            Log.e("product sku", "" + itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeightUnit());
+//            Log.e("product sku", "" + itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeightUnit());
 
             for (int i = 0; i < itemModel.getProduct().getImages().getEdges().size(); i++) {
-                Log.e("siii", String.valueOf(itemModel.getProduct().getImages().getEdges().get(i).getNode().getSrc()));
-                Log.e("siii1", String.valueOf(itemModel.getProduct().getImages().getEdges().size()));
+//                Log.e("siii", String.valueOf(itemModel.getProduct().getImages().getEdges().get(i).getNode().getSrc()));
+//                Log.e("siii1", String.valueOf(itemModel.getProduct().getImages().getEdges().size()));
                 itemsList.add(itemModel.getProduct().getImages().getEdges().get(i).getNode());
 //            adapter.notifyDataSetChanged();
             }
