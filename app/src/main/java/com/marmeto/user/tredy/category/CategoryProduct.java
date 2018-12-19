@@ -25,7 +25,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.marmeto.user.tredy.BuildConfig;
+import com.marmeto.user.tredy.category.model.CategoryModel;
+import com.marmeto.user.tredy.category.model.ProductModel;
 import com.marmeto.user.tredy.category.productDetail.ProductView;
 import com.marmeto.user.tredy.filter.Filter_Fragment;
 import com.marmeto.user.tredy.foryou.allcollection.AllCollectionModel;
@@ -81,7 +84,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     String productid = "", productidapi = "", price = "";
     String checkoutId;
     TextView category_title;
-    TextView view1,grid, subcategory, filter;
+    TextView view1, grid, subcategory, filter;
     TextView sublistname, all;
     public static int i = 0;
     public static boolean isViewWithCatalog = true;
@@ -145,6 +148,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     public void onResume() {
         super.onResume();
 
+
         String category = getArguments().getString("collection");
         Log.e("categorycheck", category);
         if (category.trim().equals("topselling")) {
@@ -161,12 +165,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             Log.e("iud", detail.getId());
             id = detail.getId().trim();
             title = detail.getCollectiontitle();
-        }else if(category.trim().equals("allproduct")){
-           id = "349437318";
+        } else if (category.trim().equals("allproduct")) {
+            id = "349437318";
 //            String text = "gid://shopify/Collection/" + id1.trim();
 //            String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
 //            id=converted.trim();
-            title="All Products";
+            title = "All Products";
         } else if (category.trim().equals("allcollection")) {
             AllCollectionModel allCollectionModel = (AllCollectionModel) getArguments().getSerializable("category_id");
             id = allCollectionModel.getId().trim();
@@ -193,6 +197,13 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
         category_title.setText(title);
         SharedPreference.saveData("collectionid", id, getActivity());
+
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
+
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, id);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, title);
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
 //        if (isFilterData=true) {
 //            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -648,7 +659,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 break;
 
             case R.id.list:
-                isViewWithCatalog=true;
+                isViewWithCatalog = true;
 //                isViewWithCatalog = !isViewWithCatalog;
                 LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
                 recyclerView.setLayoutManager(layoutManager1);
@@ -660,7 +671,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 break;
 
             case R.id.grid:
-                isViewWithCatalog=false;
+                isViewWithCatalog = false;
 //                isViewWithCatalog = !isViewWithCatalog;
                 LinearLayoutManager layoutManager2 = new GridLayoutManager(getApplicationContext(), 2, LinearLayoutManager.VERTICAL, false);
                 recyclerView.setLayoutManager(layoutManager2);

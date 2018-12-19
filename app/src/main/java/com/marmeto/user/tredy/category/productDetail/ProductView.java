@@ -35,7 +35,7 @@ import android.widget.Toast;
 import com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model;
 import com.marmeto.user.tredy.bag.ShippingAddress;
 import com.marmeto.user.tredy.BuildConfig;
-import com.marmeto.user.tredy.category.ProductModel;
+import com.marmeto.user.tredy.category.model.ProductModel;
 import com.marmeto.user.tredy.foryou.groceryhome.GroceryHomeModel;
 import com.marmeto.user.tredy.foryou.newarrival.NewArrivalModel;
 import com.marmeto.user.tredy.foryou.topcollection.TopCollectionModel;

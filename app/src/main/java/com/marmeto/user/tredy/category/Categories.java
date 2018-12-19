@@ -1,6 +1,5 @@
 package com.marmeto.user.tredy.category;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +30,8 @@ import com.android.volley.toolbox.Volley;
 import com.marmeto.user.tredy.BuildConfig;
 import com.marmeto.user.tredy.Navigation;
 import com.marmeto.user.tredy.R;
+import com.marmeto.user.tredy.category.model.CategoryModel;
+import com.marmeto.user.tredy.category.model.SubCategoryModel;
 import com.marmeto.user.tredy.util.Constants;
 import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;

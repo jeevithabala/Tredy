@@ -7,7 +7,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.android.databinding.library.baseAdapters.BR;
-import com.marmeto.user.tredy.category.ProductModel;
+import com.marmeto.user.tredy.category.model.ProductModel;
 import com.shopify.buy3.Storefront;
 
 public class SelectItemModel extends BaseObservable {

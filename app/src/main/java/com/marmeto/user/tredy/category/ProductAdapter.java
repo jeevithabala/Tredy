@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.android.databinding.library.baseAdapters.BR;
 import com.marmeto.user.tredy.callback.ProductClickInterface;
 import com.marmeto.user.tredy.R;
+import com.marmeto.user.tredy.category.model.ProductModel;
 import com.marmeto.user.tredy.databinding.ProductAdapterBinding;
 import com.marmeto.user.tredy.databinding.ProductBinding;
 

@@ -19,6 +19,8 @@ import android.widget.Toolbar;
 import com.android.volley.RequestQueue;
 import com.marmeto.user.tredy.BuildConfig;
 import com.marmeto.user.tredy.R;
+import com.marmeto.user.tredy.category.model.CategoryModel;
+import com.marmeto.user.tredy.category.model.SubCategoryModel;
 import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.HttpCachePolicy;
 

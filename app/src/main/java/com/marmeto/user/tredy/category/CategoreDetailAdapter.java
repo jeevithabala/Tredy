@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.marmeto.user.tredy.category.model.CategoryModel;
+import com.marmeto.user.tredy.category.model.SubCategoryModel;
 import com.marmeto.user.tredy.groceries.Groceries;
 import com.marmeto.user.tredy.callback.FragmentRecyclerViewClick;
 import com.marmeto.user.tredy.R;

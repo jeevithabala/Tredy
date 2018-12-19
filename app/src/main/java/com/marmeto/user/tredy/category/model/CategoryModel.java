@@ -1,4 +1,4 @@
-package com.marmeto.user.tredy.category;
+package com.marmeto.user.tredy.category.model;
 
 import android.databinding.BaseObservable;
 import android.databinding.BindingAdapter;

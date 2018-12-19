@@ -42,8 +42,9 @@ android {
                 checkReleaseBuilds false
                 abortOnError false
             }
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            shrinkResources true
         }
     }
     compileOptions {
