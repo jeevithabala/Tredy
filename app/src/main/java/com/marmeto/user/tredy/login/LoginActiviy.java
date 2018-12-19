@@ -339,9 +339,9 @@ public class LoginActiviy extends AppCompatActivity implements
         String login = SharedPreference.getData("login", getApplicationContext());
 //
         if (login.equals("true")) {
+            SharedPreference.saveData("update", "false", getApplicationContext());
             Intent i = new Intent(getApplicationContext(), Navigation.class);
             startActivity(i);
-
             finish();
         }
     }
@@ -519,7 +519,7 @@ public class LoginActiviy extends AppCompatActivity implements
                     Log.e("tokenresponse", response);
                     try {
                         JSONObject obj = new JSONObject(response);
-
+                        SharedPreference.saveData("update", "false", getApplicationContext());
                         Intent i = new Intent(getApplicationContext(), Navigation.class);
                         SharedPreference.saveData("login", "true", getApplicationContext());
                         startActivity(i);
@@ -627,6 +627,11 @@ public class LoginActiviy extends AppCompatActivity implements
         });
 
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
 

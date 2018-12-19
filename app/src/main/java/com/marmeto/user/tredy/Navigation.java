@@ -44,6 +44,7 @@ import com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model;
 import com.marmeto.user.tredy.bag.cartdatabase.DBHelper;
 import com.marmeto.user.tredy.category.Categories;
 import com.marmeto.user.tredy.category.CategoryProduct;
+import com.marmeto.user.tredy.ccavenue.WebViewActivity;
 import com.marmeto.user.tredy.foryou.ForYou;
 import com.marmeto.user.tredy.callback.AddRemoveCartItem;
 import com.marmeto.user.tredy.callback.OnFilterDataCallBack;
@@ -93,6 +94,7 @@ public class Navigation extends AppCompatActivity
     private List<AddToCart_Model> cartList = new ArrayList<>();
     private GoogleApiClient mGoogleApiClient;
     Toolbar toolbar;
+    Boolean update = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +209,17 @@ public class Navigation extends AppCompatActivity
         // Start service and provide it a way to communicate with this class.
         Intent startServiceIntent = new Intent(this, NetworkSchedulerService.class);
         startService(startServiceIntent);
+
+        if (getIntent() != null) {
+            String message = getIntent().getStringExtra("message");
+            if (message != null && message.trim().length() > 0) {
+                SharedPreference.saveData("update", "true", getApplicationContext());
+                if (message.contains("Transaction Successful!")) {
+                    message = "Your Order Placed Successfully";
+                }
+                Dialog(message);
+            }
+        }
 
     }
 
@@ -607,23 +620,27 @@ public class Navigation extends AppCompatActivity
 
     @Override
     public void onUpdateNeeded(final String updateUrl) {
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("New version available")
-                .setMessage("Please, update app to new version to continue reposting.")
-                .setPositiveButton("Update",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                redirectStore(updateUrl);
-                            }
-                        }).setNegativeButton("No, thanks",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                               dialog.dismiss();
-                            }
-                        }).create();
-        dialog.show();
+       String update= SharedPreference.getData("update",getApplicationContext());
+       if(update.equals("false")) {
+           SharedPreference.saveData("update", "true", getApplicationContext());
+           AlertDialog dialog = new AlertDialog.Builder(this)
+                   .setTitle("New version available")
+                   .setMessage("Please, update app to new version to continue reposting.")
+                   .setPositiveButton("Update",
+                           new DialogInterface.OnClickListener() {
+                               @Override
+                               public void onClick(DialogInterface dialog, int which) {
+                                   redirectStore(updateUrl);
+                               }
+                           }).setNegativeButton("No, thanks",
+                           new DialogInterface.OnClickListener() {
+                               @Override
+                               public void onClick(DialogInterface dialog, int which) {
+                                   dialog.dismiss();
+                               }
+                           }).create();
+           dialog.show();
+       }
     }
 
     private void redirectStore(String updateUrl) {
@@ -632,4 +649,29 @@ public class Navigation extends AppCompatActivity
         startActivity(intent);
     }
 
+    public void Dialog(String poptext) {
+
+
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(Navigation.this, R.style.AlertDialogStyle);
+        builder.setTitle("Status");
+        builder.setMessage(poptext)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        getIntent().removeExtra("message");
+                        dialog.dismiss();
+                    }
+                });
+        android.support.v7.app.AlertDialog alert = builder.create();
+        alert.show();
+
+        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SharedPreference.saveData("update", "false", getApplicationContext());
+    }
 }

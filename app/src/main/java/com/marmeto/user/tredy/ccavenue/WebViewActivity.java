@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
@@ -145,13 +146,24 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                         } else {
                             status = "Status Not Known!";
                         }
+//                        setResult(203);
+//                        finish();
 //                        Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
+//                        if (!status.equals("Transaction Successful!")) {
+//                            Intent intent = new Intent(getApplicationContext(), StatusActivity.class);
+//                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                            intent.putExtra("transStatus", status);
+//                            startActivity(intent);
+//                            finish();
+//
+
                         if (!status.equals("Transaction Successful!")) {
-                            Intent intent = new Intent(getApplicationContext(), StatusActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            intent.putExtra("transStatus", status);
-                            startActivity(intent);
-                            finish();
+                            Intent i = new Intent(WebViewActivity.this, Navigation.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            i.putExtra("message", status);
+                            startActivity(i);
+//                            finish();
+
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -208,7 +220,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                 @Override
                 public void onPageStarted(WebView view, String url, Bitmap favicon) {
                     super.onPageStarted(view, url, favicon);
-//                    LoadingDialog.showLoadingDialog(WebViewActivity.this, "Loading...");
+                    LoadingDialog.showLoadingDialog(WebViewActivity.this, "Loading...");
                 }
             });
 
@@ -1054,7 +1066,11 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                             if (buynow != 1) {
                                 db.deleteCart(getApplicationContext());
                             }
-                            Dialog("Your Order Placed Successfully");
+                            Intent i = new Intent(WebViewActivity.this, Navigation.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            i.putExtra("message", "Transaction Successful!");
+                            startActivity(i);
+//                            Dialog("Your Order Placed Successfully");
 
                         }
 
@@ -1111,7 +1127,6 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                     public void onClick(DialogInterface dialog, int id) {
 
                         dialog.dismiss();
-
                         Intent i = new Intent(WebViewActivity.this, Navigation.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(i);

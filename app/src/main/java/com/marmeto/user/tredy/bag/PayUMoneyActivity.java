@@ -106,7 +106,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay_umoney);
-
+        SharedPreference.saveData("update", "true", getApplicationContext());
         accessToken = SharedPreference.getData("accesstoken", PayUMoneyActivity.this);
 
         graphClient = GraphClient.builder(PayUMoneyActivity.this)
@@ -278,24 +278,6 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-//    private void discount() {
-//        if (i == 0) {
-//            coupon = discount.getText().toString();
-//            if (coupon.trim().length() != 0) {
-//                if (Integer.parseInt(totalamount) > 50) {
-//                    int a = Integer.parseInt(totalamount) - 50;
-//                    totalamount = String.valueOf(a);
-//
-//                    t_pay.setText(totalamount);
-//                    discount_price.setText("50");
-//                    discount_layout.setVisibility(View.VISIBLE);
-//                }
-//            }
-//            i = 1;
-//        }
-//
-//
-//    }
 
     protected void showCustomDialog1() {
         // TODO Auto-generated method stub
@@ -941,7 +923,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(PayUMoneyActivity.this, R.style.AlertDialogStyle);
-        builder.setTitle("Message");
+        builder.setTitle("Success");
         builder.setMessage(poptext)
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -963,5 +945,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        SharedPreference.saveData("update", "true", getApplicationContext());
+    }
 }
