@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.callback.AddRemoveCartItem;
 import com.shopify.buy3.Storefront;
 
@@ -84,7 +85,11 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_TAG, tag);
         values.put(COLUMN_SHIPPING, shipping);
         values.put(COLUMN_PRODUCT_ID, productid);
-        values.put(COLUMN_IMAGE_URL, listItem.getImage().getSrc());
+        if(listItem.getImage()==null){
+            values.put(COLUMN_IMAGE_URL, R.drawable.ic_placeholder);
+        }else {
+            values.put(COLUMN_IMAGE_URL, listItem.getImage().getSrc());
+        }
 
 //
 //        // Inserting Row

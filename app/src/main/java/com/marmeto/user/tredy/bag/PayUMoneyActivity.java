@@ -49,7 +49,6 @@ import com.marmeto.user.tredy.util.Constants;
 import com.marmeto.user.tredy.util.SharedPreference;
 import com.marmeto.user.tredy.utility.AvenuesParams;
 import com.marmeto.user.tredy.utility.ServiceUtility;
-import com.payumoney.core.PayUmoneySdkInitializer;
 import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.GraphError;
@@ -73,7 +72,6 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
     EditText emailedit, mobile, amountedit, discount;
     LinearLayout paynowbtn, recycler_layout;
-    private PayUmoneySdkInitializer.PaymentParam mPaymentParams;
     Button btnsubmit1, btncancel;
     RadioButton btnradonline, btnradcod;
     String emailstring, totalamount, coupon, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "";

@@ -455,7 +455,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                     weightunit = "g";
                 }
                 for (int j = 0; j < itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().size(); j++) {
-                    if (!itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue().trim().equals("0")) {
+                    if (!itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue().trim().equals("0")&&itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue()!=null) {
 //                    rbn.setText(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getWeight().toString() + " " + weightunit);
                         rbn.setText(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue());
                         rbn.setTag(itemModel.getProduct().getVariants().getEdges().get(i));

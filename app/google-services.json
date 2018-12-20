@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:971728730613:android:1d44b2ad1721c3b0",
+        "mobilesdk_app_id": "1:971728730613:android:3a3dc0ce10f88d04",
         "android_client_info": {
           "package_name": "com.marmeto.user.tredy"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "971728730613-p1nil46tj9go7v7drm9442jc3ljjgdr3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.marmeto.user.tredy",
+            "certificate_hash": "a7e16e3818d39adfa4958b56dd1892228841f0c3"
+          }
+        },
         {
           "client_id": "971728730613-gdiej5bia60npci8inki0g7mf45skb39.apps.googleusercontent.com",
           "client_type": 3
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "971728730613-gdiej5bia60npci8inki0g7mf45skb39.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

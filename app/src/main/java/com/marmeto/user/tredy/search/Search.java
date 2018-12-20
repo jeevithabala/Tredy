@@ -163,6 +163,7 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
         searchtext = s.trim();
         if (s.trim().length() == 0) {
             adapter.notifyDataSetChanged();
+
             if (searchlist.size() == 0) {
                 noproduct.setVisibility(View.VISIBLE);
             } else {
@@ -195,7 +196,7 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
 
         final String requestBody = jsonBody.toString();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.search + search + "?&page=" + count, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.search + search + "&page=" + count, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {

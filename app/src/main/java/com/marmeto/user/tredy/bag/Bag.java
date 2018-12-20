@@ -100,6 +100,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
             }
             cartList.clear();
             cartList = db.getCartList();
+
             Collections.reverse(cartList);
         }
 

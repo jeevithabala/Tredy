@@ -217,7 +217,7 @@ public class LoginActiviy extends AppCompatActivity implements
 
 
                                         } catch (JSONException e) {
-                                            e.printStackTrace();
+                                            Toast.makeText(LoginActiviy.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
@@ -238,9 +238,8 @@ public class LoginActiviy extends AppCompatActivity implements
 
                     @Override
                     public void onError(FacebookException exception) {
-                        System.out.println("onError");
-                        Log.v("LoginActivity", exception.getCause().toString());
-                    }
+                        Toast.makeText(LoginActiviy.this, " "+exception.getCause().toString(), Toast.LENGTH_SHORT).show();
+                        }
                 });
 
         signup.setOnClickListener(new View.OnClickListener() {
@@ -368,11 +367,13 @@ public class LoginActiviy extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int responseCode,
                                     Intent data) {
         super.onActivityResult(requestCode, responseCode, data);
-        callbackManager.onActivityResult(requestCode, responseCode, data);
 
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
+        }else {
+            callbackManager.onActivityResult(requestCode, responseCode, data);
+
         }
     }
 

@@ -18,4 +18,5 @@
     <color name="ntificationtextnuread">#000000</color>
     <color name="common_red">#f4121e</color>
     <color name="common_yellow">#c6bf42</color>
+    <color name="red">#f4121e</color>
 </resources>
