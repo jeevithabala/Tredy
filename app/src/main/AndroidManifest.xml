@@ -62,6 +62,7 @@
         </activity>
         <activity
             android:name="com.marmeto.user.tredy.Navigation"
+            android:windowSoftInputMode="stateHidden"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

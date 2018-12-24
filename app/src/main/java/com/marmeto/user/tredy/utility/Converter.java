@@ -19,7 +19,7 @@ public class Converter {
     public static Drawable convertLayoutToImage(Context mContext, int count, int drawableId) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.badge_icon_layout, null);
-        ((ImageView)view.findViewById(R.id.icon_badge)).setImageResource(drawableId);
+        ((ImageView) view.findViewById(R.id.icon_badge)).setImageResource(drawableId);
 
         Animation animate = AnimationUtils.loadAnimation(mContext, R.anim.bounce);
 
@@ -28,10 +28,12 @@ public class Converter {
             counterTextPanel.setVisibility(View.GONE);
         } else {
             TextView textView = (TextView) view.findViewById(R.id.count);
+//            if (count > 9) {
+//                textView.setTextSize(20);
+//            }
             textView.setText("" + count);
 
         }
-
 
 
         view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
@@ -53,9 +55,10 @@ public class Converter {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.badge_icon_layout1, null);
 
-        ((ImageView)view.findViewById(R.id.icon_badge)).setImageResource(drawableId);
+        ((ImageView) view.findViewById(R.id.icon_badge)).setImageResource(drawableId);
 
         Animation animate = AnimationUtils.loadAnimation(mContext, R.anim.bounce);
+
 
         if (count == 0) {
             View counterTextPanel = view.findViewById(R.id.counterValuePanel);
@@ -65,7 +68,6 @@ public class Converter {
             textView.setText("" + count);
 
         }
-
 
 
         view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),

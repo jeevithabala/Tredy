@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.marmeto.user.tredy.BuildConfig;
 import com.marmeto.user.tredy.R;
+import com.marmeto.user.tredy.util.Config;
+import com.marmeto.user.tredy.util.Constants;
 import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.GraphError;
@@ -21,6 +23,7 @@ import com.shopify.buy3.HttpCachePolicy;
 import com.shopify.buy3.Storefront;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 
@@ -55,7 +58,12 @@ public class ForgotPassword extends AppCompatActivity {
                 email = email_text.getText().toString().trim();
                 if (email.trim().length() != 0) {
                     if (Validationemail.isEmailAddress(email_text, true)) {
-                        forgotpassword();
+                        if (Config.isNetworkAvailable(Objects.requireNonNull(getApplicationContext()))) {
+                            forgotpassword();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                        }
+
                     } else {
                         Toast.makeText(getApplicationContext(), "Please enter valid email", Toast.LENGTH_SHORT).show();
                     }

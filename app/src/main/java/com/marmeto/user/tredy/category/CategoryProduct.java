@@ -40,6 +40,7 @@ import com.marmeto.user.tredy.callback.CommanCartControler;
 import com.marmeto.user.tredy.callback.ProductClickInterface;
 import com.marmeto.user.tredy.Navigation;
 import com.marmeto.user.tredy.R;
+import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.util.Constants;
 import com.marmeto.user.tredy.util.FilterSharedPreference;
 import com.marmeto.user.tredy.util.SharedPreference;
@@ -242,8 +243,11 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             productAdapter.notifyDataSetChanged();
         }
 
-
-        getData();
+        if (Config.isNetworkAvailable(getActivity())) {
+            getData();
+        } else {
+            Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+        }
 
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -259,9 +263,17 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 if (isLastItemDisplaying(recyclerView)) {
                     //Calling the method getdata again
                     if (isFilterData == true) {
-                        postFilter();
+                        if (Config.isNetworkAvailable(getActivity())) {
+                            postFilter();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        getData();
+                        if (Config.isNetworkAvailable(getActivity())) {
+                            getData();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
@@ -691,10 +703,10 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         bundle.putString("category", "ca_adapter");
         bundle.putString("product_id", productid);
         fragment.setArguments(bundle);
-        FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
+        FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "productview");
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-        if (getFragmentManager().findFragmentByTag("fragment") == null) {
-            ft.addToBackStack("fragment");
+        if (getFragmentManager().findFragmentByTag("productview") == null) {
+            ft.addToBackStack("productview");
             ft.commit();
         } else {
             ft.commit();

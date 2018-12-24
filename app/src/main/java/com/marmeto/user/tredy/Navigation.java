@@ -25,6 +25,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -57,6 +59,7 @@ import com.marmeto.user.tredy.login.LoginActiviy;
 import com.marmeto.user.tredy.networkCheck.NetworkSchedulerService;
 import com.marmeto.user.tredy.notification.NotificationsListFragment;
 import com.marmeto.user.tredy.search.Search;
+import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.util.Constants;
 import com.marmeto.user.tredy.util.Internet;
 import com.marmeto.user.tredy.util.SharedPreference;
@@ -82,19 +85,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class Navigation extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AddRemoveCartItem, GoogleApiClient.OnConnectionFailedListener, OnFilterDataCallBack, ForyouInterface, ForceUpdateChecker.OnUpdateNeededListener {
 
     FragmentManager fragmentManager;
-    private int cart_count = 0;
+    public static int cart_count = 0;
     public static int noti_counnt = 0;
     DBHelper db;
     private List<AddToCart_Model> cartList = new ArrayList<>();
     private GoogleApiClient mGoogleApiClient;
     Toolbar toolbar;
-    Boolean update = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,10 +132,35 @@ public class Navigation extends AppCompatActivity
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawer.addDrawerListener(toggle);
+//        toggle.syncState();
+
+        ActionBarDrawerToggle  actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                InputMethodManager inputMethodManager = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                InputMethodManager inputMethodManager = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
+        };
+        drawer.setDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -211,14 +240,7 @@ public class Navigation extends AppCompatActivity
         startService(startServiceIntent);
 
         if (getIntent() != null) {
-            String message = getIntent().getStringExtra("message");
-            if (message != null && message.trim().length() > 0) {
                 SharedPreference.saveData("update", "true", getApplicationContext());
-                if (message.contains("Transaction Successful!")) {
-                    message = "Your Order Placed Successfully";
-                }
-                Dialog(message);
-            }
         }
 
     }
@@ -440,16 +462,18 @@ public class Navigation extends AppCompatActivity
 
     @Override
     public void AddCartItem() {
-        cartList.clear();
-        cartList = db.getCartList();
-        cart_count = 0;
-        for (int i = 0; i < cartList.size(); i++) {
-            cartList.get(i).getQty();
-            cart_count = cart_count + cartList.get(i).getQty();
-        }
-        Log.e("countt", String.valueOf(cart_count));
+            cartList.clear();
+            if(db.getCartList().size()>0)
+            cartList = db.getCartList();
+            cart_count = 0;
+            for (int i = 0; i < cartList.size(); i++) {
+                cartList.get(i).getQty();
+                cart_count = cart_count + cartList.get(i).getQty();
+            }
+            Log.e("countt", String.valueOf(cart_count));
 //        cart_count = cartList.size();
-        invalidateOptionsMenu();
+            invalidateOptionsMenu();
+
     }
 
     @Override

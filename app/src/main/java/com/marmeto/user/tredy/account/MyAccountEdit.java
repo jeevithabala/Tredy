@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.marmeto.user.tredy.BuildConfig;
 import com.marmeto.user.tredy.Navigation;
@@ -25,6 +26,7 @@ import com.shopify.buy3.HttpCachePolicy;
 import com.shopify.buy3.Storefront;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -109,7 +111,12 @@ public class MyAccountEdit extends Fragment {
                             progressDialog.setMessage("loading, please wait...");
                             progressDialog.setCanceledOnTouchOutside(false);
                             progressDialog.show();
-                            update(accessToken);
+                            if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+                                update(accessToken);
+                            } else {
+                                Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                            }
+
                         }
                     }
                     else

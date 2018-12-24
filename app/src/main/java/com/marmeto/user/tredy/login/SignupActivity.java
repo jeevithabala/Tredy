@@ -12,6 +12,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.marmeto.user.tredy.BuildConfig;
 import com.marmeto.user.tredy.Navigation;
@@ -25,6 +26,7 @@ import com.shopify.buy3.HttpCachePolicy;
 import com.shopify.buy3.Storefront;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -228,7 +230,11 @@ public class SignupActivity extends Activity implements TextWatcher {
     }
 
     private void signingUpUser() {
-        checkCustomer(email.trim(), password.trim());
+        if (Config.isNetworkAvailable(Objects.requireNonNull(getApplicationContext()))) {
+            checkCustomer(email.trim(), password.trim());
+        } else {
+            Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+        }
 
     }
 

@@ -1,6 +1,8 @@
 package com.marmeto.user.tredy.foryou;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -23,6 +25,8 @@ import com.marmeto.user.tredy.foryou.viewmodel.ForYouViewModel;
 import com.marmeto.user.tredy.foryou.viewmodel.ForyouInterface;
 import com.marmeto.user.tredy.Navigation;
 import com.marmeto.user.tredy.R;
+import com.marmeto.user.tredy.login.LoginActiviy;
+import com.marmeto.user.tredy.util.Config;
 import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.HttpCachePolicy;
 import com.viewpagerindicator.CirclePageIndicator;
@@ -55,6 +59,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     private static int currentPage = 0;
     private static int NUM_PAGES = 0;
     SlidingImage_Adapter slidingImage_adapter;
+    private ProgressDialog progressDialog;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.foryou, container, false);
@@ -118,6 +123,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     public void onResume() {
         super.onResume();
 
+//        Config.hideKeyboard(Objects.requireNonNull(getActivity()));
     }
 
 
@@ -265,6 +271,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
     @Override
     public void collectionlist(ArrayList<TopSellingModel> topSellingModelArrayList, ArrayList<NewArrivalModel> newArrivalModelArrayList) {
+
         resultCallBackInterface.topSelling(topSellingModelArrayList);
         resultCallBackInterface.newArrivals(newArrivalModelArrayList);
     }
@@ -294,9 +301,21 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     @Override
     public void onStart() {
         super.onStart();
+
 //        InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(Activity.INPUT_METHOD_SERVICE);
 //        if (imm != null) {
 //            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 //        }
     }
+
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+
+
+
 }

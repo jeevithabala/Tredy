@@ -32,6 +32,7 @@ import com.marmeto.user.tredy.Navigation;
 import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.category.model.CategoryModel;
 import com.marmeto.user.tredy.category.model.SubCategoryModel;
+import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.util.Constants;
 import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
@@ -114,14 +115,16 @@ public class Categories extends Fragment {
         categoreDetailAdapter = new CategoreDetailAdapter(getActivity(), categoryList, getFragmentManager());
         recyclerView.setAdapter(categoreDetailAdapter);
         // productlist();
-
-        collectionList(Constants.navigation);
+        if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+            collectionList(Constants.navigation);
+        } else {
+            Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Objects.requireNonNull(getActivity()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     public void productlist() {
@@ -469,5 +472,9 @@ public class Categories extends Fragment {
         });
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+//        Config.hideKeyboard(Objects.requireNonNull(getActivity()));
+    }
 }

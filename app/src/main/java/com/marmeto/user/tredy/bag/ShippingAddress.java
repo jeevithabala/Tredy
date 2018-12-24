@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -295,8 +296,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 if (s_mobile.trim().length() != 0) {
                     if (s_mobile.contains("+91")) {
                         s_mobile = s_mobile.substring(3, 13);
-                        mobilenumber.setText(s_mobile);
                     }
+                    mobilenumber.setText(s_mobile);
                 }
 
                 if (s_pincode.trim().length() == 0) {
@@ -854,6 +855,5 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         mRequestQueue.add(stringRequest);
 
     }
-
 
 }

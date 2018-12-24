@@ -90,7 +90,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
     int costtotal = 0;
     private int buynow = 0;
     OrderDetailModel model;
-    boolean orderonce = true;
+    int ordercount=0;
 
     /**
      * Async task class to get json by making HTTP call
@@ -138,7 +138,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                         } else if (html.indexOf("Success") != -1) {
                             status = "Transaction Successful!";
                             finalhtml = html;
-                            if (orderonce == true) {
+                            if (ordercount==0) {
                                 getData();
                             }
                         } else if (html.indexOf("Aborted") != -1) {
@@ -158,9 +158,11 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
 //
 
                         if (!status.equals("Transaction Successful!")) {
+                            Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show();
+
                             Intent i = new Intent(WebViewActivity.this, Navigation.class);
                             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            i.putExtra("message", status);
+                            i.putExtra("message", "m");
                             startActivity(i);
 //                            finish();
 
@@ -268,6 +270,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.web);
+
         mainIntent = getIntent();
         manager = getFragmentManager();
 
@@ -893,7 +896,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
     }
 
     public void getData() {
-        orderonce = false;
+        ordercount++;
 
         String[] separated = finalhtml.split("<td>");
         transaction_id = separated[6];
@@ -1066,11 +1069,11 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                             if (buynow != 1) {
                                 db.deleteCart(getApplicationContext());
                             }
-                            Intent i = new Intent(WebViewActivity.this, Navigation.class);
-                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            i.putExtra("message", "Transaction Successful!");
-                            startActivity(i);
-//                            Dialog("Your Order Placed Successfully");
+//                            Intent i = new Intent(WebViewActivity.this, Navigation.class);
+//                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                            i.putExtra("message", "Transaction Successful!");
+//                            startActivity(i);
+                            Dialog("Your Order Placed Successfully");
 
                         }
 
@@ -1129,6 +1132,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                         dialog.dismiss();
                         Intent i = new Intent(WebViewActivity.this, Navigation.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        i.putExtra("message", "m");
                         startActivity(i);
                         finish();
                     }

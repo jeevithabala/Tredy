@@ -13,12 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.marmeto.user.tredy.account.orders.OrderAdapter;
 import com.marmeto.user.tredy.account.orders.OrderModel;
 import com.marmeto.user.tredy.BuildConfig;
 import com.marmeto.user.tredy.Navigation;
 import com.marmeto.user.tredy.R;
+import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.util.SharedPreference;
 import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
@@ -30,6 +32,7 @@ import com.shopify.buy3.Storefront;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class MyAccount extends Fragment {
@@ -81,7 +84,12 @@ public class MyAccount extends Fragment {
             progressDialog.setMessage("loading, please wait...");
             progressDialog.setCanceledOnTouchOutside(true);
             progressDialog.show();
-            getEmailId();
+            if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+                getEmailId();
+            } else {
+                Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+            }
+
         }
 
 
@@ -349,7 +357,9 @@ public class MyAccount extends Fragment {
                                                                 .hasPreviousPage()
                                                         )
                                                         .edges(edge -> edge
+
                                                                         .node(node -> node
+
 
                                                                                         .totalPrice()
                                                                                         .processedAt()

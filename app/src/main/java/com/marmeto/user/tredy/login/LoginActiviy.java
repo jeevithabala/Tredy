@@ -86,6 +86,8 @@ public class LoginActiviy extends AppCompatActivity implements
     ProgressDialog mProgressDialog;
     //    SignInButton btnSignIn;
     Button btnSignOut, btnRevokeAccess;
+    Boolean sociallogin = false;
+    private String personName = "";
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -188,6 +190,7 @@ public class LoginActiviy extends AppCompatActivity implements
                                     @Override
                                     public void onCompleted(JSONObject object, GraphResponse response) {
                                         try {
+                                            sociallogin = true;
 
                                             // Bundle bFacebookData = getFacebookData(object);
                                             // email = response.getJSONObject().getString("email");
@@ -204,7 +207,7 @@ public class LoginActiviy extends AppCompatActivity implements
 //                                            i.putExtra("name", name);
 //                                            i.putExtra("email", email);
 //                                            startActivity(i);
-                                            SharedPreference.saveData("facebookid",id.trim(),getApplicationContext());
+                                            SharedPreference.saveData("facebookid", id.trim(), getApplicationContext());
                                             SharedPreference.saveData("email", email.trim(), getApplicationContext());
                                             SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
                                             SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
@@ -238,8 +241,8 @@ public class LoginActiviy extends AppCompatActivity implements
 
                     @Override
                     public void onError(FacebookException exception) {
-                        Toast.makeText(LoginActiviy.this, " "+exception.getCause().toString(), Toast.LENGTH_SHORT).show();
-                        }
+                        Toast.makeText(LoginActiviy.this, " " + exception.getCause().toString(), Toast.LENGTH_SHORT).show();
+                    }
                 });
 
         signup.setOnClickListener(new View.OnClickListener() {
@@ -303,6 +306,7 @@ public class LoginActiviy extends AppCompatActivity implements
 //                            Toast.makeText(LoginActiviy.this, "Please Enter Valid email", Toast.LENGTH_SHORT).show();
                         } else {
                             if (password.trim().length() != 0) {
+                                sociallogin = false;
                                 checkCustomer(email.trim(), password.trim());
                             } else {
                                 dialog("Please enter password");
@@ -351,16 +355,22 @@ public class LoginActiviy extends AppCompatActivity implements
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
 
-            String personName = acct.getDisplayName();
-//            String personPhotoUrl = acct.getPhotoUrl().toString();
-            email = acct.getEmail();
-            String password1 = email;
+            if (acct != null) {
+                firstname = acct.getGivenName();
+                lastname=acct.getFamilyName();
+                email = acct.getEmail();
+                String password1 = email;
 
-            String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
-            Log.e("coverted", password.trim());
-            checkCustomer(email.trim(), password.trim());
+                String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
+//                Log.e("firstname", " "+firstname);
+//                Log.e("lastname", " "+lastname);
+                checkCustomer(email.trim(), password.trim());
+            }
+
+//            String personPhotoUrl = acct.getPhotoUrl().toString();
+
         } else {
-            Log.e("erroer", result.toString());
+            Log.e("erroer", " "+result.toString());
         }
     }
 
@@ -369,9 +379,10 @@ public class LoginActiviy extends AppCompatActivity implements
         super.onActivityResult(requestCode, responseCode, data);
 
         if (requestCode == RC_SIGN_IN) {
+            sociallogin = true;
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
-        }else {
+        } else {
             callbackManager.onActivityResult(requestCode, responseCode, data);
 
         }
@@ -412,31 +423,72 @@ public class LoginActiviy extends AppCompatActivity implements
 
                 if (response.data() != null) {
 
+                    if (response.data().getCustomerAccessTokenCreate().getUserErrors().size() > 0) {
+                        String message = response.data().getCustomerAccessTokenCreate().getUserErrors().get(0).getMessage();
+                        if (message.trim().equalsIgnoreCase("unidentified customer")) {
+                            if (sociallogin) {
+                                usercreate(email, password);
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progressDoalog.dismiss();
+                                        Config.Dialog("The email or password you entered is incorrect.", LoginActiviy.this);
 
-                    if (response.data().getCustomerAccessTokenCreate().getCustomerAccessToken() != null) {
+                                        if (mGoogleApiClient.isConnected()) {
+                                            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                                        }
+                                    }
+                                });
 
-                        String token = "" + response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getAccessToken().toString();
-                        String expire = response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getExpiresAt().toString();
-                        SharedPreference.saveData("accesstoken", token.trim(), getApplicationContext());
-                        getId(token);
+                            }
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressDoalog.dismiss();
+                                    Config.Dialog("The email or password you entered is incorrect.", LoginActiviy.this);
+
+                                    if (mGoogleApiClient.isConnected()) {
+                                        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                                    }
+                                }
+                            });
+
+
+                        }
 
                     } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDoalog.dismiss();
-                                dialog("The email or password you entered is incorrect.");
-                                if (mGoogleApiClient.isConnected()) {
-                                    Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+
+                        if (response.data().getCustomerAccessTokenCreate().getCustomerAccessToken() != null) {
+
+                            String token = "" + response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getAccessToken().toString();
+                            String expire = response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getExpiresAt().toString();
+                            SharedPreference.saveData("accesstoken", token.trim(), getApplicationContext());
+                            getId(token.trim());
+
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressDoalog.dismiss();
+                                    Config.Dialog("The email or password you entered is incorrect.", LoginActiviy.this);
+
+                                    if (mGoogleApiClient.isConnected()) {
+                                        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             progressDoalog.dismiss();
+                            if (mGoogleApiClient.isConnected()) {
+                                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                            }
                             Config.Dialog("Please try again later", LoginActiviy.this);
                         }
                     });
@@ -451,6 +503,11 @@ public class LoginActiviy extends AppCompatActivity implements
                     @Override
                     public void run() {
                         progressDoalog.dismiss();
+                        if (mGoogleApiClient.isConnected()) {
+                            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                        }
+                        Config.Dialog("Please try again later", LoginActiviy.this);
+
                     }
                 });
                 Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
@@ -630,9 +687,104 @@ public class LoginActiviy extends AppCompatActivity implements
 
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
+
+    public void usercreate(String email, String password) {
+
+        Storefront.CustomerCreateInput input = new Storefront.CustomerCreateInput(email.trim(), password.trim())
+                .setFirstName(firstname)
+                .setLastName(lastname)
+                .setEmail(email.trim())
+                .setAcceptsMarketing(true);
+        //  .setPhone(Input.value("1-123-456-7890"));
+
+        Storefront.MutationQuery mutationQuery = Storefront.mutation(mutation -> mutation
+                .customerCreate(input, query -> query
+                        .customer(customer -> customer
+                                .id()
+                                .email()
+                                .firstName()
+
+                        )
+                        .userErrors(userError -> userError
+                                .field()
+                                .message()
+                        )
+                )
+        );
+
+
+        graphClient.mutateGraph(mutationQuery).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
+
+
+            @Override
+            public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
+
+                if (response.data().getCustomerCreate() != null) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDoalog.dismiss();
+                        }
+                    });
+                    if (response.data().getCustomerCreate().getUserErrors() != null && response.data().getCustomerCreate().getUserErrors().size() != 0) {
+                        String error = response.data().getCustomerCreate().getUserErrors().get(0).getMessage();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mGoogleApiClient.isConnected()) {
+                                    Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                                }
+                                Config.Dialog(error, LoginActiviy.this);
+                            }
+                        });
+
+                    } else {
+
+                        String id = response.data().getCustomerCreate().getCustomer().getId().toString();
+                        String email = response.data().getCustomerCreate().getCustomer().getEmail();
+
+                        if (id != null) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    checkCustomer(email.trim(), password.trim());
+                                }
+                            });
+                        } else {
+                        }
+                    }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mGoogleApiClient.isConnected()) {
+                                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                            }
+                            Config.Dialog("Try Again Later", LoginActiviy.this);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull GraphError error) {
+//
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDoalog.dismiss();
+                        Config.Dialog("Try Again Later", LoginActiviy.this);
+                        if (mGoogleApiClient.isConnected()) {
+                            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                        }
+                    }
+                });
+            }
+
+
+        });
+
+
     }
 
 

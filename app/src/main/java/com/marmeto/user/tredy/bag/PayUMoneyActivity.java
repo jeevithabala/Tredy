@@ -98,7 +98,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     ArrayList<OrderDetailModel> orderDetailModelArrayList = new ArrayList<>();
     private String orderId, discounted_price, discount_coupon;
     String accessCode, merchantId, currency, rsaKeyUrl, redirectUrl, cancelUrl;
-    int buynow = 0;
+    int buynow = 0, ordercount=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -295,11 +295,11 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             btnradcod.setVisibility(View.VISIBLE);
         }
         int cost= Integer.parseInt(totalcost.trim());
-//        if(cost==0){
-//            btnradonline.setVisibility(View.GONE);
-//        }else {
-//            btnradonline.setVisibility(View.VISIBLE);
-//        }
+        if(cost==0){
+            btnradonline.setVisibility(View.GONE);
+        }else {
+            btnradonline.setVisibility(View.VISIBLE);
+        }
 
         txtpayamount.setText(totalcost);
         btnradonline.setOnClickListener(this);
@@ -379,6 +379,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void postOrder() {
+        ordercount++;
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("loading, please wait...");
         progressDialog.setCanceledOnTouchOutside(false);
@@ -901,7 +902,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        postOrder();
+                        if(ordercount==0) {
+                            postOrder();
+                        }
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:

@@ -166,12 +166,14 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                     final String id = customerlist.get(position).getPid();
                     final String pnew = customerlist.get(position).getPnew();
                     final String title = customerlist.get(position).getTitle();
+                    String orderid=customerlist.get(position).getOrderid();
 
 
                     Intent i=new Intent(context,NotificationDataFragment.class);
                     i.putExtra("id", id);
                     i.putExtra("pnew", pnew);
                     i.putExtra("title", title);
+                    i.putExtra("orderid",orderid);
                     context.startActivity(i);
 
 //

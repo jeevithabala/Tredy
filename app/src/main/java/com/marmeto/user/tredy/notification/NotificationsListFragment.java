@@ -20,6 +20,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.android.volley.DefaultRetryPolicy;
@@ -46,16 +48,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static android.support.v7.widget.RecyclerView.*;
 
 
-public class NotificationsListFragment extends Fragment  {
-    List<NotificationListSet> actorsList= new ArrayList<NotificationListSet>();;
+public class NotificationsListFragment extends Fragment {
+    List<NotificationListSet> actorsList = new ArrayList<NotificationListSet>();
+    ;
     private RecyclerView recyclerView;
     NotificationListAdapter adapter;
     String userid, familyid = "";
-//    CustomSwipeRefreshLayout swipeLayout;
+    //    CustomSwipeRefreshLayout swipeLayout;
     LinearLayout notification_lp;
     LinearLayout progressBar;
     private FragmentManager fragmentManager;
@@ -66,6 +70,7 @@ public class NotificationsListFragment extends Fragment  {
     private boolean loading = false;
     private ArrayList<NotificationListSet> addedList = new ArrayList<>();
     private String nextPageUrl = "";
+    TextView noti_text;
 //    private ProgressBar paginationProgress;
 
 
@@ -85,8 +90,7 @@ public class NotificationsListFragment extends Fragment  {
 //        progressBar = (LinearLayout) view.findViewById(R.id.linearProgressBar);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
 
-
-
+        noti_text = view.findViewById(R.id.noti_text);
 
 
 //        swipeLayout.setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
@@ -145,10 +149,16 @@ public class NotificationsListFragment extends Fragment  {
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager1);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        adapter = new NotificationListAdapter(actorsList,getActivity());
+        adapter = new NotificationListAdapter(actorsList, getActivity());
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        NotificationCountstatuslist();
+        if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+            NotificationCountstatuslist();
+            getNotiCount();
+        } else {
+            Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 
@@ -200,7 +210,7 @@ public class NotificationsListFragment extends Fragment  {
 //                noInternetLayout.setVisibility(View.VISIBLE);
 //            }
 //        }
-        Log.e("resume","inside");
+        Log.e("resume", "inside");
 //        if (Internet.isConnected(getActivity())) {
 //            NotificationCountstatuslist();
 //        } else {
@@ -211,6 +221,12 @@ public class NotificationsListFragment extends Fragment  {
         filter.addAction(Config.PUSH_NOTIFICATION);
         LocalBroadcastManager.getInstance(getActivity()).
                 registerReceiver(broadcastReceiver, filter);
+
+        if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+            getNotiCount();
+        } else {
+            Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onPause() {
@@ -231,16 +247,15 @@ public class NotificationsListFragment extends Fragment  {
     }
 
 
-
-
     private void NotificationCountstatuslist() {
         actorsList.clear();
         String token = SharedPreference.getData("customerid", getActivity());
+        Log.e("token", token);
 
-        String minusdatet=getCalculatedDate( "MM/dd/yyyy", -10);
+        String minusdatet = getCalculatedDate("MM/dd/yyyy", -10);
 
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.getallnotification+token.trim()+"?from="+minusdatet,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.getallnotification + token.trim() + "?from=" + minusdatet,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -257,21 +272,26 @@ public class NotificationsListFragment extends Fragment  {
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject object1 = array.getJSONObject(i);
                                 NotificationListSet actor = new NotificationListSet();
-                                String id=object1.getString("_id");
+                                String id = object1.getString("_id");
                                 Log.e("iddd", id);
-                                JSONObject object=object1.getJSONObject("notification");
+                                JSONObject object = object1.getJSONObject("notification");
 
-                                Log.e("iddd", " "+object.getString("title")+" "+object1.getString("read_at"));
+                                Log.e("iddd", " " + object.getString("title") + " " + object1.getString("read_at"));
 
                                 actor.setTitle(object.getString("title"));
                                 actor.setPnew(object1.getString("read_at"));
+                                actor.setOrderid(object.getString("order_id"));
 
                                 actor.setPid(id);
                                 actorsList.add(actor);
 
                             }
-                        adapter.notifyDataSetChanged();
-
+                            if (actorsList.size() == 0) {
+                                noti_text.setVisibility(VISIBLE);
+                            } else {
+                                noti_text.setVisibility(GONE);
+                            }
+                            adapter.notifyDataSetChanged();
 
 
                         } catch (JSONException e) {
@@ -314,7 +334,6 @@ public class NotificationsListFragment extends Fragment  {
     }
 
 
-
     private ViewHolder getViewHolderObject() {
         ViewHolder holder = (ViewHolder) recyclerView.findViewHolderForAdapterPosition(actorsList.size() + 1);
         if (null != holder) {
@@ -350,5 +369,50 @@ public class NotificationsListFragment extends Fragment  {
         }, 50);
 
     }
+
+    public void getNotiCount() {
+        String customerid = SharedPreference.getData("customerid", getActivity());
+        String minusdatet = getCalculatedDate("MM/dd/yyyy", -10);
+
+
+        RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.unreadcount + customerid.trim() + "?from=" + minusdatet,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+
+                            JSONObject obj = new JSONObject(response);
+                            Log.e("response", response);
+                            String count = obj.getString("count");
+                            int noti_counnt = Integer.parseInt(count);
+                            Navigation.noti_counnt = noti_counnt;
+                            if (getActivity() != null) {
+                                getActivity().invalidateOptionsMenu();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+
+        };
+        stringRequest.setTag("noti");
+        // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
+
+        int socketTimeout = 10000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        mRequestQueue.add(stringRequest);
+
+
+    }
+
 
 }

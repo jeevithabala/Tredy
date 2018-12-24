@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 class SplashScreenHelper implements Application.ActivityLifecycleCallbacks {
 

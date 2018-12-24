@@ -6,7 +6,7 @@ public class NotificationListSet {
     public NotificationListSet() {
         // TODO Auto-generated constructor stub
     }
-    String title, pnew,pid;
+    String title, pnew,pid, orderid;
 
     public String getTitle() {
         return title;
@@ -30,5 +30,13 @@ public class NotificationListSet {
 
     public void setPid(String pid) {
         this.pid = pid;
+    }
+
+    public String getOrderid() {
+        return orderid;
+    }
+
+    public void setOrderid(String orderid) {
+        this.orderid = orderid;
     }
 }

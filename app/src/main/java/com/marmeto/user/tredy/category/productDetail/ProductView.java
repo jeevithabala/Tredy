@@ -46,6 +46,7 @@ import com.marmeto.user.tredy.callback.CommanCartControler;
 import com.marmeto.user.tredy.callback.ProductClickInterface;
 import com.marmeto.user.tredy.Navigation;
 import com.marmeto.user.tredy.R;
+import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.whislist.AddWhislistModel;
 import com.marmeto.user.tredy.databinding.ProductViewBinding;
 import com.shopify.buy3.GraphCall;
@@ -58,8 +59,11 @@ import com.shopify.graphql.support.ID;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class ProductView extends Fragment implements ProductClickInterface {
     SelectItemModel itemModel = new SelectItemModel();
@@ -182,12 +186,20 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //            mHtmlString = detail.getProduct().getDescriptionHtml().toString();
         }
         if (product.trim().equals("grocery") || product.trim().equals("bag") || product.trim().equals("wishlist") || product.trim().equals("groceryhome")) {
-            getProductVariantID(id.trim());
+            if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+                getProductVariantID(id.trim());
+            } else {
+                Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+            }
         } else {
             String text = "gid://shopify/Product/" + id.trim();
 
             String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-            getProductVariantID(converted.trim());
+            if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+                getProductVariantID(converted.trim());
+            } else {
+                Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+            }
         }
 
 
@@ -455,7 +467,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                     weightunit = "g";
                 }
                 for (int j = 0; j < itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().size(); j++) {
-                    if (!itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue().trim().equals("0")&&itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue()!=null) {
+                    if (!itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue().trim().equals("0") && itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue() != null) {
 //                    rbn.setText(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getWeight().toString() + " " + weightunit);
                         rbn.setText(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue());
                         rbn.setTag(itemModel.getProduct().getVariants().getEdges().get(i));
@@ -517,9 +529,11 @@ public class ProductView extends Fragment implements ProductClickInterface {
         String text = "gid://shopify/Product/" + id.trim();
 
         String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-        Log.e("coverted", converted.trim());
-        Log.e("id", id);
-        getProductVariantID(converted.trim());
+        if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+            getProductVariantID(converted.trim());
+        } else {
+            Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

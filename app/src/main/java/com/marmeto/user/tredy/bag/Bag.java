@@ -24,6 +24,11 @@ import com.marmeto.user.tredy.callback.CartController;
 import com.marmeto.user.tredy.callback.CommanCartControler;
 import com.marmeto.user.tredy.Navigation;
 import com.marmeto.user.tredy.R;
+import com.marmeto.user.tredy.foryou.allcollection.AllCollectionModel;
+import com.marmeto.user.tredy.foryou.groceryhome.GroceryHomeModel;
+import com.marmeto.user.tredy.foryou.newarrival.NewArrivalModel;
+import com.marmeto.user.tredy.foryou.topselling.TopSellingModel;
+import com.marmeto.user.tredy.foryou.viewmodel.ForyouInterface;
 import com.marmeto.user.tredy.util.SharedPreference;
 import com.marmeto.user.tredy.databinding.BagBinding;
 
@@ -79,6 +84,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         db.deletDuplicates();
         cartList = db.getCartList();
         Collections.reverse(cartList); // ADD THIS LINE TO REVERSE ORDER!
+        getbagcount();
 
         if (getArguments() != null) {
             productlist = getArguments().getStringArrayList("nonshipping");
@@ -193,6 +199,20 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
             check.setVisibility(View.VISIBLE);
             total();
         }
+    }
+
+    public void getbagcount(){
+//        cartList.clear();
+//        cartList = db.getCartList();
+        Navigation.cart_count = 0;
+        for (int i = 0; i < cartList.size(); i++) {
+            cartList.get(i).getQty();
+            Navigation.cart_count = Navigation.cart_count + cartList.get(i).getQty();
+        }
+        if (getActivity() != null) {
+            getActivity().invalidateOptionsMenu();
+        }
+
     }
 
     public interface shipping1 {

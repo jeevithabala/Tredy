@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.foryou.viewmodel;
 
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -46,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ForYouViewModel extends ViewModel {
 
+    private ProgressDialog progressDialog;
     Context mContext;
     private RequestQueue mRequestQueue;
     ForyouInterface foryouInterface;
