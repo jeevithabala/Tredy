@@ -75,7 +75,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     Button btnsubmit1, btncancel;
     RadioButton btnradonline, btnradcod;
     String emailstring, totalamount, coupon, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "";
-   String s_mobile="",b_mobile="",b_email="";
+    String s_mobile = "", b_mobile = "", b_email = "";
     TextView txtpayamount, t_pay, discount_price, apply_coupon;
     CardView apply_discount;
     LinearLayout discount_layout;
@@ -98,7 +98,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     ArrayList<OrderDetailModel> orderDetailModelArrayList = new ArrayList<>();
     private String orderId, discounted_price, discount_coupon;
     String accessCode, merchantId, currency, rsaKeyUrl, redirectUrl, cancelUrl;
-    int buynow = 0, ordercount=0;
+    int buynow = 0, ordercount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,9 +145,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             product_qty = getIntent().getStringExtra("product_qty");
             totalcost = getIntent().getStringExtra("totalcost");
             tag = getIntent().getStringExtra("tag");
-            s_mobile=getIntent().getStringExtra("s_mobile");
-            b_mobile=getIntent().getStringExtra("b_mobile");
-            b_email=getIntent().getStringExtra("b_email");
+            s_mobile = getIntent().getStringExtra("s_mobile");
+            b_mobile = getIntent().getStringExtra("b_mobile");
+            b_email = getIntent().getStringExtra("b_email");
 
             if (product_varientid != null) {
                 if (product_varientid.trim().length() != 0) {
@@ -294,10 +294,10 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         } else {
             btnradcod.setVisibility(View.VISIBLE);
         }
-        int cost= Integer.parseInt(totalcost.trim());
-        if(cost==0){
+        int cost = Integer.parseInt(totalcost.trim());
+        if (cost == 0) {
             btnradonline.setVisibility(View.GONE);
-        }else {
+        } else {
             btnradonline.setVisibility(View.VISIBLE);
         }
 
@@ -317,7 +317,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     if (btnradonline.isChecked()) {
                         cod = 0;
 
-                        OrderDetailModel orderDetailModel = new OrderDetailModel(emailstring, totalcost, firstname, lastname, bfirstname, blastname, address1, city, state, country, zip, phone, b_address1, b_city, b_state, b_country, b_zip, product_varientid, product_qty, discounted_price, discount_coupon,s_mobile,b_mobile,b_email);
+                        OrderDetailModel orderDetailModel = new OrderDetailModel(emailstring, totalcost, firstname, lastname, bfirstname, blastname, address1, city, state, country, zip, phone, b_address1, b_city, b_state, b_country, b_zip, product_varientid, product_qty, discounted_price, discount_coupon, s_mobile, b_mobile, b_email);
                         orderDetailModelArrayList.add(orderDetailModel);
 
                         init();
@@ -379,7 +379,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void postOrder() {
-        ordercount++;
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("loading, please wait...");
         progressDialog.setCanceledOnTouchOutside(false);
@@ -389,175 +389,176 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         Log.e("costttt", " " + costtotal);
 
         try {
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            JSONObject jsonBody = new JSONObject();
-            jsonBody.put("email", emailstring);
-            jsonBody.put("financial_status", "pending");
-            jsonBody.put("gateway", "Cash on Delivery (COD)");
+            if (ordercount == 0) {
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("email", emailstring);
+                jsonBody.put("financial_status", "pending");
+                jsonBody.put("gateway", "Cash on Delivery (COD)");
 
 
-            JSONArray line_items = new JSONArray();
-            if (product_varientid.trim().length() == 0) {
-                for (int i = 0; i < cartlist.size(); i++) {
-                    JSONObject items = new JSONObject();
+                JSONArray line_items = new JSONArray();
+                if (product_varientid.trim().length() == 0) {
+                    for (int i = 0; i < cartlist.size(); i++) {
+                        JSONObject items = new JSONObject();
 
-                    product_varientid = cartlist.get(i).getProduct_varient_id();
-                    byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
-                    String val2 = new String(tmp2);
-                    String[] str = val2.split("/");
-                    product_varientid = str[4];
+                        product_varientid = cartlist.get(i).getProduct_varient_id();
+                        byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
+                        String val2 = new String(tmp2);
+                        String[] str = val2.split("/");
+                        product_varientid = str[4];
 
-                    Integer quantity = cartlist.get(i).getQty();
+                        Integer quantity = cartlist.get(i).getQty();
 //                    items.put("variant_id", "5823671107611");
+                        items.put("variant_id", product_varientid.trim());
+                        items.put("quantity", quantity);
+                        line_items.put(items);
+                        jsonBody.put("line_items", line_items);
+                    }
+                } else {
+                    JSONObject items = new JSONObject();
+                    buynow = 1;
+//                items.put("variant_id", "5823671107611");
                     items.put("variant_id", product_varientid.trim());
-                    items.put("quantity", quantity);
+                    items.put("quantity", product_qty);
                     line_items.put(items);
                     jsonBody.put("line_items", line_items);
+
                 }
-            } else {
-                JSONObject items = new JSONObject();
-                buynow = 1;
-//                items.put("variant_id", "5823671107611");
-                items.put("variant_id", product_varientid.trim());
-                items.put("quantity", product_qty);
-                line_items.put(items);
-                jsonBody.put("line_items", line_items);
+                if (discount_coupon.trim().length() != 0) {
+                    JSONArray note1 = new JSONArray();
+                    JSONObject notes1 = new JSONObject();
 
-            }
-            if (discount_coupon.trim().length() != 0) {
-                JSONArray note1 = new JSONArray();
-                JSONObject notes1 = new JSONObject();
+                    notes1.put("code", discount_coupon);
+                    notes1.put("amount", discounted_price);
+                    notes1.put("type", "fixed_amount");
 
-                notes1.put("code", discount_coupon);
-                notes1.put("amount", discounted_price);
-                notes1.put("type", "fixed_amount");
+                    note1.put(notes1);
+                    jsonBody.put("discount_codes", note1);
+                }
 
-                note1.put(notes1);
-                jsonBody.put("discount_codes", note1);
-            }
+                JSONArray note = new JSONArray();
+                JSONObject notes = new JSONObject();
 
-            JSONArray note = new JSONArray();
-            JSONObject notes = new JSONObject();
+                notes.put("name", "Cash on Delivery");
+                notes.put("value", "");
 
-            notes.put("name", "Cash on Delivery");
-            notes.put("value", "");
-
-            note.put(notes);
-            jsonBody.put("note_attributes", note);
+                note.put(notes);
+                jsonBody.put("note_attributes", note);
 
 
-            JSONObject shipping = new JSONObject();
-            shipping.put("first_name", firstname);
-            shipping.put("last_name", lastname);
-            shipping.put("address1", address1);
-            shipping.put("phone", phone);
-            shipping.put("city", city);
-            shipping.put("province", state);
-            shipping.put("country", country);
-            shipping.put("zip", zip);
-            jsonBody.put("shipping_address", shipping);
+                JSONObject shipping = new JSONObject();
+                shipping.put("first_name", firstname);
+                shipping.put("last_name", lastname);
+                shipping.put("address1", address1);
+                shipping.put("phone", phone);
+                shipping.put("city", city);
+                shipping.put("province", state);
+                shipping.put("country", country);
+                shipping.put("zip", zip);
+                jsonBody.put("shipping_address", shipping);
 
 
-            JSONObject billingaddress = new JSONObject();
-            billingaddress.put("first_name", bfirstname);
-            billingaddress.put("last_name", blastname);
-            billingaddress.put("address1", b_address1);
-            billingaddress.put("phone", b_mobile);
-            billingaddress.put("city", b_city);
-            billingaddress.put("province", b_state);
-            billingaddress.put("country", b_country);
-            billingaddress.put("zip", b_zip);
-            jsonBody.put("billing_address", billingaddress);
+                JSONObject billingaddress = new JSONObject();
+                billingaddress.put("first_name", bfirstname);
+                billingaddress.put("last_name", blastname);
+                billingaddress.put("address1", b_address1);
+                billingaddress.put("phone", b_mobile);
+                billingaddress.put("city", b_city);
+                billingaddress.put("province", b_state);
+                billingaddress.put("country", b_country);
+                billingaddress.put("zip", b_zip);
+                jsonBody.put("billing_address", billingaddress);
 
-            JSONArray cost = new JSONArray();
-            JSONObject costobject = new JSONObject();
-            if (cod == 1) {
-                kind_transaction = "cod";
-            } else {
-                kind_transaction = "online";
-            }
+                JSONArray cost = new JSONArray();
+                JSONObject costobject = new JSONObject();
+                if (cod == 1) {
+                    kind_transaction = "cod";
+                } else {
+                    kind_transaction = "online";
+                }
 
-            costobject.put("kind", kind_transaction);
-            costobject.put("status", "success");
-            costobject.put("amount", costtotal);
+                costobject.put("kind", kind_transaction);
+                costobject.put("status", "success");
+                costobject.put("amount", costtotal);
 
-            cost.put(costobject);
-            jsonBody.put("transactions", cost);
-
-
-            Log.d("check JSON", jsonBody.toString());
+                cost.put(costobject);
+                jsonBody.put("transactions", cost);
 
 
-            final String requestBody = jsonBody.toString();
+                Log.d("check JSON", jsonBody.toString());
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.postcreateorder, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.i("VOLLEY", response);
-                    try {
-                        JSONObject obj = new JSONObject(response);
-                        String msg = obj.getString("msg");
 
-                        Log.e("msg", "" + msg);
-                        if (msg.equals("success")) {
-                            Iterator keys = obj.keys();
-                            Log.e("Keys", "" + String.valueOf(keys));
+                final String requestBody = jsonBody.toString();
 
-                            while (keys.hasNext()) {
-                                dynamicKey = (String) keys.next();
-                                Log.d("Dynamic Key", "" + dynamicKey);
-                                if (dynamicKey.equals("order")) {
-                                    JSONObject order = obj.getJSONObject("order");
-                                    String orderid = order.getString("id");
-                                    Log.e("orderid", orderid);
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.postcreateorder, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i("VOLLEY", response);
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            String msg = obj.getString("msg");
 
+                            Log.e("msg", "" + msg);
+                            if (msg.equals("success")) {
+                                Iterator keys = obj.keys();
+                                Log.e("Keys", "" + String.valueOf(keys));
+
+                                while (keys.hasNext()) {
+                                    dynamicKey = (String) keys.next();
+                                    Log.d("Dynamic Key", "" + dynamicKey);
+                                    if (dynamicKey.equals("order")) {
+                                        JSONObject order = obj.getJSONObject("order");
+                                        String orderid = order.getString("id");
+                                        Log.e("orderid", orderid);
+
+                                    }
                                 }
-                            }
-                            progressDialog.dismiss();
-                            if (buynow != 1) {
-                                db.deleteCart(getApplicationContext());
-                            }
-                            Dialog("Your Order Placed Successfully");
+                                progressDialog.dismiss();
+                                if (buynow != 1) {
+                                    db.deleteCart(getApplicationContext());
+                                }
+                                Dialog("Your Order Placed Successfully");
 
 //                            Toast.makeText(PayUMoneyActivity.this, "Your Order Placed Sucessfully", Toast.LENGTH_SHORT).show();
 
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    progressDialog.dismiss();
-                    Log.e("VOLLEY", error.toString());
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
+                        Log.e("VOLLEY", error.toString());
+                    }
+                }) {
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
 
-                @Override
-                public byte[] getBody() throws AuthFailureError {
-                    try {
-                        return requestBody == null ? null : requestBody.getBytes("utf-8");
+                    @Override
+                    public byte[] getBody() throws AuthFailureError {
+                        try {
+                            return requestBody == null ? null : requestBody.getBytes("utf-8");
 //                        return requestBody == null;
-                    } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-                        return null;
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                            return null;
+                        }
                     }
-                }
 
-                @Override
-                protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                    //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
-                    String statusCode = String.valueOf(response.statusCode);
-                    //Handling logic
-                    return super.parseNetworkResponse(response);
-                }
+                    @Override
+                    protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                        //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
+                        String statusCode = String.valueOf(response.statusCode);
+                        //Handling logic
+                        return super.parseNetworkResponse(response);
+                    }
 //                @Override
 //                protected Response<String> parseNetworkResponse(NetworkResponse response) {
 //                    String responseString = "";
@@ -567,9 +568,12 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 //                    }
 //                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
 //                }
-            };
-
-            requestQueue.add(stringRequest);
+                };
+                if (ordercount == 0) {
+                    ordercount++;
+                    requestQueue.add(stringRequest);
+                }
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -902,7 +906,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        if(ordercount==0) {
+                        if (ordercount == 0) {
                             postOrder();
                         }
                         break;
@@ -920,7 +924,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-    public void Dialog(String poptext){
+    public void Dialog(String poptext) {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(PayUMoneyActivity.this, R.style.AlertDialogStyle);

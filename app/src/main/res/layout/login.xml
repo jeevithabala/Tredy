@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:focusable="false"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
@@ -58,8 +58,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
                         android:layout_marginTop="20dp"
+                        android:layout_marginRight="20dp"
                         android:gravity="center"
                         android:orientation="vertical">
 
@@ -113,46 +113,68 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp"
+                            android:layout_marginTop="10dp"
                             android:gravity="center"
-                            android:orientation="horizontal"
-                            android:weightSum="2">
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/signin"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginTop="5dp"
+                                android:background="@color/colorAccent"
+                                android:fontFamily="@font/lucidasansdemibold"
+                                android:gravity="center"
+                               android:paddingTop="10dp"
+                                android:paddingBottom="8dp"
+                                android:text="Login"
+                                android:textAllCaps="true"
+                                android:textColor="@color/white"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/lucidasansdemibold"
+                                android:gravity="center"
+                                android:padding="10dp"
+                                android:text="Or"
+                                android:textColor="@color/appcolor"
+                                android:textStyle="bold" />
+
 
                             <TextView
                                 android:id="@+id/signup"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:layout_margin="10dp"
-                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
                                 android:background="@color/colorAccent"
                                 android:fontFamily="@font/lucidasansdemibold"
                                 android:gravity="center"
-                                android:padding="10dp"
-                                android:text="Sign Up"
+                                android:paddingTop="10dp"
+                                android:paddingBottom="8dp"
+                                android:text="Create An Account"
                                 android:textAllCaps="true"
                                 android:textColor="@color/white"
                                 android:textStyle="bold" />
 
-                            <TextView
-                                android:id="@+id/signin"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_margin="10dp"
-                                android:layout_weight="1"
-                                android:background="@color/colorAccent"
-                                android:fontFamily="@font/lucidasansdemibold"
-                                android:gravity="center"
-                                android:padding="10dp"
-                                android:text="Sign In"
-                                android:textAllCaps="true"
-                                android:textColor="@color/white"
-                                android:textStyle="bold" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
+            <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:padding="10dp"-->
+            <!--android:fontFamily="@font/lucidasansdemibold"-->
+            <!--android:gravity="center"-->
+            <!--android:text="Or"-->
+            <!--android:textColor="@color/appcolor"-->
+            <!--android:textStyle="bold" />-->
+
 
             <TextView
                 android:id="@+id/social"
@@ -161,7 +183,7 @@
                 android:layout_below="@+id/frame"
                 android:fontFamily="@font/lucidasansdemiboldroman"
                 android:gravity="center"
-                android:text="Social Login"
+                android:text=" Or Login With"
                 android:textSize="14sp" />
 
             <LinearLayout

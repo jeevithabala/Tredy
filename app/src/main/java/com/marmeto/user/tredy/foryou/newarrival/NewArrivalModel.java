@@ -1,16 +1,19 @@
 package com.marmeto.user.tredy.foryou.newarrival;
 
 import android.databinding.BindingAdapter;
+import android.support.annotation.NonNull;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.marmeto.user.tredy.R;
+import com.marmeto.user.tredy.util.MObject;
 import com.shopify.buy3.Storefront;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
+import java.util.Date;
 
-public class NewArrivalModel implements Serializable {
+public class NewArrivalModel implements Serializable, Comparable<NewArrivalModel>  {
 
     private Storefront.Product product;
     private Storefront.Collection collection;
@@ -101,4 +104,21 @@ public class NewArrivalModel implements Serializable {
         }
     }
 
+    private Date dateTime;
+
+    public Date getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(Date datetime) {
+        this.dateTime = datetime;
+    }
+
+
+
+    @Override
+    public int compareTo(@NonNull NewArrivalModel newArrivalModel) {
+        return getDateTime().compareTo(newArrivalModel.getDateTime());
+
+    }
 }

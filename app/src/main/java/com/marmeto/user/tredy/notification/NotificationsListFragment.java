@@ -264,23 +264,26 @@ public class NotificationsListFragment extends Fragment {
 //                            progressBar.setVisibility(View.GONE);
                             JSONArray array = new JSONArray(response);
 
-                            Log.e("response", response);
-
-                            Log.e("array", String.valueOf(array.length()));
-
 
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject object1 = array.getJSONObject(i);
                                 NotificationListSet actor = new NotificationListSet();
                                 String id = object1.getString("_id");
-                                Log.e("iddd", id);
                                 JSONObject object = object1.getJSONObject("notification");
 
-                                Log.e("iddd", " " + object.getString("title") + " " + object1.getString("read_at"));
+//                                Log.e("iddd", " " + object.getString("title") + " " + object1.getString("read_at"));
 
                                 actor.setTitle(object.getString("title"));
                                 actor.setPnew(object1.getString("read_at"));
-                                actor.setOrderid(object.getString("order_id"));
+//                                if(object.getString("order_name")!=null) {
+//                                    actor.setOrderid(object.getString("order_name"));
+//                                }
+
+                                if (object.has("order_name") && !object.isNull("order_name")) {
+                                    actor.setOrderid(object.getString("order_name"));
+                                }else{
+                                    // Avoid this user.
+                                }
 
                                 actor.setPid(id);
                                 actorsList.add(actor);

@@ -90,7 +90,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
     int costtotal = 0;
     private int buynow = 0;
     OrderDetailModel model;
-    int ordercount=0;
+    int ordercount = 0;
 
     /**
      * Async task class to get json by making HTTP call
@@ -138,7 +138,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                         } else if (html.indexOf("Success") != -1) {
                             status = "Transaction Successful!";
                             finalhtml = html;
-                            if (ordercount==0) {
+                            if (ordercount == 0) {
                                 getData();
                             }
                         } else if (html.indexOf("Aborted") != -1) {
@@ -896,7 +896,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
     }
 
     public void getData() {
-        ordercount++;
+
 
         String[] separated = finalhtml.split("<td>");
         transaction_id = separated[6];
@@ -946,174 +946,178 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
     public void postOrder() {
         costtotal = Integer.parseInt(totalamount.trim());
         try {
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            JSONObject jsonBody = new JSONObject();
-            jsonBody.put("email", emailstring);
-            jsonBody.put("financial_status", "paid");
+            if (ordercount == 0) {
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("email", emailstring);
+                jsonBody.put("financial_status", "paid");
 
 
-            JSONArray line_items = new JSONArray();
-            if (product_varientid.trim().length() == 0) {
-                for (int i = 0; i < cartlist.size(); i++) {
-                    JSONObject items = new JSONObject();
+                JSONArray line_items = new JSONArray();
+                if (product_varientid.trim().length() == 0) {
+                    for (int i = 0; i < cartlist.size(); i++) {
+                        JSONObject items = new JSONObject();
 
-                    product_varientid = cartlist.get(i).getProduct_varient_id();
-                    byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
-                    String val2 = new String(tmp2);
-                    String[] str = val2.split("/");
-                    product_varientid = str[4];
+                        product_varientid = cartlist.get(i).getProduct_varient_id();
+                        byte[] tmp2 = Base64.decode(product_varientid, Base64.DEFAULT);
+                        String val2 = new String(tmp2);
+                        String[] str = val2.split("/");
+                        product_varientid = str[4];
 
-                    Integer quantity = cartlist.get(i).getQty();
+                        Integer quantity = cartlist.get(i).getQty();
 //                    items.put("variant_id", "5823671107611");
+                        items.put("variant_id", product_varientid.trim());
+                        items.put("quantity", quantity);
+                        line_items.put(items);
+                        jsonBody.put("line_items", line_items);
+                    }
+                } else {
+                    JSONObject items = new JSONObject();
+                    buynow = 1;
+//                items.put("variant_id", "5823671107611");
                     items.put("variant_id", product_varientid.trim());
-                    items.put("quantity", quantity);
+                    items.put("quantity", product_qty);
                     line_items.put(items);
                     jsonBody.put("line_items", line_items);
+
                 }
-            } else {
-                JSONObject items = new JSONObject();
-                buynow = 1;
-//                items.put("variant_id", "5823671107611");
-                items.put("variant_id", product_varientid.trim());
-                items.put("quantity", product_qty);
-                line_items.put(items);
-                jsonBody.put("line_items", line_items);
+                if (discount_coupon.trim().length() != 0) {
+                    JSONArray note1 = new JSONArray();
+                    JSONObject notes1 = new JSONObject();
 
-            }
-            if (discount_coupon.trim().length() != 0) {
-                JSONArray note1 = new JSONArray();
-                JSONObject notes1 = new JSONObject();
+                    notes1.put("code", discount_coupon);
+                    notes1.put("amount", discounted_price);
+                    notes1.put("type", "fixed_amount");
 
-                notes1.put("code", discount_coupon);
-                notes1.put("amount", discounted_price);
-                notes1.put("type", "fixed_amount");
+                    note1.put(notes1);
+                    jsonBody.put("discount_codes", note1);
+                }
 
-                note1.put(notes1);
-                jsonBody.put("discount_codes", note1);
-            }
+                JSONArray note = new JSONArray();
+                JSONObject notes = new JSONObject();
 
-            JSONArray note = new JSONArray();
-            JSONObject notes = new JSONObject();
+                notes.put("name", "ccavenue");
+                notes.put("value", transaction_id);
 
-            notes.put("name", "ccavenue");
-            notes.put("value", transaction_id);
-
-            note.put(notes);
-            jsonBody.put("note_attributes", note);
+                note.put(notes);
+                jsonBody.put("note_attributes", note);
 
 
-            JSONObject shipping = new JSONObject();
-            shipping.put("first_name", firstname);
-            shipping.put("last_name", lastname);
-            shipping.put("address1", address1);
-            shipping.put("phone", phone);
-            shipping.put("city", city);
-            shipping.put("province", state);
-            shipping.put("country", country);
-            shipping.put("zip", zip);
-            jsonBody.put("shipping_address", shipping);
+                JSONObject shipping = new JSONObject();
+                shipping.put("first_name", firstname);
+                shipping.put("last_name", lastname);
+                shipping.put("address1", address1);
+                shipping.put("phone", phone);
+                shipping.put("city", city);
+                shipping.put("province", state);
+                shipping.put("country", country);
+                shipping.put("zip", zip);
+                jsonBody.put("shipping_address", shipping);
 
 
-            JSONObject billingaddress = new JSONObject();
-            billingaddress.put("first_name", bfirstname);
-            billingaddress.put("last_name", blastname);
-            billingaddress.put("address1", b_address1);
-            billingaddress.put("phone", b_phone);
-            billingaddress.put("city", b_city);
-            billingaddress.put("province", b_state);
-            billingaddress.put("country", b_country);
-            billingaddress.put("zip", b_zip);
-            jsonBody.put("billing_address", billingaddress);
+                JSONObject billingaddress = new JSONObject();
+                billingaddress.put("first_name", bfirstname);
+                billingaddress.put("last_name", blastname);
+                billingaddress.put("address1", b_address1);
+                billingaddress.put("phone", b_phone);
+                billingaddress.put("city", b_city);
+                billingaddress.put("province", b_state);
+                billingaddress.put("country", b_country);
+                billingaddress.put("zip", b_zip);
+                jsonBody.put("billing_address", billingaddress);
 
-            JSONArray cost = new JSONArray();
-            JSONObject costobject = new JSONObject();
+                JSONArray cost = new JSONArray();
+                JSONObject costobject = new JSONObject();
 
-            String kind_transaction = "sale";
+                String kind_transaction = "sale";
 
-            costobject.put("kind", kind_transaction);
-            costobject.put("status", "success");
-            costobject.put("amount", costtotal);
-            costobject.put("gateway", "ccavenue");
+                costobject.put("kind", kind_transaction);
+                costobject.put("status", "success");
+                costobject.put("amount", costtotal);
+                costobject.put("gateway", "ccavenue");
 
-            cost.put(costobject);
-            jsonBody.put("transactions", cost);
-
-
-            Log.d("check JSON", jsonBody.toString());
+                cost.put(costobject);
+                jsonBody.put("transactions", cost);
 
 
-            final String requestBody = jsonBody.toString();
+                Log.d("check JSON", jsonBody.toString());
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, com.marmeto.user.tredy.util.Constants.postcreateorder, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.i("VOLLEY", response);
-                    try {
-                        JSONObject obj = new JSONObject(response);
-                        String msg = obj.getString("msg");
 
-                        Log.e("msg", "" + msg);
-                        if (msg.equals("success")) {
-                            Iterator keys = obj.keys();
-                            Log.e("Keys", "" + String.valueOf(keys));
+                final String requestBody = jsonBody.toString();
 
-                            while (keys.hasNext()) {
-                                String dynamicKey = (String) keys.next();
-                                Log.d("Dynamic Key", "" + dynamicKey);
-                                if (dynamicKey.equals("order")) {
-                                    JSONObject order = obj.getJSONObject("order");
-                                    String orderid = order.getString("id");
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, com.marmeto.user.tredy.util.Constants.postcreateorder, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i("VOLLEY", response);
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            String msg = obj.getString("msg");
 
+                            Log.e("msg", "" + msg);
+                            if (msg.equals("success")) {
+                                Iterator keys = obj.keys();
+                                Log.e("Keys", "" + String.valueOf(keys));
+
+                                while (keys.hasNext()) {
+                                    String dynamicKey = (String) keys.next();
+                                    Log.d("Dynamic Key", "" + dynamicKey);
+                                    if (dynamicKey.equals("order")) {
+                                        JSONObject order = obj.getJSONObject("order");
+                                        String orderid = order.getString("id");
+
+                                    }
                                 }
-                            }
-                            if (buynow != 1) {
-                                db.deleteCart(getApplicationContext());
-                            }
+                                if (buynow != 1) {
+                                    db.deleteCart(getApplicationContext());
+                                }
 //                            Intent i = new Intent(WebViewActivity.this, Navigation.class);
 //                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //                            i.putExtra("message", "Transaction Successful!");
 //                            startActivity(i);
-                            Dialog("Your Order Placed Successfully");
+                                Dialog("Your Order Placed Successfully");
 
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
 
-                @Override
-                public byte[] getBody() throws AuthFailureError {
-                    try {
-                        return requestBody == null ? null : requestBody.getBytes("utf-8");
+                    @Override
+                    public byte[] getBody() throws AuthFailureError {
+                        try {
+                            return requestBody == null ? null : requestBody.getBytes("utf-8");
 //                        return requestBody == null;
-                    } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-                        return null;
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                            return null;
+                        }
                     }
+
+                    @Override
+                    protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                        //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
+                        String statusCode = String.valueOf(response.statusCode);
+                        //Handling logic
+                        return super.parseNetworkResponse(response);
+                    }
+
+                };
+                if (ordercount == 0) {
+                    ordercount++;
+                    requestQueue.add(stringRequest);
                 }
-
-                @Override
-                protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                    //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
-                    String statusCode = String.valueOf(response.statusCode);
-                    //Handling logic
-                    return super.parseNetworkResponse(response);
-                }
-
-            };
-
-            requestQueue.add(stringRequest);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

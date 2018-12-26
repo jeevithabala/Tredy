@@ -148,7 +148,9 @@ public class Navigation extends AppCompatActivity
                 super.onDrawerOpened(drawerView);
                 InputMethodManager inputMethodManager = (InputMethodManager)
                         getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                if (inputMethodManager != null) {
+                    inputMethodManager.hideSoftInputFromWindow(Objects.requireNonNull(getCurrentFocus()).getWindowToken(), 0);
+                }
             }
 
             @Override
@@ -156,10 +158,13 @@ public class Navigation extends AppCompatActivity
                 super.onDrawerSlide(drawerView, slideOffset);
                 InputMethodManager inputMethodManager = (InputMethodManager)
                         getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                if (inputMethodManager != null) {
+                    inputMethodManager.hideSoftInputFromWindow(Objects.requireNonNull(getCurrentFocus()).getWindowToken(), 0);
+                }
             }
         };
-        drawer.setDrawerListener(actionBarDrawerToggle);
+//        drawer.setDrawerListener(actionBarDrawerToggle);
+        drawer.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -219,7 +224,9 @@ public class Navigation extends AppCompatActivity
                 .build();
 
         JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(myJob);
+        if (jobScheduler != null) {
+            jobScheduler.schedule(myJob);
+        }
     }
 
     @Override
@@ -463,11 +470,9 @@ public class Navigation extends AppCompatActivity
     @Override
     public void AddCartItem() {
             cartList.clear();
-            if(db.getCartList().size()>0)
             cartList = db.getCartList();
             cart_count = 0;
             for (int i = 0; i < cartList.size(); i++) {
-                cartList.get(i).getQty();
                 cart_count = cart_count + cartList.get(i).getQty();
             }
             Log.e("countt", String.valueOf(cart_count));

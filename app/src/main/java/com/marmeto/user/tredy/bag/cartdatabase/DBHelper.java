@@ -121,6 +121,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 // Adding user record to list
                 userList.add(user);
             } while (cursor.moveToNext());
+        }else{
+            Log.e("erroe in db", "c");
         }
         cursor.close();
         db.close();
@@ -128,13 +130,14 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void update(String id, int qty) {
-        String qty2 = "";
+
         SQLiteDatabase db = this.getWritableDatabase();
         String qty1 = "select qty from "
                 + TABLE_ADDTOCART + " where "
                 + COLUMN_PRODUCT_VARIENT_ID + " = " + "'" + id + "'";
         Cursor cursor = db.rawQuery(qty1, null);
         if (cursor.moveToFirst()) {
+            String qty2 = "";
             qty2 = cursor.getString(cursor.getColumnIndex("qty"));
             Log.e("qty2", "" + qty2);
             int quantity = Integer.parseInt(qty2) + qty;

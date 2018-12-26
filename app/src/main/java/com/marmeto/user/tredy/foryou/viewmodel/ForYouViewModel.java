@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.foryou.viewmodel;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
@@ -24,6 +25,7 @@ import com.marmeto.user.tredy.foryou.newarrival.NewArrivalModel;
 import com.marmeto.user.tredy.foryou.topcollection.TopCollectionModel;
 import com.marmeto.user.tredy.foryou.topselling.TopSellingModel;
 import com.marmeto.user.tredy.util.Constants;
+import com.marmeto.user.tredy.util.MObject;
 import com.marmeto.user.tredy.util.SharedPreference;
 import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
@@ -38,11 +40,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class ForYouViewModel extends ViewModel {
@@ -57,6 +65,7 @@ public class ForYouViewModel extends ViewModel {
     ArrayList<AllCollectionModel> allCollectionModelArrayList = new ArrayList<>();
     private ArrayList<GroceryHomeModel> GroceryHomeModelArrayList = new ArrayList<>();
     private String collectionid, title, id, price, image;
+    String date;
     private String collectionname;
     ArrayList<String> bannerlist = new ArrayList<>();
     GraphClient graphClient;
@@ -117,7 +126,7 @@ public class ForYouViewModel extends ViewModel {
                                             String type = subcollectionobject.getString("type");
                                             if (type.trim().equals("collection")) {
                                                 String image1 = subcollectionobject.getString("image");
-                                                Log.e("immmm", " "+image1);
+                                                Log.e("immmm", " " + image1);
                                                 if (!subid.trim().equals("null")) {
 
 
@@ -187,6 +196,7 @@ public class ForYouViewModel extends ViewModel {
         RequestQueue mRequestQueue = Volley.newRequestQueue(mContext);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.collectionid,
                 new Response.Listener<String>() {
+                    @SuppressLint("SimpleDateFormat")
                     @Override
                     public void onResponse(String response) {
                         try {
@@ -224,6 +234,7 @@ public class ForYouViewModel extends ViewModel {
                                             JSONObject objec = array1.getJSONObject(j);
 
                                             title = objec.getString("title");
+                                            date = objec.getString("published_at");
 //                                            if (title.trim().toLowerCase().equals("home page")) {
 //                                                title = "Treding";
 //                                            }
@@ -259,6 +270,18 @@ public class ForYouViewModel extends ViewModel {
                                                 NewArrivalModel newArrivalModel = new NewArrivalModel(id, title, price, image, collectionname);
                                                 Log.e("product", title);
                                                 newArrivalModel.setCollectionid(collectionid);
+                                                Date date1= null;
+                                                try {
+//                                                    date1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.mmm'Z'").parse(date);
+                                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+// use UTC as timezone
+                                                    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                                                     date1 = sdf.parse(date);
+                                                    Log.e("date", String.valueOf(date1));
+                                                } catch (ParseException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                newArrivalModel.setDateTime(date1);
                                                 newArrivalModelArray.add(newArrivalModel);
 
 //                                                resultCallBackInterface.newArrivals(collectionid, id, title, price, image, collectionname);
@@ -266,6 +289,11 @@ public class ForYouViewModel extends ViewModel {
 
                                         }
                                     }
+                                    Collections.sort(newArrivalModelArray, new Comparator<NewArrivalModel>() {
+                                        public int compare(NewArrivalModel m1, NewArrivalModel m2) {
+                                            return m1.getDateTime().compareTo(m2.getDateTime());
+                                        }
+                                    });
                                     foryouInterface.collectionlist(topSellingModelArray, newArrivalModelArray);
 //                                    resultCallBackInterface.topSelling(topSellingModelArray);
 //                                    resultCallBackInterface.bestCollection(topCollectionModelArray);
@@ -459,7 +487,6 @@ public class ForYouViewModel extends ViewModel {
         RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         stringRequest.setRetryPolicy(policy);
         mRequestQueue.add(stringRequest);
-
 
 
     }
