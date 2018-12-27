@@ -294,6 +294,7 @@ public class ForYouViewModel extends ViewModel {
                                             return m1.getDateTime().compareTo(m2.getDateTime());
                                         }
                                     });
+                                    Collections.reverse(newArrivalModelArray);
                                     foryouInterface.collectionlist(topSellingModelArray, newArrivalModelArray);
 //                                    resultCallBackInterface.topSelling(topSellingModelArray);
 //                                    resultCallBackInterface.bestCollection(topCollectionModelArray);

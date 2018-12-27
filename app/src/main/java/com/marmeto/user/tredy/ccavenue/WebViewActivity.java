@@ -63,6 +63,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -1144,7 +1145,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
         android.support.v7.app.AlertDialog alert = builder.create();
         alert.show();
 
-        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.white);
 
 
     }

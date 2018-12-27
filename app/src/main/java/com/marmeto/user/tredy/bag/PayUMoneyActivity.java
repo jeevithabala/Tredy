@@ -295,11 +295,11 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             btnradcod.setVisibility(View.VISIBLE);
         }
         int cost = Integer.parseInt(totalcost.trim());
-        if (cost == 0) {
-            btnradonline.setVisibility(View.GONE);
-        } else {
-            btnradonline.setVisibility(View.VISIBLE);
-        }
+//        if (cost == 0) {
+//            btnradonline.setVisibility(View.GONE);
+//        } else {
+//            btnradonline.setVisibility(View.VISIBLE);
+//        }
 
         txtpayamount.setText(totalcost);
         btnradonline.setOnClickListener(this);
