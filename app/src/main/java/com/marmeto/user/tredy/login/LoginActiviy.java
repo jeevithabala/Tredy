@@ -236,12 +236,13 @@ public class LoginActiviy extends AppCompatActivity implements
 
                     @Override
                     public void onCancel() {
+//                        LoginManager.getInstance().logOut();
                         System.out.println("onCancel");
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
-                        Toast.makeText(LoginActiviy.this, " " + exception.getCause().toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActiviy.this, " " + exception.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 

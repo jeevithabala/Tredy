@@ -52,7 +52,7 @@ public class MyAccount extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.myaccount, container, false);
 
-        ((Navigation) getActivity()).getSupportActionBar().setTitle("Account");
+        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Account");
 
         name = view.findViewById(R.id.name);
         email = view.findViewById(R.id.email);

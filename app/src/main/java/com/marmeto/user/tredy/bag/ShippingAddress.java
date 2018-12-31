@@ -55,6 +55,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -421,14 +422,17 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     bundle.putStringArrayList("nonshipping", productlist);
                     bundle.putString("state", state);
                     bag.setArguments(bundle);
-                    FragmentTransaction transaction1 = getFragmentManager().beginTransaction();
-                    transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    transaction1.replace(R.id.home_container, bag, "Bag");
-                    if (getFragmentManager().findFragmentByTag("Bag") == null) {
-                        transaction1.addToBackStack("Bag");
-                        transaction1.commit();
-                    } else {
-                        transaction1.commit();
+                    FragmentTransaction transaction1 = null;
+                    if (getFragmentManager() != null) {
+                        transaction1 = getFragmentManager().beginTransaction();
+                        transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                        transaction1.replace(R.id.home_container, bag, "Bag");
+                        if (getFragmentManager().findFragmentByTag("Bag") == null) {
+                            transaction1.addToBackStack("Bag");
+                            transaction1.commit();
+                        } else {
+                            transaction1.commit();
+                        }
                     }
 
                 } else {
@@ -478,7 +482,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         city = "";
         state = "";
         country = "";
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mRequestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.shippingaddressfetch + pincode,
                 new Response.Listener<String>() {
                     @Override
@@ -615,18 +619,16 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 
 
                     String[] items1 = tag.split(",");
-                    for (String item : items1) {
-                        getInclude.add(item);
-                    }
-                    Log.d("getsize", String.valueOf(getInclude.size()));
+                    getInclude.addAll(Arrays.asList(items1));
+//                    Log.d("getsize", String.valueOf(getInclude.size()));
                     for (int j = 0; j < getInclude.size(); j++) {
                         if (getInclude.get(j).toLowerCase().contains(exclude.toLowerCase())) {
                             String[] item = getInclude.get(j).split(":");
                             exclude_state = item[1];
                             Log.d("exclude_state", exclude_state);
                         }
-                        Log.d("state", state.trim().toLowerCase());
-                        Log.d("exclude", " " + exclude_state.trim().toLowerCase());
+//                        Log.d("state", state.trim().toLowerCase());
+//                        Log.d("exclude", " " + exclude_state.trim().toLowerCase());
                         String excludespace = exclude_state.replace(" ", "");
                         String statespace = state.replace(" ", "");
 //                if (tag.toLowerCase().contains(tagcheck.toLowerCase())) {
@@ -650,9 +652,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     productlist.add(cartList.get(i).getProduct_varient_id().trim());
 
                     String[] items = tag.split(",");
-                    for (String item : items) {
-                        getInclude.add(item);
-                    }
+                    getInclude.addAll(Arrays.asList(items));
                     for (int j = 0; j < getInclude.size(); j++) {
                         if (getInclude.get(j).toLowerCase().contains(include.toLowerCase())) {
                             String[] item = getInclude.get(j).split(":");
@@ -801,7 +801,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     }
 
     public void getlatestCheckouot() {
-        String customerid = SharedPreference.getData("customerid", getActivity());
+        String customerid = SharedPreference.getData("customerid", Objects.requireNonNull(getActivity()));
         String id = "customer_id=" + customerid;
 
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());

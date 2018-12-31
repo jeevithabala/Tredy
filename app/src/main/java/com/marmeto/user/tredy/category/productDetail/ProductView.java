@@ -70,11 +70,11 @@ public class ProductView extends Fragment implements ProductClickInterface {
     RecyclerView recyclerView;
     ArrayList<Storefront.Image> itemsList = new ArrayList<>();
     ProductViewBinding productViewBinding;
-    TextView product_price, desc;
+    TextView product_price, sku;
     RadioButton rbn;
     LinearLayout veg, eggless, fatfree;
     EditText count;
-    String mHtmlString;
+    String mHtmlString,product="";
     private String id;
     private GraphClient graphClient;
     View view;
@@ -83,9 +83,6 @@ public class ProductView extends Fragment implements ProductClickInterface {
     CommanCartControler commanCartControler;
     String selectedweight = "";
     int selectedID = 0;
-    String productvarient_id;
-    ProgressDialog progressDialog;
-
     RadioGroup radioGroup;
 
     String no_of_count;
@@ -118,7 +115,8 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 .build();
         bag_button = view.findViewById(R.id.bag_button);
         buy = view.findViewById(R.id.buy);
-
+        product_price = view.findViewById(R.id.product_price);
+        sku=view.findViewById(R.id.sku);
         radioGroup = view.findViewById(R.id.radiogroup);
 
         // desc=view.findViewById(R.id.desc);
@@ -132,11 +130,11 @@ public class ProductView extends Fragment implements ProductClickInterface {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String product = getArguments().getString("category");
-        Log.e("topsellingcheck", "" + product);
+        if (getArguments() != null) {
+            product = getArguments().getString("category");
+        }
         if (product.trim().equals("topselling")) {
             TopSellingModel detail = (TopSellingModel) getArguments().getSerializable("category_id");
-            Log.e("title", "" + detail.getCollectionTitle());
             id = detail.getProduct_ID();
 
 //            Log.e("itemModel", "" + itemModel.getProduct().getTitle());
@@ -148,7 +146,6 @@ public class ProductView extends Fragment implements ProductClickInterface {
             NewArrivalModel detail = (NewArrivalModel) getArguments().getSerializable("category_id");
 //            itemModel.setProduct(detail.getProduct());
             id = detail.getProduct_ID().trim();
-            Log.e("idd", id);
         } else if (product.trim().equals("ca_adapter")) {
             id = getArguments().getString("product_id");
 //            String text = "gid://shopify/Product/" + id.trim();
@@ -160,24 +157,34 @@ public class ProductView extends Fragment implements ProductClickInterface {
         } else if (product.trim().equals("grocery")) {
             GroceryModel detail = (GroceryModel) getArguments().getSerializable("category_id");
 //            itemModel.setProduct(detail.getProduct());
-            id = detail.getProduct().getId().toString();
+            if (detail != null) {
+                id = detail.getProduct().getId().toString();
+            }
         } else if (product.trim().equals("groceryhome")) {
             GroceryHomeModel detail = (GroceryHomeModel) getArguments().getSerializable("category_id");
-            id = detail.getProduct().getId().toString();
+            if (detail != null) {
+                id = detail.getProduct().getId().toString();
+            }
         } else if (product.trim().equals("bag")) {
             AddToCart_Model model = (AddToCart_Model) getArguments().getSerializable("category_id");
 
-            id = model.getProduct_id();
+            if (model != null) {
+                id = model.getProduct_id();
+            }
         } else if (product.trim().equals("wishlist")) {
             AddWhislistModel model = (AddWhislistModel) getArguments().getSerializable("category_id");
 
-            id = model.getProduct_id();
+            if (model != null) {
+                id = model.getProduct_id();
+            }
         } else if (product.trim().equals("search")) {
             id = getArguments().getString("product_id");
         } else {
             ProductModel detail = (ProductModel) getArguments().getSerializable("category_id");
 //            itemModel.setProduct(detail.getProduct());
-            id = detail.getProduct_ID();
+            if (detail != null) {
+                id = detail.getProduct_ID();
+            }
 //            itemModel = new SelectItemModel(detail);
 //            productViewBinding.setProductview(itemModel);
 //            Log.e("title", detail.getProduct().getTitle());
@@ -238,9 +245,13 @@ public class ProductView extends Fragment implements ProductClickInterface {
 
                         Fragment fragment = new ShippingAddress();
                         fragment.setArguments(bundle);
-                        FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
-                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                        ft.commit();
+                        FragmentTransaction ft = null;
+                        if (getFragmentManager() != null) {
+                            ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                            ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                            ft.commit();
+                        }
+
                     } else {
                         dialog("Entered Quantity should be less than 100");
 //                        Toast.makeText(getActivity(), "Entered Quantity should be less than 100", Toast.LENGTH_SHORT).show();
@@ -301,20 +312,22 @@ public class ProductView extends Fragment implements ProductClickInterface {
                                 .tags()
                                 .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
                                         .edges(imageEdgeQuery -> imageEdgeQuery
-                                                .node(imageQuery -> imageQuery
-                                                        .src()
+                                                .node(Storefront.ImageQuery::src
                                                 )
                                         )
                                 )
                                 .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
                                         .edges(variantEdgeQuery -> variantEdgeQuery
+
                                                 .node(productVariantQuery -> productVariantQuery
+                                                        .sku()
                                                         .price()
                                                         .title()
-                                                        .image(args -> args.src())
+                                                        .image(Storefront.ImageQuery::src)
                                                         .weight()
                                                         .weightUnit()
                                                         .available()
+
                                                         .selectedOptions(ar -> ar.value()
                                                                 .name())
                                                 )
@@ -348,7 +361,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                         }
 
                     } else {
-                        getActivity().runOnUiThread(new Runnable() {
+                        Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 progressDialog.dismiss();
@@ -356,7 +369,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                         });
                     }
                 } else {
-                    getActivity().runOnUiThread(new Runnable() {
+                    Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             progressDialog.dismiss();
@@ -370,7 +383,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
 
             @Override
             public void onFailure(@NonNull GraphError error) {
-                getActivity().runOnUiThread(new Runnable() {
+                Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         progressDialog.dismiss();
@@ -407,7 +420,12 @@ public class ProductView extends Fragment implements ProductClickInterface {
             webView.setBackgroundColor(Color.TRANSPARENT);
 
 
-            product_price = view.findViewById(R.id.product_price);
+
+            if(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getSku()!=null){
+                sku.setText(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getSku().toString());
+            }else {
+                sku.setText("");
+            }
             product_price.setText(getResources().getString(R.string.Rs) + " " + itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getPrice().toString());
 
             recyclerView = view.findViewById(R.id.product_view_recycler);
@@ -441,15 +459,22 @@ public class ProductView extends Fragment implements ProductClickInterface {
 
                 while (st.hasMoreTokens()) {
                     String token = st.nextToken();
-                    if (token.trim().toLowerCase().equals("veg")) {
-                        veg.setVisibility(View.VISIBLE);
-                    } else if (token.trim().toLowerCase().equals("eggless") || token.trim().toLowerCase().equals("egg less")) {
-                        eggless.setVisibility(View.VISIBLE);
+                    switch (token.trim().toLowerCase()) {
+                        case "veg":
+                            veg.setVisibility(View.VISIBLE);
+                            break;
+                        case "eggless":
+                        case "egg less":
+                            eggless.setVisibility(View.VISIBLE);
 
-                    } else if (token.trim().toLowerCase().equals("fatfree") || token.trim().toLowerCase().equals("fat free")) {
-                        fatfree.setVisibility(View.VISIBLE);
-                    } else {
-                        veg.setVisibility(View.VISIBLE);
+                            break;
+                        case "fatfree":
+                        case "fat free":
+                            fatfree.setVisibility(View.VISIBLE);
+                            break;
+                        default:
+                            veg.setVisibility(View.VISIBLE);
+                            break;
                     }
                 }
 
@@ -548,7 +573,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
 
     public void dialog(String poptext) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
 //            builder.setTitle("Success");
         builder.setMessage(poptext)
                 .setCancelable(false)
@@ -559,7 +584,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 });
         AlertDialog alert = builder.create();
         alert.show();
-        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.white);
 //            alert.getWindow().setBackgroundDrawableResource(android.R.color.white)
     }
 

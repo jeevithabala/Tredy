@@ -66,6 +66,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class PayUMoneyActivity extends AppCompatActivity implements View.OnClickListener, DiscountAdapter.Discountinterface {
@@ -295,11 +296,11 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             btnradcod.setVisibility(View.VISIBLE);
         }
         int cost = Integer.parseInt(totalcost.trim());
-//        if (cost == 0) {
-//            btnradonline.setVisibility(View.GONE);
-//        } else {
-//            btnradonline.setVisibility(View.VISIBLE);
-//        }
+        if (cost == 0) {
+            btnradonline.setVisibility(View.GONE);
+        } else {
+            btnradonline.setVisibility(View.VISIBLE);
+        }
 
         txtpayamount.setText(totalcost);
         btnradonline.setOnClickListener(this);
@@ -377,7 +378,15 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         dialog.show();
     }
+    public RequestQueue getRequestQueue() {
+        // lazy initialize the request queue, the queue instance will be
+        // created when it is accessed for the first time
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        }
 
+        return mRequestQueue;
+    }
     public void postOrder() {
 
         progressDialog = new ProgressDialog(this);
@@ -390,7 +399,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
         try {
             if (ordercount == 0) {
-                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+//                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                 JSONObject jsonBody = new JSONObject();
                 jsonBody.put("email", emailstring);
                 jsonBody.put("financial_status", "pending");
@@ -571,7 +580,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 };
                 if (ordercount == 0) {
                     ordercount++;
-                    requestQueue.add(stringRequest);
+                    getRequestQueue().add(stringRequest);
+//                    requestQueue.add(stringRequest);
                 }
             }
         } catch (JSONException e) {
@@ -582,7 +592,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
     private void getDiscount() {
         discountlist.clear();
-        mRequestQueue = Volley.newRequestQueue(PayUMoneyActivity.this);
+       RequestQueue mRequestQueue = Volley.newRequestQueue(PayUMoneyActivity.this);
 
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.getDiscount,
@@ -945,7 +955,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         AlertDialog alert = builder.create();
         alert.show();
 
-        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.white);
 
 
     }

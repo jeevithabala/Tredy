@@ -71,7 +71,21 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginTop="10dp"
+                        android:orientation="vertical"
                         android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/sku"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/lucidasansdemiboldroman"
+                            android:gravity="center"
+                            android:text=""
+                            android:textColor="@color/textcolor"
+                            android:textSize="12sp"
+                            />
+
 
                         <TextView
                             android:id="@+id/product_price"

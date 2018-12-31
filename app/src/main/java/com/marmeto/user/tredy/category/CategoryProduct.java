@@ -68,6 +68,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -102,12 +103,13 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     private String sortbykey;
     TextView noproduct;
     private Boolean isFilterData = false;
+    String newarrival = "", sortbystring = "";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.category_product, container, false);
 
-        graphClient = GraphClient.builder(getActivity())
+        graphClient = GraphClient.builder(Objects.requireNonNull(getActivity()))
                 .shopDomain(BuildConfig.SHOP_DOMAIN)
                 .accessToken(BuildConfig.API_KEY)
                 .httpCache(new File(getActivity().getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
@@ -163,7 +165,6 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             title = topCollectionModel.getCollectionTitle();
         } else if (category.trim().equals("api")) {
             CategoryModel detail = (CategoryModel) getArguments().getSerializable("category_id");
-            Log.e("iud", detail.getId());
             id = detail.getId().trim();
             title = detail.getCollectiontitle();
         } else if (category.trim().equals("allproduct")) {
@@ -174,13 +175,17 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             title = "All Products";
         } else if (category.trim().equals("allcollection")) {
             AllCollectionModel allCollectionModel = (AllCollectionModel) getArguments().getSerializable("category_id");
-            id = allCollectionModel.getId().trim();
-            title = allCollectionModel.getTitle();
-
+            if (allCollectionModel != null) {
+                id = allCollectionModel.getId().trim();
+                title = allCollectionModel.getTitle();
+            }
         } else if (category.trim().equals("newarrival")) {
+
             NewArrivalModel newArrivalModel = (NewArrivalModel) getArguments().getSerializable("category_id");
-            id = newArrivalModel.getCollectionid().trim();
-            title = newArrivalModel.getCollectionTitle();
+            if (newArrivalModel != null) {
+                id = newArrivalModel.getCollectionid().trim();
+                title = newArrivalModel.getCollectionTitle();
+            }
         } else if (category.trim().equals("filter")) {
 
             Log.e("iddc", id);
@@ -188,11 +193,11 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         }
         if (title != null) {
             if (title.trim().length() != 0) {
-                ((Navigation) getActivity()).getSupportActionBar().setTitle(title);
+                Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle(title);
 
             }
         } else {
-            ((Navigation) getActivity()).getSupportActionBar().setTitle("Categories");
+            Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Categories");
 
         }
 
@@ -430,20 +435,16 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                                     JSONObject object1 = array.getJSONObject(i);
                                     String title = object1.getString("title");
                                     String min_price = object1.getString("min_price");
-                                    Log.e("image1", title + min_price);
 
+                                    String imagesrc="";
                                     JSONArray array1 = object1.getJSONArray("images");
                                     for (int j = 0; j < array1.length(); j++) {
                                         JSONObject object = array1.getJSONObject(j);
                                         productidapi = object.getString("product_id");
-                                        String imagesrc = object.getString("src");
-                                        ProductModel productModel = new ProductModel(productidapi, min_price, title, imagesrc);
-                                        Log.e("image", productidapi + imagesrc);
-//                                        productDetalList1.add(productModel);
-                                        productDetalList1.add(productModel);
+                                         imagesrc = object.getString("src");
                                     }
-
-
+                                    ProductModel productModel = new ProductModel(productidapi, min_price, title, imagesrc);
+                                    productDetalList1.add(productModel);
                                 }
 
 //                                productAdapter1 = new ProductAdapter(getActivity(), productDetalList1, getFragmentManager(), CategoryProduct.this);
@@ -511,6 +512,13 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
     private void getData() {
 //        isFilterData=false;
+        newarrival = "33238122615";
+        if (newarrival.trim().equals(id.trim())) {
+            sortbystring = "?sortBy=published_at&page_size=10&page=";
+        } else {
+            sortbystring = "?page_size=10&page=";
+        }
+
 
         requestQueue.add(collectionList(id, requestCount));
         Log.d("request counter", String.valueOf(requestCount));
@@ -533,7 +541,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
         final String requestBody = jsonBody.toString();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + "?page_size=10&page=" + count, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + sortbystring + count, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.i("VOLLEY", response);
@@ -558,13 +566,15 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                                 Log.e("image1", title + price);
 
                                 JSONArray array1 = object1.getJSONArray("images");
+                                String imagesrc = "";
+
                                 for (int j = 0; j < array1.length(); j++) {
                                     JSONObject object = array1.getJSONObject(j);
                                     productidapi = object.getString("product_id");
-                                    String imagesrc = object.getString("src");
-                                    ProductModel productModel = new ProductModel(productidapi, price, title, imagesrc);
-                                    productDetalList.add(productModel);
+                                    imagesrc = object.getString("src");
                                 }
+                                ProductModel productModel = new ProductModel(productidapi, price, title, imagesrc);
+                                productDetalList.add(productModel);
 
 
                             }

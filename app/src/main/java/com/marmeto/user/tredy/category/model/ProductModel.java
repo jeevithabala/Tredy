@@ -2,6 +2,7 @@ package com.marmeto.user.tredy.category.model;
 
 import android.databinding.BaseObservable;
 import android.databinding.BindingAdapter;
+import android.support.annotation.NonNull;
 import android.text.Html;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,8 +12,9 @@ import com.shopify.buy3.Storefront;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
+import java.util.Date;
 
-public class ProductModel extends BaseObservable implements Serializable {
+public class ProductModel extends BaseObservable implements Serializable ,Comparable<ProductModel>{
 
     private String Product_ID;
     private String price;
@@ -200,6 +202,24 @@ public class ProductModel extends BaseObservable implements Serializable {
         String mHtmlString = product.getDescriptionHtml();
         text.setText(Html.fromHtml(Html.fromHtml(mHtmlString).toString()));
 
+
+    }
+
+    private Date dateTime;
+
+    public Date getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(Date datetime) {
+        this.dateTime = datetime;
+    }
+
+
+
+    @Override
+    public int compareTo(@NonNull ProductModel productModel) {
+        return getDateTime().compareTo(productModel.getDateTime());
 
     }
 
