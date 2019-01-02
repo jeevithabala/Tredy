@@ -55,7 +55,6 @@ import java.util.concurrent.TimeUnit;
 
 public class ForYouViewModel extends ViewModel {
 
-    private ProgressDialog progressDialog;
     Context mContext;
     private RequestQueue mRequestQueue;
     ForyouInterface foryouInterface;
@@ -126,7 +125,6 @@ public class ForYouViewModel extends ViewModel {
                                             String type = subcollectionobject.getString("type");
                                             if (type.trim().equals("collection")) {
                                                 String image1 = subcollectionobject.getString("image");
-                                                Log.e("immmm", " " + image1);
                                                 if (!subid.trim().equals("null")) {
 
 
@@ -134,7 +132,6 @@ public class ForYouViewModel extends ViewModel {
                                                         String text = "gid://shopify/Collection/" + subid.trim();
 
                                                         String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-                                                        Log.e("coverted", converted.trim());
                                                     }
 
                                                     AllCollectionModel allCollectionModel = new AllCollectionModel(subid, image1, subcollectiontitle);
@@ -208,11 +205,9 @@ public class ForYouViewModel extends ViewModel {
 
 
                             Iterator keys = obj.keys();
-                            Log.e("Keys", "" + String.valueOf(keys));
 
                             while (keys.hasNext()) {
                                 String dynamicKey = (String) keys.next();
-                                Log.d("Dynamic Key", "" + dynamicKey);
 
                                 JSONArray array = null;
                                 try {
@@ -261,14 +256,12 @@ public class ForYouViewModel extends ViewModel {
 
 
                                                 TopSellingModel topSellingModel = new TopSellingModel(id, title, price, image, collectionname);
-                                                Log.e("product", title);
                                                 topSellingModel.setCollectionid(collectionid);
                                                 topSellingModelArray.add(topSellingModel);
 
 //                                                resultCallBackInterface.bestCollection(collectionid, id, title, price, image, collectionname);
                                             } else if (i == 2) {
                                                 NewArrivalModel newArrivalModel = new NewArrivalModel(id, title, price, image, collectionname);
-                                                Log.e("product", title);
                                                 newArrivalModel.setCollectionid(collectionid);
                                                 Date date1= null;
                                                 try {
@@ -277,7 +270,6 @@ public class ForYouViewModel extends ViewModel {
 // use UTC as timezone
                                                     sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
                                                      date1 = sdf.parse(date);
-                                                    Log.e("date", String.valueOf(date1));
                                                 } catch (ParseException e) {
                                                     e.printStackTrace();
                                                 }
