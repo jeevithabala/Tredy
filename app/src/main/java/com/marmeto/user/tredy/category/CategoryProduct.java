@@ -300,7 +300,12 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
     public void getFilterData(String minprice, String maxprice, String sortby, String collectionid, ArrayList<String> selectedFilterLists, String CollectionName) {
 
-
+ArrayList<String> arrayList=new ArrayList<>();
+        if (FilterSharedPreference.getArrayList("filter", getActivity()) != null) {
+            for (int i = 0; i < FilterSharedPreference.getArrayList("filter", getActivity()).size(); i++) {
+                FilterSharedPreference.saveInSp(FilterSharedPreference.getArrayList("filter", getActivity()).get(i), false, Objects.requireNonNull(getActivity()));
+            }
+        }
         requestCount1 = 1;
 
         isFilterData = true;
@@ -310,10 +315,21 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         id = collectionid;
         selectedFilterList = selectedFilterLists;
         for (int i = 0; i < selectedFilterLists.size(); i++) {
-            FilterSharedPreference.saveInSp(selectedFilterLists.get(i), true, Objects.requireNonNull(getActivity()));
+            String[] splitStr = selectedFilterLists.get(i).trim().split("\\s+");
+            String selectedf = "";
+
+            for (int j = 0; j < splitStr.length; j++) {
+                if (j + 1 < splitStr.length) {
+                    selectedf = selectedf + " "+splitStr[j + 1].trim();
+                    arrayList.add(selectedf.trim());
+                }
+            }
+//            FilterSharedPreference.saveInSp(selectedFilterLists.get(i), true, Objects.requireNonNull(getActivity()));
+            FilterSharedPreference.saveInSp(selectedf.trim(), true, Objects.requireNonNull(getActivity()));
+
 
         }
-        FilterSharedPreference.saveArrayList(selectedFilterList, "filter", getActivity());
+        FilterSharedPreference.saveArrayList(arrayList, "filter", getActivity());
         if (sortby.equals("sortBy=min_price&order=desc")) {
             sortby = "Price : High to Low";
             FilterSharedPreference.saveData("sort", sortby, getActivity());
@@ -395,8 +411,11 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 JSONObject food1 = new JSONObject();
                 String type = selectedFilterList.get(i).trim();
                 Log.e("type", type);
+                String[] splitStr = type.trim().split("\\s+");
+                dynamicKey1 = splitStr[0];
                 food1.put("name", dynamicKey1);
-                food1.put("value", "Filter" + " " + dynamicKey1 + " " + type);
+//                food1.put("value", "Filter" + " " + dynamicKey1 + " " + type);
+                food1.put("value", "Filter" + " " + type);
                 food.put(food1);
             }
 
@@ -661,7 +680,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 //                bundle.putStringArrayList("producttag", producttag);
 //                bundle.putStringArrayList("producttype", producttype);
                 fragment.setArguments(bundle);
-                FragmentTransaction ft ;
+                FragmentTransaction ft;
                 if (getFragmentManager() != null) {
                     ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "filter");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
@@ -728,7 +747,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     public void OnclickPlus(String productid) {
         Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
             cartController = new CartController(getActivity());
-            commanCartControler =  cartController;
+            commanCartControler = cartController;
             commanCartControler.AddToCart(productid.trim());
 //                productAdapter.notifyDataSetChanged();
             Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();

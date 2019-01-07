@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -24,7 +25,9 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.marmeto.user.tredy.filter.filtertype.FilterAdapter;
+import com.marmeto.user.tredy.filter.filtertype.FilterHetroAdapter;
 import com.marmeto.user.tredy.filter.filtertype.FilterModel;
+import com.marmeto.user.tredy.filter.filtertype.FilterTilteAndTag;
 import com.marmeto.user.tredy.filter.price.PriceAdapter;
 import com.marmeto.user.tredy.filter.price.PriceModel;
 import com.marmeto.user.tredy.filter.sortby.SortByAdapter;
@@ -39,6 +42,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -50,7 +55,6 @@ public class Filter_Fragment extends Fragment {
     FilterAdapter filterAdapter;
     PriceAdapter priceAdapter;
     SortByAdapter sortByAdapter;
-    ArrayList<FilterModel> filterModelArrayList = new ArrayList<>();
     ArrayList<PriceModel> priceModelArrayList = new ArrayList<>();
     ArrayList<SortByModel> sortByModelArrayList = new ArrayList<>();
     ArrayList<String> producttag = new ArrayList<>();
@@ -62,9 +66,11 @@ public class Filter_Fragment extends Fragment {
     int firstsplit, secondsplit, thirdsplit, fourthsplit;
     ArrayList<String> pricelist = new ArrayList<>();
     ArrayList<String> sortlist = new ArrayList<>();
-    TextView type;
+    ArrayList<FilterTilteAndTag> filterTilteAndTags = new ArrayList<>();
+//    TextView type;
     String min_price, max_price;
     String dynamicKey = "", sortlistkey = "";
+    FilterHetroAdapter filterHetroAdapter;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,11 +90,11 @@ public class Filter_Fragment extends Fragment {
         price_recycler = view.findViewById(R.id.price_recycler);
         btn_filter = view.findViewById(R.id.btn_filter1);
         btn_clear = view.findViewById(R.id.btn_clearall);
-        type = view.findViewById(R.id.type);
+//        type = view.findViewById(R.id.type);
 
 
-        filterAdapter = new FilterAdapter(getActivity(), filterModelArrayList, getFragmentManager());
-        filter_recycler.setAdapter(filterAdapter);
+        filterHetroAdapter = new FilterHetroAdapter(getActivity(), filterTilteAndTags, getFragmentManager());
+        filter_recycler.setAdapter(filterHetroAdapter);
         filter_recycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         priceAdapter = new PriceAdapter(getActivity(), priceModelArrayList, getFragmentManager());
@@ -117,9 +123,9 @@ public class Filter_Fragment extends Fragment {
         sortByAdapter.notifyDataSetChanged();
 
         btn_filter.setOnClickListener(view12 -> {
-            selectedFilterList = ( filterAdapter).getSelectedContactList();
-            selectedsortList = ( sortByAdapter).getSelectedSortList();
-            selectedpriceList = ( priceAdapter).getSelectedPriceList();
+            selectedFilterList = (filterHetroAdapter).getSelectedContactList();
+            selectedsortList = (sortByAdapter).getSelectedSortList();
+            selectedpriceList = (priceAdapter).getSelectedPriceList();
 
             Log.e("adaa", "" + selectedFilterList.toString() + selectedpriceList.toString() + selectedsortList.toString());
             if (selectedpriceList.size() != 0) {
@@ -158,13 +164,13 @@ public class Filter_Fragment extends Fragment {
 //                ((SortByAdapter) sortByAdapter).getSelectedSortList().clear();
 //                ((PriceAdapter) priceAdapter).getSelectedPriceList().clear();
 
-            ( sortByAdapter).sortclear();
-            ( filterAdapter).typeclear();
-            ( priceAdapter).priceclear();
-            filterAdapter.notifyDataSetChanged();
+            (sortByAdapter).sortclear();
+            (filterHetroAdapter).typeclear();
+            (priceAdapter).priceclear();
+            filterHetroAdapter.notifyDataSetChanged();
         });
 
-        filterAdapter.notifyDataSetChanged();
+//        filterAdapter.notifyDataSetChanged();
 
 
         return view;
@@ -174,7 +180,7 @@ public class Filter_Fragment extends Fragment {
     public void getTaglist() {
         producttag.clear();
 
-        filterModelArrayList.clear();
+//        filterModelArrayList.clear();
 
         RequestQueue mRequestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.filter_tag1 + collectionid.trim(),
@@ -188,9 +194,11 @@ public class Filter_Fragment extends Fragment {
                         Log.e("obj1", String.valueOf(obj1.length()));
                         Iterator keys = obj1.keys();
 
-                        while (keys.hasNext()) {
-                            dynamicKey = (String) keys.next();
 
+                        while (keys.hasNext()) {
+
+                            dynamicKey = (String) keys.next();
+                            producttag.clear();
 //                            LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //                            assert layoutInflater != null;
 //                            @SuppressLint("InflateParams") final View addView = layoutInflater.inflate(R.layout.row, null);
@@ -199,15 +207,21 @@ public class Filter_Fragment extends Fragment {
 
 //                            if(dynamicKey.equalsIgnoreCase("Kitchenwares")) {
 //                                type.setText(dynamicKey);
-                                JSONArray array = obj1.getJSONArray(dynamicKey);
-                                for (int i = 0; i < array.length(); i++) {
-                                    producttag.add(array.getString(i));
-                                }
-//                            }
+                            JSONArray array = obj1.getJSONArray(dynamicKey);
+                            ArrayList<FilterModel> filterModelArrayList = new ArrayList<>();
+                            for (int i = 0; i < array.length(); i++) {
+                                FilterModel model = new FilterModel(array.get(i).toString(), false);
+                                filterModelArrayList.add(model);
+                            }
 
+
+                            FilterTilteAndTag filterTilte = new FilterTilteAndTag(dynamicKey, filterModelArrayList);
+                            filterTilteAndTags.add(filterTilte);
 
                         }
+//                        Collections.reverse(filterTilteAndTags);
 
+                        filterHetroAdapter.notifyDataSetChanged();
                         min_price = obj.getString("min_price");
                         max_price = obj.getString("max_price");
                         pricelist.clear();
@@ -236,22 +250,22 @@ public class Filter_Fragment extends Fragment {
                         }
 
 //
-                        for (String tag : producttag) {
-
-                            /* Create new FilterDefaultMultipleListModel object for brand and set array value to brand model {@model}
-                             * Description:
-                             * -- Class: FilterDefaultMultipleListModel.java
-                             * -- Package:main.shop.javaxerp.com.shoppingapp.model
-                             * NOTE: #checked value @FilterDefaultMultipleListModel is false;
-                             * */
-                            FilterModel model = new FilterModel(tag, false);
-//                                model.setName(tag);
-
-                            /*add brand model @model to ArrayList*/
-                            filterModelArrayList.add(model);
-
-                        }
-                        filterAdapter.notifyDataSetChanged();
+//                        for (String tag : producttag) {
+//
+//                            /* Create new FilterDefaultMultipleListModel object for brand and set array value to brand model {@model}
+//                             * Description:
+//                             * -- Class: FilterDefaultMultipleListModel.java
+//                             * -- Package:main.shop.javaxerp.com.shoppingapp.model
+//                             * NOTE: #checked value @FilterDefaultMultipleListModel is false;
+//                             * */
+//                            FilterModel model = new FilterModel(tag, false);
+////                                model.setName(tag);
+//
+//                            /*add brand model @model to ArrayList*/
+//                            filterModelArrayList.add(model);
+//
+//                        }
+//                        filterAdapter.notifyDataSetChanged();
                         priceAdapter.notifyDataSetChanged();
 
 //                        if (getActivity() != null) {
@@ -284,7 +298,6 @@ public class Filter_Fragment extends Fragment {
 
 
     }
-
 
 
 }

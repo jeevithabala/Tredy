@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.util.FilterSharedPreference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -22,13 +24,20 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
     Context mContext;
     ArrayList<FilterModel> itemsList;
     private ArrayList<String> selectedList = new ArrayList<>();
-     FragmentManager fragmentManager;
+    FragmentManager fragmentManager;
     private LayoutInflater layoutInflater;
+    selected selected;
+    String dynamickey;
 
-    public FilterAdapter(Context mContext, ArrayList<FilterModel> itemsList, FragmentManager fragmentManager) {
+    public FilterAdapter() {
+    }
+
+    public FilterAdapter(Context mContext, ArrayList<FilterModel> itemsList, String dynamickey, FragmentManager fragmentManager, selected selected) {
         this.mContext = mContext;
         this.itemsList = itemsList;
         this.fragmentManager = fragmentManager;
+        this.dynamickey = dynamickey;
+        this.selected = selected;
     }
 
 
@@ -50,6 +59,8 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
 
         final int pos = position;
         viewHolder.Name.setText(itemsList.get(position).getTitle());
+        Log.e("title", itemsList.get(position).getTitle());
+
 
         viewHolder.chkSelected.setChecked(getFromSP(itemsList.get(position).title));
 
@@ -58,11 +69,12 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
         viewHolder.chkSelected.setTag(itemsList.get(position));
 
         selectedList.clear();
-        for (int i = 0; i <itemsList.size() ; i++) {
+        for (int i = 0; i < itemsList.size(); i++) {
             String value = String.valueOf(getFromSP(itemsList.get(i).title));
-        if(value.equals("true")){
-            selectedList.add(itemsList.get(i).getTitle());
-        }
+            if (value.equals("true")) {
+                selectedList.add(itemsList.get(i).getTitle());
+                selected.selectedli(dynamickey + " " + itemsList.get(i).getTitle());
+            }
         }
         viewHolder.chkSelected.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -74,10 +86,12 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
 
                 if (cb.isChecked()) {
                     selectedList.add(itemsList.get(pos).getTitle());
+                    selected.selectedli(dynamickey + " " + itemsList.get(pos).getTitle());
 //                    saveInSp(itemsList.get(pos).getTitle(),true);
                 } else {
                     selectedList.remove(itemsList.get(pos).getTitle());
-                    FilterSharedPreference.saveInSp(itemsList.get(pos).getTitle(),false,getApplicationContext());
+                    selected.selectedlistremove(dynamickey + " " + itemsList.get(pos).getTitle());
+                    FilterSharedPreference.saveInSp(itemsList.get(pos).getTitle(), false, getApplicationContext());
 //                    saveInSp(itemsList.get(pos).getTitle(),false);
 
                 }
@@ -92,11 +106,10 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
         return itemsList.size();
     }
 
-    private boolean getFromSP(String key){
+    private boolean getFromSP(String key) {
         SharedPreferences preferences = getApplicationContext().getSharedPreferences("PROJECT_NAME", android.content.Context.MODE_PRIVATE);
         return preferences.getBoolean(key, false);
     }
-
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -118,15 +131,20 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
         return selectedList;
     }
 
-    public void typeclear() {
+    public void typeclear(ArrayList<FilterModel> itemsList) {
         for (int i = 0; i < itemsList.size(); i++) {
 
             itemsList.get(i).setChecked(false);
-            FilterSharedPreference.saveInSp(itemsList.get(i).getTitle(),false,getApplicationContext());
+            FilterSharedPreference.saveInSp(itemsList.get(i).getTitle(), false, getApplicationContext());
 //                    viewHolder.chkSelected.setVisibility(View.GONE);
             selectedList.remove(itemsList.get(i).getTitle());
         }
         notifyDataSetChanged();
+    }
+
+    public interface selected {
+        void selectedli(String select);
+        void selectedlistremove(String select);
     }
 
 }
