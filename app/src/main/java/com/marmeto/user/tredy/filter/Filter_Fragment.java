@@ -201,7 +201,7 @@ public class Filter_Fragment extends Fragment {
 //                                type.setText(dynamicKey);
                                 JSONArray array = obj1.getJSONArray(dynamicKey);
                                 for (int i = 0; i < array.length(); i++) {
-                                    producttag.add(dynamicKey + " "+array.getString(i));
+                                    producttag.add(array.getString(i));
                                 }
 //                            }
 
