@@ -3,6 +3,7 @@ package com.marmeto.user.tredy.category;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,9 +13,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.marmeto.user.tredy.category.model.CategoryModel;
-import com.marmeto.user.tredy.category.model.SubCategoryModel;
 import com.marmeto.user.tredy.groceries.Groceries;
-import com.marmeto.user.tredy.callback.FragmentRecyclerViewClick;
 import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.databinding.CategoreyAdapterBinding;
 
@@ -24,20 +23,20 @@ import java.util.ArrayList;
 public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAdapter.ViewHolder> {
 
     Context mContext;
-    ArrayList<CategoryModel> itemsList;
-    ArrayList<SubCategoryModel> subCategoryModelArrayList;
+    private   ArrayList<CategoryModel> itemsList;
 
     private FragmentManager fragmentManager;
     private LayoutInflater layoutInflater;
 
-    public CategoreDetailAdapter(Context mContext, ArrayList<CategoryModel> itemsList, FragmentManager fragmentManager) {
+    CategoreDetailAdapter(Context mContext, ArrayList<CategoryModel> itemsList, FragmentManager fragmentManager) {
         this.mContext = mContext;
         this.itemsList = itemsList;
         this.fragmentManager = fragmentManager;
     }
 
+    @NonNull
     @Override
-    public CategoreDetailAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CategoreDetailAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (layoutInflater == null) {
             layoutInflater = LayoutInflater.from(parent.getContext());
@@ -48,7 +47,7 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         holder.binding.setCategory(itemsList.get(position));
     }
@@ -68,76 +67,73 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
             this.binding = itembinding;
 
 
-            binding.setItemclick(new FragmentRecyclerViewClick() {
-                @Override
-                public void onClickPostion() {
-                    if (itemsList.get(getAdapterPosition()).getCollectiontitle().trim().toLowerCase().equals("grocery")) {
-                        Groceries groceries = new Groceries();
-                        FragmentTransaction transaction = fragmentManager.beginTransaction();
-                        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                        transaction.replace(R.id.home_container, groceries, "grocery");
-                        if (fragmentManager.findFragmentByTag("grocery") == null) {
-                            transaction.addToBackStack("grocery");
-                            transaction.commit();
-                        } else {
-                            transaction.commit();
-                        }
-
-                    }   else if (itemsList.get(getAdapterPosition()).getCollectiontitle().trim().toLowerCase().equals("all products")) {
-                        Fragment fragment = new CategoryProduct();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("collection", "allproduct");
-//                        bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
-                        fragment.setArguments(bundle);
-                        FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
-                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                        if (fragmentManager.findFragmentByTag("categoryproduct") == null) {
-                            ft.addToBackStack("categoryproduct");
-                            ft.commit();
-                        } else {
-                            ft.commit();
-                        }
-
-                    } else if (itemsList.get(getAdapterPosition()).getSubCategoryModelArrayList() == null) {
-
-                        Fragment fragment = new CategoryProduct();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("collection", "api");
-                        bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
-                        fragment.setArguments(bundle);
-                        FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
-                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                        if (fragmentManager.findFragmentByTag("categoryproduct") == null) {
-                            ft.addToBackStack("categoryproduct");
-                            ft.commit();
-                        } else {
-                            ft.commit();
-                        }
-
+            binding.setItemclick(() -> {
+                if (itemsList.get(getAdapterPosition()).getCollectiontitle().trim().toLowerCase().equals("grocery")) {
+                    Groceries groceries = new Groceries();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    transaction.replace(R.id.home_container, groceries, "grocery");
+                    if (fragmentManager.findFragmentByTag("grocery") == null) {
+                        transaction.addToBackStack("grocery");
+                        transaction.commit();
                     } else {
-
-                        Fragment fragment = new SubCategory();
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
-                        Log.e("iddddddd1", String.valueOf(itemsList.get(getAdapterPosition()).getSubCategoryModelArrayList()));
-                        fragment.setArguments(bundle);
-                        FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
-                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                        if (fragmentManager.findFragmentByTag("fragment") == null) {
-                            ft.addToBackStack("fragment");
-                            ft.commit();
-                        } else {
-                            ft.commit();
-                        }
-
-
+                        transaction.commit();
                     }
+
+                }   else if (itemsList.get(getAdapterPosition()).getCollectiontitle().trim().toLowerCase().equals("all products")) {
+                    Fragment fragment = new CategoryProduct();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("collection", "allproduct");
+//                        bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
+                    fragment.setArguments(bundle);
+                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
+                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    if (fragmentManager.findFragmentByTag("categoryproduct") == null) {
+                        ft.addToBackStack("categoryproduct");
+                        ft.commit();
+                    } else {
+                        ft.commit();
+                    }
+
+                } else if (itemsList.get(getAdapterPosition()).getSubCategoryModelArrayList() == null) {
+
+                    Fragment fragment = new CategoryProduct();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("collection", "api");
+                    bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
+                    fragment.setArguments(bundle);
+                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
+                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    if (fragmentManager.findFragmentByTag("categoryproduct") == null) {
+                        ft.addToBackStack("categoryproduct");
+                        ft.commit();
+                    } else {
+                        ft.commit();
+                    }
+
+                } else {
+
+                    Fragment fragment = new SubCategory();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
+                    Log.e("iddddddd1", String.valueOf(itemsList.get(getAdapterPosition()).getSubCategoryModelArrayList()));
+                    fragment.setArguments(bundle);
+                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    if (fragmentManager.findFragmentByTag("fragment") == null) {
+                        ft.addToBackStack("fragment");
+                        ft.commit();
+                    } else {
+                        ft.commit();
+                    }
+
+
+                }
 //
 //                    Intent intent = new Intent(mContext, Main2Activity.class);
 //                    intent.putExtra("productDetail",itemsList.get(getAdapterPosition()).getCollection().getId());
 //                    mContext.startActivity(intent);
 
-                }
             });
         }
 

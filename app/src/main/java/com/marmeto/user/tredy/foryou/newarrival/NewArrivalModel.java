@@ -1,12 +1,12 @@
 package com.marmeto.user.tredy.foryou.newarrival;
 
+import android.annotation.SuppressLint;
 import android.databinding.BindingAdapter;
 import android.support.annotation.NonNull;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.marmeto.user.tredy.R;
-import com.marmeto.user.tredy.util.MObject;
 import com.shopify.buy3.Storefront;
 import com.squareup.picasso.Picasso;
 
@@ -21,9 +21,8 @@ public class NewArrivalModel implements Serializable, Comparable<NewArrivalModel
 
     public NewArrivalModel() {
     }
-    String price,Product_ID,Product_title,imageUrl;
+    private String price,Product_ID,Product_title,imageUrl;
     private String  collectionid;
-    private  String id;
 
 
 
@@ -59,9 +58,6 @@ public class NewArrivalModel implements Serializable, Comparable<NewArrivalModel
         this.collectionid = collectionid;
     }
 
-    public String getId() {
-        return id;
-    }
 
     public NewArrivalModel(Storefront.Product product, String collectionTitle) {
         this.product = product;
@@ -84,6 +80,7 @@ public class NewArrivalModel implements Serializable, Comparable<NewArrivalModel
         return collectionTitle;
     }
 
+    @SuppressLint("SetTextI18n")
     @BindingAdapter("price")
     public static void price(TextView textView, String price)
     {

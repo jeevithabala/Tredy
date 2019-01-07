@@ -14,7 +14,7 @@ public class AddWhislistModel implements Serializable{
     private Double product_price;
     private String product_varient_title;
     private String imageUrl;
-    String col_id,product_id;
+    private String col_id,product_id;
 
     public String getProduct_id() {
         return product_id;
@@ -40,7 +40,7 @@ public class AddWhislistModel implements Serializable{
         this.product_name = product_name;
     }
 
-    public String getProduct_varient_id() {
+     String getProduct_varient_id() {
         return product_varient_id;
     }
 

@@ -112,10 +112,11 @@ public class NotificationsListFragment extends Fragment {
                         }
                         getNotiCount();
                     } else {
+                        progressDoalog.dismiss();
                         Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
                     }
-
-
+                }else {
+                    progressDoalog.dismiss();
                 }
             }
         });

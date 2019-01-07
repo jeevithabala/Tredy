@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.whislist.whislistDB;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.whislist.AddWhislistModel;
 import com.shopify.buy3.Storefront;
 
@@ -26,22 +28,11 @@ public class DBWhislist   extends SQLiteOpenHelper {
     private static final String COLUMN_PRICE = "price";
     private static final String COLUMN_IMAGE_URL = "image_url";
     private static final String COLUMN_QTY = "qty";
-    private static final String COLUMN_TAG= "tag";
-    private static final String COLUMN_SHIPPING= "shipping";
+//    private static final String COLUMN_TAG= "tag";
+//    private static final String COLUMN_SHIPPING= "shipping";
     private static final String COLUMN_PRODUCT_ID= "product_id";
 
-    private Context mContext;
-
-    private String CREATE_ADD_TO_CARD = "CREATE TABLE " + TABLE_ADDTOCART + "("
-            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_PRODUCT_NAME + " TEXT,"
-            + COLUMN_PRODUCT_VARIENT_ID + " TEXT,"
-            + COLUMN_PRICE + " REAL,"
-            + COLUMN_PRODUCT_VARIENT_TITLE + " TEXT,"
-            + COLUMN_PRODUCT_ID + " TEXT,"
-            + COLUMN_IMAGE_URL + " TEXT" + ")";
-
-
-    private String DROP_ADD_TO_CART = "DROP TABLE IF EXISTS " + TABLE_ADDTOCART;
+     Context mContext;
 
 
     public DBWhislist(Context context) {
@@ -53,6 +44,13 @@ public class DBWhislist   extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        String CREATE_ADD_TO_CARD = "CREATE TABLE " + TABLE_ADDTOCART + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_PRODUCT_NAME + " TEXT,"
+                + COLUMN_PRODUCT_VARIENT_ID + " TEXT,"
+                + COLUMN_PRICE + " REAL,"
+                + COLUMN_PRODUCT_VARIENT_TITLE + " TEXT,"
+                + COLUMN_PRODUCT_ID + " TEXT,"
+                + COLUMN_IMAGE_URL + " TEXT" + ")";
         db.execSQL(CREATE_ADD_TO_CARD);
 
     }
@@ -60,6 +58,7 @@ public class DBWhislist   extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+        String DROP_ADD_TO_CART = "DROP TABLE IF EXISTS " + TABLE_ADDTOCART;
         db.execSQL(DROP_ADD_TO_CART);
 
         // Create tables again
@@ -75,9 +74,13 @@ public class DBWhislist   extends SQLiteOpenHelper {
         values.put(COLUMN_PRODUCT_VARIENT_ID, String.valueOf(listItem.getId()));
         values.put(COLUMN_PRICE, Double.parseDouble(String.valueOf(listItem.getPrice())));
         values.put(COLUMN_PRODUCT_VARIENT_TITLE, listItem.getTitle());
-        values.put(COLUMN_IMAGE_URL, listItem.getImage().getSrc());
+//        values.put(COLUMN_IMAGE_URL, listItem.getImage().getSrc());
         values.put(COLUMN_PRODUCT_ID, productid);
-
+        if(listItem.getImage()==null){
+            values.put(COLUMN_IMAGE_URL, R.drawable.ic_placeholder);
+        }else {
+            values.put(COLUMN_IMAGE_URL, listItem.getImage().getSrc());
+        }
 //
 //        // Inserting Row
         db.insert(TABLE_ADDTOCART, null, values);
@@ -88,7 +91,7 @@ public class DBWhislist   extends SQLiteOpenHelper {
 
     public List<AddWhislistModel> getCartList() {
         SQLiteDatabase db = this.getReadableDatabase();
-        List<AddWhislistModel> userList = new ArrayList<AddWhislistModel>();
+        List<AddWhislistModel> userList = new ArrayList<>();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_ADDTOCART, null);
 
         if (cursor.moveToFirst()) {
@@ -115,12 +118,12 @@ public class DBWhislist   extends SQLiteOpenHelper {
     }
 
     public void update(String id, int qty) {
-        String qty2 = "";
+        String qty2;
         SQLiteDatabase db = this.getWritableDatabase();
         String qty1 = "select qty from "
                 + TABLE_ADDTOCART        + " where "
                 + COLUMN_PRODUCT_VARIENT_ID      + " = "  + "'"   + id  + "'";
-        Cursor  cursor = db.rawQuery(qty1,null);
+        @SuppressLint("Recycle") Cursor  cursor = db.rawQuery(qty1,null);
         if (cursor.moveToFirst()) {
             qty2 =  cursor.getString(cursor.getColumnIndex("qty"));
             Log.e("qty2",""+qty2);
@@ -133,73 +136,9 @@ public class DBWhislist   extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void updateshipping(String id, String ship) {
-        String qty2 = "";
-        SQLiteDatabase db = this.getWritableDatabase();
-        String qty1 = "select shipping from "
-                + TABLE_ADDTOCART        + " where "
-                + COLUMN_PRODUCT_VARIENT_ID      + " = "  + "'"   + id  + "'";
-        Cursor  cursor = db.rawQuery(qty1,null);
-        if (cursor.moveToFirst()) {
-            qty2 =  cursor.getString(cursor.getColumnIndex("shipping"));
-//            if (qty2.equals("true")){
-//                qty2="false";
-//            }
-            Log.e("value",""+qty2);
-
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_SHIPPING, ship);
-
-            db.update(TABLE_ADDTOCART, values, COLUMN_PRODUCT_VARIENT_ID + "= '" + id+ "'", null);
-        }
-        db.close();
-    }
-
-    public void decreaseqty(String id) {
-        String qty2 = "";
-        SQLiteDatabase db = this.getWritableDatabase();
-        String qty1 = "select qty from "
-                + TABLE_ADDTOCART        + " where "
-                + COLUMN_PRODUCT_VARIENT_ID      + " = "  + "'"   + id  + "'";
-        Cursor  cursor = db.rawQuery(qty1,null);
-        if (cursor.moveToFirst()) {
-            qty2 =  cursor.getString(cursor.getColumnIndex("qty"));
-            Log.e("qty2",""+qty2);
-            if(Integer.parseInt(qty2)>1){
-                int quantity= Integer.parseInt(qty2)-1;
-                ContentValues values = new ContentValues();
-                values.put(COLUMN_QTY, quantity);
-
-                db.update(TABLE_ADDTOCART, values, COLUMN_PRODUCT_VARIENT_ID + "= '" + id+ "'", null);
-            }
-
-        }
-        db.close();
-    }
 
 
-    public String getQuantity(String id) {
-        String qty2 = "";
-        SQLiteDatabase db = this.getWritableDatabase();
-        String qty1 = "select qty from "
-                + TABLE_ADDTOCART        + " where "
-                + COLUMN_PRODUCT_VARIENT_ID      + " = "  + "'"   + id  + "'";
-        Cursor  cursor = db.rawQuery(qty1,null);
-        if (cursor.moveToFirst()) {
-            qty2 = cursor.getString(cursor.getColumnIndex("qty"));
-            Log.e("qty2", "" + qty2);
 
-        }
-        db.close();
-        return qty2;
-    }
-
-//    public void deleteItemFromCart(String ID) {
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        db.delete(TABLE_ADDTOCART, COLUMN_PRODUCT_VARIENT_ID + "=" + ID, null);
-//
-//    }
 
     public boolean deleteRow(String name)
     {
@@ -221,12 +160,6 @@ public class DBWhislist   extends SQLiteOpenHelper {
         // selection argument
         String[] selectionArgs = {id};
 
-        // query user table with condition
-        /**
-         * Here query function is used to fetch records from user table this function works like we use sql query.
-         * SQL query equivalent to this query function is
-         * SELECT user_id FROM user WHERE user_email = 'jack@androidtutorialshub.com';
-         */
         Cursor cursor = db.query(TABLE_ADDTOCART, //Table to query
                 columns,                    //columns to return
                 selection,                  //columns for the WHERE clause
@@ -238,10 +171,7 @@ public class DBWhislist   extends SQLiteOpenHelper {
         cursor.close();
         db.close();
 
-        if (cursorCount > 0) {
-            return true;
-        }
+        return cursorCount > 0;
 
-        return false;
     }
 }

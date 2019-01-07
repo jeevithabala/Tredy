@@ -17,22 +17,15 @@ public class AddToCart_Model extends BaseObservable implements Serializable {
     private String product_varient_id;
     private Double product_price;
     private String product_varient_title;
-    private String product_varient_gram;
     private int qty;
     private String imageUrl;
-    String col_id;
-    int total;
+    private String col_id;
+    private int total;
     private  String tag;
-    ArrayList<String> productlist=new ArrayList<>();
-    String ship, product_id;
+    private ArrayList<String> productlist=new ArrayList<>();
+    private String ship, product_id;
 
-    public String getProduct_varient_gram() {
-        return product_varient_gram;
-    }
 
-    public void setProduct_varient_gram(String product_varient_gram) {
-        this.product_varient_gram = product_varient_gram;
-    }
 
     public String getProduct_id() {
         return product_id;
@@ -42,11 +35,11 @@ public class AddToCart_Model extends BaseObservable implements Serializable {
         this.product_id = product_id;
     }
 
-    public String getShip() {
+    String getShip() {
         return ship;
     }
 
-    public void setShip(String ship) {
+    void setShip(String ship) {
         this.ship = ship;
     }
 
@@ -62,7 +55,7 @@ public class AddToCart_Model extends BaseObservable implements Serializable {
         return col_id;
     }
 
-    public void setCol_id(String col_id) {
+    void setCol_id(String col_id) {
         this.col_id = col_id;
     }
 
@@ -78,7 +71,7 @@ public class AddToCart_Model extends BaseObservable implements Serializable {
         return product_varient_id;
     }
 
-    public void setProduct_varient_id(String product_varient_id) {
+    void setProduct_varient_id(String product_varient_id) {
         this.product_varient_id = product_varient_id;
     }
 
@@ -94,7 +87,7 @@ public class AddToCart_Model extends BaseObservable implements Serializable {
         return product_varient_title;
     }
 
-    public void setProduct_varient_title(String product_varient_title) {
+    void setProduct_varient_title(String product_varient_title) {
         this.product_varient_title = product_varient_title;
     }
 
@@ -135,7 +128,7 @@ public class AddToCart_Model extends BaseObservable implements Serializable {
         setTotal1(total);
         return total;
     }
-    public void setTotal1(int total) {
+     private void setTotal1(int total) {
         this.total = total;
         notifyPropertyChanged(BR.total);
     }

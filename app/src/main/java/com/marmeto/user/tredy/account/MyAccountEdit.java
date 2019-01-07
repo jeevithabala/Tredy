@@ -34,8 +34,8 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class MyAccountEdit extends Fragment {
-    EditText firstname, lastname, email, mobilenumber,password;
-    String emailtext, mobiletext, firstnametext, lastnametext,passwordtext;
+    EditText firstname, lastname, email, mobilenumber;
+    String emailtext, mobiletext, firstnametext, lastnametext;
     private String accessToken;
     private GraphClient graphClient;
     TextView save;
@@ -44,7 +44,7 @@ public class MyAccountEdit extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.myaccountedit, container, false);
 
-        ((Navigation) getActivity()).getSupportActionBar().setTitle(" Edit Account");
+        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle(" Edit Account");
 
         firstname = view.findViewById(R.id.first_name);
         lastname = view.findViewById(R.id.last_name);
@@ -54,6 +54,7 @@ public class MyAccountEdit extends Fragment {
         save=view.findViewById(R.id.save);
 
 
+        assert getArguments() != null;
         emailtext = getArguments().getString("email");
         mobiletext = getArguments().getString("mobile");
         firstnametext = getArguments().getString("firstname");
@@ -86,50 +87,47 @@ public class MyAccountEdit extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        save.setOnClickListener(view -> {
 //                Boolean valid=true;
-                if (accessToken != null) {
-                    emailtext=email.getText().toString().trim();
-                    mobiletext=mobilenumber.getText().toString().trim();
-                    firstnametext=firstname.getText().toString().trim();
-                    lastnametext=lastname.getText().toString().trim();
-                    if(mobiletext.length()>0)
-                    {
-                        if(mobiletext.length()<10) {
+            if (accessToken != null) {
+                emailtext=email.getText().toString().trim();
+                mobiletext=mobilenumber.getText().toString().trim();
+                firstnametext=firstname.getText().toString().trim();
+                lastnametext=lastname.getText().toString().trim();
+                if(mobiletext.length()>0)
+                {
+                    if(mobiletext.length()<10) {
 //                            Toast.makeText(getActivity(), "Please Enter 10 Digit Mobile Number", Toast.LENGTH_SHORT).show();
-                            Config.Dialog("Please Enter 10 Digit Mobile Number", getActivity());
+                        Config.Dialog("Please Enter 10 Digit Mobile Number", getActivity());
 
 //                            valid = false;
-                        }
-                        else if(mobiletext.length()==10)
-                        {
-//                            valid=true;
-                            mobiletext=("+91"+mobiletext).trim();
-                            progressDialog = new ProgressDialog(getActivity());
-                            progressDialog.setMessage("loading, please wait...");
-                            progressDialog.setCanceledOnTouchOutside(false);
-                            progressDialog.show();
-                            if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
-                                update(accessToken);
-                            } else {
-                                Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
                     }
-                    else
+                    else if(mobiletext.length()==10)
                     {
-                        Config.Dialog("Please Enter Mobile Number", getActivity());
+//                            valid=true;
+                        mobiletext=("+91"+mobiletext).trim();
+                        progressDialog = new ProgressDialog(getActivity());
+                        progressDialog.setMessage("loading, please wait...");
+                        progressDialog.setCanceledOnTouchOutside(false);
+                        progressDialog.show();
+                        if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+                            update(accessToken);
+                        } else {
+                            Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                }
+                else
+                {
+                    Config.Dialog("Please Enter Mobile Number", getActivity());
 
 //                        valid=false;
 //                        Toast.makeText(getActivity(), "Please Enter Mobile Number", Toast.LENGTH_SHORT).show();
 
-                    }
                 }
-                }
-        });
+            }
+            });
     }
 
     public void update(String accessToken) {
@@ -177,16 +175,15 @@ public class MyAccountEdit extends Fragment {
 //                        transaction.addToBackStack("account");
 //                        transaction.commit();
                        if(getActivity()!=null) {
-                           getActivity().runOnUiThread(new Runnable() {
-                               @Override
-                               public void run() {
-                                   progressDialog.dismiss();
-                                   Config.Dialog("Profile Changes updated.. It takes few minutes to update in your account", getActivity());
+                           getActivity().runOnUiThread(() -> {
+                               progressDialog.dismiss();
+                               Config.Dialog("Profile Changes updated.. It takes few minutes to update in your account", getActivity());
 
 //                                   Toast.makeText(getActivity(), "Changes updated.. It takes few minutes to update in your account", Toast.LENGTH_SHORT).show();
+                               if (getFragmentManager() != null) {
                                    getFragmentManager().popBackStack();
-
                                }
+
                            });
                        }
 
@@ -196,15 +193,12 @@ public class MyAccountEdit extends Fragment {
 
                         for (int i=0;i<response.data().getCustomerUpdate().getUserErrors().size();i++){
                             String phonecheck=response.data().getCustomerUpdate().getUserErrors().get(i).getMessage();
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressDialog.dismiss();
-                                    Config.Dialog(phonecheck, getActivity());
+                            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                                progressDialog.dismiss();
+                                Config.Dialog(phonecheck, getActivity());
 
 //                                    Toast.makeText(getActivity(),phonecheck,Toast.LENGTH_SHORT).show();
 
-                                }
                             });
                         }
 

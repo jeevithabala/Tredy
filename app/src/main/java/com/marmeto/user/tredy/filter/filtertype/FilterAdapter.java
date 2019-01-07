@@ -22,7 +22,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
     Context mContext;
     ArrayList<FilterModel> itemsList;
     private ArrayList<String> selectedList = new ArrayList<>();
-    private FragmentManager fragmentManager;
+     FragmentManager fragmentManager;
     private LayoutInflater layoutInflater;
 
     public FilterAdapter(Context mContext, ArrayList<FilterModel> itemsList, FragmentManager fragmentManager) {
@@ -49,7 +49,6 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
 
         final int pos = position;
-
         viewHolder.Name.setText(itemsList.get(position).getTitle());
 
         viewHolder.chkSelected.setChecked(getFromSP(itemsList.get(position).title));

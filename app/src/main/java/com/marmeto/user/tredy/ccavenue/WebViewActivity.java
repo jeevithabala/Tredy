@@ -909,12 +909,15 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
 
     public void getData() {
 
+//        try {
+            String[] separated = finalhtml.split("<td>");
+            transaction_id = separated[6];
+            String[] separated1 = transaction_id.split("</td>");
+            transaction_id = separated1[0];
+//        }catch (Exception e){
+//            transaction_id="";
+//        }
 
-        String[] separated = finalhtml.split("<td>");
-        transaction_id = separated[6];
-        String[] separated1 = transaction_id.split("</td>");
-        transaction_id = separated1[0];
-        Log.e("transaction_id", " " + transaction_id);
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
 

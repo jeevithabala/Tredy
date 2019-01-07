@@ -9,13 +9,13 @@ import java.util.ArrayList;
 
 
 public class SharedPreference {
-    public static final String Data = "hello";
+     private static final String Data = "hello";
 
 
     public static void saveData(String key, String value , Context context){
         SharedPreferences.Editor editor = context.getSharedPreferences(Data, Activity.MODE_PRIVATE).edit();
         editor.putString(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public static String getData(String key, Context context){
@@ -25,7 +25,7 @@ public class SharedPreference {
     public static void saveArrayData(String key, ArrayList value , Context context){
         SharedPreferences.Editor editor = context.getSharedPreferences(Data, Activity.MODE_PRIVATE).edit();
         editor.putString(key, String.valueOf(value));
-        editor.commit();
+        editor.apply();
     }
     public static String getArrayData(String key, Context context){
         SharedPreferences prefs = context.getSharedPreferences(Data, Activity.MODE_PRIVATE);
@@ -35,7 +35,7 @@ public class SharedPreference {
     public static void saveIntData(String key, Integer value , Context context){
         SharedPreferences.Editor editor = context.getSharedPreferences(Data, Activity.MODE_PRIVATE).edit();
         editor.putInt(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public static int getIntData(String key,Context context){
@@ -46,7 +46,7 @@ public class SharedPreference {
     public static void saveBooleanData(String key, Boolean value , Context context){
         SharedPreferences.Editor editor = context.getSharedPreferences(Data, Activity.MODE_PRIVATE).edit();
         editor.putBoolean(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public static Boolean getBooleanData(String key,Context context){
@@ -57,7 +57,7 @@ public class SharedPreference {
     public static void clearSession(Context context){
         SharedPreferences.Editor editor = context.getSharedPreferences(Data, Activity.MODE_PRIVATE).edit();
         editor.clear();
-        editor.commit();
+        editor.apply();
     }
 
     public static void removeStringData(String key, Context context){

@@ -1,7 +1,9 @@
 package com.marmeto.user.tredy.filter.price;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,10 +23,9 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> {
 
     Context mContext;
-    ArrayList<PriceModel> itemsList;
+    private ArrayList<PriceModel> itemsList;
     private ArrayList<String> selectedList = new ArrayList<>();
-    private FragmentManager fragmentManager;
-    private LayoutInflater layoutInflater;
+     FragmentManager fragmentManager;
 
     public PriceAdapter(Context mContext, ArrayList<PriceModel> itemsList, FragmentManager fragmentManager) {
         this.mContext = mContext;
@@ -34,22 +35,20 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> 
 
 
     // Create new views
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent,
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                          int viewType) {
         // create a new view
-        View itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(
+        @SuppressLint("InflateParams") View itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.pricebyadapter, null);
 
-        ViewHolder viewHolder = new ViewHolder(itemLayoutView);
-
-        return viewHolder;
+        return new ViewHolder(itemLayoutView);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
-
-        final int pos = position;
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, @SuppressLint("RecyclerView") final int position) {
 
         viewHolder.Name.setText("\u20B9" + itemsList.get(position).getTitle());
 
@@ -65,33 +64,31 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> 
             }
         }
 
-        viewHolder.chkSelected.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        viewHolder.chkSelected.setOnClickListener(v -> {
 
 
-                RadioButton cb = (RadioButton) v;
-                PriceModel filterModel = (PriceModel) cb.getTag();
+            RadioButton cb = (RadioButton) v;
+            PriceModel filterModel = (PriceModel) cb.getTag();
 
-                for (int i = 0; i < itemsList.size(); i++) {
-                    itemsList.get(i).setChecked(false);
-                    FilterSharedPreference.saveInSp_price(itemsList.get(i).getTitle(), false, getApplicationContext());
-                    selectedList.remove(itemsList.get(i).getTitle());
-                }
-                notifyDataSetChanged();
+            for (int i = 0; i < itemsList.size(); i++) {
+                itemsList.get(i).setChecked(false);
+                FilterSharedPreference.saveInSp_price(itemsList.get(i).getTitle(), false, getApplicationContext());
+                selectedList.remove(itemsList.get(i).getTitle());
+            }
+            notifyDataSetChanged();
 
-                filterModel.setChecked(cb.isChecked());
-                itemsList.get(pos).setChecked(cb.isChecked());
+            filterModel.setChecked(cb.isChecked());
+            itemsList.get(position).setChecked(cb.isChecked());
 
 
-                if (cb.isChecked()) {
-                    selectedList.add(itemsList.get(pos).getTitle());
-                    FilterSharedPreference.saveInSp_price(itemsList.get(pos).getTitle(), true, getApplicationContext());
+            if (cb.isChecked()) {
+                selectedList.add(itemsList.get(position).getTitle());
+                FilterSharedPreference.saveInSp_price(itemsList.get(position).getTitle(), true, getApplicationContext());
 
-                } else {
-                    selectedList.remove(itemsList.get(pos).getTitle());
-                    FilterSharedPreference.saveInSp_price(itemsList.get(pos).getTitle(), false, getApplicationContext());
+            } else {
+                selectedList.remove(itemsList.get(position).getTitle());
+                FilterSharedPreference.saveInSp_price(itemsList.get(position).getTitle(), false, getApplicationContext());
 
-                }
             }
         });
 
@@ -110,15 +107,15 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.ViewHolder> 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView Name;
-        public RadioButton chkSelected;
+         TextView Name;
+         RadioButton chkSelected;
 
 
         public ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
 
-            Name = (TextView) itemLayoutView.findViewById(R.id.txt_item_list_title);
-            chkSelected = (RadioButton) itemLayoutView.findViewById(R.id.cbSelected);
+            Name = itemLayoutView.findViewById(R.id.txt_item_list_title);
+            chkSelected = itemLayoutView.findViewById(R.id.cbSelected);
         }
 
     }

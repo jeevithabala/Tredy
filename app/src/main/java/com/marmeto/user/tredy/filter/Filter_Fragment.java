@@ -1,7 +1,10 @@
 package com.marmeto.user.tredy.filter;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,15 +16,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.marmeto.user.tredy.filter.filtertype.FilterAdapter;
@@ -43,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 public class Filter_Fragment extends Fragment {
@@ -53,10 +53,8 @@ public class Filter_Fragment extends Fragment {
     ArrayList<FilterModel> filterModelArrayList = new ArrayList<>();
     ArrayList<PriceModel> priceModelArrayList = new ArrayList<>();
     ArrayList<SortByModel> sortByModelArrayList = new ArrayList<>();
-    private RequestQueue mRequestQueue;
     ArrayList<String> producttag = new ArrayList<>();
     private String collectionid;
-    ArrayList<String> selectedarray = new ArrayList<>();
     Button btn_filter, btn_clear;
     private ArrayList<String> selectedFilterList;
     private ArrayList<String> selectedsortList;
@@ -64,18 +62,18 @@ public class Filter_Fragment extends Fragment {
     int firstsplit, secondsplit, thirdsplit, fourthsplit;
     ArrayList<String> pricelist = new ArrayList<>();
     ArrayList<String> sortlist = new ArrayList<>();
-    Toolbar toolbar;
     TextView type;
     String min_price, max_price;
     String dynamicKey = "", sortlistkey = "";
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.filter_fragment, container, false);
 
-        ((Navigation) getActivity()).getSupportActionBar().setTitle("Filter");
+        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Filter");
 
 
+        assert getArguments() != null;
         collectionid = getArguments().getString("collectionid");
         Log.e("collection", collectionid);
         getTaglist();
@@ -118,49 +116,41 @@ public class Filter_Fragment extends Fragment {
         }
         sortByAdapter.notifyDataSetChanged();
 
-        btn_filter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.e("inside", "came");
+        btn_filter.setOnClickListener(view12 -> {
+            selectedFilterList = ( filterAdapter).getSelectedContactList();
+            selectedsortList = ( sortByAdapter).getSelectedSortList();
+            selectedpriceList = ( priceAdapter).getSelectedPriceList();
 
+            Log.e("adaa", "" + selectedFilterList.toString() + selectedpriceList.toString() + selectedsortList.toString());
+            if (selectedpriceList.size() != 0) {
+                String price = selectedpriceList.get(0).trim();
+                StringTokenizer tokens = new StringTokenizer(price, "-");
+                min_price = tokens.nextToken().trim();// this will contain "Fruit"
+                max_price = tokens.nextToken().trim();
 
-                selectedFilterList = ((FilterAdapter) filterAdapter).getSelectedContactList();
-                selectedsortList = ((SortByAdapter) sortByAdapter).getSelectedSortList();
-                selectedpriceList = ((PriceAdapter) priceAdapter).getSelectedPriceList();
+            }
 
-                Log.e("adaa", "" + selectedFilterList.toString() + selectedpriceList.toString() + selectedsortList.toString());
-                if (selectedpriceList.size() != 0) {
-                    String price = selectedpriceList.get(0).trim();
-                    StringTokenizer tokens = new StringTokenizer(price, "-");
-                    min_price = tokens.nextToken().trim();// this will contain "Fruit"
-                    max_price = tokens.nextToken().trim();
+            if (selectedsortList.size() != 0) {
 
+                if (selectedsortList.get(0).trim().equals("Price : High to Low")) {
+                    sortlistkey = "sortBy=min_price&order=desc";
+                } else {
+                    sortlistkey = "sortBy=min_price&order=asc";
                 }
-
-                if (selectedsortList.size() != 0) {
-
-                    if (selectedsortList.get(0).trim().equals("Price : High to Low")) {
-                        sortlistkey = "sortBy=min_price&order=desc";
-                    } else {
-                        sortlistkey = "sortBy=min_price&order=asc";
-                    }
-                }
+            }
 
 
-                OnFilterDataCallBack onFilterDataCallBack = (OnFilterDataCallBack) getActivity();
-                onFilterDataCallBack.onFilterValueSelectCallBack(min_price, max_price, sortlistkey, collectionid, selectedFilterList, dynamicKey);
+            OnFilterDataCallBack onFilterDataCallBack = (OnFilterDataCallBack) getActivity();
+            onFilterDataCallBack.onFilterValueSelectCallBack(min_price, max_price, sortlistkey, collectionid, selectedFilterList, dynamicKey);
 
-                getActivity().onBackPressed();
+            getActivity().onBackPressed();
 
 //                getFragmentManager().beginTransaction().remove(Filter_Fragment.this).commit();
 
 //                postFilter();
 
-            }
         });
-        btn_clear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        btn_clear.setOnClickListener(view1 -> {
 //                selectedFilterList.clear();
 //                selectedsortList.clear();
 //                selectedpriceList.clear();
@@ -168,11 +158,10 @@ public class Filter_Fragment extends Fragment {
 //                ((SortByAdapter) sortByAdapter).getSelectedSortList().clear();
 //                ((PriceAdapter) priceAdapter).getSelectedPriceList().clear();
 
-                ((SortByAdapter) sortByAdapter).sortclear();
-                ((FilterAdapter) filterAdapter).typeclear();
-                ((PriceAdapter) priceAdapter).priceclear();
-                filterAdapter.notifyDataSetChanged();
-            }
+            ( sortByAdapter).sortclear();
+            ( filterAdapter).typeclear();
+            ( priceAdapter).priceclear();
+            filterAdapter.notifyDataSetChanged();
         });
 
         filterAdapter.notifyDataSetChanged();
@@ -187,96 +176,93 @@ public class Filter_Fragment extends Fragment {
 
         filterModelArrayList.clear();
 
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        RequestQueue mRequestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.filter_tag1 + collectionid.trim(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
+                response -> {
 
-                        try {
+                    try {
 
 
-                            JSONObject obj = new JSONObject(response);
-                            JSONObject obj1 = obj.getJSONObject("filters");
+                        JSONObject obj = new JSONObject(response);
+                        JSONObject obj1 = obj.getJSONObject("filters");
+                        Log.e("obj1", String.valueOf(obj1.length()));
+                        Iterator keys = obj1.keys();
 
-                            Iterator keys = obj1.keys();
+                        while (keys.hasNext()) {
+                            dynamicKey = (String) keys.next();
 
-                            while (keys.hasNext()) {
-                                dynamicKey = (String) keys.next();
+//                            LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//                            assert layoutInflater != null;
+//                            @SuppressLint("InflateParams") final View addView = layoutInflater.inflate(R.layout.row, null);
+//                            TextView textOut = (TextView)addView.findViewById(R.id.type1);
+//                            textOut.setText(dynamicKey);
 
+//                            if(dynamicKey.equalsIgnoreCase("Kitchenwares")) {
+//                                type.setText(dynamicKey);
                                 JSONArray array = obj1.getJSONArray(dynamicKey);
                                 for (int i = 0; i < array.length(); i++) {
-                                    producttag.add(array.getString(i));
+                                    producttag.add(dynamicKey + " "+array.getString(i));
                                 }
+//                            }
 
 
-                            }
+                        }
 
-                            min_price = obj.getString("min_price");
-                            max_price = obj.getString("max_price");
-                            pricelist.clear();
+                        min_price = obj.getString("min_price");
+                        max_price = obj.getString("max_price");
+                        pricelist.clear();
 
-                            int splitvalue;
-                            splitvalue = (Integer.parseInt(max_price) - Integer.parseInt(min_price)) / 4;
-                            firstsplit = Math.round(Integer.parseInt(min_price) + splitvalue);
-                            secondsplit = Math.round(firstsplit + splitvalue);
-                            thirdsplit = Math.round(secondsplit + splitvalue);
-                            fourthsplit = Math.round(Integer.parseInt(max_price));
+                        int splitvalue;
+                        splitvalue = (Integer.parseInt(max_price) - Integer.parseInt(min_price)) / 4;
+                        firstsplit = Math.round(Integer.parseInt(min_price) + splitvalue);
+                        secondsplit = Math.round(firstsplit + splitvalue);
+                        thirdsplit = Math.round(secondsplit + splitvalue);
+                        fourthsplit = Math.round(Integer.parseInt(max_price));
 
-                            String first = min_price + " - " + String.valueOf(firstsplit);
-                            String second = String.valueOf(firstsplit + 1 + " - " + secondsplit);
-                            String third = String.valueOf(secondsplit + 1 + " - " + thirdsplit);
-                            String fourth = String.valueOf(thirdsplit + 1 + " - " + max_price);
+                        String first = min_price + " - " + String.valueOf(firstsplit);
+                        String second = String.valueOf(firstsplit + 1 + " - " + secondsplit);
+                        String third = String.valueOf(secondsplit + 1 + " - " + thirdsplit);
+                        String fourth = String.valueOf(thirdsplit + 1 + " - " + max_price);
 
-                            pricelist.add(first);
-                            pricelist.add(second);
-                            pricelist.add(third);
-                            pricelist.add(fourth);
-                            priceModelArrayList.clear();
-                            for (String tag : pricelist) {
-                                PriceModel priceModel = new PriceModel(tag, false);
-                                priceModelArrayList.add(priceModel);
+                        pricelist.add(first);
+                        pricelist.add(second);
+                        pricelist.add(third);
+                        pricelist.add(fourth);
+                        priceModelArrayList.clear();
+                        for (String tag : pricelist) {
+                            PriceModel priceModel = new PriceModel(tag, false);
+                            priceModelArrayList.add(priceModel);
 
-                            }
+                        }
 
 //
-                            for (String tag : producttag) {
+                        for (String tag : producttag) {
 
-                                /* Create new FilterDefaultMultipleListModel object for brand and set array value to brand model {@model}
-                                 * Description:
-                                 * -- Class: FilterDefaultMultipleListModel.java
-                                 * -- Package:main.shop.javaxerp.com.shoppingapp.model
-                                 * NOTE: #checked value @FilterDefaultMultipleListModel is false;
-                                 * */
-                                FilterModel model = new FilterModel(tag, false);
+                            /* Create new FilterDefaultMultipleListModel object for brand and set array value to brand model {@model}
+                             * Description:
+                             * -- Class: FilterDefaultMultipleListModel.java
+                             * -- Package:main.shop.javaxerp.com.shoppingapp.model
+                             * NOTE: #checked value @FilterDefaultMultipleListModel is false;
+                             * */
+                            FilterModel model = new FilterModel(tag, false);
 //                                model.setName(tag);
 
-                                /*add brand model @model to ArrayList*/
-                                filterModelArrayList.add(model);
+                            /*add brand model @model to ArrayList*/
+                            filterModelArrayList.add(model);
 
-                            }
-                            filterAdapter.notifyDataSetChanged();
-                            priceAdapter.notifyDataSetChanged();
-
-                            if (getActivity() != null) {
-                                getActivity().runOnUiThread(new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        type.setText(dynamicKey);
-                                    }
-                                });
-
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+                        filterAdapter.notifyDataSetChanged();
+                        priceAdapter.notifyDataSetChanged();
+
+//                        if (getActivity() != null) {
+//                            getActivity().runOnUiThread(() -> type.setText(dynamicKey));
+//
+//                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                    }
+                error -> {
                 }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -288,7 +274,7 @@ public class Filter_Fragment extends Fragment {
                 return params;
             }
         };
-        stringRequest.setTag("insurance_view");
+        stringRequest.setTag("filter");
         //  VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
 
         int socketTimeout = 10000;

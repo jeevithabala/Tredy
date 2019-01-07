@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.bag.cartdatabase;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -34,21 +35,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private Context mContext;
 
-    private String CREATE_ADD_TO_CARD = "CREATE TABLE " + TABLE_ADDTOCART + "("
-            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + COLUMN_PRODUCT_NAME + " TEXT,"
-            + COLUMN_PRODUCT_VARIENT_ID + " TEXT,"
-            + COLUMN_PRICE + " REAL,"
-            + COLUMN_PRODUCT_VARIENT_TITLE + " TEXT,"
-            + COLUMN_QTY + " INTEGER,"
-            + COLUMN_TAG + " TEXT,"
-            + COLUMN_SHIPPING + " TEXT,"
-            + COLUMN_PRODUCT_ID + " TEXT,"
-            + COLUMN_IMAGE_URL + " TEXT" + ")";
-
-
-    private String DROP_ADD_TO_CART = "DROP TABLE IF EXISTS " + TABLE_ADDTOCART;
-
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -59,6 +45,17 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        String CREATE_ADD_TO_CARD = "CREATE TABLE " + TABLE_ADDTOCART + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_PRODUCT_NAME + " TEXT,"
+                + COLUMN_PRODUCT_VARIENT_ID + " TEXT,"
+                + COLUMN_PRICE + " REAL,"
+                + COLUMN_PRODUCT_VARIENT_TITLE + " TEXT,"
+                + COLUMN_QTY + " INTEGER,"
+                + COLUMN_TAG + " TEXT,"
+                + COLUMN_SHIPPING + " TEXT,"
+                + COLUMN_PRODUCT_ID + " TEXT,"
+                + COLUMN_IMAGE_URL + " TEXT" + ")";
         db.execSQL(CREATE_ADD_TO_CARD);
 
     }
@@ -66,6 +63,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+        String DROP_ADD_TO_CART = "DROP TABLE IF EXISTS " + TABLE_ADDTOCART;
         db.execSQL(DROP_ADD_TO_CART);
 
         // Create tables again
@@ -101,7 +99,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public List<AddToCart_Model> getCartList() {
         SQLiteDatabase db = this.getReadableDatabase();
-        List<AddToCart_Model> userList = new ArrayList<AddToCart_Model>();
+        List<AddToCart_Model> userList = new ArrayList<>();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_ADDTOCART, null);
 
         if (cursor.moveToFirst()) {
@@ -135,9 +133,9 @@ public class DBHelper extends SQLiteOpenHelper {
         String qty1 = "select qty from "
                 + TABLE_ADDTOCART + " where "
                 + COLUMN_PRODUCT_VARIENT_ID + " = " + "'" + id + "'";
-        Cursor cursor = db.rawQuery(qty1, null);
+         @SuppressLint("Recycle") Cursor cursor = db.rawQuery(qty1, null);
         if (cursor.moveToFirst()) {
-            String qty2 = "";
+            String qty2;
             qty2 = cursor.getString(cursor.getColumnIndex("qty"));
             Log.e("qty2", "" + qty2);
             int quantity = Integer.parseInt(qty2) + qty;
@@ -156,12 +154,12 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void updateshipping(String id, String ship) {
-        String qty2 = "";
+        String qty2;
         SQLiteDatabase db = this.getWritableDatabase();
         String qty1 = "select shipping from "
                 + TABLE_ADDTOCART + " where "
                 + COLUMN_PRODUCT_VARIENT_ID + " = " + "'" + id + "'";
-        Cursor cursor = db.rawQuery(qty1, null);
+        @SuppressLint("Recycle") Cursor cursor = db.rawQuery(qty1, null);
         if (cursor.moveToFirst()) {
             qty2 = cursor.getString(cursor.getColumnIndex("shipping"));
 //            if (qty2.equals("true")){
@@ -178,12 +176,12 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void decreaseqty(String id) {
-        String qty2 = "";
+        String qty2;
         SQLiteDatabase db = this.getWritableDatabase();
         String qty1 = "select qty from "
                 + TABLE_ADDTOCART + " where "
                 + COLUMN_PRODUCT_VARIENT_ID + " = " + "'" + id + "'";
-        Cursor cursor = db.rawQuery(qty1, null);
+        @SuppressLint("Recycle") Cursor cursor = db.rawQuery(qty1, null);
         if (cursor.moveToFirst()) {
             qty2 = cursor.getString(cursor.getColumnIndex("qty"));
             Log.e("qty2", "" + qty2);
@@ -207,7 +205,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String qty1 = "select qty from "
                 + TABLE_ADDTOCART + " where "
                 + COLUMN_PRODUCT_VARIENT_ID + " = " + "'" + id + "'";
-        Cursor cursor = db.rawQuery(qty1, null);
+        @SuppressLint("Recycle") Cursor cursor = db.rawQuery(qty1, null);
         if (cursor.moveToFirst()) {
             qty2 = cursor.getString(cursor.getColumnIndex("qty"));
             Log.e("qty2", "" + qty2);
@@ -224,7 +222,7 @@ public class DBHelper extends SQLiteOpenHelper {
 //
 //    }
 
-    public boolean deleteRow(String name) {
+    boolean deleteRow(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         return db.delete(TABLE_ADDTOCART, COLUMN_PRODUCT_VARIENT_ID + "='" + name + "' ;", null) > 0;
@@ -246,12 +244,7 @@ public class DBHelper extends SQLiteOpenHelper {
         // selection argument
         String[] selectionArgs = {id};
 
-        // query user table with condition
-        /**
-         * Here query function is used to fetch records from user table this function works like we use sql query.
-         * SQL query equivalent to this query function is
-         * SELECT user_id FROM user WHERE user_email = 'jack@androidtutorialshub.com';
-         */
+
         Cursor cursor = db.query(TABLE_ADDTOCART, //Table to query
                 columns,                    //columns to return
                 selection,                  //columns for the WHERE clause
@@ -263,50 +256,10 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
 
-        if (cursorCount > 0) {
-            return true;
-        }
+        return cursorCount > 0;
 
-        return false;
     }
 
-    public boolean checkProduct(String id) {
-
-        // array of columns to fetch
-        String[] columns = {
-                COLUMN_ID
-        };
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        // selection criteria
-        String selection = COLUMN_PRODUCT_ID + " = ?";
-
-        // selection argument
-        String[] selectionArgs = {id};
-
-        // query user table with condition
-        /**
-         * Here query function is used to fetch records from user table this function works like we use sql query.
-         * SQL query equivalent to this query function is
-         * SELECT user_id FROM user WHERE user_email = 'jack@androidtutorialshub.com';
-         */
-        Cursor cursor = db.query(TABLE_ADDTOCART, //Table to query
-                columns,                    //columns to return
-                selection,                  //columns for the WHERE clause
-                selectionArgs,              //The values for the WHERE clause
-                null,                       //group the rows
-                null,                      //filter by row groups
-                null);                      //The sort order
-        int cursorCount = cursor.getCount();
-        cursor.close();
-        db.close();
-
-        if (cursorCount > 0) {
-            return true;
-        }
-
-        return false;
-    }
 
     public  void deleteCart(Context context) {
         DBHelper dbHelper = new DBHelper(context);

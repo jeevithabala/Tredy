@@ -1,15 +1,13 @@
 package com.marmeto.user.tredy.bag;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,14 +29,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model;
 import com.marmeto.user.tredy.bag.cartdatabase.DBHelper;
-import com.marmeto.user.tredy.BuildConfig;
 import com.marmeto.user.tredy.ccavenue.WebViewActivity;
 import com.marmeto.user.tredy.login.Validationemail;
 import com.marmeto.user.tredy.login.Validationmobile;
@@ -49,58 +44,45 @@ import com.marmeto.user.tredy.util.Constants;
 import com.marmeto.user.tredy.util.SharedPreference;
 import com.marmeto.user.tredy.utility.AvenuesParams;
 import com.marmeto.user.tredy.utility.ServiceUtility;
-import com.shopify.buy3.GraphCall;
-import com.shopify.buy3.GraphClient;
-import com.shopify.buy3.GraphError;
-import com.shopify.buy3.GraphResponse;
-import com.shopify.buy3.HttpCachePolicy;
-import com.shopify.buy3.QueryGraphCall;
-import com.shopify.buy3.Storefront;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public class PayUMoneyActivity extends AppCompatActivity implements View.OnClickListener, DiscountAdapter.Discountinterface {
 
-    EditText emailedit, mobile, amountedit, discount;
+    EditText emailedit, mobile, amountedit;
     LinearLayout paynowbtn, recycler_layout;
     Button btnsubmit1, btncancel;
     RadioButton btnradonline, btnradcod;
-    String emailstring, totalamount, coupon, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "";
+    String emailstring, totalamount, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "";
     String s_mobile = "", b_mobile = "", b_email = "";
     TextView txtpayamount, t_pay, discount_price, apply_coupon;
-    CardView apply_discount;
     LinearLayout discount_layout;
-    int i = 0, cod = 0;
+    int  cod = 0;
     private String dynamicKey = "", remove_cod = "";
     DBHelper db;
     List<AddToCart_Model> cartlist = new ArrayList<>();
     String product_varientid = "", product_qty = "", totalcost = "", tag = "";
-    private String kind_transaction = "";
-    private String product_varientid1 = "";
     RecyclerView discount_recycler;
     private RequestQueue mRequestQueue;
     ArrayList<DiscountModel> discountlist = new ArrayList<>();
-    private JsonArrayRequest request;
     DiscountAdapter discountAdapter;
     TextView view_coupon;
     String accessToken;
-    private GraphClient graphClient;
     private ProgressDialog progressDialog;
     ArrayList<OrderDetailModel> orderDetailModelArrayList = new ArrayList<>();
     private String orderId, discounted_price, discount_coupon;
     String accessCode, merchantId, currency, rsaKeyUrl, redirectUrl, cancelUrl;
     int buynow = 0, ordercount = 0;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,12 +90,12 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         SharedPreference.saveData("update", "true", getApplicationContext());
         accessToken = SharedPreference.getData("accesstoken", PayUMoneyActivity.this);
 
-        graphClient = GraphClient.builder(PayUMoneyActivity.this)
-                .shopDomain(BuildConfig.SHOP_DOMAIN)
-                .accessToken(BuildConfig.API_KEY)
-                .httpCache(new File(PayUMoneyActivity.this.getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
-                .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
-                .build();
+//        GraphClient graphClient = GraphClient.builder(PayUMoneyActivity.this)
+//                .shopDomain(BuildConfig.SHOP_DOMAIN)
+//                .accessToken(BuildConfig.API_KEY)
+//                .httpCache(new File(PayUMoneyActivity.this.getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
+//                .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
+//                .build();
 
 
         db = new DBHelper(this);
@@ -171,15 +153,15 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         }
 
 
-        emailedit = (EditText) findViewById(R.id.payuemail);
-        mobile = (EditText) findViewById(R.id.payumobile);
-        amountedit = (EditText) findViewById(R.id.payuamount);
+        emailedit =findViewById(R.id.payuemail);
+        mobile =  findViewById(R.id.payumobile);
+        amountedit =findViewById(R.id.payuamount);
 //        apply_discount = findViewById(R.id.apply_discount);
         discount_price = findViewById(R.id.discount_price);
         t_pay = findViewById(R.id.t_pay);
         discount_layout = findViewById(R.id.discount_layout);
         apply_coupon = findViewById(R.id.apply_coupon);
-        paynowbtn = (LinearLayout) findViewById(R.id.paynowbtn);
+        paynowbtn =  findViewById(R.id.paynowbtn);
         paynowbtn.setOnClickListener(this);
         view_coupon.setOnClickListener(this);
 
@@ -214,11 +196,11 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
         Integer randomNum = ServiceUtility.randInt(0, 9999999);
         orderId = randomNum.toString();
-
-        String vAccessCode = ServiceUtility.chkNull(accessCode).toString().trim();
-        String vMerchantId = ServiceUtility.chkNull(merchantId).toString().trim();
-        String vCurrency = ServiceUtility.chkNull(currency).toString().trim();
-        String vAmount = ServiceUtility.chkNull(totalcost).toString().trim();
+//
+//        String vAccessCode = ServiceUtility.chkNull(accessCode).toString().trim();
+//        String vMerchantId = ServiceUtility.chkNull(merchantId).toString().trim();
+//        String vCurrency = ServiceUtility.chkNull(currency).toString().trim();
+//        String vAmount = ServiceUtility.chkNull(totalcost).toString().trim();
 //        if(!vAccessCode.equals("") && !vMerchantId.equals("") && !vCurrency.equals("") && !vAmount.equals("")){
         Intent intent = new Intent(this, WebViewActivity.class);
         intent.putExtra(AvenuesParams.ACCESS_CODE, ServiceUtility.chkNull(accessCode).toString().trim());
@@ -285,11 +267,11 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.paybywalletorbankdata);
 
-        btnsubmit1 = (Button) dialog.findViewById(R.id.res_pay_submit);
-        btncancel = (Button) dialog.findViewById(R.id.res_pay_cancel);
-        txtpayamount = (TextView) dialog.findViewById(R.id.pay_amount);
-        btnradonline = (RadioButton) dialog.findViewById(R.id.online);
-        btnradcod = (RadioButton) dialog.findViewById(R.id.cod);
+        btnsubmit1 =  dialog.findViewById(R.id.res_pay_submit);
+        btncancel =  dialog.findViewById(R.id.res_pay_cancel);
+        txtpayamount =  dialog.findViewById(R.id.pay_amount);
+        btnradonline =dialog.findViewById(R.id.online);
+        btnradcod =  dialog.findViewById(R.id.cod);
         if (remove_cod.trim().length() != 0) {
             btnradcod.setVisibility(View.GONE);
         } else {
@@ -308,74 +290,62 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
         dialog.setCanceledOnTouchOutside(false);
 
-        btnsubmit1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.e("dismiss", "dialog dismiss");
+        btnsubmit1.setOnClickListener(view -> {
+            Log.e("dismiss", "dialog dismiss");
 
-                if (btnradonline.isChecked() || btnradcod.isChecked()) {
-                    dialog.dismiss();
-                    if (btnradonline.isChecked()) {
-                        cod = 0;
+            if (btnradonline.isChecked() || btnradcod.isChecked()) {
+                dialog.dismiss();
+                if (btnradonline.isChecked()) {
+                    cod = 0;
 
-                        OrderDetailModel orderDetailModel = new OrderDetailModel(emailstring, totalcost, firstname, lastname, bfirstname, blastname, address1, city, state, country, zip, phone, b_address1, b_city, b_state, b_country, b_zip, product_varientid, product_qty, discounted_price, discount_coupon, s_mobile, b_mobile, b_email);
-                        orderDetailModelArrayList.add(orderDetailModel);
+                    OrderDetailModel orderDetailModel = new OrderDetailModel(emailstring, totalcost, firstname, lastname, bfirstname, blastname, address1, city, state, country, zip, phone, b_address1, b_city, b_state, b_country, b_zip, product_varientid, product_qty, discounted_price, discount_coupon, s_mobile, b_mobile, b_email);
+                    orderDetailModelArrayList.add(orderDetailModel);
 
-                        init();
+                    init();
 //                        Intent i = new Intent(getApplicationContext(), InitialActivity.class);
 //                        Bundle bundle = new Bundle();
 //                        bundle.putSerializable("value", orderDetailModelArrayList.get(0));
 //                        i.putExtras(bundle);
 //                        startActivity(i);
-                    } else {
-                        if (discount_coupon == null) {
-                            discounted_price = "";
-                            discount_coupon = "";
-                        }
-                        cod = 1;
-                        noDialog();
-                    }
                 } else {
-                    Config.Dialog("Select the payment method", PayUMoneyActivity.this);
+                    if (discount_coupon == null) {
+                        discounted_price = "";
+                        discount_coupon = "";
+                    }
+                    cod = 1;
+                    noDialog();
+                }
+            } else {
+                Config.Dialog("Select the payment method", PayUMoneyActivity.this);
 
 //                    Toast.makeText(PayUMoneyActivity.this, "Select the payment method", Toast.LENGTH_SHORT).show();
-                }
-
-
             }
+
+
         });
 
 
-        btncancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // progressDialog.dismiss();
-                AlertDialog.Builder builder = new AlertDialog.Builder(PayUMoneyActivity.this);
-                builder.setMessage("Are you sure you want to cancel?")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog1, int id) {
+        btncancel.setOnClickListener(view -> {
+            // progressDialog.dismiss();
+            AlertDialog.Builder builder = new AlertDialog.Builder(PayUMoneyActivity.this);
+            builder.setMessage("Are you sure you want to cancel?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", (dialog1, id) -> {
 
-                                dialog.dismiss();
-                                abandandCheckout();
+                        dialog.dismiss();
+                        abandandCheckout();
 
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog1, int id) {
-                                dialog1.cancel();
-                            }
-                        })
-                        .show();
+                    })
+                    .setNegativeButton("No", (dialog1, id) -> dialog1.cancel())
+                    .show();
 
 
 //                if (getApplicationContext() != null) {
 //                    finish();
 //                    startActivity(new Intent(PayUMoneyActivity.this, PayUMoneyActivity.class));
 //                }
-            }
         });
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         dialog.show();
     }
     public RequestQueue getRequestQueue() {
@@ -481,6 +451,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
                 JSONArray cost = new JSONArray();
                 JSONObject costobject = new JSONObject();
+                String kind_transaction;
                 if (cod == 1) {
                     kind_transaction = "cod";
                 } else {
@@ -500,50 +471,44 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
                 final String requestBody = jsonBody.toString();
 
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.postcreateorder, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.i("VOLLEY", response);
-                        try {
-                            JSONObject obj = new JSONObject(response);
-                            String msg = obj.getString("msg");
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.postcreateorder, response -> {
+                    Log.i("VOLLEY", response);
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        String msg = obj.getString("msg");
 
-                            Log.e("msg", "" + msg);
-                            if (msg.equals("success")) {
-                                Iterator keys = obj.keys();
-                                Log.e("Keys", "" + String.valueOf(keys));
+                        Log.e("msg", "" + msg);
+                        if (msg.equals("success")) {
+                            Iterator keys = obj.keys();
+                            Log.e("Keys", "" + String.valueOf(keys));
 
-                                while (keys.hasNext()) {
-                                    dynamicKey = (String) keys.next();
-                                    Log.d("Dynamic Key", "" + dynamicKey);
-                                    if (dynamicKey.equals("order")) {
-                                        JSONObject order = obj.getJSONObject("order");
-                                        String orderid = order.getString("id");
-                                        Log.e("orderid", orderid);
+                            while (keys.hasNext()) {
+                                dynamicKey = (String) keys.next();
+                                Log.d("Dynamic Key", "" + dynamicKey);
+                                if (dynamicKey.equals("order")) {
+                                    JSONObject order = obj.getJSONObject("order");
+                                    String orderid = order.getString("id");
+                                    Log.e("orderid", orderid);
 
-                                    }
                                 }
-                                progressDialog.dismiss();
-                                if (buynow != 1) {
-                                    db.deleteCart(getApplicationContext());
-                                }
-                                Dialog("Your Order Placed Successfully");
+                            }
+                            progressDialog.dismiss();
+                            if (buynow != 1) {
+                                db.deleteCart(getApplicationContext());
+                            }
+                            Dialog("Your Order Placed Successfully");
 
 //                            Toast.makeText(PayUMoneyActivity.this, "Your Order Placed Sucessfully", Toast.LENGTH_SHORT).show();
 
-                            }
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                        Log.e("VOLLEY", error.toString());
-                    }
+                }, error -> {
+                    progressDialog.dismiss();
+                    Log.e("VOLLEY", error.toString());
                 }) {
                     @Override
                     public String getBodyContentType() {
@@ -564,7 +529,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     @Override
                     protected Response<String> parseNetworkResponse(NetworkResponse response) {
                         //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
-                        String statusCode = String.valueOf(response.statusCode);
+//                        String statusCode = String.valueOf(response.statusCode);
                         //Handling logic
                         return super.parseNetworkResponse(response);
                     }
@@ -580,6 +545,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 };
                 if (ordercount == 0) {
                     ordercount++;
+//                    VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
                     getRequestQueue().add(stringRequest);
 //                    requestQueue.add(stringRequest);
                 }
@@ -596,49 +562,37 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.getDiscount,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            Log.e("response", " " + response);
+                response -> {
+                    try {
 
-                            JSONObject obj = new JSONObject(response);
-                            Log.e("response1", response);
+                        JSONObject obj = new JSONObject(response);
 
-                            JSONArray jsonarray = obj.getJSONArray("discounts");
-                            Log.e("jsonarray", String.valueOf(jsonarray));
+                        JSONArray jsonarray = obj.getJSONArray("discounts");
 
-                            for (int i = 0; i < jsonarray.length(); i++) {
-                                JSONObject collectionobject = jsonarray.getJSONObject(i);
+                        for (int i = 0; i < jsonarray.length(); i++) {
+                            JSONObject collectionobject = jsonarray.getJSONObject(i);
 
-                                DiscountModel discountModel = new DiscountModel();
-                                String discountname = collectionobject.getString("title");
-                                String value = collectionobject.getString("value");
-                                discountModel.setTitle(discountname);
-                                discountModel.setValue(value);
+                            DiscountModel discountModel = new DiscountModel();
+                            String discountname = collectionobject.getString("title");
+                            String value = collectionobject.getString("value");
+                            discountModel.setTitle(discountname);
+                            discountModel.setValue(value);
 
-
-                                Log.e("discountname", discountname);
-                                Log.e("value", value);
-                                discountlist.add(discountModel);
-                            }
-
-
-                            discountAdapter.notifyDataSetChanged();
-//
-//
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            discountlist.add(discountModel);
                         }
+
+
+                        discountAdapter.notifyDataSetChanged();
+//
+//
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                error -> {
 
-                    }
                 }) {
 
             @Override
@@ -665,14 +619,15 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     }
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void discountValue(String discounted_amount, String coupon) {
         if (discounted_amount.trim().length() != 0) {
 
             discount_coupon = coupon;
-            int amount = 0;
+            int amount;
 
-            String val2 = new String(discounted_amount);
+            String val2 = discounted_amount;
             String[] str = val2.split("-");
             discounted_amount = str[1];
             discounted_price = discounted_amount;
@@ -704,58 +659,58 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    public void getEmailId() {
-        Storefront.QueryRootQuery query = Storefront.query(root -> root
-                .customer(accessToken, customer -> customer
-                        .firstName()
-                        .lastName()
-                        .email()
-                        .phone()
-                        .displayName()
-                        .id()
-                )
-        );
-
-        QueryGraphCall call = graphClient.queryGraph(query);
-
-        call.enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
-            @Override
-            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
-                if (response.data() != null && response.data().getCustomer() != null) {
-
-                    phone = response.data().getCustomer().getPhone();
-
-                    PayUMoneyActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (phone != null) {
-                                if (phone.length() != 0) {
-                                    if (phone.contains("+91")) {
-                                        phone = phone.substring(3, 13);
-                                        mobile.setText(phone);
-                                    } else {
-                                        mobile.setText(phone);
-                                    }
-                                }
-
-                            } else {
-                                phone = "";
-                                mobile.setText(phone);
-                            }
-
-                        }
-                    });
-
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull GraphError error) {
-                Log.e("TAG", "Failed to execute query", error);
-            }
-        });
-
-    }
+//    public void getEmailId() {
+//        Storefront.QueryRootQuery query = Storefront.query(root -> root
+//                .customer(accessToken, customer -> customer
+//                        .firstName()
+//                        .lastName()
+//                        .email()
+//                        .phone()
+//                        .displayName()
+//                        .id()
+//                )
+//        );
+//
+//        QueryGraphCall call = graphClient.queryGraph(query);
+//
+//        call.enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
+//            @Override
+//            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
+//                if (response.data() != null && response.data().getCustomer() != null) {
+//
+//                    phone = response.data().getCustomer().getPhone();
+//
+//                    PayUMoneyActivity.this.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if (phone != null) {
+//                                if (phone.length() != 0) {
+//                                    if (phone.contains("+91")) {
+//                                        phone = phone.substring(3, 13);
+//                                        mobile.setText(phone);
+//                                    } else {
+//                                        mobile.setText(phone);
+//                                    }
+//                                }
+//
+//                            } else {
+//                                phone = "";
+//                                mobile.setText(phone);
+//                            }
+//
+//                        }
+//                    });
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull GraphError error) {
+////                Log.e("TAG", "Failed to execute query", Objects.requireNonNull(error));
+//            }
+//        });
+//
+//    }
 
     public void abandandCheckout() {
         Integer randomNum = ServiceUtility.randInt(0, 9999999);
@@ -850,26 +805,18 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
             final String requestBody = jsonBody.toString();
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.createabandoned, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.i("VOLLEY", response);
-                    try {
-                        JSONObject obj = new JSONObject(response);
-                        String msg = obj.getString("msg");
-                        Log.e("msg", " " + msg);
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.createabandoned, response -> {
+                Log.i("VOLLEY", response);
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    String msg = obj.getString("msg");
+                    Log.e("msg", " " + msg);
 
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("VOLLEY", error.toString());
-                }
-            }) {
+            }, error -> Log.e("VOLLEY", error.toString())) {
                 @Override
                 public String getBodyContentType() {
                     return "application/json; charset=utf-8";
@@ -889,7 +836,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 @Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
-                    String statusCode = String.valueOf(response.statusCode);
+//                    String statusCode = String.valueOf(response.statusCode);
                     //Handling logic
                     return super.parseNetworkResponse(response);
                 }
@@ -911,20 +858,17 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void noDialog() {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        if (ordercount == 0) {
-                            postOrder();
-                        }
-                        break;
+        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    if (ordercount == 0) {
+                        postOrder();
+                    }
+                    break;
 
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        dialog.dismiss();
-                        break;
-                }
+                case DialogInterface.BUTTON_NEGATIVE:
+                    dialog.dismiss();
+                    break;
             }
         };
 
@@ -941,16 +885,14 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         builder.setTitle("Success");
         builder.setMessage(poptext)
                 .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                .setPositiveButton("OK", (dialog, id) -> {
 
-                        dialog.dismiss();
+                    dialog.dismiss();
 
-                        Intent i = new Intent(PayUMoneyActivity.this, Navigation.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(i);
+                    Intent i = new Intent(PayUMoneyActivity.this, Navigation.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
 
-                    }
                 });
         AlertDialog alert = builder.create();
         alert.show();

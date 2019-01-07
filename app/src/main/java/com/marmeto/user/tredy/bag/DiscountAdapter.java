@@ -47,7 +47,6 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        Log.e("itemsize_discount", String.valueOf(itemsList.size()));
         return itemsList.size();
     }
 

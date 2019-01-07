@@ -5,7 +5,7 @@ import android.databinding.BaseObservable;
 import java.io.Serializable;
 
 public class SubCategoryModel  extends BaseObservable implements Serializable  {
-    String id, title, image;
+    private String id, title, image;
 
     public String getId() {
         return id;

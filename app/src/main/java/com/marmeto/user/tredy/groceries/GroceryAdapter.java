@@ -1,27 +1,21 @@
 package com.marmeto.user.tredy.groceries;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model;
-import com.marmeto.user.tredy.bag.cartdatabase.DBHelper;
-import com.marmeto.user.tredy.bag.ShippingAddress;
 import com.marmeto.user.tredy.category.productDetail.ProductView;
 import com.marmeto.user.tredy.callback.CartController;
 import com.marmeto.user.tredy.callback.CommanCartControler;
@@ -29,23 +23,20 @@ import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.databinding.GroceryadapterBinding;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHolder> {
 
     Context mContext;
-    ArrayList<GroceryModel> itemsList;
-    CartController cartController;
-    CommanCartControler commanCartControler;
-    int pos = 0;
-    DBHelper db;
-    List<AddToCart_Model> addToCart_modelArrayList = new ArrayList<>();
-    CartDailog cartDailog;
+    private ArrayList<GroceryModel> itemsList;
+    private CartController cartController;
+    private CommanCartControler commanCartControler;
+    private int pos = 0;
+    private CartDailog cartDailog;
     private FragmentManager fragmentManager;
     private LayoutInflater layoutInflater;
     private int pos1 = 0;
 
-    public GroceryAdapter(Context mContext, ArrayList<GroceryModel> itemsList, FragmentManager fragmentManager, CartDailog cartDailog) {
+     GroceryAdapter(Context mContext, ArrayList<GroceryModel> itemsList, FragmentManager fragmentManager, CartDailog cartDailog) {
         this.mContext = mContext;
         this.itemsList = itemsList;
         this.fragmentManager = fragmentManager;
@@ -53,8 +44,9 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     }
 
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (layoutInflater == null) {
             layoutInflater = LayoutInflater.from(parent.getContext());
@@ -65,7 +57,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         holder.binding.setGrocery(itemsList.get(position));
 
@@ -77,65 +69,59 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
         return itemsList.size();
     }
 
-    public void display() {
 
-        Dialog dialog;
-        dialog = new Dialog(mContext);
-
-        dialog.setContentView(R.layout.dialog_layout);
-
-        dialog.setTitle("Cart");
-
-        Window window = dialog.getWindow();
-        window.setGravity(Gravity.BOTTOM);
-        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        TextView itemCount = dialog.findViewById(R.id.txt_items);
-        TextView subTotal = dialog.findViewById(R.id.txt_subtotal);
-
-        TextView btn_continue = dialog.findViewById(R.id.btn_continue_shopping);
-        TextView btn_checkout = dialog.findViewById(R.id.btn_checkout);
-
-        db = new DBHelper(mContext);
-        addToCart_modelArrayList = db.getCartList();
-        Log.e("array", "" + db.getCartList());
-        int cart_size = addToCart_modelArrayList.size();
-        cart_size++;
-        itemCount.setText("Items : " + cart_size);
-
-        CartController cartController;
-        CommanCartControler commanCartControler;
-        cartController = new CartController(mContext);
-        commanCartControler = (CommanCartControler) cartController;
-        int cost = commanCartControler.getTotalPrice();
-        int current_cost = itemsList.get(pos1).product.getVariants().getEdges().get(pos).getNode().getPrice().intValue();
-        cost = cost + current_cost;
-        subTotal.setText("SubTotal : Rs. " + cost);
-
-        cost = commanCartControler.getTotalPrice();
-
-
-        btn_continue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.cancel();
-            }
-        });
-
-        btn_checkout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.cancel();
-                Fragment fragment = new ShippingAddress();
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
-                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                ft.commit();
-            }
-        });
-
-
-        dialog.show();
-    }
+//    public void display() {
+//
+//        Dialog dialog;
+//        dialog = new Dialog(mContext);
+//
+//        dialog.setContentView(R.layout.dialog_layout);
+//
+//        dialog.setTitle("Cart");
+//
+//        Window window = dialog.getWindow();
+//        if (window != null) {
+//            window.setGravity(Gravity.BOTTOM);
+//            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        }
+//
+//        TextView itemCount = dialog.findViewById(R.id.txt_items);
+//        TextView subTotal = dialog.findViewById(R.id.txt_subtotal);
+//
+//        TextView btn_continue = dialog.findViewById(R.id.btn_continue_shopping);
+//        TextView btn_checkout = dialog.findViewById(R.id.btn_checkout);
+//
+//        DBHelper db = new DBHelper(mContext);
+//        List<AddToCart_Model> addToCart_modelArrayList = db.getCartList();
+//        Log.e("array", "" + db.getCartList());
+//        int cart_size = addToCart_modelArrayList.size();
+//        cart_size++;
+//        itemCount.setText("Items : " + cart_size);
+//
+//        CartController cartController;
+//        CommanCartControler commanCartControler;
+//        cartController = new CartController(mContext);
+//        commanCartControler = cartController;
+//        int cost = commanCartControler.getTotalPrice();
+//        int current_cost = itemsList.get(pos1).product.getVariants().getEdges().get(pos).getNode().getPrice().intValue();
+//        cost = cost + current_cost;
+//        subTotal.setText("SubTotal : Rs. " + cost);
+//
+//
+//
+//        btn_continue.setOnClickListener(view -> dialog.cancel());
+//
+//        btn_checkout.setOnClickListener(view -> {
+//            dialog.cancel();
+//            Fragment fragment = new ShippingAddress();
+//            FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+//            ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+//            ft.commit();
+//        });
+//
+//
+//        dialog.show();
+//    }
 
 
     class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnItemSelectedListener {
@@ -156,27 +142,19 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
             spinner.setOnItemSelectedListener(this);
 
 
-            addgrocery.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    pos1 = getAdapterPosition();
+            addgrocery.setOnClickListener(view -> {
+                pos1 = getAdapterPosition();
 //                    display();
-                    cartController = new CartController(mContext);
-                    commanCartControler = (CommanCartControler) cartController;
-                    commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
-                    add_to_cart.setVisibility(View.VISIBLE);
+                cartController = new CartController(mContext);
+                commanCartControler = cartController;
+                commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
+                add_to_cart.setVisibility(View.VISIBLE);
 
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            cartDailog.cart(pos1, pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
-                        }
-                    }, 1500);
+                Handler handler = new Handler();
+                handler.postDelayed(() -> cartDailog.cart(pos1, pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty())), 1500);
 
 
 
-                }
             });
 
             binding.setCounter(new GroceryInterface() {
@@ -249,7 +227,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
             pos = i;
-            String item = adapterView.getItemAtPosition(i).toString();
+//            String item = adapterView.getItemAtPosition(i).toString();
         }
 
         @Override
@@ -259,7 +237,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     }
 
     public interface CartDailog {
-        public void cart(int adapter_pos, int varient_pos, int qty);
+         void cart(int adapter_pos, int varient_pos, int qty);
     }
 
 

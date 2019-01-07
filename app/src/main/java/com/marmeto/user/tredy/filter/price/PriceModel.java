@@ -2,7 +2,7 @@ package com.marmeto.user.tredy.filter.price;
 
 public class PriceModel {
     String title;
-    boolean checked=false;
+   private boolean checked=false;
 
     public PriceModel(String title,boolean checked) {
         this.title = title;

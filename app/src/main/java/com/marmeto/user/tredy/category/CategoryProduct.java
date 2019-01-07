@@ -11,6 +11,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,6 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -44,19 +44,13 @@ import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.util.Constants;
 import com.marmeto.user.tredy.util.FilterSharedPreference;
 import com.marmeto.user.tredy.util.SharedPreference;
-import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
-import com.shopify.buy3.GraphError;
-import com.shopify.buy3.GraphResponse;
 import com.shopify.buy3.HttpCachePolicy;
-import com.shopify.buy3.Storefront;
-import com.shopify.graphql.support.ID;
-import com.shopify.graphql.support.Input;
+
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,24 +72,16 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     RecyclerView recyclerView;
     ArrayList<ProductModel> productDetalList = new ArrayList<>();
     ArrayList<ProductModel> productDetalList1 = new ArrayList<>();
-    ArrayList vendorarray = new ArrayList();
-    ArrayList producttype = new ArrayList();
-    ArrayList producttag = new ArrayList();
     ProductAdapter productAdapter;
     ProductAdapter productAdapter1;
     String productid = "", productidapi = "", price = "";
-    String checkoutId;
     TextView category_title;
-    TextView view1, grid, subcategory, filter;
-    TextView sublistname, all;
+    TextView view1, grid, filter;
     public static int i = 0;
     public static boolean isViewWithCatalog = true;
-    CategoryModel detail = new CategoryModel();
     String id, title = "";
-    private RequestQueue mRequestQueue;
     String min_price = "", max_price = "", dynamicKey, dynamicKey1;
     ArrayList<String> selectedFilterList = new ArrayList<>();
-    private String collectionname;
     CartController cartController;
     CommanCartControler commanCartControler;
     private int requestCount = 1, requestCount1 = 1;
@@ -103,7 +89,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     private String sortbykey;
     TextView noproduct;
     private Boolean isFilterData = false;
-    String newarrival = "", sortbystring = "";
+    String sortbystring = "";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -134,7 +120,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 //        isViewWithCatalog = !isViewWithCatalog;
 
 
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+//        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
 //        recyclerView.setLayoutManager(layoutManager1);
 
         recyclerView.setLayoutManager(isViewWithCatalog ? new LinearLayoutManager(getActivity()) : new GridLayoutManager(getActivity(), 2));
@@ -152,44 +138,66 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         super.onResume();
 
 
-        String category = getArguments().getString("collection");
-        Log.e("categorycheck", category);
-        if (category.trim().equals("topselling")) {
-            TopSellingModel topSellingModel = (TopSellingModel) getArguments().getSerializable("category_id");
-//            detail.setCollection(topSellingModel.getCollection());
-            id = topSellingModel.getCollectionid().trim();
-            title = topSellingModel.getCollectionTitle();
-        } else if (category.trim().equals("bestcollection")) {
-            TopCollectionModel topCollectionModel = (TopCollectionModel) getArguments().getSerializable("category_id");
-            id = topCollectionModel.getCollectionid().trim();
-            title = topCollectionModel.getCollectionTitle();
-        } else if (category.trim().equals("api")) {
-            CategoryModel detail = (CategoryModel) getArguments().getSerializable("category_id");
-            id = detail.getId().trim();
-            title = detail.getCollectiontitle();
-        } else if (category.trim().equals("allproduct")) {
-            id = "349437318";
-//            String text = "gid://shopify/Collection/" + id1.trim();
-//            String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-//            id=converted.trim();
-            title = "All Products";
-        } else if (category.trim().equals("allcollection")) {
-            AllCollectionModel allCollectionModel = (AllCollectionModel) getArguments().getSerializable("category_id");
-            if (allCollectionModel != null) {
-                id = allCollectionModel.getId().trim();
-                title = allCollectionModel.getTitle();
+        String category = null;
+        if (getArguments() != null) {
+            category = getArguments().getString("collection");
+        }
+        if (category != null) {
+            switch (category.trim()) {
+                case "topselling":
+                    TopSellingModel topSellingModel = (TopSellingModel) getArguments().getSerializable("category_id");
+                    //            detail.setCollection(topSellingModel.getCollection());
+                    if (topSellingModel != null) {
+                        id = topSellingModel.getCollectionid().trim();
+                        byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
+                        String val2 = new String(tmp2);
+                        String[] str = val2.split("/");
+                        id = str[4];
+                        title = topSellingModel.getCollectionTitle();
+                    }
+
+                    break;
+                case "bestcollection":
+                    TopCollectionModel topCollectionModel = (TopCollectionModel) getArguments().getSerializable("category_id");
+                    if (topCollectionModel != null) {
+                        id = topCollectionModel.getCollectionid().trim();
+                        title = topCollectionModel.getCollectionTitle();
+                    }
+
+                    break;
+                case "api":
+                    CategoryModel detail = (CategoryModel) getArguments().getSerializable("category_id");
+                    if (detail != null) {
+                        id = detail.getId().trim();
+                        title = detail.getCollectiontitle();
+                    }
+                    break;
+                case "allproduct":
+                    id = "349437318";
+                    //            String text = "gid://shopify/Collection/" + id1.trim();
+                    //            String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
+                    //            id=converted.trim();
+                    title = "All Products";
+                    break;
+                case "allcollection":
+                    AllCollectionModel allCollectionModel = (AllCollectionModel) getArguments().getSerializable("category_id");
+                    if (allCollectionModel != null) {
+                        id = allCollectionModel.getId().trim();
+                        title = allCollectionModel.getTitle();
+                    }
+                    break;
+                case "newarrival":
+
+                    NewArrivalModel newArrivalModel = (NewArrivalModel) getArguments().getSerializable("category_id");
+                    if (newArrivalModel != null) {
+                        id = newArrivalModel.getCollectionid().trim();
+                        title = newArrivalModel.getCollectionTitle();
+                    }
+                    break;
+                case "filter":
+
+                    break;
             }
-        } else if (category.trim().equals("newarrival")) {
-
-            NewArrivalModel newArrivalModel = (NewArrivalModel) getArguments().getSerializable("category_id");
-            if (newArrivalModel != null) {
-                id = newArrivalModel.getCollectionid().trim();
-                title = newArrivalModel.getCollectionTitle();
-            }
-        } else if (category.trim().equals("filter")) {
-
-            Log.e("iddc", id);
-
         }
         if (title != null) {
             if (title.trim().length() != 0) {
@@ -235,13 +243,13 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 //            collectionList(id.trim(),requestCount);
 
 
-        if (isFilterData == true) {
+        if (isFilterData) {
 
             productAdapter1 = new ProductAdapter(getActivity(), productDetalList1, getFragmentManager(), this);
             recyclerView.setAdapter(productAdapter1);
             productAdapter1.notifyDataSetChanged();
 
-        } else if (isFilterData == false) {
+        } else {
             onBackPressed();
             productAdapter = new ProductAdapter(getActivity(), productDetalList, getFragmentManager(), this);
             recyclerView.setAdapter(productAdapter);
@@ -257,17 +265,17 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
             }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
                 if (isLastItemDisplaying(recyclerView)) {
                     //Calling the method getdata again
-                    if (isFilterData == true) {
+                    if (isFilterData) {
                         if (Config.isNetworkAvailable(getActivity())) {
                             postFilter();
                         } else {
@@ -302,7 +310,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         id = collectionid;
         selectedFilterList = selectedFilterLists;
         for (int i = 0; i < selectedFilterLists.size(); i++) {
-            FilterSharedPreference.saveInSp(selectedFilterLists.get(i), true, getActivity());
+            FilterSharedPreference.saveInSp(selectedFilterLists.get(i), true, Objects.requireNonNull(getActivity()));
 
         }
         FilterSharedPreference.saveArrayList(selectedFilterList, "filter", getActivity());
@@ -347,7 +355,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
         if (FilterSharedPreference.getArrayList("filter", getActivity()) != null) {
             for (int i = 0; i < FilterSharedPreference.getArrayList("filter", getActivity()).size(); i++) {
-                FilterSharedPreference.saveInSp(FilterSharedPreference.getArrayList("filter", getActivity()).get(i), false, getActivity());
+                FilterSharedPreference.saveInSp(FilterSharedPreference.getArrayList("filter", getActivity()).get(i), false, Objects.requireNonNull(getActivity()));
             }
         }
 
@@ -406,75 +414,67 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 a = "?" + sortbykey.trim() + "&page_size=10&page=" + count;
             }
 
-            stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + a, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.i("VOLLEY", response);
-                    try {
-                        JSONObject obj = new JSONObject(response);
-                        title = obj.getString("collection_name");
-                        if (title.toLowerCase().equals("home page")) {
-                            category_title.setText("Trending");
-                        } else {
-                            category_title.setText(title);
-                        }
+            stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + a, response -> {
+                Log.i("VOLLEY", response);
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    title = obj.getString("collection_name");
+                    if (title.toLowerCase().equals("home page")) {
+                        category_title.setText("Trending");
+                    } else {
+                        category_title.setText(title);
+                    }
 
-                        Log.e("title", "" + title);
-                        Iterator keys = obj.keys();
-                        Log.e("Keys", "" + String.valueOf(keys));
+                    Log.e("title", "" + title);
+                    Iterator keys = obj.keys();
+                    Log.e("Keys", "" + String.valueOf(keys));
 
-                        while (keys.hasNext()) {
-                            dynamicKey = (String) keys.next();
-                            Log.d("Dynamic Key", "" + dynamicKey);
+                    while (keys.hasNext()) {
+                        dynamicKey = (String) keys.next();
+                        Log.d("Dynamic Key", "" + dynamicKey);
 
-                            JSONArray array = null;
-                            try {
-                                array = obj.getJSONArray(dynamicKey);
+                        JSONArray array;
+                        try {
+                            array = obj.getJSONArray(dynamicKey);
 
-                                for (int i = 0; i < array.length(); i++) {
-                                    JSONObject object1 = array.getJSONObject(i);
-                                    String title = object1.getString("title");
-                                    String min_price = object1.getString("min_price");
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject object1 = array.getJSONObject(i);
+                                String title = object1.getString("title");
+                                String min_price = object1.getString("min_price");
 
-                                    String imagesrc="";
-                                    JSONArray array1 = object1.getJSONArray("images");
-                                    for (int j = 0; j < array1.length(); j++) {
-                                        JSONObject object = array1.getJSONObject(j);
-                                        productidapi = object.getString("product_id");
-                                         imagesrc = object.getString("src");
-                                    }
-                                    ProductModel productModel = new ProductModel(productidapi, min_price, title, imagesrc);
-                                    productDetalList1.add(productModel);
+                                String imagesrc = "";
+                                JSONArray array1 = object1.getJSONArray("images");
+                                for (int j = 0; j < array1.length(); j++) {
+                                    JSONObject object = array1.getJSONObject(j);
+                                    productidapi = object.getString("product_id");
+                                    imagesrc = object.getString("src");
                                 }
+                                ProductModel productModel = new ProductModel(productidapi, min_price, title, imagesrc);
+                                productDetalList1.add(productModel);
+                            }
 
 //                                productAdapter1 = new ProductAdapter(getActivity(), productDetalList1, getFragmentManager(), CategoryProduct.this);
 //                                productAdapter = new ProductAdapter(getActivity(), productDetalList, getFragmentManager(), CategoryProduct.this);
 //                                recyclerView.setAdapter(productAdapter);
-                                productAdapter1.notifyDataSetChanged();
-                                if (productDetalList1.size() == 0) {
-                                    noproduct.setVisibility(View.VISIBLE);
-                                } else {
-                                    noproduct.setVisibility(View.GONE);
-                                }
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-
+                            productAdapter1.notifyDataSetChanged();
+                            if (productDetalList1.size() == 0) {
+                                noproduct.setVisibility(View.VISIBLE);
+                            } else {
+                                noproduct.setVisibility(View.GONE);
                             }
-
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
 
                         }
 
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("VOLLEY", error.toString());
-                }
-            }) {
+            }, error -> Log.e("VOLLEY", error.toString())) {
                 @Override
                 public String getBodyContentType() {
                     return "application/json; charset=utf-8";
@@ -494,7 +494,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 @Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
-                    String statusCode = String.valueOf(response.statusCode);
+//                    String statusCode = String.valueOf(response.statusCode);
                     //Handling logic
                     return super.parseNetworkResponse(response);
                 }
@@ -512,13 +512,14 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
     private void getData() {
 //        isFilterData=false;
-        newarrival = "33238122615";
-        if (newarrival.trim().equals(id.trim())) {
-            sortbystring = "?sortBy=published_at&page_size=10&page=";
-        } else {
-            sortbystring = "?page_size=10&page=";
-        }
-
+//        newarrival = "33238122615";
+//        String topselling="345069894";
+//        if (newarrival.trim().equals(id.trim())||topselling.trim().equals(id.trim())) {
+//            sortbystring = "?sortBy=created_at&page_size=10&page=";
+//        } else {
+//            sortbystring = "?page_size=10&page=";
+//        }
+        sortbystring = "?page_size=10&page=";
 
         requestQueue.add(collectionList(id, requestCount));
         Log.d("request counter", String.valueOf(requestCount));
@@ -527,7 +528,6 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
     private StringRequest collectionList(String id, int count) {
 
-        String URL = "http://...";
         JSONObject jsonBody = new JSONObject();
         try {
             jsonBody.put("collection_id", id);
@@ -555,7 +555,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                         String dynamicKey = (String) keys.next();
                         Log.d("Dynamic Key", "" + dynamicKey);
 
-                        JSONArray array = null;
+                        JSONArray array;
                         try {
                             array = obj.getJSONArray(dynamicKey);
 
@@ -592,12 +592,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                     e.printStackTrace();
                 }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("VOLLEY", error.toString());
-            }
-        }) {
+        }, error -> Log.e("VOLLEY", "" + error.toString())) {
             @Override
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
@@ -618,7 +613,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
             @Override
             protected Response<String> parseNetworkResponse(NetworkResponse response) {
                 //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
-                String statusCode = String.valueOf(response.statusCode);
+//                String statusCode = String.valueOf(response.statusCode);
                 //Handling logic
                 return super.parseNetworkResponse(response);
             }
@@ -636,10 +631,9 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     }
 
     private boolean isLastItemDisplaying(RecyclerView recyclerView) {
-        if (recyclerView.getAdapter().getItemCount() != 0) {
-            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1)
-                return true;
+        if (Objects.requireNonNull(recyclerView.getAdapter()).getItemCount() != 0) {
+            int lastVisibleItemPosition = ((LinearLayoutManager) Objects.requireNonNull(recyclerView.getLayoutManager())).findLastCompletelyVisibleItemPosition();
+            return lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1;
         }
         return false;
     }
@@ -667,14 +661,17 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 //                bundle.putStringArrayList("producttag", producttag);
 //                bundle.putStringArrayList("producttype", producttype);
                 fragment.setArguments(bundle);
-                FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "filter");
-                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                FragmentTransaction ft ;
+                if (getFragmentManager() != null) {
+                    ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "filter");
+                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
 //                ft.addToBackStack(null);
-                if (getFragmentManager().findFragmentByTag("filter") == null) {
-                    ft.addToBackStack("filter");
-                    ft.commit();
-                } else {
-                    ft.commit();
+                    if (getFragmentManager().findFragmentByTag("filter") == null) {
+                        ft.addToBackStack("filter");
+                        ft.commit();
+                    } else {
+                        ft.commit();
+                    }
                 }
 
 
@@ -713,27 +710,28 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         bundle.putString("category", "ca_adapter");
         bundle.putString("product_id", productid);
         fragment.setArguments(bundle);
-        FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "productview");
-        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-        if (getFragmentManager().findFragmentByTag("productview") == null) {
-            ft.addToBackStack("productview");
-            ft.commit();
-        } else {
-            ft.commit();
+        FragmentTransaction ft;
+        if (getFragmentManager() != null) {
+            ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "productview");
+            ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+            if (getFragmentManager().findFragmentByTag("productview") == null) {
+                ft.addToBackStack("productview");
+                ft.commit();
+            } else {
+                ft.commit();
+            }
         }
+
     }
 
     @Override
     public void OnclickPlus(String productid) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                cartController = new CartController(getActivity());
-                commanCartControler = (CommanCartControler) cartController;
-                commanCartControler.AddToCart(productid.trim());
+        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+            cartController = new CartController(getActivity());
+            commanCartControler =  cartController;
+            commanCartControler.AddToCart(productid.trim());
 //                productAdapter.notifyDataSetChanged();
-                Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
         });
 
     }
@@ -741,7 +739,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     @Override
     public void OnclickWhislilst(String productid) {
         cartController = new CartController(getActivity());
-        commanCartControler = (CommanCartControler) cartController;
+        commanCartControler = cartController;
         commanCartControler.AddToWhislist(productid.trim());
         Toast.makeText(getActivity(), "Added to Wishlist", Toast.LENGTH_SHORT).show();
     }
@@ -749,52 +747,9 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     @Override
     public void onClick(String value) {
         productid = value;
-        Log.d("productid", productid);
-        cart(productid);
+//        cart(productid);
     }
 
-
-    public void cart(String id) {
-
-        Storefront.CheckoutCreateInput input = new Storefront.CheckoutCreateInput()
-                .setLineItemsInput(Input.value(Arrays.asList(
-                        new Storefront.CheckoutLineItemInput(3, new ID(id))
-                )));
-
-        Storefront.MutationQuery query = Storefront.mutation(mutationQuery -> mutationQuery
-
-                .checkoutCreate(input, createPayloadQuery -> createPayloadQuery
-                        .checkout(checkoutQuery -> checkoutQuery
-                                .webUrl()
-                        )
-                        .userErrors(userErrorQuery -> userErrorQuery
-                                .field()
-                                .message()
-                        )
-                )
-        );
-
-        graphClient.mutateGraph(query).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
-            @Override
-            public void onResponse(@NonNull GraphResponse<Storefront.Mutation> response) {
-                if (!response.data().getCheckoutCreate().getUserErrors().isEmpty()) {
-                    Log.e("data", response.data().getCheckoutCreate().toString());
-                    // handle user friendly errors
-                } else {
-                    checkoutId = String.valueOf(response.data().getCheckoutCreate().getCheckout().getId());
-                    String checkoutWebUrl = response.data().getCheckoutCreate().getCheckout().getWebUrl();
-                    Log.d("checkoutId", checkoutId);
-                    Log.d("checkoutWebUrl", checkoutWebUrl);
-                    //    checkId();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull GraphError error) {
-                // handle errors
-            }
-        });
-    }
 
 }
 

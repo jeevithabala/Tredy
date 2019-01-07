@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.foryou.topselling;
 
+import android.annotation.SuppressLint;
 import android.databinding.BaseObservable;
 import android.databinding.BindingAdapter;
 import android.widget.ImageView;
@@ -51,9 +52,6 @@ public class TopSellingModel extends BaseObservable implements Serializable {
         this.price = price;
     }
 
-    public void setCollectionTitle(String collectionTitle) {
-        this.collectionTitle = collectionTitle;
-    }
 
     public String getCollectionid() {
         return collectionid;
@@ -63,7 +61,7 @@ public class TopSellingModel extends BaseObservable implements Serializable {
         this.collectionid = collectionid;
     }
 
-    Storefront.Collection collection;
+   private Storefront.Collection collection;
     private Storefront.Product product;
     private String collectionTitle,id, collectionid;
 
@@ -104,6 +102,7 @@ public class TopSellingModel extends BaseObservable implements Serializable {
         this.collection = collection;
     }
 
+    @SuppressLint("SetTextI18n")
     @BindingAdapter("price1")
     public static void price(TextView textView, String price) {
         textView.setText("₹ " + price);

@@ -2,7 +2,7 @@ package com.marmeto.user.tredy.filter.filtertype;
 
 public class FilterModel {
     String title;
-    boolean checked=false;
+  private   boolean checked=false;
 
 
 

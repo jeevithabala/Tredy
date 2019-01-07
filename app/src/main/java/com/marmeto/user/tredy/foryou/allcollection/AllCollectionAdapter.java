@@ -3,6 +3,7 @@ package com.marmeto.user.tredy.foryou.allcollection;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -11,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.marmeto.user.tredy.category.CategoryProduct;
-import com.marmeto.user.tredy.callback.FragmentRecyclerViewClick;
 import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.databinding.AllcollectionAdapterBinding;
 
@@ -19,8 +19,8 @@ import java.util.ArrayList;
 
 public class AllCollectionAdapter extends RecyclerView.Adapter<AllCollectionAdapter.ViewHolder> {
 
-    Context mContext;
-    ArrayList<AllCollectionModel> itemsList;
+     Context mContext;
+    private ArrayList<AllCollectionModel> itemsList;
     private FragmentManager fragmentManager;
     private LayoutInflater layoutInflater;
 
@@ -31,13 +31,9 @@ public class AllCollectionAdapter extends RecyclerView.Adapter<AllCollectionAdap
         this.fragmentManager = fragmentManager;
     }
 
-    public AllCollectionAdapter(ArrayList<AllCollectionModel> itemsList) {
-
-        this.itemsList = itemsList;
-    }
-
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (layoutInflater == null) {
             layoutInflater = LayoutInflater.from(parent.getContext());
@@ -48,7 +44,7 @@ public class AllCollectionAdapter extends RecyclerView.Adapter<AllCollectionAdap
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.binding.setAllcollection(itemsList.get(position));
     }
 
@@ -67,12 +63,10 @@ public class AllCollectionAdapter extends RecyclerView.Adapter<AllCollectionAdap
             this.binding = itembinding;
 
 
-            binding.setItemclick(new FragmentRecyclerViewClick() {
-                @Override
-                public void onClickPostion() {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("collection", "allcollection");
-                    bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
+            binding.setItemclick(() -> {
+                Bundle bundle = new Bundle();
+                bundle.putString("collection", "allcollection");
+                bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
 
 //                onItemClick.onClick(itemsList.get(getAdapterPosition()).getProduct_ID());
 //                    Storefront.CheckoutCreateInput input = new Storefront.CheckoutCreateInput()
@@ -80,24 +74,23 @@ public class AllCollectionAdapter extends RecyclerView.Adapter<AllCollectionAdap
 //                                    new Storefront.CheckoutLineItemInput(5, new ID(itemsList.get(getAdapterPosition()).getProduct_ID()))
 //                            )));
 ////
-                    Fragment fragment = new CategoryProduct();
+                Fragment fragment = new CategoryProduct();
 
-                    fragment.setArguments(bundle);
-                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
-                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    if (fragmentManager.findFragmentByTag("categoryproduct") == null) {
-                        ft.addToBackStack("categoryproduct");
-                        ft.commit();
-                    } else {
-                        ft.commit();
-                    }
+                fragment.setArguments(bundle);
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "categoryproduct");
+                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                if (fragmentManager.findFragmentByTag("categoryproduct") == null) {
+                    ft.addToBackStack("categoryproduct");
+                    ft.commit();
+                } else {
+                    ft.commit();
+                }
 
 
 //                    Intent intent = new Intent(mContext, Main2Activity.class);
 //                    intent.putExtra("productDetail",itemsList.get(getAdapterPosition()).getCollection().getId());
 //                    mContext.startActivity(intent);
 ////
-                }
             });
         }
 

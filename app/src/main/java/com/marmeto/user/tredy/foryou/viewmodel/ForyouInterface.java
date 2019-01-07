@@ -8,13 +8,12 @@ import com.marmeto.user.tredy.foryou.topselling.TopSellingModel;
 import java.util.ArrayList;
 
 public interface ForyouInterface {
-    public void allcollection( ArrayList<AllCollectionModel> allCollectionModelArrayList);
 
-    public void collectionlist(ArrayList<TopSellingModel> topSellingModelArrayList, ArrayList<NewArrivalModel> newArrivalModelArrayList);
+     void allcollection( ArrayList<AllCollectionModel> allCollectionModelArrayList);
+     void collectionlist( ArrayList<NewArrivalModel> newArrivalModelArrayList);
+     void bannerlist(ArrayList<String> bannerlist);
+     void grocerylist(ArrayList<GroceryHomeModel> arrayList);
+     void topselling1(ArrayList<TopSellingModel> topSellingModelArrayList);
+     void getcount(int count);
 
-    public void bannerlist(ArrayList<String> bannerlist);
-
-    public void grocerylist(ArrayList<GroceryHomeModel> arrayList);
-
-    public void getcount(int count);
 }

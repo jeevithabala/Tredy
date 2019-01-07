@@ -24,17 +24,13 @@ import com.marmeto.user.tredy.callback.CartController;
 import com.marmeto.user.tredy.callback.CommanCartControler;
 import com.marmeto.user.tredy.Navigation;
 import com.marmeto.user.tredy.R;
-import com.marmeto.user.tredy.foryou.allcollection.AllCollectionModel;
-import com.marmeto.user.tredy.foryou.groceryhome.GroceryHomeModel;
-import com.marmeto.user.tredy.foryou.newarrival.NewArrivalModel;
-import com.marmeto.user.tredy.foryou.topselling.TopSellingModel;
-import com.marmeto.user.tredy.foryou.viewmodel.ForyouInterface;
 import com.marmeto.user.tredy.util.SharedPreference;
 import com.marmeto.user.tredy.databinding.BagBinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
     RecyclerView bag_recyclerview;
@@ -42,10 +38,8 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
     DBHelper db;
     AddToCart_Adapter adapter;
     TextView items, totalcost;
-    int totalcost1 = 0;
     BagBinding binding;
     LinearLayout checkoutbtn, check;
-    AddToCart_Model addToCart_model = new AddToCart_Model();
     View view;
     TextView nobag;
     ArrayList<String> productlist = new ArrayList<>();
@@ -57,7 +51,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.bag, container, false);
 
-        ((Navigation) getActivity()).getSupportActionBar().setTitle("Cart");
+        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Cart");
 
         view = binding.getRoot();
         checkoutbtn = view.findViewById(R.id.checkoutbtn);
@@ -79,7 +73,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         super.onActivityCreated(savedInstanceState);
 
         cartController = new CartController(getActivity());
-        commanCartControler = (CommanCartControler) cartController;
+        commanCartControler = cartController;
         db = new DBHelper(getActivity());
         db.deletDuplicates();
         cartList = db.getCartList();
@@ -89,7 +83,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         if (getArguments() != null) {
             productlist = getArguments().getStringArrayList("nonshipping");
             state = getArguments().getString("state");
-            SharedPreference.saveData("state", state, getActivity());
+            SharedPreference.saveData("state", state, Objects.requireNonNull(getActivity()));
         }
 
         Log.d("statev", " " + state);
@@ -134,26 +128,24 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         visibilityCheck();
         total();
 
-        checkoutbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String[] str_totalCost = totalcost.getText().toString().split(" ");
-                totalcosts = str_totalCost[1];
-                Bundle bundle = new Bundle();
-                bundle.putString("collection", "allcollection");
-                bundle.putString("totalcost", totalcosts);
-                Fragment fragment = new ShippingAddress();
-                fragment.setArguments(bundle);
-                FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
-                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                if (getFragmentManager().findFragmentByTag("fragment") == null) {
-                    ft.addToBackStack("fragment");
-                    ft.commit();
-                } else {
-                    ft.commit();
-                }
-
+        checkoutbtn.setOnClickListener(view -> {
+            String[] str_totalCost = totalcost.getText().toString().split(" ");
+            totalcosts = str_totalCost[1];
+            Bundle bundle = new Bundle();
+            bundle.putString("collection", "allcollection");
+            bundle.putString("totalcost", totalcosts);
+            Fragment fragment = new ShippingAddress();
+            fragment.setArguments(bundle);
+            assert getFragmentManager() != null;
+            FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
+            ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+            if (getFragmentManager().findFragmentByTag("fragment") == null) {
+                ft.addToBackStack("fragment");
+                ft.commit();
+            } else {
+                ft.commit();
             }
+
         });
     }
 
@@ -175,8 +167,8 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         CartController cartController;
         CommanCartControler commanCartControler;
         cartController = new CartController(getActivity());
-        commanCartControler = (CommanCartControler) cartController;
-        SharedPreference.saveData("total", Integer.toString(commanCartControler.getTotalPrice()), getActivity());
+        commanCartControler = cartController;
+        SharedPreference.saveData("total", Integer.toString(commanCartControler.getTotalPrice()), Objects.requireNonNull(getActivity()));
         totalcost.setText(getResources().getString(R.string.Rs) + " " + Integer.toString(commanCartControler.getTotalPrice()));
 
 
@@ -215,7 +207,4 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
 
     }
 
-    public interface shipping1 {
-        public void shippingvisibility(String state, ArrayList<String> productlist);
-    }
 }

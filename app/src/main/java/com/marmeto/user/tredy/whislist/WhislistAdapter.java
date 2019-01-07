@@ -1,15 +1,16 @@
 package com.marmeto.user.tredy.whislist;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,7 +19,6 @@ import android.widget.Toast;
 import com.marmeto.user.tredy.category.productDetail.ProductView;
 import com.marmeto.user.tredy.callback.CartController;
 import com.marmeto.user.tredy.callback.CommanCartControler;
-import com.marmeto.user.tredy.callback.FragmentRecyclerViewClick;
 import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.whislist.whislistDB.DBWhislist;
 import com.marmeto.user.tredy.databinding.WhislistAdapterBinding;
@@ -27,21 +27,17 @@ import java.util.List;
 
 public class WhislistAdapter extends RecyclerView.Adapter<WhislistAdapter.ViewHolder> {
 
-    List<AddWhislistModel> items;
-    Context mContext;
+    private  List<AddWhislistModel> items;
+    private  Context mContext;
     private LayoutInflater layoutInflater;
-    CartController cartController;
-    CommanCartControler commanCartControler;
-    FragmentManager fragmentManager;
-    TextView textView;
-    GetTotalCost getTotalCost;
+    private  CartController cartController;
+    private  CommanCartControler commanCartControler;
+    private FragmentManager fragmentManager;
+    private TextView textView;
+    private GetTotalCost getTotalCost;
 
-    public WhislistAdapter(List<AddWhislistModel> items, Context mContext) {
-        this.items = items;
-        this.mContext = mContext;
-    }
 
-    public WhislistAdapter(List<AddWhislistModel> items, Context mContext, GetTotalCost getTotalCost, FragmentManager fragmentManager, TextView textView) {
+     WhislistAdapter(List<AddWhislistModel> items, Context mContext, GetTotalCost getTotalCost, FragmentManager fragmentManager, TextView textView) {
         this.items = items;
         this.mContext = mContext;
         this.getTotalCost = getTotalCost;
@@ -49,8 +45,9 @@ public class WhislistAdapter extends RecyclerView.Adapter<WhislistAdapter.ViewHo
         this.textView = textView;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (layoutInflater == null) {
             layoutInflater = LayoutInflater.from(parent.getContext());
@@ -63,8 +60,9 @@ public class WhislistAdapter extends RecyclerView.Adapter<WhislistAdapter.ViewHo
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         holder.binding.setWhislistitem(items.get(position));
         Log.d("Product varient id ", items.get(position).getProduct_varient_id());
@@ -83,9 +81,8 @@ public class WhislistAdapter extends RecyclerView.Adapter<WhislistAdapter.ViewHo
 //    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView remove, shipping_visibility;
-        LinearLayout decrease, increase, addcart;
-        DBWhislist db = new DBWhislist(mContext);
+        TextView remove;
+        LinearLayout  addcart;
 
         private final WhislistAdapterBinding binding;
 
@@ -96,53 +93,44 @@ public class WhislistAdapter extends RecyclerView.Adapter<WhislistAdapter.ViewHo
             addcart = itemView.findViewById(R.id.addcart);
 
 
-            binding.setItemclick(new FragmentRecyclerViewClick() {
-                @Override
-                public void onClickPostion() {
+            binding.setItemclick(() -> {
 
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString("category", "wishlist");
-                    bundle.putSerializable("category_id", items.get(getAdapterPosition()));
-                    Fragment fragment = new ProductView();
-                    fragment.setArguments(bundle);
-                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "whislist");
-                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    if (fragmentManager.findFragmentByTag("whislist") == null) {
-                        ft.addToBackStack("whislist");
-                        ft.commit();
-                    } else {
-                        ft.commit();
-                    }
-
+                Bundle bundle = new Bundle();
+                bundle.putString("category", "wishlist");
+                bundle.putSerializable("category_id", items.get(getAdapterPosition()));
+                Fragment fragment = new ProductView();
+                fragment.setArguments(bundle);
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "whislist");
+                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                if (fragmentManager.findFragmentByTag("whislist") == null) {
+                    ft.addToBackStack("whislist");
+                    ft.commit();
+                } else {
+                    ft.commit();
                 }
+
             });
 
 
-            remove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.e("iddd", items.get(getAdapterPosition()).getProduct_varient_id());
+            remove.setOnClickListener(view -> {
+//                    Log.e("iddd", items.get(getAdapterPosition()).getProduct_varient_id());
 //                    remove1.removeItem(items.get(getAdapterPosition()).getProduct_varient_id());
-                    DBWhislist db = new DBWhislist(mContext);
-                    if (db.deleteRow(items.get(getAdapterPosition()).getProduct_varient_id().trim())) {
-                        items.remove(getAdapterPosition());
-                        notifyItemRemoved(getAdapterPosition());
+                DBWhislist db = new DBWhislist(mContext);
+                if (db.deleteRow(items.get(getAdapterPosition()).getProduct_varient_id().trim())) {
+                    items.remove(getAdapterPosition());
+                    notifyItemRemoved(getAdapterPosition());
 
-                        notifyDataSetChanged();
-                        getTotalCost.totalcostinjterface();
-                    }
+                    notifyDataSetChanged();
+                    getTotalCost.totalcostinjterface();
                 }
             });
 
-            addcart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    cartController = new CartController(mContext);
-                    commanCartControler = (CommanCartControler) cartController;
-                    commanCartControler.AddToCartGrocery(items.get(getAdapterPosition()).getProduct_id().trim(), 0, 1);
-                    Toast.makeText(mContext, "Added to cart", Toast.LENGTH_SHORT).show();
-                }
+            addcart.setOnClickListener(view -> {
+                cartController = new CartController(mContext);
+                commanCartControler =  cartController;
+                commanCartControler.AddToCartGrocery(items.get(getAdapterPosition()).getProduct_id().trim(), 0, 1);
+                Toast.makeText(mContext, "Added to cart", Toast.LENGTH_SHORT).show();
             });
 
         }

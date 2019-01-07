@@ -20,24 +20,24 @@ public class FilterSharedPreference {
         SharedPreferences preferences = context.getSharedPreferences("PROJECT_NAME", android.content.Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(key, value);
-        editor.commit();
+        editor.apply();
     }
     public static void saveInSp_sort(String key,boolean value,Context context){
         SharedPreferences preferences = context.getSharedPreferences("sort_by", android.content.Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(key, value);
-        editor.commit();
+        editor.apply();
     }
     public static void saveInSp_price(String key,boolean value,Context context){
         SharedPreferences preferences = context.getSharedPreferences("price", android.content.Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(key, value);
-        editor.commit();
+        editor.apply();
     }
     public static void saveData(String key, String value , Context context){
         SharedPreferences.Editor editor = context.getSharedPreferences(Data, Activity.MODE_PRIVATE).edit();
         editor.putString(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public static String getData(String key, Context context){

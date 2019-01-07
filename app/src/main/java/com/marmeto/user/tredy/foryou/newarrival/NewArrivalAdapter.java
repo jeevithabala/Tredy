@@ -3,6 +3,7 @@ package com.marmeto.user.tredy.foryou.newarrival;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,7 +16,6 @@ import com.marmeto.user.tredy.category.productDetail.ProductView;
 import com.marmeto.user.tredy.foryou.topselling.Plus;
 import com.marmeto.user.tredy.callback.CartController;
 import com.marmeto.user.tredy.callback.CommanCartControler;
-import com.marmeto.user.tredy.callback.FragmentRecyclerViewClick;
 import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.databinding.NewarrivalAdapterBinding;
 
@@ -23,12 +23,12 @@ import java.util.ArrayList;
 
 public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.ViewHolder> {
 
-    Context mContext;
-    ArrayList<NewArrivalModel> itemsList;
+    private Context mContext;
+    private ArrayList<NewArrivalModel> itemsList;
     private FragmentManager fragmentManager;
     private LayoutInflater layoutInflater;
-    CartController cartController;
-    CommanCartControler commanCartControler;
+    private CartController cartController;
+    private CommanCartControler commanCartControler;
 
 
     public NewArrivalAdapter(Context mContext, ArrayList<NewArrivalModel> itemsList, FragmentManager fragmentManager) {
@@ -37,13 +37,9 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
         this.fragmentManager = fragmentManager;
     }
 
-    public NewArrivalAdapter(ArrayList<NewArrivalModel> itemsList, FragmentManager fragmentManager) {
-        this.fragmentManager = fragmentManager;
-        this.itemsList = itemsList;
-    }
-
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (layoutInflater == null) {
             layoutInflater = LayoutInflater.from(parent.getContext());
@@ -54,7 +50,7 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.binding.setNewarrival(itemsList.get(position));
     }
 
@@ -72,34 +68,31 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
             super(itembinding.getRoot());
             this.binding = itembinding;
 
-            binding.setItemclick(new FragmentRecyclerViewClick() {
-                @Override
-                public void onClickPostion() {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("category", "newarrival");
-                    bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
-                    Fragment fragment = new ProductView();
-                    fragment.setArguments(bundle);
-                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
-                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    if(fragmentManager.findFragmentByTag("fragment")==null)
-                    {
-                        ft.addToBackStack("fragment");
-                        ft.commit();
-                    }
-                    else
-                    {
-                        ft.commit();
-                    }
-
+            binding.setItemclick(() -> {
+                Bundle bundle = new Bundle();
+                bundle.putString("category", "newarrival");
+                bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
+                Fragment fragment = new ProductView();
+                fragment.setArguments(bundle);
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                if(fragmentManager.findFragmentByTag("fragment")==null)
+                {
+                    ft.addToBackStack("fragment");
+                    ft.commit();
                 }
+                else
+                {
+                    ft.commit();
+                }
+
             });
             binding.setOnitemclickplus(new Plus() {
 
                 @Override
                 public void OnclickPlus() {
                     cartController = new CartController(mContext);
-                    commanCartControler = (CommanCartControler)cartController;
+                    commanCartControler = cartController;
                     commanCartControler.AddToCart(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
                     Toast.makeText(mContext,"Added to cart",Toast.LENGTH_SHORT).show();
 
@@ -108,7 +101,7 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
                 @Override
                 public void OnclickWhislilst() {
                     cartController = new CartController(mContext);
-                    commanCartControler = (CommanCartControler)cartController;
+                    commanCartControler = cartController;
                     commanCartControler.AddToWhislist(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
                     Toast.makeText(mContext,"Added to Wishlist",Toast.LENGTH_SHORT).show();
                 }

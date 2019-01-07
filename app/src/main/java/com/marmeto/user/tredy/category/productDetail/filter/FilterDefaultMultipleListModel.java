@@ -3,8 +3,8 @@ package com.marmeto.user.tredy.category.productDetail.filter;
 
 public class FilterDefaultMultipleListModel {
 
-    String name;
-    boolean checked = false;
+    private String name;
+    private boolean checked = false;
 
     public String getName() {
         return name;

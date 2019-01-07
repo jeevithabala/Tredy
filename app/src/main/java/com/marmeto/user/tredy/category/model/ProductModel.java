@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.category.model;
 
+import android.annotation.SuppressLint;
 import android.databinding.BaseObservable;
 import android.databinding.BindingAdapter;
 import android.support.annotation.NonNull;
@@ -161,6 +162,7 @@ public class ProductModel extends BaseObservable implements Serializable ,Compar
 //    }
 
 
+    @SuppressLint("SetTextI18n")
     @BindingAdapter("price1")
     public static void price(TextView textView, String price) {
         textView.setText("₹ " + price);
@@ -197,17 +199,10 @@ public class ProductModel extends BaseObservable implements Serializable ,Compar
         }
     }
 
-    @BindingAdapter("desc")
-    public void desc(TextView text, Storefront.Product product) {
-        String mHtmlString = product.getDescriptionHtml();
-        text.setText(Html.fromHtml(Html.fromHtml(mHtmlString).toString()));
-
-
-    }
 
     private Date dateTime;
 
-    public Date getDateTime() {
+    private Date getDateTime() {
         return dateTime;
     }
 
