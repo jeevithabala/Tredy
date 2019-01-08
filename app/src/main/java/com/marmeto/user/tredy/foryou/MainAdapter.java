@@ -223,7 +223,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.seall.setOnClickListener(view -> {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-            transaction.replace(R.id.home_container, new Groceries(), "grocery");
+            transaction.add(R.id.home_container, new Groceries(), "grocery");
             if(fragmentManager.findFragmentByTag("grocery")==null)
             {
                 transaction.addToBackStack("grocery");

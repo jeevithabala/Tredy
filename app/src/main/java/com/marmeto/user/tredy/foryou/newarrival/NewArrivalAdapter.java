@@ -93,7 +93,9 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
                 public void OnclickPlus() {
                     cartController = new CartController(mContext);
                     commanCartControler = cartController;
-                    commanCartControler.AddToCart(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
+//                    commanCartControler.AddToCart(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
+                    commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct_ID()), 0, 1);
+
                     Toast.makeText(mContext,"Added to cart",Toast.LENGTH_SHORT).show();
 
                 }
