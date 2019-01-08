@@ -13,18 +13,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.marmeto.user.tredy.BuildConfig;
@@ -34,13 +30,8 @@ import com.marmeto.user.tredy.category.model.CategoryModel;
 import com.marmeto.user.tredy.category.model.SubCategoryModel;
 import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.util.Constants;
-import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
-import com.shopify.buy3.GraphError;
-import com.shopify.buy3.GraphResponse;
 import com.shopify.buy3.HttpCachePolicy;
-import com.shopify.buy3.Storefront;
-import com.shopify.graphql.support.ID;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,27 +39,20 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class Categories extends Fragment {
 
-
-    private TextView all;
-    Toolbar toolbar;
     RecyclerView recyclerView;
     GraphClient graphClient;
     ArrayList<CategoryModel> categoryList = new ArrayList<>();
     ArrayList<SubCategoryModel> subCategoryModelArrayList;
     CategoreDetailAdapter categoreDetailAdapter;
-    private RequestQueue mRequestQueue;
-    String imageurl = "";
-    LinearLayout subcategory, grocery;
+    LinearLayout subcategory;
     String converted;
     private String image1 = "";
     private ProgressDialog progressDialog;
-    CategoryModel categoreDetail = new CategoryModel();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,10 +62,10 @@ public class Categories extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.categories, container, false);
 
-        ((Navigation) getActivity()).getSupportActionBar().setTitle("Categories");
+        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Categories");
 
 
-        all = view.findViewById(R.id.all);
+        TextView all = view.findViewById(R.id.all);
         all.setVisibility(View.GONE);
         subcategory = view.findViewById(R.id.sublayout);
         subcategory.setVisibility(View.GONE);
@@ -116,7 +100,7 @@ public class Categories extends Fragment {
         recyclerView.setAdapter(categoreDetailAdapter);
         // productlist();
         if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
-            collectionList(Constants.navigation);
+            collectionList();
         } else {
             Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
         }
@@ -127,181 +111,82 @@ public class Categories extends Fragment {
         super.onStart();
     }
 
-    public void productlist() {
-        categoryList.clear();
-        Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
-                .shop(shopQuery -> shopQuery
-                        .collections(arg -> arg.first(100), collectionConnectionQuery -> collectionConnectionQuery
-                                .edges(collectionEdgeQuery -> collectionEdgeQuery
-                                        .node(collectionQuery -> collectionQuery
-                                                .title()
-                                                .handle()
-                                                .description()
-                                                .image(args -> args.src())
-                                                .products(arg -> arg.first(10), productConnectionQuery -> productConnectionQuery
-                                                        .edges(productEdgeQuery -> productEdgeQuery
-                                                                .node(productQuery -> productQuery
-                                                                        .title()
-                                                                        .productType()
-                                                                        .description()
-                                                                )
-                                                        )
-                                                )
-                                        )
-                                )
-                        )
-                )
-        );
-
-        graphClient.queryGraph(query).enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
-
-            @Override
-            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
-
-                List<Storefront.Collection> collections = new ArrayList<>();
-                for (Storefront.CollectionEdge collectionEdge : response.data().getShop().getCollections().getEdges()) {
-                    collections.add(collectionEdge.getNode());
-                    CategoryModel categoreDetail = new CategoryModel();
-                    categoreDetail.setCollection(collectionEdge.getNode());
-
-                    if (collectionEdge.getNode().getImage() != null) {
-                        Log.d("Collection Image :", collectionEdge.getNode().getImage().getSrc());
-                        //    categoreDetail.setImageurl(collectionEdge.getNode().getImage().getSrc());
-                    }
-                    categoryList.add(categoreDetail);
-
-                    Log.d("Collection value :", collectionEdge.getNode().getTitle());
-                    Log.d("Collection ID :", String.valueOf(collectionEdge.getNode().getId()));
-                    // Log.d("Collection ID :", collectionEdge.getNode().getImage().getSrc());
 
 
-                    List<Storefront.Product> products = new ArrayList<>();
-                    for (Storefront.ProductEdge productEdge : collectionEdge.getNode().getProducts().getEdges()) {
-                        products.add(productEdge.getNode());
-
-//                        Log.d("product : ", String.valueOf(productEdge.getNode().getTitle()));
-//                        Log.d("product ID : ", String.valueOf(productEdge.getNode().getId()));
-//                        Log.d("product Description : ", String.valueOf(productEdge.getNode().getDescription()));
-
-
-                        //   getProductVariantID(String.valueOf(productEdge.getNode().getId()));
-                    }
-                }
-//
-//                for(int i=0;i<collections.size();i++)
-//                {
-////                    if(String.valueOf(collections.get(i).getImage().getSrc())!=null)
-//                }
-
-                getActivity().runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-
-//
-
-                        categoreDetailAdapter.notifyDataSetChanged();
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void onFailure(@NonNull GraphError error) {
-                Log.e("product fail", "Failed to execute query", error);
-
-            }
-
-        });
-
-
-    }
-
-    /**
-     *
-     * @param url
-     */
-    private void collectionList(String url) {
+    private void collectionList() {
         categoryList.clear();
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("loading, please wait...");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
-        mRequestQueue = Volley.newRequestQueue(getActivity());
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            Log.e("response", response);
+        RequestQueue mRequestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.navigation,
+                response -> {
+                    try {
+                        Log.e("response", response);
 
-                            JSONObject obj = new JSONObject(response);
-                            Log.e("response1", response);
-                            categoryList.clear();
-                            JSONObject menu = obj.getJSONObject("menu");
-                            //  String status = obj.getString("menu");
+                        JSONObject obj = new JSONObject(response);
+                        Log.e("response1", response);
+                        categoryList.clear();
+                        JSONObject menu = obj.getJSONObject("menu");
+                        //  String status = obj.getString("menu");
 
-                            String title = menu.getString("title");
-                            Log.e("title", title);
-                            // JSONObject allhistoryobj = obj.getJSONObject("insurance");
-                            JSONArray jsonarray = menu.getJSONArray("items");
-                            Log.e("jsonarray", String.valueOf(jsonarray));
+                        String title = menu.getString("title");
+                        Log.e("title", title);
+                        // JSONObject allhistoryobj = obj.getJSONObject("insurance");
+                        JSONArray jsonarray = menu.getJSONArray("items");
+                        Log.e("jsonarray", String.valueOf(jsonarray));
 
-                            for (int i = 0; i < jsonarray.length(); i++) {
-                                JSONObject collectionobject = jsonarray.getJSONObject(i);
-                                CategoryModel categoreDetail = new CategoryModel();
+                        for (int i = 0; i < jsonarray.length(); i++) {
+                            JSONObject collectionobject = jsonarray.getJSONObject(i);
+                            CategoryModel categoreDetail = new CategoryModel();
 
-                                String id = "" + collectionobject.getString("subject_id");
-                                String collectiontitle = collectionobject.getString("title");
-                                String nav = collectionobject.getString("type");
+                            String id = "" + collectionobject.getString("subject_id");
+                            String collectiontitle = collectionobject.getString("title");
+                            String nav = collectionobject.getString("type");
 //                                String image = collectionobject.getString("image");
 
 
-                                Log.e("id", id);
-                                Log.e("collectiontitle", collectiontitle);
+                            if (id.trim().length() != 0) {
+                                String text = "gid://shopify/Collection/" + id.trim();
 
-                                if (id.trim().length() != 0) {
-                                    String text = "gid://shopify/Collection/" + id.trim();
+                                converted = Base64.encodeToString(text.getBytes(), Base64.DEFAULT);
+                                Log.e("coverted", converted.trim());
+                            }
 
-                                    converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-                                    Log.e("coverted", converted.trim());
-                                }
+                            if (nav.trim().equals("http") || nav.trim().equals("collection")) {
+                                categoreDetail.setId(id.trim());
+                                categoreDetail.setCollectiontitle(collectiontitle);
+                                categoreDetail.setImageurl("");
 
-                                if (nav.trim().equals("http") || nav.trim().equals("collection")) {
-                                    categoreDetail.setId(id.trim());
-                                    categoreDetail.setCollectiontitle(collectiontitle);
-                                    categoreDetail.setImageurl("");
+                                JSONArray jsonarray1 = collectionobject.getJSONArray("items");
+                                Log.e("jsonarray1", String.valueOf(jsonarray1));
+                                subCategoryModelArrayList = new ArrayList<>();
+                                if (jsonarray1.length() != 0) {
+                                    for (int j = 0; j < jsonarray1.length(); j++) {
+                                        JSONObject subcollectionobject = jsonarray1.getJSONObject(j);
+                                        SubCategoryModel subCategoryModel = new SubCategoryModel();
 
-                                    JSONArray jsonarray1 = collectionobject.getJSONArray("items");
-                                    Log.e("jsonarray1", String.valueOf(jsonarray1));
-                                    subCategoryModelArrayList = new ArrayList<>();
-                                    if (jsonarray1.length() != 0) {
-                                        for (int j = 0; j < jsonarray1.length(); j++) {
-                                            JSONObject subcollectionobject = jsonarray1.getJSONObject(j);
-                                            SubCategoryModel subCategoryModel = new SubCategoryModel();
+                                        String subid = "" + subcollectionobject.getString("subject_id");
+                                        String subcollectiontitle = subcollectionobject.getString("title");
+                                        String type = subcollectionobject.getString("type");
+                                        if (type.trim().equals("collection")) {
+                                            image1 = subcollectionobject.getString("image");
+                                        }
 
-                                            String subid = "" + subcollectionobject.getString("subject_id");
-                                            String subcollectiontitle = subcollectionobject.getString("title");
-                                            String type = subcollectionobject.getString("type");
-                                            if (type.trim().equals("collection")) {
-                                                image1 = subcollectionobject.getString("image");
+                                        if (!subid.trim().equals("null")) {
+
+
+                                            if (subid.trim().length() != 0) {
+                                                String text = "gid://shopify/Collection/" + subid.trim();
+
+                                                converted = Base64.encodeToString(text.getBytes(), Base64.DEFAULT);
                                             }
-
-                                            if (!subid.trim().equals("null")) {
-
-
-                                                if (subid.trim().length() != 0) {
-                                                    String text = "gid://shopify/Collection/" + subid.trim();
-
-                                                    converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-                                                    Log.e("coverted", converted.trim());
-                                                }
-                                                subCategoryModel.setId(subid.trim());
-                                                subCategoryModel.setTitle(subcollectiontitle);
-                                                subCategoryModel.setImage(image1);
-                                                subCategoryModelArrayList.add(subCategoryModel);
-                                                categoreDetail.setSubCategoryModelArrayList(subCategoryModelArrayList);
+                                            subCategoryModel.setId(subid.trim());
+                                            subCategoryModel.setTitle(subcollectiontitle);
+                                            subCategoryModel.setImage(image1);
+                                            subCategoryModelArrayList.add(subCategoryModel);
+                                            categoreDetail.setSubCategoryModelArrayList(subCategoryModelArrayList);
 
 //                                                String text="gid://shopify/Product/"+subid.trim();
 //
@@ -310,25 +195,25 @@ public class Categories extends Fragment {
 //                                                    getProductByCollection(converted);
 //                                                    Log.e("imageurl1", "" + imageurl);
 //                                                    categoreDetail.setImageurl(imageurl);
-                                            }
-
                                         }
+
+                                    }
 //                                    } else {
 //                                        categoryList.add(categoreDetail);
-                                    }
-                                    categoryList.add(categoreDetail);
                                 }
+                                categoryList.add(categoreDetail);
                             }
-                            ArrayList<String> extra = new ArrayList<>();
-                            extra.add("Grocery");
-                            extra.add("All Products");
+                        }
+                        ArrayList<String> extra = new ArrayList<>();
+                        extra.add("Grocery");
+                        extra.add("All Products");
 
-                            for (int i = 0; i < extra.size(); i++) {
-                                CategoryModel categoryModel1 = new CategoryModel();
-                                categoryModel1.setCollectiontitle(extra.get(i));
-                                categoryList.add(categoryModel1);
+                        for (int i = 0; i < extra.size(); i++) {
+                            CategoryModel categoryModel1 = new CategoryModel();
+                            categoryModel1.setCollectiontitle(extra.get(i));
+                            categoryList.add(categoryModel1);
 
-                            }
+                        }
 //                           CategoryModel categoryModel1 = new CategoryModel();
 //                            categoryModel1.setCollectiontitle("Grocery");
 //                            categoryList.add(categoryModel1);
@@ -337,22 +222,16 @@ public class Categories extends Fragment {
 //                            categoryModel1.setCollectiontitle("All Products");
 //                            categoryList.add(categoryModel2);
 
-                            categoreDetailAdapter = new CategoreDetailAdapter(getActivity(), categoryList, getFragmentManager());
+                        categoreDetailAdapter = new CategoreDetailAdapter(getActivity(), categoryList, getFragmentManager());
 
-                            recyclerView.setAdapter(categoreDetailAdapter);
-                            categoreDetailAdapter.notifyDataSetChanged();
-                            progressDialog.dismiss();
-                        } catch (JSONException e) {
-                        Toast.makeText(getActivity()," "+e.getMessage(),Toast.LENGTH_SHORT).show();
-                        }
+                        recyclerView.setAdapter(categoreDetailAdapter);
+                        categoreDetailAdapter.notifyDataSetChanged();
+                        progressDialog.dismiss();
+                    } catch (JSONException e) {
+                    Toast.makeText(getActivity()," "+e.getMessage(),Toast.LENGTH_SHORT).show();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                    }
-                }) {
+                error -> progressDialog.dismiss()) {
 
         };
         stringRequest.setTag("categories_page");
@@ -365,112 +244,112 @@ public class Categories extends Fragment {
 
     }
 
-    public void getProductByCollection(String categoryID) {
-        imageurl = "";
-        Log.e("inside", "came");
-        Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
-                .node(new ID(categoryID), nodeQuery -> nodeQuery
-                        .onCollection(collectionQuery -> collectionQuery
-                                .title()
-                                .image(args -> args.src())
-                                .products(arg -> arg.first(100), productConnectionQuery -> productConnectionQuery
-                                        .edges(productEdgeQuery -> productEdgeQuery
-                                                .node(productQuery -> productQuery
-                                                        .title()
-                                                        .productType()
-                                                        .description()
-                                                        .descriptionHtml()
-                                                        .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
-                                                                .edges(imageEdgeQuery -> imageEdgeQuery
-                                                                        .node(imageQuery -> imageQuery
-                                                                                .src()
-                                                                        )
-                                                                )
-                                                        )
-                                                        .tags()
-                                                        .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
-                                                                .edges(variantEdgeQuery -> variantEdgeQuery
-                                                                        .node(productVariantQuery -> productVariantQuery
-                                                                                .price()
-                                                                                .title()
-                                                                                .image(args -> args.src())
-                                                                                .weight()
-                                                                                .weightUnit()
-                                                                                .compareAtPrice()
-                                                                                .available()
-                                                                        )
-                                                                )
-                                                        )
-                                                )
-                                        )
-
-
-                                ))));
-
-        graphClient.queryGraph(query).enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
-            @Override
-            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
-
-
-                List<Storefront.Product> products = new ArrayList<>();
-                Storefront.Collection product = (Storefront.Collection) response.data().getNode();
-
-//                if (product.responseData != null) {
-//                    if (product.getImage() != null) {
-//                        imageurl = product.getImage().getSrc();
-//                        Log.e("imagee", "" + imageurl);
-//                    }
-
-//                for(Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
-//                    ProductModel productDetail = new ProductModel();
-//                    productDetail.setProduct_Name(productEdge.getNode().getTitle());
-//                    productDetail.setProduct_description(productEdge.getNode().getDescription());
+//    public void getProductByCollection(String categoryID) {
+//        imageurl = "";
+//        Log.e("inside", "came");
+//        Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
+//                .node(new ID(categoryID), nodeQuery -> nodeQuery
+//                        .onCollection(collectionQuery -> collectionQuery
+//                                .title()
+//                                .image(args -> args.src())
+//                                .products(arg -> arg.first(100), productConnectionQuery -> productConnectionQuery
+//                                        .edges(productEdgeQuery -> productEdgeQuery
+//                                                .node(productQuery -> productQuery
+//                                                        .title()
+//                                                        .productType()
+//                                                        .description()
+//                                                        .descriptionHtml()
+//                                                        .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
+//                                                                .edges(imageEdgeQuery -> imageEdgeQuery
+//                                                                        .node(imageQuery -> imageQuery
+//                                                                                .src()
+//                                                                        )
+//                                                                )
+//                                                        )
+//                                                        .tags()
+//                                                        .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
+//                                                                .edges(variantEdgeQuery -> variantEdgeQuery
+//                                                                        .node(productVariantQuery -> productVariantQuery
+//                                                                                .price()
+//                                                                                .title()
+//                                                                                .image(args -> args.src())
+//                                                                                .weight()
+//                                                                                .weightUnit()
+//                                                                                .compareAtPrice()
+//                                                                                .available()
+//                                                                        )
+//                                                                )
+//                                                        )
+//                                                )
+//                                        )
 //
-//                    Log.d("prodcut title : ", productEdge.getNode().getTitle());
+//
+//                                ))));
+//
+//        graphClient.queryGraph(query).enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
+//            @Override
+//            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
+//
+//
+//                List<Storefront.Product> products = new ArrayList<>();
+//                Storefront.Collection product = (Storefront.Collection) response.data().getNode();
+//
+////                if (product.responseData != null) {
+////                    if (product.getImage() != null) {
+////                        imageurl = product.getImage().getSrc();
+////                        Log.e("imagee", "" + imageurl);
+////                    }
+//
+////                for(Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
+////                    ProductModel productDetail = new ProductModel();
+////                    productDetail.setProduct_Name(productEdge.getNode().getTitle());
+////                    productDetail.setProduct_description(productEdge.getNode().getDescription());
+////
+////                    Log.d("prodcut title : ", productEdge.getNode().getTitle());
+////                }
+//
+//
+//                Log.e("subinside", "came");
+//
+//                for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
+//                    Log.e("product_title : ", productEdge.getNode().getTitle());
+//                    Log.e("product_ID : ", String.valueOf(productEdge.getNode().getId()));
+//
+//
+//                    ArrayList<Storefront.Image> productImages = new ArrayList<>();
+//                    for (final Storefront.ImageEdge imageEdge : productEdge.getNode().getImages().getEdges()) {
+//                        productImages.add(imageEdge.getNode());
+//                        Log.d("Product Image: ", productImages.get(0).getSrc());
+//                        imageurl = productImages.get(0).getSrc();
+//                    }
+//
+//
+//                    List<Storefront.ProductVariant> productVariants = new ArrayList<>();
+//
+//
+//                    for (final Storefront.ProductVariantEdge productVariantEdge : productEdge.getNode().getVariants().getEdges()) {
+//                        productVariants.add(productVariantEdge.getNode());
+//
+//
+//                        if (productVariantEdge.getNode().getImage() != null)
+//                            // productDetail.setImageUrl(productVariantEdge.getNode().getImage().getSrc());
+//
+//                            Log.d("Product varient Id : ", String.valueOf(productVariantEdge.getNode().getId()));
+//                        Log.d("Product title : ", String.valueOf(productVariantEdge.getNode().getTitle()));
+//                        Log.d("Product price : ", String.valueOf(productVariantEdge.getNode().getPrice()));
+//
+//
+//                    }
 //                }
-
-
-                Log.e("subinside", "came");
-
-                for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
-                    Log.e("product_title : ", productEdge.getNode().getTitle());
-                    Log.e("product_ID : ", String.valueOf(productEdge.getNode().getId()));
-
-
-                    ArrayList<Storefront.Image> productImages = new ArrayList<>();
-                    for (final Storefront.ImageEdge imageEdge : productEdge.getNode().getImages().getEdges()) {
-                        productImages.add(imageEdge.getNode());
-                        Log.d("Product Image: ", productImages.get(0).getSrc());
-                        imageurl = productImages.get(0).getSrc();
-                    }
-
-
-                    List<Storefront.ProductVariant> productVariants = new ArrayList<>();
-
-
-                    for (final Storefront.ProductVariantEdge productVariantEdge : productEdge.getNode().getVariants().getEdges()) {
-                        productVariants.add(productVariantEdge.getNode());
-
-
-                        if (productVariantEdge.getNode().getImage() != null)
-                            // productDetail.setImageUrl(productVariantEdge.getNode().getImage().getSrc());
-
-                            Log.d("Product varient Id : ", String.valueOf(productVariantEdge.getNode().getId()));
-                        Log.d("Product title : ", String.valueOf(productVariantEdge.getNode().getTitle()));
-                        Log.d("Product price : ", String.valueOf(productVariantEdge.getNode().getPrice()));
-
-
-                    }
-                }
-            }
-
-
-            @Override
-            public void onFailure(@NonNull GraphError error) {
-
-            }
-        });
-    }
+//            }
+//
+//
+//            @Override
+//            public void onFailure(@NonNull GraphError error) {
+//
+//            }
+//        });
+//    }
 
     @Override
     public void onResume() {

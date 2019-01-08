@@ -3,6 +3,7 @@ package com.marmeto.user.tredy.foryou.groceryhome;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,7 +16,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model;
 import com.marmeto.user.tredy.category.productDetail.ProductView;
 import com.marmeto.user.tredy.groceries.GroceryInterface;
 import com.marmeto.user.tredy.callback.CartController;
@@ -24,20 +24,16 @@ import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.databinding.Groceryadapter1Binding;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.ViewHolder> {
 
-    Context mContext;
-    ArrayList<GroceryHomeModel> itemsList;
-    CartController cartController;
-    CommanCartControler commanCartControler;
-    int pos = 0;
-    List<AddToCart_Model> addToCart_modelArrayList = new ArrayList<>();
-    CartDailog cartDailog;
+    private Context mContext;
+    private ArrayList<GroceryHomeModel> itemsList;
+    private CartController cartController;
+    private CommanCartControler commanCartControler;
+    private int pos = 0;
     private FragmentManager fragmentManager;
     private LayoutInflater layoutInflater;
-    private int pos1 = 0;
 
 
     public GroceryHomeAdapter(Context mContext, ArrayList<GroceryHomeModel> itemsList, FragmentManager fragmentManager) {
@@ -46,8 +42,9 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
         this.fragmentManager = fragmentManager;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (layoutInflater == null) {
             layoutInflater = LayoutInflater.from(parent.getContext());
@@ -58,7 +55,7 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         holder.binding.setGrocery1(itemsList.get(position));
 
@@ -74,7 +71,7 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
     class ViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnItemSelectedListener {
 
         private final Groceryadapter1Binding binding;
-        TextView textView, addgrocery, add_to_cart;
+        TextView textView, addgrocery;
         Spinner spinner;
 
         public ViewHolder(final Groceryadapter1Binding itembinding) {
@@ -86,15 +83,11 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
 
             spinner.setOnItemSelectedListener(this);
 
-            addgrocery.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    pos1 = getAdapterPosition();
-                    cartController = new CartController(mContext);
-                    commanCartControler = (CommanCartControler) cartController;
-                    commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
-                    Toast.makeText(mContext, "Added to cart", Toast.LENGTH_SHORT).show();
-                }
+            addgrocery.setOnClickListener(view -> {
+                cartController = new CartController(mContext);
+                commanCartControler = cartController;
+                commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
+                Toast.makeText(mContext, "Added to cart", Toast.LENGTH_SHORT).show();
             });
 //            spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) mContext);
 
@@ -111,9 +104,10 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
                 @Override
                 public void decrease() {
                     String getQuantity = textView.getText().toString();
-                    if (getQuantity.trim().equals("1")) {
+                    if (getQuantity.trim().equals("1")){
 
-                    } else {
+                    }
+                    else {
                         int decrease_qty = Integer.parseInt(getQuantity) - 1;
                         getQuantity = String.valueOf(decrease_qty);
                         itemsList.get(getAdapterPosition()).setQty(getQuantity);
@@ -145,17 +139,13 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
             pos = i;
-            String item = adapterView.getItemAtPosition(i).toString();
+//            String item = adapterView.getItemAtPosition(i).toString();
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
 
         }
-    }
-
-    public interface CartDailog {
-        public void cart(int adapter_pos, int varient_pos);
     }
 
 

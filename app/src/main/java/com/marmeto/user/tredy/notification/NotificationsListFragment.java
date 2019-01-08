@@ -1,6 +1,7 @@
 package com.marmeto.user.tredy.notification;
 
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +35,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.marmeto.user.tredy.Navigation;
 import com.marmeto.user.tredy.R;
+import com.marmeto.user.tredy.login.LoginActiviy;
 import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.util.Constants;
 import com.marmeto.user.tredy.util.Internet;
@@ -55,23 +57,11 @@ import static android.support.v7.widget.RecyclerView.*;
 
 public class NotificationsListFragment extends Fragment {
     List<NotificationListSet> actorsList = new ArrayList<NotificationListSet>();
-    ;
     private RecyclerView recyclerView;
     NotificationListAdapter adapter;
-    String userid, familyid = "";
-    //    CustomSwipeRefreshLayout swipeLayout;
-    LinearLayout notification_lp;
-    LinearLayout progressBar;
-    private FragmentManager fragmentManager;
-    private Toolbar toolbar;
     public static boolean active = false;
-    int pastVisiblesItems, visibleItemCount, totalItemCount;
-    private LinearLayoutManager linearLayoutManager;
-    private boolean loading = false;
-    private ArrayList<NotificationListSet> addedList = new ArrayList<>();
-    private String nextPageUrl = "";
-    TextView noti_text;
-//    private ProgressBar paginationProgress;
+    TextView noti_text, read_all;
+    private ProgressDialog progressDoalog;
 
 
     @Nullable
@@ -79,64 +69,9 @@ public class NotificationsListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.notificationlist, container, false);
 
-//        paginationProgress = view.findViewById(R.id.pagination_progress_bar);
-//        swipeLayout = (CustomSwipeRefreshLayout) view.findViewById(R.id.swipe_container);
-//        fragmentManager = getFragmentManager();
-
-
-//        ((HomePage)getActivity()).setToolbar(toolbar, "Notification");
-//        notification_lp = (LinearLayout) view.findViewById(R.id.notification_lp);
-//        notification_lp.setVisibility(View.GONE);
-//        progressBar = (LinearLayout) view.findViewById(R.id.linearProgressBar);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-
+        read_all = view.findViewById(R.id.read_all);
         noti_text = view.findViewById(R.id.noti_text);
-
-
-//        swipeLayout.setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        actorsList.clear();
-//                        Log.e("swipe_refresh", "came");
-//                        nextPageUrl = "";
-//                        NotificationCountstatuslist();
-//
-//                        //adapter.notifyDataSetChanged();
-//                        swipeLayout.refreshComplete();
-//
-//                    }
-//                }, 5000);
-//                // do something here when it starts to refresh
-//                // e.g. to request data from server
-//            }
-//        });
-
-        //set RefreshCheckHandler (OPTIONAL)
-//        swipeLayout.setRefreshCheckHandler(new CustomSwipeRefreshLayout.RefreshCheckHandler() {
-//            @Override
-//            public boolean canRefresh() {
-//                // return false when you don't want to trigger refresh
-//                // e.g. return false when network is disabled.
-//                if (Internet.isConnected(getActivity())) {
-//                    return true;
-//                } else {
-//                    return false;
-//                }
-//
-//            }
-//        });
-
-//        if (getActivity() != null) {
-//            if (Internet.isConnected(getActivity())) {
-//                progressBar.setVisibility(View.VISIBLE);
-//                actorsList.clear();
-//                NotificationCountstatuslist();
-//            } else {
-//            }
-//        }
 
         return view;
     }
@@ -144,7 +79,8 @@ public class NotificationsListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((Navigation) getActivity()).getSupportActionBar().setTitle("Notification");
+        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Notification");
+        progressDoalog = new ProgressDialog(getActivity());
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager1);
@@ -159,27 +95,34 @@ public class NotificationsListFragment extends Fragment {
             Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
         }
 
+        read_all.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                progressDoalog.setMessage("loading....");
+                progressDoalog.setTitle("Processing");
+                progressDoalog.setCanceledOnTouchOutside(false);
+                progressDoalog.show();
+                if (actorsList.size() > 0) {
+                    if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+                        for (int i = 0; i < actorsList.size(); i++) {
+                            if(actorsList.get(i).getPnew().equals("null")) {
+                                registperp(actorsList.get(i).getPid());
+                            }
+                        }
+                        getNotiCount();
+                    } else {
+                        progressDoalog.dismiss();
+                        Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+                    progressDoalog.dismiss();
+                }
+            }
+        });
+
     }
 
-
-//    public void onRefresh() {
-//        // TODO Auto-generated method stub
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                actorsList.clear();
-//                NotificationCountstatuslist();
-//                // adapter.notifyDataSetChanged();
-//                swipeLayout.refreshComplete();
-//
-//            }
-//        }, 5000);
-//    }
-
-
-//    public interface CustomSwipeRefreshHeadLayout {
-//        void onStateChange(CustomSwipeRefreshLayout.State currentState, CustomSwipeRefreshLayout.State lastState);
-//    }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -191,35 +134,16 @@ public class NotificationsListFragment extends Fragment {
                     NotificationCountstatuslist();
                 }
             }
-
-
         }
     };
-
 
     @Override
     public void onResume() {
         super.onResume();
         active = true;
-//        if (getActivity() != null) {
-//            if (Internet.isConnected(getActivity())) {
-//                progressBar.setVisibility(View.VISIBLE);
-//                actorsList.clear();
-//                NotificationCountstatus();
-//            } else {
-//                noInternetLayout.setVisibility(View.VISIBLE);
-//            }
-//        }
-        Log.e("resume", "inside");
-//        if (Internet.isConnected(getActivity())) {
-//            NotificationCountstatuslist();
-//        } else {
-//            Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
-//        }
-
         IntentFilter filter = new IntentFilter();
         filter.addAction(Config.PUSH_NOTIFICATION);
-        LocalBroadcastManager.getInstance(getActivity()).
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getActivity())).
                 registerReceiver(broadcastReceiver, filter);
 
         if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
@@ -249,7 +173,7 @@ public class NotificationsListFragment extends Fragment {
 
     private void NotificationCountstatuslist() {
         actorsList.clear();
-        String token = SharedPreference.getData("customerid", getActivity());
+        String token = SharedPreference.getData("customerid", Objects.requireNonNull(getActivity()));
         Log.e("token", token);
 
         String minusdatet = getCalculatedDate("MM/dd/yyyy", -10);
@@ -271,17 +195,11 @@ public class NotificationsListFragment extends Fragment {
                                 String id = object1.getString("_id");
                                 JSONObject object = object1.getJSONObject("notification");
 
-//                                Log.e("iddd", " " + object.getString("title") + " " + object1.getString("read_at"));
-
                                 actor.setTitle(object.getString("title"));
                                 actor.setPnew(object1.getString("read_at"));
-//                                if(object.getString("order_name")!=null) {
-//                                    actor.setOrderid(object.getString("order_name"));
-//                                }
-
                                 if (object.has("order_name") && !object.isNull("order_name")) {
                                     actor.setOrderid(object.getString("order_name"));
-                                }else{
+                                } else {
                                     // Avoid this user.
                                 }
 
@@ -305,7 +223,9 @@ public class NotificationsListFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-//                        paginationProgress.setVisibility(View.GONE);
+                        if (progressDoalog != null && progressDoalog.isShowing()) {
+                            progressDoalog.dismiss();
+                        }
                     }
                 }) {
 
@@ -321,60 +241,8 @@ public class NotificationsListFragment extends Fragment {
     }
 
 
-    private void addFixedItems() {
-        Log.e("item_size", String.valueOf(actorsList.size()));
-        for (int i = 0; i < actorsList.size(); i++) {
-            if (i < 10) {
-                addedList.add(actorsList.get(i));
-            } else {
-                break;
-            }
-
-        }
-        progressBar.setVisibility(View.GONE);
-        notification_lp.setVisibility(View.VISIBLE);
-        adapter.notifyDataSetChanged();
-    }
-
-
-    private ViewHolder getViewHolderObject() {
-        ViewHolder holder = (ViewHolder) recyclerView.findViewHolderForAdapterPosition(actorsList.size() + 1);
-        if (null != holder) {
-            Log.e("holder_check", "came");
-//            holder.itemView.setVisibility(View.VISIBLE);
-            return holder;
-        } else {
-            return null;
-        }
-
-    }
-
-    private void setFooterVisibility(String visibilityStatus) {
-
-        ViewHolder viewHolder = recyclerView.getChildViewHolder(recyclerView.getChildAt(actorsList.size()));
-        Log.e("holder_check3", "" + viewHolder);
-
-        recyclerView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ViewHolder holder = (ViewHolder) recyclerView.findViewHolderForAdapterPosition(actorsList.size() + 1);
-                Log.e("holder_check1", "came");
-                if (holder != null) {
-                    Log.e("holder_check2", "came");
-                    if (visibilityStatus.equals("VISIBLE")) {
-                        holder.itemView.setVisibility(View.VISIBLE);
-                    } else {
-                        holder.itemView.setVisibility(View.GONE);
-                    }
-
-                }
-            }
-        }, 50);
-
-    }
-
     public void getNotiCount() {
-        String customerid = SharedPreference.getData("customerid", getActivity());
+        String customerid = SharedPreference.getData("customerid", Objects.requireNonNull(getActivity()));
         String minusdatet = getCalculatedDate("MM/dd/yyyy", -10);
 
 
@@ -388,13 +256,19 @@ public class NotificationsListFragment extends Fragment {
                             JSONObject obj = new JSONObject(response);
                             Log.e("response", response);
                             String count = obj.getString("count");
-                            int noti_counnt = Integer.parseInt(count);
-                            Navigation.noti_counnt = noti_counnt;
+                            NotificationCountstatuslist();
+                            Navigation.noti_counnt = Integer.parseInt(count);
                             if (getActivity() != null) {
                                 getActivity().invalidateOptionsMenu();
                             }
+                            if (progressDoalog != null && progressDoalog.isShowing()) {
+                                progressDoalog.dismiss();
+                            }
 
                         } catch (JSONException e) {
+                            if (progressDoalog != null && progressDoalog.isShowing()) {
+                                progressDoalog.dismiss();
+                            }
                             e.printStackTrace();
                         }
                     }
@@ -402,6 +276,9 @@ public class NotificationsListFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        if (progressDoalog != null && progressDoalog.isShowing()) {
+                            progressDoalog.dismiss();
+                        }
                     }
                 }) {
 
@@ -417,5 +294,43 @@ public class NotificationsListFragment extends Fragment {
 
     }
 
+    private void registperp(String s) {
+        RequestQueue mRequestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
+        StringRequest stringRequest = new StringRequest(Request.Method.PUT, Constants.readnotification + s,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+
+                            JSONObject obj = new JSONObject(response);
+
+                        } catch (JSONException e) {
+                            if (progressDoalog != null && progressDoalog.isShowing()) {
+                                progressDoalog.dismiss();
+                            }
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (progressDoalog != null && progressDoalog.isShowing()) {
+                            progressDoalog.dismiss();
+                        }
+//                        progressDialog.dismiss();
+                    }
+                }) {
+
+        };
+        stringRequest.setTag("read");
+        // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
+
+        int socketTimeout = 10000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        mRequestQueue.add(stringRequest);
+
+    }
 
 }

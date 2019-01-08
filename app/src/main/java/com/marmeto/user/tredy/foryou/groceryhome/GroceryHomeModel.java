@@ -77,16 +77,16 @@ public class GroceryHomeModel implements Serializable {
     @BindingAdapter("weight1")
     public static void weight(TextView textView, Storefront.Product product) {
         if (product != null) {
-            String c = "";
+            StringBuilder c = new StringBuilder();
             if (product.getOptions() != null) {
                 if (product.getOptions().size() == 1) {
-                    c = String.valueOf(product.getOptions().get(0).getName());
+                    c = new StringBuilder(String.valueOf(product.getOptions().get(0).getName()));
                 } else {
                     for (int i = 0; i < product.getOptions().size(); i++) {
-                        c = c + String.valueOf(product.getOptions().get(i).getName()) + " / ";
+                        c.append(String.valueOf(product.getOptions().get(i).getName())).append(" / ");
                     }
                 }
-                String cost = String.valueOf(c);
+                String cost = String.valueOf(c.toString());
                 textView.setText(cost);
             }
         }
@@ -127,8 +127,7 @@ public class GroceryHomeModel implements Serializable {
         }
 
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(spinner.getContext(),
-                android.R.layout.simple_spinner_item, spinner_title);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(spinner.getContext(), android.R.layout.simple_spinner_item, spinner_title);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);

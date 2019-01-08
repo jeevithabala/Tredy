@@ -2,9 +2,9 @@ package com.marmeto.user.tredy.search;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -17,19 +17,20 @@ import java.util.ArrayList;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
     Context mContext;
-    ArrayList<SearchModel> itemsList;
+    private ArrayList<SearchModel> itemsList;
     private FragmentManager fragmentManager;
     private LayoutInflater layoutInflater;
-    ProductClickInterface productClickInterface;
+    private ProductClickInterface productClickInterface;
 
-    public SearchAdapter(Context mContext, ArrayList<SearchModel> itemsList,ProductClickInterface productClickInterface) {
+     SearchAdapter(Context mContext, ArrayList<SearchModel> itemsList,ProductClickInterface productClickInterface) {
         this.mContext = mContext;
         this.itemsList = itemsList;
         this.productClickInterface=productClickInterface;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (layoutInflater == null) {
             layoutInflater = LayoutInflater.from(parent.getContext());
@@ -41,7 +42,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         holder.binding.setSearchproduct(itemsList.get(position));
         holder.binding.setVariable(BR.itemclick,productClickInterface);
@@ -50,7 +51,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        Log.e("itemsize_discount", String.valueOf(itemsList.size()));
+//        Log.e("itemsize_discount", String.valueOf(itemsList.size()));
         return itemsList.size();
     }
 

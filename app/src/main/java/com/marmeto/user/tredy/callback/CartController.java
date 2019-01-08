@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.callback;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -28,13 +29,13 @@ import java.util.concurrent.TimeUnit;
 
 public class CartController extends ViewModel implements CommanCartControler {
 
-    DBHelper db;
-    DBWhislist dbWhislist;
-    SelectItemModel model;
-    Context mContext;
+    private DBHelper db;
+    private DBWhislist dbWhislist;
+    private SelectItemModel model;
+    @SuppressLint("StaticFieldLeak")
+    private Context mContext;
     private List<AddToCart_Model> cartList = new ArrayList<>();
     private List<AddWhislistModel> whislist = new ArrayList<>();
-    GraphClient graphClient;
 
     public CartController(Context mContext) {
         this.mContext = mContext;
@@ -59,10 +60,7 @@ public class CartController extends ViewModel implements CommanCartControler {
 
     @Override
     public void AddQuantity(String id) {
-//        String getquantity = db.getQuantity(id.trim());
-//        Log.e("getquantity", getquantity);
         db.update(id.trim(), 1);
-
     }
 
 
@@ -80,11 +78,7 @@ public class CartController extends ViewModel implements CommanCartControler {
         for (int i = 0; i < cartList.size(); i++) {
             int qty = cartList.get(i).getQty();
             Double cost = cartList.get(i).getProduct_price();
-            Log.e("qty", "" + String.valueOf(qty));
-            Log.e("cost", "" + String.valueOf(cost));
-            Log.e("icost", "" + String.valueOf(totalcost1));
             totalcost1 = totalcost1 + (qty * (cost.intValue()));
-            Log.e("cost", "" + String.valueOf(totalcost1));
         }
         return totalcost1;
     }
@@ -106,16 +100,15 @@ public class CartController extends ViewModel implements CommanCartControler {
     @Override
     public void AddToWhislist(String id) {
         whislist.clear();
-
         whislist = dbWhislist.getCartList();
 
-        Log.e("plus", "plus");
-        String text = "gid://shopify/Product/" + id.trim();
-
-        String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-        Log.e("coverted", converted.trim());
-
-        getProductVariantID1(converted.trim());
+        if (id.trim().length() > 15) {
+            getProductVariantID1(id.trim());
+        } else {
+            String text = "gid://shopify/Product/" + id.trim();
+            String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
+            getProductVariantID1(converted.trim());
+        }
     }
 
     @Override
@@ -133,7 +126,6 @@ public class CartController extends ViewModel implements CommanCartControler {
                 .httpCache(new File(mContext.getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
                 .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
                 .build();
-        Log.e("id,", " " + trim);
 
         Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
                 .node(new ID(trim), nodeQuery -> nodeQuery
@@ -144,8 +136,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                                 .tags()
                                 .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
                                         .edges(imageEdgeQuery -> imageEdgeQuery
-                                                .node(imageQuery -> imageQuery
-                                                        .src()
+                                                .node(Storefront.ImageQuery::src
                                                 )
                                         )
                                 )
@@ -156,7 +147,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                                                         .title()
                                                         .compareAtPrice()
                                                         .availableForSale()
-                                                        .image(args -> args.src())
+                                                        .image(Storefront.ImageQuery::src)
                                                         .weight()
                                                         .weightUnit()
                                                         .available()
@@ -180,22 +171,15 @@ public class CartController extends ViewModel implements CommanCartControler {
                     model = new SelectItemModel();
                     model.setProduct(product);
                     model.setShip("true");
-                    Log.e("tttyt", String.valueOf(model.getProduct().getTags()));
 
                     List<Storefront.ProductVariant> productVariant = new ArrayList<>();
                     for (final Storefront.ProductVariantEdge productVariantEdge : product.getVariants().getEdges()) {
                         productVariant.add(productVariantEdge.getNode()
                         );
-//
-                        Log.d("Product varient Id : ", String.valueOf(productVariantEdge.getNode().getId()));
-
-
                     }
                     String available = productVariant.get(selectedID).getAvailableForSale().toString();
-                    Log.e("available", available);
                     if (productVariant.get(0).getAvailableForSale()) {
                         if (cartList.size() == 0) {
-                            Log.e("empty", "empty");
 //                            int qty = 1;
                             db.insertToDo(trim.trim(), productVariant.get(selectedID), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
                         } else {
@@ -211,7 +195,6 @@ public class CartController extends ViewModel implements CommanCartControler {
 
                     }
                 }
-                return;
 
             }
 
@@ -244,8 +227,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                                 .tags()
                                 .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
                                         .edges(imageEdgeQuery -> imageEdgeQuery
-                                                .node(imageQuery -> imageQuery
-                                                        .src()
+                                                .node(Storefront.ImageQuery::src
                                                 )
                                         )
                                 )
@@ -256,7 +238,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                                                         .title()
                                                         .compareAtPrice()
                                                         .availableForSale()
-                                                        .image(args -> args.src())
+                                                        .image(Storefront.ImageQuery::src)
                                                         .weight()
                                                         .weightUnit()
                                                         .available()
@@ -280,38 +262,29 @@ public class CartController extends ViewModel implements CommanCartControler {
                     model = new SelectItemModel();
                     model.setProduct(product);
                     model.setShip("true");
-                    Log.e("tttyt", String.valueOf(model.getProduct().getTags()));
 
                     List<Storefront.ProductVariant> productVariant = new ArrayList<>();
                     for (final Storefront.ProductVariantEdge productVariantEdge : product.getVariants().getEdges()) {
                         productVariant.add(productVariantEdge.getNode()
                         );
-//
-                        Log.d("Product varient Id : ", String.valueOf(productVariantEdge.getNode().getId()));
-
 
                     }
                     String available = productVariant.get(0).getAvailableForSale().toString();
                     Log.e("available", available);
                     if (productVariant.get(0).getAvailableForSale()) {
                         if (whislist.size() == 0) {
-                            Log.e("empty", "empty");
                             int qty = 1;
                             dbWhislist.insertToDo(productID.trim(), productVariant.get(0), model.getProduct().getTitle());
                         } else {
 
 //                            db.checkUser(productVariant.get(0).getId().toString().trim());
-                            if (dbWhislist.checkUser(productVariant.get(0).getId().toString().trim())) {
-
-//                                db.update(productVariant.get(0).getId().toString().trim(), 1);
-                            } else {
+                            if (!dbWhislist.checkUser(productVariant.get(0).getId().toString().trim())) {
                                 dbWhislist.insertToDo(productID.trim(), productVariant.get(0), model.getProduct().getTitle());
                             }
                         }
 
                     }
                 }
-                return;
 
             }
 
@@ -329,7 +302,7 @@ public class CartController extends ViewModel implements CommanCartControler {
 
     private void getProductVariantID(String productID) {
 
-        graphClient = GraphClient.builder(mContext)
+        GraphClient graphClient = GraphClient.builder(mContext)
                 .shopDomain(BuildConfig.SHOP_DOMAIN)
                 .accessToken(BuildConfig.API_KEY)
                 .httpCache(new File(mContext.getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
@@ -346,8 +319,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                                 .productType()
                                 .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
                                         .edges(imageEdgeQuery -> imageEdgeQuery
-                                                .node(imageQuery -> imageQuery
-                                                        .src()
+                                                .node(Storefront.ImageQuery::src
                                                 )
                                         )
                                 )
@@ -358,7 +330,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                                                         .title()
                                                         .compareAtPrice()
                                                         .availableForSale()
-                                                        .image(args -> args.src())
+                                                        .image(Storefront.ImageQuery::src)
                                                         .weight()
                                                         .weightUnit()
                                                         .available()
@@ -389,12 +361,12 @@ public class CartController extends ViewModel implements CommanCartControler {
 
                     List<Storefront.ProductVariant> productVariant = new ArrayList<>();
 //                    if(product.getVariants()!=null) {
-                        for (final Storefront.ProductVariantEdge productVariantEdge : Objects.requireNonNull(product.getVariants()).getEdges()) {
-                            productVariant.add(productVariantEdge.getNode());
+                    for (final Storefront.ProductVariantEdge productVariantEdge : Objects.requireNonNull(product.getVariants()).getEdges()) {
+                        productVariant.add(productVariantEdge.getNode());
 
-                        }
+                    }
 //                    }
-                    if (productVariant != null && productVariant.size() > 0) {
+                    if (productVariant.size() > 0) {
                         if (productVariant.get(0).getAvailableForSale()) {
                             if (cartList.size() == 0) {
                                 Log.e("empty", "empty");
@@ -417,7 +389,6 @@ public class CartController extends ViewModel implements CommanCartControler {
 
                     }
                 }
-                return;
 
             }
 

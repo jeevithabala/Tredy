@@ -1,7 +1,7 @@
 package com.marmeto.user.tredy.bag;
 
 public class DiscountModel {
-    String title, value;
+    private String title, value;
 
     public String getTitle() {
         return title;

@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.category;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,9 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
-import com.android.volley.RequestQueue;
 import com.marmeto.user.tredy.BuildConfig;
 import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.category.model.CategoryModel;
@@ -26,24 +25,22 @@ import com.shopify.buy3.HttpCachePolicy;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class SubCategory extends Fragment {
-    public String collectionurl = "https://cdn.shopify.com/s/files/1/0012/0658/3356/t/8/assets/tredyfoods.js?86827102922423728";
 
-    private TextView mTextMessage;
-    Toolbar toolbar;
+
     RecyclerView recyclerView;
     GraphClient graphClient;
     ArrayList<CategoryModel> categoryList = new ArrayList<>();
     ArrayList<SubCategoryModel> subCategoryModelArrayList = new ArrayList<>();
     CategoreDetailAdapter categoreDetailAdapter;
-    private RequestQueue mRequestQueue;
-    String imageurl = "";
     LinearLayout subcategory;
     TextView sublistname, all;
 
 
+    @SuppressLint("SetTextI18n")
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.categories, container, false);
 
@@ -59,21 +56,19 @@ public class SubCategory extends Fragment {
         all = view.findViewById(R.id.all);
         subcategory.setVisibility(View.VISIBLE);
         all.setText("All");
-        all.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Categories categories = new Categories();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction.replace(R.id.home_container, categories, "Categories");
-                if (getFragmentManager().findFragmentByTag("Categories") == null) {
-                    transaction.addToBackStack("Categories");
-                    transaction.commit();
-                } else {
-                    transaction.commit();
-                }
-
+        all.setOnClickListener(view1 -> {
+            Categories categories = new Categories();
+            assert getFragmentManager() != null;
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+            transaction.replace(R.id.home_container, categories, "Categories");
+            if (getFragmentManager().findFragmentByTag("Categories") == null) {
+                transaction.addToBackStack("Categories");
+                transaction.commit();
+            } else {
+                transaction.commit();
             }
+
         });
 
 
@@ -85,7 +80,7 @@ public class SubCategory extends Fragment {
 
         recyclerView = view.findViewById(R.id.categories_recyclerview);
 
-        graphClient = GraphClient.builder(getActivity())
+        graphClient = GraphClient.builder(Objects.requireNonNull(getActivity()))
                 .shopDomain(BuildConfig.SHOP_DOMAIN)
                 .accessToken(BuildConfig.API_KEY)
                 .httpCache(new File(getActivity().getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
@@ -101,18 +96,18 @@ public class SubCategory extends Fragment {
         recyclerView.setAdapter(categoreDetailAdapter);
         // productlist();
 
+        assert getArguments() != null;
         CategoryModel detail = (CategoryModel) getArguments().getSerializable("category_id");
+        assert detail != null;
         String title = detail.getCollectiontitle();
         sublistname.setText(title);
         subCategoryModelArrayList = detail.getSubCategoryModelArrayList();
-        Log.e("subarray", "" + String.valueOf(subCategoryModelArrayList.size()));
-        Log.e("sizecount", "" + String.valueOf(detail.getSubCategoryModelArrayList().size()));
+
         for (int i = 0; i < subCategoryModelArrayList.size(); i++) {
             CategoryModel model = new CategoryModel();
             model.setId(subCategoryModelArrayList.get(i).getId());
             model.setCollectiontitle(subCategoryModelArrayList.get(i).getTitle());
             model.setImageurl(subCategoryModelArrayList.get(i).getImage());
-            Log.e("sub_id", subCategoryModelArrayList.get(i).getId());
             categoryList.add(model);
 
         }

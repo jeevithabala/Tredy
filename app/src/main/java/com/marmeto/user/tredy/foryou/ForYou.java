@@ -1,10 +1,9 @@
 package com.marmeto.user.tredy.foryou;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -13,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 
 import com.marmeto.user.tredy.BuildConfig;
 import com.marmeto.user.tredy.foryou.allcollection.AllCollectionAdapter;
@@ -25,8 +23,6 @@ import com.marmeto.user.tredy.foryou.viewmodel.ForYouViewModel;
 import com.marmeto.user.tredy.foryou.viewmodel.ForyouInterface;
 import com.marmeto.user.tredy.Navigation;
 import com.marmeto.user.tredy.R;
-import com.marmeto.user.tredy.login.LoginActiviy;
-import com.marmeto.user.tredy.util.Config;
 import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.HttpCachePolicy;
 import com.viewpagerindicator.CirclePageIndicator;
@@ -55,18 +51,19 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     ArrayList<AllCollectionModel> allCollectionModelArrayList = new ArrayList<>();
     ArrayList<String> bannerlist = new ArrayList<>();
     View view;
+    @SuppressLint("StaticFieldLeak")
     private static ViewPager mPager;
     private static int currentPage = 0;
     private static int NUM_PAGES = 0;
     SlidingImage_Adapter slidingImage_adapter;
-    private ProgressDialog progressDialog;
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.foryou, container, false);
 
-        ((Navigation) getActivity()).getSupportActionBar().setTitle("Home");
+        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Home");
 
         ForYouViewModel forYouViewModel = new ForYouViewModel(getActivity(), this);
+
 
         topselling_recyclerview = view.findViewById(R.id.main_recyclerview);
         allcollection = view.findViewById(R.id.allcollection);
@@ -88,7 +85,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mPager = (ViewPager) view.findViewById(R.id.pager);
+        mPager = view.findViewById(R.id.pager);
         allCollectionAdapter = new AllCollectionAdapter(getActivity(), allCollectionModelArrayList, getFragmentManager());
         allcollection.setAdapter(allCollectionAdapter);
         allcollection.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
@@ -130,23 +127,19 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     @Override
     public void topSelling(ArrayList<TopSellingModel> arrayList) {
         if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    topSellingModelArrayList.clear();
-                    for (int i = 0; i < arrayList.size(); i++) {
-                        TopSellingModel topSellingModel = new TopSellingModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
-                        topSellingModel.setCollectionid(arrayList.get(i).getCollectionid());
-                        topSellingModelArrayList.add(topSellingModel);
-                    }
-
-
-                    getObject().add(topSellingModelArrayList.get(0));
-                    adapter.notifyDataSetChanged();
-
-
+            getActivity().runOnUiThread(() -> {
+                topSellingModelArrayList.clear();
+                for (int i = 0; i < arrayList.size(); i++) {
+                    TopSellingModel topSellingModel = new TopSellingModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
+                    topSellingModel.setCollectionid(arrayList.get(i).getCollectionid());
+                    topSellingModelArrayList.add(topSellingModel);
                 }
+
+
+                getObject().add(topSellingModelArrayList.get(0));
+                adapter.notifyDataSetChanged();
+
+
             });
         }
 
@@ -155,23 +148,18 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     @Override
     public void newArrivals(ArrayList<NewArrivalModel> arrayList) {
         if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
+            getActivity().runOnUiThread(() -> {
+                newArrivalModelArrayList.clear();
 
-                @Override
-                public void run() {
-                    newArrivalModelArrayList.clear();
-
-
-                    for (int i = 0; i < arrayList.size(); i++) {
-                        NewArrivalModel newArrivalModel = new NewArrivalModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
-                        newArrivalModel.setCollectionid(arrayList.get(i).getCollectionid());
-                        newArrivalModelArrayList.add(newArrivalModel);
-                    }
-                    getObject().add(newArrivalModelArrayList.get(0));
-                    adapter.notifyDataSetChanged();
-
-
+                for (int i = 0; i < arrayList.size(); i++) {
+                    NewArrivalModel newArrivalModel = new NewArrivalModel(arrayList.get(i).getProduct_ID(), arrayList.get(i).getProduct_title(), arrayList.get(i).getPrice(), arrayList.get(i).getImageUrl(), arrayList.get(i).getCollectionTitle());
+                    newArrivalModel.setCollectionid(arrayList.get(i).getCollectionid());
+                    newArrivalModelArrayList.add(newArrivalModel);
                 }
+                getObject().add(newArrivalModelArrayList.get(0));
+                adapter.notifyDataSetChanged();
+
+
             });
         }
     }
@@ -189,13 +177,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
         getObject().add(GroceryHomeModels.get(0));
 
         if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    adapter.notifyDataSetChanged();
-                }
-            });
+            getActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
         }
     }
 
@@ -206,8 +188,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
         mPager.setAdapter(slidingImage_adapter);
 
 
-        CirclePageIndicator indicator = (CirclePageIndicator) view.
-                findViewById(R.id.indicator);
+        CirclePageIndicator indicator =  view.findViewById(R.id.indicator);
 
         indicator.setViewPager(mPager);
 
@@ -221,13 +202,11 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
         // Auto start of viewpager
         final Handler handler = new Handler();
-        final Runnable Update = new Runnable() {
-            public void run() {
-                if (currentPage == NUM_PAGES) {
-                    currentPage = 0;
-                }
-                mPager.setCurrentItem(currentPage++, true);
+        final Runnable Update = () -> {
+            if (currentPage == NUM_PAGES) {
+                currentPage = 0;
             }
+            mPager.setCurrentItem(currentPage++, true);
         };
         Timer swipeTimer = new Timer();
         swipeTimer.schedule(new TimerTask() {
@@ -270,16 +249,14 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     }
 
     @Override
-    public void collectionlist(ArrayList<TopSellingModel> topSellingModelArrayList, ArrayList<NewArrivalModel> newArrivalModelArrayList) {
-
-        resultCallBackInterface.topSelling(topSellingModelArrayList);
+    public void collectionlist(ArrayList<NewArrivalModel> newArrivalModelArrayList) {
         resultCallBackInterface.newArrivals(newArrivalModelArrayList);
     }
+
 
     @Override
     public void bannerlist(ArrayList<String> bannerlist1) {
         bannerlist.clear();
-
         bannerlist.addAll(bannerlist1);
         init();
     }
@@ -287,6 +264,11 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     @Override
     public void grocerylist(ArrayList<GroceryHomeModel> arrayList) {
         resultCallBackInterface.grocery(arrayList);
+    }
+
+    @Override
+    public void topselling1(ArrayList<TopSellingModel> topSellingModelArrayList) {
+        resultCallBackInterface.topSelling(topSellingModelArrayList);
     }
 
     @Override

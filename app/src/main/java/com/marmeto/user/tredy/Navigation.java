@@ -7,7 +7,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,21 +31,15 @@ import android.widget.Toast;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.marmeto.user.tredy.account.MyAccount;
 import com.marmeto.user.tredy.bag.Bag;
 import com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model;
 import com.marmeto.user.tredy.bag.cartdatabase.DBHelper;
 import com.marmeto.user.tredy.category.Categories;
 import com.marmeto.user.tredy.category.CategoryProduct;
-import com.marmeto.user.tredy.ccavenue.WebViewActivity;
 import com.marmeto.user.tredy.foryou.ForYou;
 import com.marmeto.user.tredy.callback.AddRemoveCartItem;
 import com.marmeto.user.tredy.callback.OnFilterDataCallBack;
@@ -59,7 +52,6 @@ import com.marmeto.user.tredy.login.LoginActiviy;
 import com.marmeto.user.tredy.networkCheck.NetworkSchedulerService;
 import com.marmeto.user.tredy.notification.NotificationsListFragment;
 import com.marmeto.user.tredy.search.Search;
-import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.util.Constants;
 import com.marmeto.user.tredy.util.Internet;
 import com.marmeto.user.tredy.util.SharedPreference;
@@ -67,7 +59,6 @@ import com.marmeto.user.tredy.utility.Converter;
 import com.marmeto.user.tredy.whislist.Whislist;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
@@ -82,9 +73,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 
@@ -105,7 +94,7 @@ public class Navigation extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         init();
@@ -131,7 +120,7 @@ public class Navigation extends AppCompatActivity
                 .build();
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
 //        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
 //                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 //        drawer.addDrawerListener(toggle);
@@ -167,7 +156,7 @@ public class Navigation extends AppCompatActivity
         drawer.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         onNavigationItemSelected(navigationView.getMenu().getItem(0));
         db = new DBHelper(getApplicationContext());
@@ -188,7 +177,7 @@ public class Navigation extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -305,7 +294,6 @@ public class Navigation extends AppCompatActivity
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
                 transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction1.replace(R.id.home_container, notificationsListFragment, "notification");
                 if (fragmentManager.findFragmentByTag("notification") == null) {
                     transaction1.addToBackStack("notification");
                     transaction1.commit();
@@ -339,7 +327,7 @@ public class Navigation extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -461,7 +449,7 @@ public class Navigation extends AppCompatActivity
         }
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -497,25 +485,22 @@ public class Navigation extends AppCompatActivity
 
 
     public void noDialog() {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        disconnectFromFacebook();
-                        if (mGoogleApiClient.isConnected()) {
-                            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                        }
-                        SharedPreference.saveData("login", "", Navigation.this);
-                        SharedPreference.saveData("accesstoken", "", getApplicationContext());
-                        startActivity(new Intent(Navigation.this, LoginActiviy.class));
-                        finish();
-                        break;
+        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    disconnectFromFacebook();
+                    if (mGoogleApiClient.isConnected()) {
+                        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                    }
+                    SharedPreference.saveData("login", "", Navigation.this);
+                    SharedPreference.saveData("accesstoken", "", getApplicationContext());
+                    startActivity(new Intent(Navigation.this, LoginActiviy.class));
+                    finish();
+                    break;
 
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        dialog.dismiss();
-                        break;
-                }
+                case DialogInterface.BUTTON_NEGATIVE:
+                    dialog.dismiss();
+                    break;
             }
         };
 
@@ -531,15 +516,7 @@ public class Navigation extends AppCompatActivity
             return; // already logged out
         } else {
 
-            new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, new GraphRequest
-                    .Callback() {
-                @Override
-                public void onCompleted(GraphResponse graphResponse) {
-
-                    LoginManager.getInstance().logOut();
-
-                }
-            }).executeAsync();
+            new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, graphResponse -> LoginManager.getInstance().logOut()).executeAsync();
         }
     }
 
@@ -549,17 +526,19 @@ public class Navigation extends AppCompatActivity
 
     }
 
-    public void refreshActivity() {
-
-        Toast.makeText(this, "Main ACtivity", Toast.LENGTH_SHORT).show();
-
-    }
-
+//    public void refreshActivity() {
+//
+//        Toast.makeText(this, "Main ACtivity", Toast.LENGTH_SHORT).show();
+//
+//    }
+//
 
     @Override
     public void onFilterValueSelectCallBack(String minprice, String maxprice, String sortby, String collectionid, ArrayList<String> selectedFilterLists, String CollectionName) {
         CategoryProduct categoryProduct = (CategoryProduct) getSupportFragmentManager().findFragmentByTag("categoryproduct");
-        categoryProduct.getFilterData(minprice, maxprice, sortby, collectionid, selectedFilterLists, CollectionName);
+        if (categoryProduct != null) {
+            categoryProduct.getFilterData(minprice, maxprice, sortby, collectionid, selectedFilterLists, CollectionName);
+        }
 //
 //        if (categoryProduct == null) {
 //            categoryProduct = new CategoryProduct();
@@ -587,26 +566,20 @@ public class Navigation extends AppCompatActivity
 
         RequestQueue mRequestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.unreadcount + customerid.trim() + "?from=" + minusdatet,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
+                response -> {
+                    try {
 
-                            JSONObject obj = new JSONObject(response);
-                            Log.e("response", response);
-                            String count = obj.getString("count");
-                            noti_counnt = Integer.parseInt(count);
-                            invalidateOptionsMenu();
+                        JSONObject obj = new JSONObject(response);
+                        Log.e("response", response);
+                        String count = obj.getString("count");
+                        noti_counnt = Integer.parseInt(count);
+                        invalidateOptionsMenu();
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                    }
+                error -> {
                 }) {
 
         };
@@ -626,9 +599,10 @@ public class Navigation extends AppCompatActivity
     }
 
     @Override
-    public void collectionlist(ArrayList<TopSellingModel> topSellingModelArrayList, ArrayList<NewArrivalModel> newArrivalModelArrayList) {
+    public void collectionlist(ArrayList<NewArrivalModel> newArrivalModelArrayList) {
 
     }
+
 
     @Override
     public void bannerlist(ArrayList<String> bannerlist) {
@@ -637,6 +611,11 @@ public class Navigation extends AppCompatActivity
 
     @Override
     public void grocerylist(ArrayList<GroceryHomeModel> arrayList) {
+
+    }
+
+    @Override
+    public void topselling1(ArrayList<TopSellingModel> topSellingModelArrayList) {
 
     }
 
@@ -656,18 +635,8 @@ public class Navigation extends AppCompatActivity
                    .setTitle("New version available")
                    .setMessage("Please, update app to new version to continue reposting.")
                    .setPositiveButton("Update",
-                           new DialogInterface.OnClickListener() {
-                               @Override
-                               public void onClick(DialogInterface dialog, int which) {
-                                   redirectStore(updateUrl);
-                               }
-                           }).setNegativeButton("No, thanks",
-                           new DialogInterface.OnClickListener() {
-                               @Override
-                               public void onClick(DialogInterface dialog, int which) {
-                                   dialog.dismiss();
-                               }
-                           }).create();
+                           (dialog12, which) -> redirectStore(updateUrl)).setNegativeButton("No, thanks",
+                           (dialog1, which) -> dialog1.dismiss()).create();
            dialog.show();
        }
     }
@@ -685,16 +654,14 @@ public class Navigation extends AppCompatActivity
         builder.setTitle("Status");
         builder.setMessage(poptext)
                 .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        getIntent().removeExtra("message");
-                        dialog.dismiss();
-                    }
+                .setPositiveButton("OK", (dialog, id) -> {
+                    getIntent().removeExtra("message");
+                    dialog.dismiss();
                 });
         android.support.v7.app.AlertDialog alert = builder.create();
         alert.show();
 
-        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.white);
 
     }
 

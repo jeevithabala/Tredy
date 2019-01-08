@@ -1,8 +1,10 @@
 package com.marmeto.user.tredy.bag.cartdatabase;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -27,21 +29,14 @@ import java.util.List;
 
 public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.ViewHolder> {
 
-    List<AddToCart_Model> items;
+    private List<AddToCart_Model> items;
     Context mContext;
     private LayoutInflater layoutInflater;
-    CartController cartController;
-    CommanCartControler commanCartControler;
-    GetTotalCost getTotalCost;
-    TextView textView, textView1;
-    String state;
+    private CartController cartController;
+    private CommanCartControler commanCartControler;
+    private GetTotalCost getTotalCost;
+    private TextView textView, textView1;
     private FragmentManager fragmentManager;
-
-    public AddToCart_Adapter(List<AddToCart_Model> items, Context mContext, GetTotalCost getTotalCost) {
-        this.items = items;
-        this.mContext = mContext;
-        this.getTotalCost = getTotalCost;
-    }
 
     public AddToCart_Adapter(List<AddToCart_Model> items, Context mContext, GetTotalCost getTotalCost, TextView textView, TextView textView1, FragmentManager fragmentManager) {
         this.items = items;
@@ -52,8 +47,9 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
         this.fragmentManager = fragmentManager;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (layoutInflater == null) {
             layoutInflater = LayoutInflater.from(parent.getContext());
@@ -66,8 +62,9 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         holder.binding.setCartitem(items.get(position));
         Log.d("Product varient id ", items.get(position).getProduct_varient_id());
@@ -99,6 +96,7 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
 
         private final AddtocartAdapterBinding binding;
 
+        @SuppressLint("SetTextI18n")
         public ViewHolder(final AddtocartAdapterBinding itembinding) {
             super(itembinding.getRoot());
             this.binding = itembinding;
@@ -111,89 +109,74 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
 
             product_name = itemView.findViewById(R.id.product_name);
 
-            binding.productImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("category", "bag");
-                    bundle.putSerializable("category_id", items.get(getAdapterPosition()));
-                    Fragment fragment = new ProductView();
-                    fragment.setArguments(bundle);
-                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
-                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    if (fragmentManager.findFragmentByTag("fragment") == null) {
-                        ft.addToBackStack("fragment");
-                        ft.commit();
-                    } else {
-                        ft.commit();
-                    }
-
+            binding.productImage.setOnClickListener(view -> {
+                Bundle bundle = new Bundle();
+                bundle.putString("category", "bag");
+                bundle.putSerializable("category_id", items.get(getAdapterPosition()));
+                Fragment fragment = new ProductView();
+                fragment.setArguments(bundle);
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                if (fragmentManager.findFragmentByTag("fragment") == null) {
+                    ft.addToBackStack("fragment");
+                    ft.commit();
+                } else {
+                    ft.commit();
                 }
+
             });
 
-            product_name.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("category", "bag");
-                    bundle.putSerializable("category_id", items.get(getAdapterPosition()));
-                    Fragment fragment = new ProductView();
-                    fragment.setArguments(bundle);
-                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
-                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    if (fragmentManager.findFragmentByTag("fragment") == null) {
-                        ft.addToBackStack("fragment");
-                        ft.commit();
-                    } else {
-                        ft.commit();
-                    }
-
+            product_name.setOnClickListener(view -> {
+                Bundle bundle = new Bundle();
+                bundle.putString("category", "bag");
+                bundle.putSerializable("category_id", items.get(getAdapterPosition()));
+                Fragment fragment = new ProductView();
+                fragment.setArguments(bundle);
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                if (fragmentManager.findFragmentByTag("fragment") == null) {
+                    ft.addToBackStack("fragment");
+                    ft.commit();
+                } else {
+                    ft.commit();
                 }
+
             });
 
-            remove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.e("iddd", items.get(getAdapterPosition()).getProduct_varient_id());
+            remove.setOnClickListener(view -> {
+                Log.e("iddd", items.get(getAdapterPosition()).getProduct_varient_id());
 //                    remove1.removeItem(items.get(getAdapterPosition()).getProduct_varient_id());
-                    DBHelper db = new DBHelper(mContext);
-                    if (db.deleteRow(items.get(getAdapterPosition()).getProduct_varient_id().trim())) {
-                        ((AddRemoveCartItem) mContext).RemoveCartItem();
-                        items.remove(getAdapterPosition());
-                        notifyDataSetChanged();
-                        notifyItemRemoved(getAdapterPosition());
-                        getTotalCost.totalcostinjterface();
+                DBHelper db = new DBHelper(mContext);
+                if (db.deleteRow(items.get(getAdapterPosition()).getProduct_varient_id().trim())) {
+                    ((AddRemoveCartItem) mContext).RemoveCartItem();
+                    items.remove(getAdapterPosition());
+                    notifyDataSetChanged();
+                    notifyItemRemoved(getAdapterPosition());
+                    getTotalCost.totalcostinjterface();
 
-                    }
                 }
             });
 
-            increase.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    cartController = new CartController(mContext);
-                    commanCartControler = (CommanCartControler) cartController;
-                    commanCartControler.AddQuantity(items.get(getAdapterPosition()).getProduct_varient_id().trim());
+            increase.setOnClickListener(view -> {
+                cartController = new CartController(mContext);
+                commanCartControler =  cartController;
+                commanCartControler.AddQuantity(items.get(getAdapterPosition()).getProduct_varient_id().trim());
 
-                    items.get(getAdapterPosition()).setQty(Integer.parseInt(db.getQuantity(items.get(getAdapterPosition()).getProduct_varient_id())));
-                    textView.setText("Rs. " + Integer.toString(commanCartControler.getTotalPrice()));
-                    SharedPreference.saveData("total", String.valueOf(commanCartControler.getTotalPrice()), mContext);
-                    Log.e("costcheckadapter", "" + String.valueOf(commanCartControler.getTotalPrice()));
+                items.get(getAdapterPosition()).setQty(Integer.parseInt(db.getQuantity(items.get(getAdapterPosition()).getProduct_varient_id())));
+                textView.setText("Rs. " + Integer.toString(commanCartControler.getTotalPrice()));
+                SharedPreference.saveData("total", String.valueOf(commanCartControler.getTotalPrice()), mContext);
+                Log.e("costcheckadapter", "" + String.valueOf(commanCartControler.getTotalPrice()));
 //                    getTotalCost.totalcostinjterface(commanCartControler.getTotalPrice());
 
-                }
             });
 
-            decrease.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    cartController = new CartController(mContext);
-                    commanCartControler = (CommanCartControler) cartController;
-                    commanCartControler.RemoveQuantity(items.get(getAdapterPosition()).getProduct_varient_id().trim());
-                    items.get(getAdapterPosition()).setQty(Integer.parseInt(db.getQuantity(items.get(getAdapterPosition()).getProduct_varient_id())));
-                    textView.setText("Rs. " + Integer.toString(commanCartControler.getTotalPrice()));
-                    SharedPreference.saveData("total", String.valueOf(commanCartControler.getTotalPrice()), mContext);
-                }
+            decrease.setOnClickListener(view -> {
+                cartController = new CartController(mContext);
+                commanCartControler =  cartController;
+                commanCartControler.RemoveQuantity(items.get(getAdapterPosition()).getProduct_varient_id().trim());
+                items.get(getAdapterPosition()).setQty(Integer.parseInt(db.getQuantity(items.get(getAdapterPosition()).getProduct_varient_id())));
+                textView.setText("Rs. " + Integer.toString(commanCartControler.getTotalPrice()));
+                SharedPreference.saveData("total", String.valueOf(commanCartControler.getTotalPrice()), mContext);
             });
         }
     }

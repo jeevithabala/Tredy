@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.search;
 
+import android.annotation.SuppressLint;
 import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,7 +17,7 @@ public class SearchModel implements Serializable {
     private String Product_title;
     private String imageUrl;
 
-    public SearchModel(String product_ID, String price, String product_title, String imageUrl) {
+     SearchModel(String product_ID, String price, String product_title, String imageUrl) {
         Product_ID = product_ID;
         this.price = price;
         Product_title = product_title;
@@ -39,6 +40,7 @@ public class SearchModel implements Serializable {
         return imageUrl;
     }
 
+    @SuppressLint("SetTextI18n")
     @BindingAdapter("price1")
     public static void price(TextView textView, String price) {
         textView.setText("₹ " + price);

@@ -3,7 +3,7 @@ package com.marmeto.user.tredy.filter.sortby;
 public class SortByModel {
 
     String title;
-    boolean checked=false;
+    private boolean checked=false;
 
     public SortByModel(String title,boolean checked) {
         this.title = title;

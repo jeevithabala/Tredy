@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso;
 import java.io.Serializable;
 
 public class AllCollectionModel implements Serializable {
-    String id, image, title;
+    private String id, image, title;
 
     private Storefront.Collection collection;
 

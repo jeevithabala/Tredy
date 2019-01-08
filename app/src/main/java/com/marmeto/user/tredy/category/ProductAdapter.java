@@ -3,6 +3,7 @@ package com.marmeto.user.tredy.category;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,24 +24,22 @@ import static com.marmeto.user.tredy.category.CategoryProduct.isViewWithCatalog;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
 
     Context mContext;
-    ArrayList<ProductModel> itemsList;
+    private ArrayList<ProductModel> itemsList;
     private FragmentManager fragmentManager;
-    private LayoutInflater layoutInflater;
-    OnItemClick onItemClick;
-    ProductClickInterface productClickInterface;
+    private ProductClickInterface productClickInterface;
 
 
-    public ProductAdapter(Context mContext, ArrayList<ProductModel> itemsList, FragmentManager fragmentManager, ProductClickInterface productClickInterface) {
+     ProductAdapter(Context mContext, ArrayList<ProductModel> itemsList, FragmentManager fragmentManager, ProductClickInterface productClickInterface) {
         this.mContext = mContext;
         this.itemsList = itemsList;
         this.fragmentManager = fragmentManager;
         this.productClickInterface = productClickInterface;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater= LayoutInflater.from(mContext);
-        View view;
         RecyclerView.ViewHolder viewHolder;
 
 
@@ -62,13 +61,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        ViewHolder viewHolder = (ViewHolder) holder;
-
-        viewHolder.getBinding().setVariable(BR.product, itemsList.get(position));
-        viewHolder.getBinding().setVariable(BR.itemclick,productClickInterface);
-        viewHolder.getBinding().executePendingBindings();
+        ( holder).getBinding().setVariable(BR.product, itemsList.get(position));
+        (holder).getBinding().setVariable(BR.itemclick,productClickInterface);
+        ( holder).getBinding().executePendingBindings();
 //        viewHolder.getBinding().setVariable(BR.onitemclickplus,plus;
         //        viewHolder.getBinding().getRoot().setOnClickListener(new View.OnClickListener() {
 //            @Override

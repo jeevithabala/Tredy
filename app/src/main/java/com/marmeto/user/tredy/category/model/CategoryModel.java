@@ -12,8 +12,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class CategoryModel extends BaseObservable implements Serializable {
-    String imageUrl, id, collectiontitle;
-    ArrayList<SubCategoryModel> subCategoryModelArrayList;
+    private  String imageUrl, id, collectiontitle;
+    private ArrayList<SubCategoryModel> subCategoryModelArrayList;
 
 
     private Storefront.Collection collection;

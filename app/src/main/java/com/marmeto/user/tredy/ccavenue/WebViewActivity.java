@@ -92,6 +92,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
     private int buynow = 0;
     OrderDetailModel model;
     int ordercount = 0;
+    private RequestQueue mRequestQueue;
 
     /**
      * Async task class to get json by making HTTP call
@@ -896,14 +897,27 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
         alertDialog.show();
     }
 
+    public RequestQueue getRequestQueue() {
+        // lazy initialize the request queue, the queue instance will be
+        // created when it is accessed for the first time
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        }
+
+        return mRequestQueue;
+    }
+
     public void getData() {
 
+//        try {
+            String[] separated = finalhtml.split("<td>");
+            transaction_id = separated[6];
+            String[] separated1 = transaction_id.split("</td>");
+            transaction_id = separated1[0];
+//        }catch (Exception e){
+//            transaction_id="";
+//        }
 
-        String[] separated = finalhtml.split("<td>");
-        transaction_id = separated[6];
-        String[] separated1 = transaction_id.split("</td>");
-        transaction_id = separated1[0];
-        Log.e("transaction_id", " " + transaction_id);
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
 
@@ -948,7 +962,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
         costtotal = Integer.parseInt(totalamount.trim());
         try {
             if (ordercount == 0) {
-                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+//                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                 JSONObject jsonBody = new JSONObject();
                 jsonBody.put("email", emailstring);
                 jsonBody.put("financial_status", "paid");
@@ -1116,7 +1130,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                 };
                 if (ordercount == 0) {
                     ordercount++;
-                    requestQueue.add(stringRequest);
+                    getRequestQueue().add(stringRequest);
                 }
             }
         } catch (JSONException e) {

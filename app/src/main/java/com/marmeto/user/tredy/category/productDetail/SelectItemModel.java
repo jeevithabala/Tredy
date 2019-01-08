@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.category.productDetail;
 
+import android.annotation.SuppressLint;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
@@ -7,17 +8,14 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.android.databinding.library.baseAdapters.BR;
-import com.marmeto.user.tredy.category.model.ProductModel;
 import com.shopify.buy3.Storefront;
 
 public class SelectItemModel extends BaseObservable {
 
-    private ProductModel selectItem;
-    private boolean addedTocart = false;
     private Storefront.Product product;
-    int price;
-    String productid;
-    String weightname;
+    private int price;
+    private String productid;
+    private String weightname;
 
     private String count = "1";
     private int cost;
@@ -27,7 +25,7 @@ public class SelectItemModel extends BaseObservable {
         return weightname;
     }
 
-    public void setWeightname(String weightname) {
+     void setWeightname(String weightname) {
         this.weightname = weightname;
     }
 
@@ -72,27 +70,6 @@ public class SelectItemModel extends BaseObservable {
 
     public void setProduct(Storefront.Product product) {
         this.product = product;
-    }
-
-    public boolean isAddedTocart() {
-        return addedTocart;
-    }
-
-    public void setAddedTocart(boolean addedTocart) {
-        this.addedTocart = addedTocart;
-    }
-
-    public SelectItemModel(ProductModel selectItem) {
-        this.selectItem = selectItem;
-
-    }
-
-    public ProductModel getSelectItem() {
-        return selectItem;
-    }
-
-    public void setSelectItem(ProductModel selectItem) {
-        this.selectItem = selectItem;
     }
 
 
@@ -159,6 +136,7 @@ public class SelectItemModel extends BaseObservable {
         return cost;
     }
 
+    @SuppressLint("SetTextI18n")
     @BindingAdapter({"productPrice","position"})
     public static void setProductprice(TextView textView, Storefront.Product product, int i)
     {
