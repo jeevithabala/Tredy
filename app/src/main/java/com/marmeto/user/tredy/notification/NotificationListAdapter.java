@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.android.volley.DefaultRetryPolicy;
@@ -24,14 +25,21 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.marmeto.user.tredy.Navigation;
 import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.util.Constants;
+import com.marmeto.user.tredy.util.Internet;
+import com.marmeto.user.tredy.util.SharedPreference;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Objects;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
+import static com.marmeto.user.tredy.notification.NotificationsListFragment.getCalculatedDate;
 
 public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -47,14 +55,14 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
     SimpleDateFormat simpleDateFormatinput = new SimpleDateFormat("yyyy-mm-dd");
     SimpleDateFormat simpleDateFormatoutput = new SimpleDateFormat("dd-mm-yyyy");
     private boolean loading;
-
+    noticount noticount;
 
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         //public TextView title, year, genre;
 
 
-        TextView title, iconText, date, name, time;
+        TextView title, iconText, date, name, read;
         ImageView imgProfile;
         LinearLayout notification;
 
@@ -66,7 +74,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
             //  iconText = (TextView) view.findViewById(R.id.icon_text);
             date = (TextView) view.findViewById(R.id.icon_star);
             notification = (LinearLayout) view.findViewById(R.id.notificationp);
-            time = (TextView) view.findViewById(R.id.time);
+            read = (TextView) view.findViewById(R.id.read);
 
 
         }
@@ -82,15 +90,16 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
-    public NotificationListAdapter(List<NotificationListSet> customerlist, Context context) {
+    public NotificationListAdapter(List<NotificationListSet> customerlist, Context context, noticount noticount) {
         this.customerlist = customerlist;
         this.context = context;
+        this.noticount=noticount;
 
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.e("ulhijio","hui");
+        Log.e("ulhijio", "hui");
         if (viewType == TYPE_ITEM) {
             Log.e("item_view", "came");
             View itemView = LayoutInflater.from(parent.getContext())
@@ -114,7 +123,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (holder instanceof ViewHolder) {
             final String id = customerlist.get(position).getPid();
             final String pnew = customerlist.get(position).getPnew();
-            Log.e("pnew", " "+pnew);
+            Log.e("pnew", " " + pnew);
 
             final String title = customerlist.get(position).getTitle();
 
@@ -166,16 +175,35 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                     final String id = customerlist.get(position).getPid();
                     final String pnew = customerlist.get(position).getPnew();
                     final String title = customerlist.get(position).getTitle();
-                    String orderid=customerlist.get(position).getOrderid();
+                    String orderid = customerlist.get(position).getOrderid();
 
 
-                    Intent i=new Intent(context,NotificationDataFragment.class);
+                    Intent i = new Intent(context, NotificationDataFragment.class);
                     i.putExtra("id", id);
                     i.putExtra("pnew", pnew);
                     i.putExtra("title", title);
-                    i.putExtra("orderid",orderid);
+                    i.putExtra("orderid", orderid);
                     context.startActivity(i);
 
+//
+                }
+            });
+
+            viewHolder.read.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (pnew.equals("null")) {
+                        if (Internet.isConnected(context)) {
+                            registperp(id);
+                            viewHolder.title.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
+                            viewHolder.title.setTypeface(null, Typeface.NORMAL);
+                            viewHolder.date.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
+                            viewHolder.date.setTypeface(null, Typeface.NORMAL);
+                            noticount.noticountchange(id);
+                        } else {
+                            Toast.makeText(context, "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                        }
+                    }
 //
                 }
             });
@@ -190,25 +218,10 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
     private void registperp(String s) {
         RequestQueue mRequestQueue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(Request.Method.PUT, Constants.readnotification + s,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-
-                            JSONObject obj = new JSONObject(response);
-                            Log.e("response", response);
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                response -> {
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                error -> {
 //                        progressDialog.dismiss();
-                    }
                 }) {
 
         };
@@ -221,6 +234,8 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         mRequestQueue.add(stringRequest);
 
     }
+
+
 
 
     @Override
@@ -240,7 +255,9 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         return TYPE_ITEM;
     }
 
-
+    public interface noticount {
+        void noticountchange(String id);
+    }
 
 }
 

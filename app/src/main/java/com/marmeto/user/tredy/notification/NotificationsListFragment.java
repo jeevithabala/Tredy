@@ -55,7 +55,7 @@ import java.util.Objects;
 import static android.support.v7.widget.RecyclerView.*;
 
 
-public class NotificationsListFragment extends Fragment {
+public class NotificationsListFragment extends Fragment implements NotificationListAdapter.noticount {
     List<NotificationListSet> actorsList = new ArrayList<NotificationListSet>();
     private RecyclerView recyclerView;
     NotificationListAdapter adapter;
@@ -85,7 +85,7 @@ public class NotificationsListFragment extends Fragment {
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager1);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        adapter = new NotificationListAdapter(actorsList, getActivity());
+        adapter = new NotificationListAdapter(actorsList, getActivity(),this);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
@@ -333,4 +333,8 @@ public class NotificationsListFragment extends Fragment {
 
     }
 
+    @Override
+    public void noticountchange( String id) {
+      getNotiCount();
+    }
 }
