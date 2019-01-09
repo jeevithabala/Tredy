@@ -13,15 +13,15 @@
         android:layout_above="@+id/scroll"
         android:layout_below="@+id/toolbar">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/grey">
+                android:background="@color/grey"
+                android:id="@+id/ll">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -37,7 +37,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/sortby_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ll">
 
             </android.support.v7.widget.RecyclerView>
 
@@ -60,14 +61,19 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/filter_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:layout_below="@+id/sortby_recycler">
 
             </android.support.v7.widget.RecyclerView>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/grey">
+                android:background="@color/grey"
+                android:id="@+id/ll2"
+                android:layout_below="@id/filter_recycler">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -82,10 +88,11 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/price_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="200dp">
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ll2">
 
             </android.support.v7.widget.RecyclerView>
-        </LinearLayout>
+        </RelativeLayout>
 
 
     </ScrollView>
