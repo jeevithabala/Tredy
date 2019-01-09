@@ -122,7 +122,6 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 //        Config.hideKeyboard(Objects.requireNonNull(getActivity()));
     }
 
-
     @Override
     public void topSelling(ArrayList<TopSellingModel> arrayList) {
         if (getActivity() != null) {

@@ -183,6 +183,18 @@ public class Navigation extends AppCompatActivity
         } else {
             super.onBackPressed();
 
+
+            try {
+                    if (getSupportFragmentManager().findFragmentByTag("ForYou").isVisible()) {
+                        toolbar.setTitle("Home");
+                    }else if (getSupportFragmentManager().findFragmentByTag("grocery").isVisible()) {
+                    toolbar.setTitle("Grocery");
+                }
+
+            }
+            catch (NullPointerException e) {
+            }
+
         }
 
 
