@@ -29,6 +29,7 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -46,6 +47,7 @@ import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.util.Internet;
 import com.marmeto.user.tredy.util.SharedPreference;
+import com.marmeto.user.tredy.util.VolleySingleton;
 import com.marmeto.user.tredy.utility.AvenuesParams;
 import com.marmeto.user.tredy.utility.Constants;
 import com.marmeto.user.tredy.utility.LoadingDialog;
@@ -910,10 +912,10 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
     public void getData() {
 
 //        try {
-            String[] separated = finalhtml.split("<td>");
-            transaction_id = separated[6];
-            String[] separated1 = transaction_id.split("</td>");
-            transaction_id = separated1[0];
+        String[] separated = finalhtml.split("<td>");
+        transaction_id = separated[6];
+        String[] separated1 = transaction_id.split("</td>");
+        transaction_id = separated1[0];
 //        }catch (Exception e){
 //            transaction_id="";
 //        }
@@ -1082,9 +1084,9 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
 
                                     }
                                 }
-                                if (buynow != 1) {
-                                    db.deleteCart(getApplicationContext());
-                                }
+//                                if (buynow != 1) {
+                                db.deleteCart(getApplicationContext());
+//                                }
 //                            Intent i = new Intent(WebViewActivity.this, Navigation.class);
 //                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //                            i.putExtra("message", "Transaction Successful!");
@@ -1130,7 +1132,9 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                 };
                 if (ordercount == 0) {
                     ordercount++;
-                    getRequestQueue().add(stringRequest);
+//                    getRequestQueue().add(stringRequest);
+                    stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                    VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
                 }
             }
         } catch (JSONException e) {

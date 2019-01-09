@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,15 +26,18 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.marmeto.user.tredy.bag.Bag;
 import com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model;
 import com.marmeto.user.tredy.bag.ShippingAddress;
 import com.marmeto.user.tredy.BuildConfig;
+import com.marmeto.user.tredy.bag.cartdatabase.DBHelper;
 import com.marmeto.user.tredy.category.model.ProductModel;
 import com.marmeto.user.tredy.foryou.groceryhome.GroceryHomeModel;
 import com.marmeto.user.tredy.foryou.newarrival.NewArrivalModel;
@@ -67,11 +71,11 @@ public class ProductView extends Fragment implements ProductClickInterface {
     RecyclerView recyclerView;
     ArrayList<Storefront.Image> itemsList = new ArrayList<>();
     ProductViewBinding productViewBinding;
-    TextView product_price, sku;
+    TextView product_price, sku, veg_text;
     RadioButton rbn;
     LinearLayout veg, eggless, fatfree;
     EditText count;
-    String mHtmlString,product="";
+    String mHtmlString, product = "";
     private String id;
     private GraphClient graphClient;
     View view;
@@ -81,8 +85,8 @@ public class ProductView extends Fragment implements ProductClickInterface {
     String selectedweight = "";
     int selectedID = 0;
     RadioGroup radioGroup;
-
     String no_of_count;
+    private ImageView veg_image;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,11 +98,10 @@ public class ProductView extends Fragment implements ProductClickInterface {
         productViewBinding = DataBindingUtil.inflate(inflater, R.layout.product_view, container, false);
         view = productViewBinding.getRoot();
 
-        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Product");
 
         //  final View view = inflater.inflate(R.layout.product_view, container, false);
         cartController = new CartController(getActivity());
-        commanCartControler =  cartController;
+        commanCartControler = cartController;
 
         veg = view.findViewById(R.id.veg);
         eggless = view.findViewById(R.id.eggless);
@@ -113,8 +116,10 @@ public class ProductView extends Fragment implements ProductClickInterface {
         bag_button = view.findViewById(R.id.bag_button);
         buy = view.findViewById(R.id.buy);
         product_price = view.findViewById(R.id.product_price);
-        sku=view.findViewById(R.id.sku);
+        sku = view.findViewById(R.id.sku);
         radioGroup = view.findViewById(R.id.radiogroup);
+        veg_image = view.findViewById(R.id.veg_image);
+        veg_text = view.findViewById(R.id.veg_text);
 
         // desc=view.findViewById(R.id.desc);
 //        count.addTextChangedListener(this);
@@ -212,7 +217,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
             }
         }
         if (product != null) {
-            if (product.trim().equals("grocery") || product.trim().equals("bag") || product.trim().equals("wishlist") || product.trim().equals("groceryhome")||product.trim().equals("topselling")) {
+            if (product.trim().equals("grocery") || product.trim().equals("bag") || product.trim().equals("wishlist") || product.trim().equals("groceryhome") || product.trim().equals("topselling") || product.trim().equals("newarrival")) {
                 if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
                     getProductVariantID(id.trim());
                 } else {
@@ -231,49 +236,106 @@ public class ProductView extends Fragment implements ProductClickInterface {
         }
 
 
-        buy.setOnClickListener(view -> {
-            no_of_count = count.getText().toString();
-            if (no_of_count.isEmpty()) {
+//        buy.setOnClickListener(view -> {
+//            no_of_count = count.getText().toString();
+//            if (no_of_count.isEmpty()) {
+//
+//                Toast.makeText(getActivity(), "Please Enter Quantity.", Toast.LENGTH_SHORT).show();
+//            } else {
+//                if (Integer.parseInt(no_of_count) <= 100) {
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("collection", "productview");
+//                    bundle.putString("productid", itemModel.getProductid());
+//                    bundle.putString("product_varientid", String.valueOf(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getId()));
+//                    bundle.putString("product_qty", no_of_count);
+//                    bundle.putString("totalcost", String.valueOf(itemModel.getCost()));
+//                    bundle.putString("tag", String.valueOf(itemModel.getProduct().getTags()));
+//
+////                        if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist")) {
+////                            byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
+////                            String val2 = new String(tmp2);
+////                            String[] str = val2.split("/");
+////                            Log.d("str value", str[4]);
+////                            commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(no_of_count));
+//////                    Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
+////                        } else {
+////                            String text = "gid://shopify/Product/" + id.trim();
+////                            String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
+////                            Log.e("coverted", converted.trim());
+////                            Log.e("id", id);
+////                            commanCartControler.AddToCartGrocery(converted.trim(), selectedID, Integer.parseInt(no_of_count));
+//////                    Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
+////                        }
+//
+//                    Fragment fragment = new ShippingAddress();
+//                    fragment.setArguments(bundle);
+//                    FragmentTransaction ft;
+//                    if (getFragmentManager() != null) {
+//                        ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
+//                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+//                        ft.commit();
+//                    }
+//
+//                } else {
+//                    dialog("Entered Quantity should be less than 100");
+////                        Toast.makeText(getActivity(), "Entered Quantity should be less than 100", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+        buy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                no_of_count = count.getText().toString();
+                if (no_of_count.isEmpty()) {
+                    dialog("Please Enter Quantity.");
 
-                Toast.makeText(getActivity(), "Please Enter Quantity.", Toast.LENGTH_SHORT).show();
-            } else {
-                if (Integer.parseInt(no_of_count) <= 100) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("collection", "productview");
-                    bundle.putString("productid", itemModel.getProductid());
-                    bundle.putString("product_varientid", String.valueOf(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getId()));
-                    bundle.putString("product_qty", no_of_count);
-                    bundle.putString("totalcost", String.valueOf(itemModel.getCost()));
-                    bundle.putString("tag", String.valueOf(itemModel.getProduct().getTags()));
-
-//                        if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist")) {
-//                            byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
-//                            String val2 = new String(tmp2);
-//                            String[] str = val2.split("/");
-//                            Log.d("str value", str[4]);
-//                            commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(no_of_count));
-////                    Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            String text = "gid://shopify/Product/" + id.trim();
-//                            String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
-//                            Log.e("coverted", converted.trim());
-//                            Log.e("id", id);
-//                            commanCartControler.AddToCartGrocery(converted.trim(), selectedID, Integer.parseInt(no_of_count));
-////                    Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
-//                        }
-
-                    Fragment fragment = new ShippingAddress();
-                    fragment.setArguments(bundle);
-                    FragmentTransaction ft;
-                    if (getFragmentManager() != null) {
-                        ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
-                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                        ft.commit();
-                    }
-
+//                    Toast.makeText(getActivity(), "Please Enter Quantity.", Toast.LENGTH_SHORT).show();
                 } else {
-                    dialog("Entered Quantity should be less than 100");
+                    if (Integer.parseInt(no_of_count) <= 100) {
+                        if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist") || product.trim().equals("topselling") || product.trim().equals("newarrival")) {
+                            no_of_count = count.getText().toString();
+                            byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
+                            String val2 = new String(tmp2);
+                            String[] str = val2.split("/");
+                            commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(no_of_count));
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Fragment fragment = new Bag();
+                                    FragmentTransaction ft;
+                                    if (getFragmentManager() != null) {
+                                        ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "bag");
+                                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                                        ft.commit();
+                                    }
+                                }
+                            }, 2000);
+
+                        } else {
+                            String text = "gid://shopify/Product/" + id.trim();
+                            String converted = Base64.encodeToString(text.getBytes(), Base64.DEFAULT);
+                            no_of_count = count.getText().toString();
+                            commanCartControler.AddToCartGrocery(converted.trim(), selectedID, Integer.parseInt(no_of_count));
+
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Fragment fragment = new Bag();
+                                    FragmentTransaction ft;
+                                    if (getFragmentManager() != null) {
+                                        ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "bag");
+                                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                                        ft.commit();
+                                    }
+                                }
+                            }, 2000);
+                        }
+                    } else {
+                        dialog("Entered Quantity should be less than 100");
 //                        Toast.makeText(getActivity(), "Entered Quantity should be less than 100", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -287,12 +349,11 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //                    Toast.makeText(getActivity(), "Please Enter Quantity.", Toast.LENGTH_SHORT).show();
             } else {
                 if (Integer.parseInt(no_of_count) <= 100) {
-                    if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist")) {
+                    if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist") || product.trim().equals("topselling") || product.trim().equals("newarrival")) {
                         no_of_count = count.getText().toString();
                         byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
                         String val2 = new String(tmp2);
                         String[] str = val2.split("/");
-                        Log.d("str value", str[4]);
                         commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(no_of_count));
                         Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
                     } else {
@@ -410,9 +471,9 @@ public class ProductView extends Fragment implements ProductClickInterface {
             webView.setBackgroundColor(Color.TRANSPARENT);
 
 
-            if(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getSku()!=null){
+            if (itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getSku() != null) {
                 sku.setText(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getSku());
-            }else {
+            } else {
                 sku.setText("");
             }
             product_price.setText(getResources().getString(R.string.Rs) + " " + itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getPrice().toString());
@@ -431,44 +492,55 @@ public class ProductView extends Fragment implements ProductClickInterface {
 
             recyclerView.setAdapter(adapter);
 
-
-//            Log.e("product sku", "" + itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeightUnit());
-
             for (int i = 0; i < itemModel.getProduct().getImages().getEdges().size(); i++) {
-//                Log.e("siii", String.valueOf(itemModel.getProduct().getImages().getEdges().get(i).getNode().getSrc()));
-//                Log.e("siii1", String.valueOf(itemModel.getProduct().getImages().getEdges().size()));
                 itemsList.add(itemModel.getProduct().getImages().getEdges().get(i).getNode());
-//            adapter.notifyDataSetChanged();
             }
 
             adapter.notifyDataSetChanged();
             if (itemModel.getProduct().getTags() != null && itemModel.getProduct().getTags().size() > 0) {
-                String product_tag = itemModel.getProduct().getTags().get(0);
-                StringTokenizer st = new StringTokenizer(product_tag, ","); //pass comma as delimeter
+                ArrayList<String> arrayList = new ArrayList<>(itemModel.getProduct().getTags());
 
-                while (st.hasMoreTokens()) {
-                    String token = st.nextToken();
-                    switch (token.trim().toLowerCase()) {
-                        case "veg":
-                            veg.setVisibility(View.VISIBLE);
-                            break;
-                        case "eggless":
-                        case "egg less":
-                            eggless.setVisibility(View.VISIBLE);
-
-                            break;
-                        case "fatfree":
-                        case "fat free":
-                            fatfree.setVisibility(View.VISIBLE);
-                            break;
-                        default:
-                            veg.setVisibility(View.VISIBLE);
-                            break;
-                    }
+                if (arrayList.contains("veg")) {
+                    veg.setVisibility(View.VISIBLE);
+                } else if (arrayList.contains("eggless") || arrayList.contains("egg less")) {
+                    eggless.setVisibility(View.VISIBLE);
+                } else if (arrayList.contains("fatfree") || arrayList.contains("fat free")) {
+                    fatfree.setVisibility(View.VISIBLE);
+                } else if (arrayList.contains("Non Veg") || arrayList.contains("Filter Type Non-Veg")) {
+                    veg.setVisibility(View.VISIBLE);
+                    veg_image.setImageDrawable(getResources().getDrawable(R.drawable.ic_non_veg));
+                    veg_text.setText("Non Veg");
+                } else {
+                    veg.setVisibility(View.INVISIBLE);
                 }
-
-                Log.e("product_tag", "" + product_tag);
             }
+//            if (itemModel.getProduct().getTags() != null && itemModel.getProduct().getTags().size() > 0) {
+//                String product_tag = itemModel.getProduct().getTags().get(0);
+//                StringTokenizer st = new StringTokenizer(product_tag, ","); //pass comma as delimeter
+//
+//                while (st.hasMoreTokens()) {
+//                    String token = st.nextToken();
+//                    switch (token.trim().toLowerCase()) {
+//                        case "veg":
+//                            veg.setVisibility(View.VISIBLE);
+//                            break;
+//                        case "eggless":
+//                        case "egg less":
+//                            eggless.setVisibility(View.VISIBLE);
+//
+//                            break;
+//                        case "fatfree":
+//                        case "fat free":
+//                            fatfree.setVisibility(View.VISIBLE);
+//                            break;
+//                        default:
+//                            veg.setVisibility(View.VISIBLE);
+//                            break;
+//                    }
+//                }
+//
+//                Log.e("product_tag", "" + product_tag);
+//            }
 
 
             for (int i = 0; i < itemModel.getProduct().getVariants().getEdges().size(); i++) {
@@ -503,7 +575,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
 
                             selectedID = productViewBinding.radiogroup.getCheckedRadioButtonId();
                             rbn.setTextColor(Color.BLACK);
-                            rbn =  view.findViewById(selectedID);
+                            rbn = view.findViewById(selectedID);
 //                            Log.e("selected id", String.valueOf(selectedID));
 //                            Log.e("selected rdn id", itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getWeight().toString());
 //                            Log.e("child count", String.valueOf(productViewBinding.radiogroup.getChildCount()));
@@ -569,4 +641,9 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //            alert.getWindow().setBackgroundDrawableResource(android.R.color.white)
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Product");
+    }
 }

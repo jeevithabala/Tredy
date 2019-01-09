@@ -61,7 +61,6 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.search, container, false);
 
-        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Search");
 
         search_recycler = view.findViewById(R.id.search_recycler);
         search = view.findViewById(R.id.search);
@@ -273,10 +272,10 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
         bundle.putString("product_id", productid);
         fragment.setArguments(bundle);
         assert getFragmentManager() != null;
-        FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "search");
+        FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-        if (getFragmentManager().findFragmentByTag("search") == null) {
-            ft.addToBackStack("search");
+        if (getFragmentManager().findFragmentByTag("fragment") == null) {
+            ft.addToBackStack("fragment");
             ft.commit();
         } else {
             ft.commit();
@@ -305,5 +304,9 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
         Toast.makeText(getActivity(), "Added to Wishlist", Toast.LENGTH_SHORT).show();
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Search");
+    }
 }

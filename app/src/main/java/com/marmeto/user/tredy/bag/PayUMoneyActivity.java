@@ -42,6 +42,7 @@ import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.util.Constants;
 import com.marmeto.user.tredy.util.SharedPreference;
+import com.marmeto.user.tredy.util.VolleySingleton;
 import com.marmeto.user.tredy.utility.AvenuesParams;
 import com.marmeto.user.tredy.utility.ServiceUtility;
 
@@ -493,9 +494,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                                 }
                             }
                             progressDialog.dismiss();
-                            if (buynow != 1) {
+//                            if (buynow != 1) {
                                 db.deleteCart(getApplicationContext());
-                            }
+//                            }
                             Dialog("Your Order Placed Successfully");
 
 //                            Toast.makeText(PayUMoneyActivity.this, "Your Order Placed Sucessfully", Toast.LENGTH_SHORT).show();
@@ -546,8 +547,10 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                 if (ordercount == 0) {
                     ordercount++;
 //                    VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
-                    getRequestQueue().add(stringRequest);
+//                    getRequestQueue().add(stringRequest);
 //                    requestQueue.add(stringRequest);
+                    stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                    VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
                 }
             }
         } catch (JSONException e) {

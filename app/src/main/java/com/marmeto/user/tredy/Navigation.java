@@ -278,7 +278,7 @@ public class Navigation extends AppCompatActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
             transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-            transaction1.replace(R.id.home_container, bag, "Bag");
+            transaction1.add(R.id.home_container, bag, "Bag");
             if (fragmentManager.findFragmentByTag("Bag") == null) {
                 transaction1.addToBackStack("Bag");
                 transaction1.commit();
@@ -294,6 +294,7 @@ public class Navigation extends AppCompatActivity
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
                 transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                transaction1.add(R.id.home_container, notificationsListFragment, "search");
                 if (fragmentManager.findFragmentByTag("notification") == null) {
                     transaction1.addToBackStack("notification");
                     transaction1.commit();

@@ -62,7 +62,6 @@ public class Categories extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.categories, container, false);
 
-        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Categories");
 
 
         TextView all = view.findViewById(R.id.all);
@@ -354,6 +353,8 @@ public class Categories extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Categories");
+
 //        Config.hideKeyboard(Objects.requireNonNull(getActivity()));
     }
 }

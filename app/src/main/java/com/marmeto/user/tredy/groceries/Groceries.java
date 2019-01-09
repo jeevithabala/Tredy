@@ -1,5 +1,6 @@
 package com.marmeto.user.tredy.groceries;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -40,6 +41,7 @@ import com.shopify.graphql.support.ID;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class Groceries extends Fragment implements GroceryAdapter.CartDailog, View.OnClickListener {
@@ -70,7 +72,6 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.grocery, container, false);
 
-        ((Navigation) getActivity()).getSupportActionBar().setTitle("Grocery");
 
         cartController = new CartController(getActivity());
         commanCartControler = (CommanCartControler) cartController;
@@ -137,15 +138,14 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
 
         getCollection(converted.trim(), sort_string);
         adapter.notifyDataSetChanged();
-
         grocery_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
             }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
                 if (isLastItemDisplaying(recyclerView)) {
@@ -155,10 +155,12 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
             }
         });
 
+
         btn_continue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Fragment fragment = new ForYou();
+                assert getFragmentManager() != null;
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "ForYou");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                 if (getFragmentManager().findFragmentByTag("ForYou") == null) {
@@ -179,6 +181,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                 bundle.putString("totalcost", Integer.toString(cost));
                 Fragment fragment = new ShippingAddress();
                 fragment.setArguments(bundle);
+                assert getFragmentManager() != null;
                 FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
                 if (getFragmentManager().findFragmentByTag("fragment") == null) {
@@ -194,10 +197,9 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
     }
 
     private boolean isLastItemDisplaying(RecyclerView recyclerView) {
-        if (recyclerView.getAdapter().getItemCount() != 0) {
-            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1)
-                return true;
+        if (Objects.requireNonNull(recyclerView.getAdapter()).getItemCount() != 0) {
+            int lastVisibleItemPosition = ((LinearLayoutManager) Objects.requireNonNull(recyclerView.getLayoutManager())).findLastCompletelyVisibleItemPosition();
+            return lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1;
         }
         return false;
     }
@@ -236,26 +238,24 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
 
                                                         .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
                                                                 .edges(imageEdgeQuery -> imageEdgeQuery
-                                                                        .node(imageQuery -> imageQuery
-                                                                                .src()
+                                                                        .node(Storefront.ImageQuery::src
                                                                         )
                                                                 )
                                                         )
                                                         .tags()
-                                                        .options(option -> option
-                                                                .name())
+                                                        .options(Storefront.ProductOptionQuery::name)
                                                         .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
                                                                 .edges(variantEdgeQuery -> variantEdgeQuery
                                                                         .node(productVariantQuery -> productVariantQuery
                                                                                 .price()
                                                                                 .title()
-                                                                                .image(args -> args.src())
+                                                                                .image(Storefront.ImageQuery::src)
                                                                                 .weight()
                                                                                 .weightUnit()
                                                                                 .available()
                                                                                 .sku()
                                                                                 .availableForSale()
-                                                                                .selectedOptions(se->se.name())
+                                                                                .selectedOptions(Storefront.SelectedOptionQuery::name)
                                                                         )
                                                                 )
                                                         )
@@ -269,6 +269,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
         graphClient.queryGraph(query).enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
             @Override
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
+                assert response.data() != null;
                 Storefront.Collection product = (Storefront.Collection) response.data().getNode();
                 Log.e("pagin", " " + product.getProducts().getPageInfo().getHasNextPage());
                 boolean hasNextProductPage = product.getProducts().getPageInfo().getHasNextPage().booleanValue();
@@ -311,7 +312,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
 
             @Override
             public void onFailure(@NonNull GraphError error) {
-                getActivity().runOnUiThread(new Runnable() {
+                Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         progressDialog.dismiss();
@@ -341,20 +342,18 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
 
                                                         .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
                                                                 .edges(imageEdgeQuery -> imageEdgeQuery
-                                                                        .node(imageQuery -> imageQuery
-                                                                                .src()
+                                                                        .node(Storefront.ImageQuery::src
                                                                         )
                                                                 )
                                                         )
                                                         .tags()
-                                                        .options(option -> option
-                                                                .name())
+                                                        .options(Storefront.ProductOptionQuery::name)
                                                         .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
                                                                 .edges(variantEdgeQuery -> variantEdgeQuery
                                                                         .node(productVariantQuery -> productVariantQuery
                                                                                 .price()
                                                                                 .title()
-                                                                                .image(args -> args.src())
+                                                                                .image(Storefront.ImageQuery::src)
                                                                                 .weight()
                                                                                 .weightUnit()
                                                                                 .available()
@@ -370,11 +369,12 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
         graphClient.queryGraph(query).enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
             @Override
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
+                assert response.data() != null;
                 Storefront.Collection product = (Storefront.Collection) response.data().getNode();
 //                Log.e("pagin1"," "+ product.getProducts().getPageInfo().getHasNextPage());
                 productStringPageCursor.clear();
                 Log.e("pagincursur", " " + productCursor);
-                boolean hasNextProductPage = product.getProducts().getPageInfo().getHasNextPage().booleanValue();
+                boolean hasNextProductPage = product.getProducts().getPageInfo().getHasNextPage();
                 Log.e("hasNextProductPage", " " + hasNextProductPage);
                 for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
                     if (hasNextProductPage) {
@@ -404,7 +404,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                 }
 
 
-                getActivity().runOnUiThread(new Runnable() {
+                Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         adapter.notifyDataSetChanged();
@@ -420,6 +420,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
     }
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void cart(int adapter_pos, int varient_pos, int qty) {
         adapter_posi = adapter_pos;
@@ -428,10 +429,8 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
         add_to_cart.setVisibility(View.VISIBLE);
         addToCart_modelArrayList.clear();
         addToCart_modelArrayList = db.getCartList();
-        Log.e("array", "" + db.getCartList());
         for (int j = 0; j < addToCart_modelArrayList.size(); j++) {
             if (addToCart_modelArrayList.get(j).getProduct_id().equals(groceryModelArrayList.get(adapter_pos).getProduct().getId().toString())) {
-                Log.e("truu", "jih");
             }
 
         }
@@ -491,4 +490,12 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Grocery");
+
+
+
+    }
 }

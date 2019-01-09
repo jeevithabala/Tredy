@@ -60,7 +60,6 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.foryou, container, false);
 
-        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Home");
 
         ForYouViewModel forYouViewModel = new ForYouViewModel(getActivity(), this);
 
@@ -119,7 +118,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     @Override
     public void onResume() {
         super.onResume();
-
+        Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Home");
 //        Config.hideKeyboard(Objects.requireNonNull(getActivity()));
     }
 
@@ -296,7 +295,6 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     public void onPause() {
         super.onPause();
     }
-
 
 
 
