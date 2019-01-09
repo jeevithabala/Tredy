@@ -189,8 +189,16 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 case "newarrival":
 
                     NewArrivalModel newArrivalModel = (NewArrivalModel) getArguments().getSerializable("category_id");
+//                    if (newArrivalModel != null) {
+//                        id = newArrivalModel.getCollectionid().trim();
+//                        title = newArrivalModel.getCollectionTitle();
+//                    }
                     if (newArrivalModel != null) {
                         id = newArrivalModel.getCollectionid().trim();
+                        byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
+                        String val2 = new String(tmp2);
+                        String[] str = val2.split("/");
+                        id = str[4];
                         title = newArrivalModel.getCollectionTitle();
                     }
                     break;
