@@ -90,6 +90,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     TextView noproduct;
     private Boolean isFilterData = false;
     String sortbystring = "";
+    String category = null;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -138,7 +139,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         super.onResume();
 
 
-        String category = null;
+
         if (getArguments() != null) {
             category = getArguments().getString("collection");
         }
@@ -436,7 +437,10 @@ ArrayList<String> arrayList=new ArrayList<>();
             final String requestBody = jsonBody.toString();
             String a;
             if (sortbykey.trim().length() == 0) {
-                a = "?page_size=10&page=" + count;
+                if (category.equals("newarrival"))
+                    a = "?sortBy=created_at&order=desc&page_size=10&page=" + count;
+                else
+                    a = "?page_size=10&page=" + count;
             } else {
                 a = "?" + sortbykey.trim() + "&page_size=10&page=" + count;
             }
@@ -546,7 +550,11 @@ ArrayList<String> arrayList=new ArrayList<>();
 //        } else {
 //            sortbystring = "?page_size=10&page=";
 //        }
-        sortbystring = "?page_size=10&page=";
+        if (category.equals("newarrival"))
+            sortbystring = "?sortBy=created_at&order=desc&page_size=10&page=";
+        else
+            sortbystring = "?page_size=10&page=";
+
 
         requestQueue.add(collectionList(id, requestCount));
         Log.d("request counter", String.valueOf(requestCount));
