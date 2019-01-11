@@ -323,7 +323,7 @@ public class Navigation extends AppCompatActivity
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
                 transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction1.replace(R.id.home_container, search, "search");
+                transaction1.add(R.id.home_container, search, "search");
                 if (fragmentManager.findFragmentByTag("search") == null) {
                     transaction1.addToBackStack("search");
                     transaction1.commit();

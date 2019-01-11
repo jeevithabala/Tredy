@@ -3,7 +3,6 @@ package com.marmeto.user.tredy.groceries;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -69,12 +68,13 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
     TextView filter;
 
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @SuppressLint("SetTextI18n")
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.grocery, container, false);
 
 
         cartController = new CartController(getActivity());
-        commanCartControler = (CommanCartControler) cartController;
+        commanCartControler =  cartController;
 
         grocery_recycler = view.findViewById(R.id.grocery_recycler);
         title_layout = view.findViewById(R.id.title_layout);
@@ -83,7 +83,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
         title_layout.setVisibility(View.GONE);
         String id = "58881703997";
         String text = "gid://shopify/Collection/" + id.trim();
-        converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
+        converted = Base64.encodeToString(text.getBytes(), Base64.DEFAULT);
 
 
         add_to_cart = view.findViewById(R.id.cart_frame);
@@ -114,7 +114,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
         }
 
 
-        graphClient = GraphClient.builder(getActivity())
+        graphClient = GraphClient.builder(Objects.requireNonNull(getActivity()))
                 .shopDomain(BuildConfig.SHOP_DOMAIN)
                 .accessToken(BuildConfig.API_KEY)
                 .httpCache(new File(getActivity().getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
@@ -138,6 +138,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
 
         getCollection(converted.trim(), sort_string);
         adapter.notifyDataSetChanged();
+
         grocery_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -155,43 +156,36 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
             }
         });
 
-
-        btn_continue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = new ForYou();
-                assert getFragmentManager() != null;
-                FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "ForYou");
-                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                if (getFragmentManager().findFragmentByTag("ForYou") == null) {
-                    ft.addToBackStack("ForYou");
-                    ft.commit();
-                } else {
-                    ft.commit();
-                }
+        btn_continue.setOnClickListener(view -> {
+            Fragment fragment = new ForYou();
+            assert getFragmentManager() != null;
+            FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "ForYou");
+            ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+            if (getFragmentManager().findFragmentByTag("ForYou") == null) {
+                ft.addToBackStack("ForYou");
+                ft.commit();
+            } else {
+                ft.commit();
             }
         });
 
-        btn_checkout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        btn_checkout.setOnClickListener(view -> {
 
-                Bundle bundle = new Bundle();
-                bundle.putString("collection", "allcollection");
-                bundle.putString("totalcost", Integer.toString(cost));
-                Fragment fragment = new ShippingAddress();
-                fragment.setArguments(bundle);
-                assert getFragmentManager() != null;
-                FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
-                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                if (getFragmentManager().findFragmentByTag("fragment") == null) {
-                    ft.addToBackStack("fragment");
-                    ft.commit();
-                } else {
-                    ft.commit();
-                }
-
+            Bundle bundle = new Bundle();
+            bundle.putString("collection", "allcollection");
+            bundle.putString("totalcost", Integer.toString(cost));
+            Fragment fragment = new ShippingAddress();
+            fragment.setArguments(bundle);
+            assert getFragmentManager() != null;
+            FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
+            ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+            if (getFragmentManager().findFragmentByTag("fragment") == null) {
+                ft.addToBackStack("fragment");
+                ft.commit();
+            } else {
+                ft.commit();
             }
+
         });
         filter.setOnClickListener(this);
     }
@@ -272,14 +266,14 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                 assert response.data() != null;
                 Storefront.Collection product = (Storefront.Collection) response.data().getNode();
                 Log.e("pagin", " " + product.getProducts().getPageInfo().getHasNextPage());
-                boolean hasNextProductPage = product.getProducts().getPageInfo().getHasNextPage().booleanValue();
+//                boolean hasNextProductPage = product.getProducts().getPageInfo().getHasNextPage().booleanValue();
 
 
                 for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
 
                     if (i == 0) {
                         for (int i = 0; i < product.getProducts().getEdges().size(); i++) {
-                            productPageCursor = productEdge.getCursor().toString();
+                            productPageCursor = productEdge.getCursor();
 
                             productStringPageCursor.add(productPageCursor);
                         }
@@ -312,12 +306,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
 
             @Override
             public void onFailure(@NonNull GraphError error) {
-                Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDialog.dismiss();
-                    }
-                });
+                Objects.requireNonNull(getActivity()).runOnUiThread(() -> progressDialog.dismiss());
             }
         });
     }
@@ -382,7 +371,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
 //                        Log.e("pagin11", " " + productEdge.getCursor().toString());
                         Log.e("product_name", " " + productEdge.getNode().getTitle());
                         for (int i = 0; i < product.getProducts().getEdges().size(); i++) {
-                            productPageCursor = productEdge.getCursor().toString();
+                            productPageCursor = productEdge.getCursor();
 
                             productStringPageCursor.add(productPageCursor);
                         }
@@ -404,12 +393,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                 }
 
 
-                Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                });
+                Objects.requireNonNull(getActivity()).runOnUiThread(() -> adapter.notifyDataSetChanged());
             }
 
             @Override
@@ -429,8 +413,10 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
         add_to_cart.setVisibility(View.VISIBLE);
         addToCart_modelArrayList.clear();
         addToCart_modelArrayList = db.getCartList();
+        Log.e("array", "" + db.getCartList());
         for (int j = 0; j < addToCart_modelArrayList.size(); j++) {
             if (addToCart_modelArrayList.get(j).getProduct_id().equals(groceryModelArrayList.get(adapter_pos).getProduct().getId().toString())) {
+                Log.e("truu", "jih");
             }
 
         }
@@ -460,28 +446,27 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                 final CharSequence[] relevance = new String[]{"Best Selling",  "Lowest Price", "Relevance", "Product Title A - Z", "Manual"};
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Select");
-                builder.setSingleChoiceItems(relevance, check, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
-                        if (i == 0) {
-                            sort_string = "BEST_SELLING";
-                        } else if (i == 1) {
-                            sort_string = "PRICE";
-                        } else if (i == 2) {
-                            sort_string = "RELEVANCE";
-                        } else if (i == 3) {
-                            sort_string = "TITLE";
-                        } else if (i == 4) {
-                            sort_string = "MANUAL";
-                        } else {
-                            sort_string = "BEST_SELLING";
-                        }
-                        //   sort_string = relevance[i].toString();
-                        check = i;
-                        getCollection(converted.trim(), sort_string);
-
+                builder.setSingleChoiceItems(relevance, check, (dialogInterface, value) -> {
+                    dialogInterface.cancel();
+                    if (value == 0) {
+                        sort_string = "BEST_SELLING";
+                    } else if (value == 1) {
+                        sort_string = "PRICE";
+                    } else if (value == 2) {
+                        sort_string = "RELEVANCE";
+                    } else if (value == 3) {
+                        sort_string = "TITLE";
+                    } else if (value == 4) {
+                        sort_string = "MANUAL";
+                    } else {
+                        sort_string = "BEST_SELLING";
                     }
+                    //   sort_string = relevance[i].toString();
+                    check = value;
+                    i=0;
+                    getCollection(converted.trim(), sort_string);
+                    adapter.notifyDataSetChanged();
+
                 });
                 AlertDialog alertDialog1 = builder.create();
                 alertDialog1.show();
@@ -494,8 +479,6 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
     public void onResume() {
         super.onResume();
         Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Grocery");
-
-
 
     }
 }

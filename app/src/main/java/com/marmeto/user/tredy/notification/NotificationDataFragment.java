@@ -152,7 +152,7 @@ public class NotificationDataFragment extends AppCompatActivity {
         orderModelArrayList1.clear();
         Storefront.QueryRootQuery query = Storefront.query(root -> root
                 .customer(accessToken, customer -> customer
-                        .orders(arg -> arg.first(200), connection -> connection
+                        .orders(arg -> arg.first(300), connection -> connection
                                 .pageInfo(pageInfoQuery -> pageInfoQuery
                                         .hasNextPage()
                                         .hasPreviousPage()

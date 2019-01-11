@@ -62,6 +62,7 @@ import com.shopify.graphql.support.ID;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
@@ -541,17 +542,30 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //
 //                Log.e("product_tag", "" + product_tag);
 //            }
+            ArrayList<Integer> arrayList = new ArrayList<>();
+            for (int i = 0; i < itemModel.getProduct().getVariants().getEdges().size(); i++) {
+                for (int j = 0; j < itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().size(); j++) {
+                    arrayList.add(Integer.valueOf(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue()));
+                }
+            }
+            Collections.sort(arrayList);
+//            Log.e("arraylist", arrayList.toString());
 
 
             for (int i = 0; i < itemModel.getProduct().getVariants().getEdges().size(); i++) {
                 rbn = new RadioButton(getActivity());
+
                 rbn.setId(i);
+//                arrayList.addAll(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions());
+//                Collections.sort(arrayList.get());
+
 
                 String weightunit = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeightUnit().toString();
                 selectedweight = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeight().toString() + " " + weightunit;
                 if (weightunit.trim().equals("GRAMS")) {
                     weightunit = "g";
                 }
+
                 for (int j = 0; j < itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().size(); j++) {
                     if (!itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue().trim().equals("0") && itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue() != null) {
 //                    rbn.setText(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getWeight().toString() + " " + weightunit);
