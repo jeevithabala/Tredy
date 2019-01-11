@@ -94,7 +94,7 @@ public class Navigation extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation);
 
-        toolbar =  findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         init();
@@ -120,13 +120,13 @@ public class Navigation extends AppCompatActivity
                 .build();
 
 
-        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
 //        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
 //                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 //        drawer.addDrawerListener(toggle);
 //        toggle.syncState();
 
-        ActionBarDrawerToggle  actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -185,14 +185,31 @@ public class Navigation extends AppCompatActivity
 
 
             try {
-                    if (getSupportFragmentManager().findFragmentByTag("ForYou").isVisible()) {
-                        toolbar.setTitle("Home");
-                    }else if (getSupportFragmentManager().findFragmentByTag("grocery").isVisible()) {
+                if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("ForYou")).isVisible()) {
+                    toolbar.setTitle("Home");
+                } else if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("grocery")).isVisible()) {
                     toolbar.setTitle("Grocery");
+                } else if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("wishlist")).isVisible()) {
+                    toolbar.setTitle("Wishlist");
+                } else if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("Categories")).isVisible()) {
+                    toolbar.setTitle("Categories");
+//                } else if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("notification")).isVisible()) {
+//                    toolbar.setTitle("Notification");
+                } else if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("account")).isVisible()) {
+                    toolbar.setTitle("Account Details");
+                } else if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("aboutus")).isVisible()) {
+                    toolbar.setTitle("About Us");
+                } else if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("Bag")).isVisible()) {
+                    toolbar.setTitle("Cart");
+                } else if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("search")).isVisible()) {
+                    toolbar.setTitle("Search");
+                } else if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("productview")).isVisible()) {
+                    toolbar.setTitle("Product");
+                } else if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("categoryproduct")).isVisible()) {
+                    toolbar.setTitle("Categories");
                 }
 
-            }
-            catch (NullPointerException e) {
+            } catch (NullPointerException ignored) {
             }
 
         }
@@ -248,7 +265,7 @@ public class Navigation extends AppCompatActivity
         startService(startServiceIntent);
 
         if (getIntent() != null) {
-                SharedPreference.saveData("update", "true", getApplicationContext());
+            SharedPreference.saveData("update", "true", getApplicationContext());
         }
 
     }
@@ -306,7 +323,7 @@ public class Navigation extends AppCompatActivity
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
                 transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                transaction1.add(R.id.home_container, notificationsListFragment, "search");
+                transaction1.add(R.id.home_container, notificationsListFragment, "notification");
                 if (fragmentManager.findFragmentByTag("notification") == null) {
                     transaction1.addToBackStack("notification");
                     transaction1.commit();
@@ -462,7 +479,7 @@ public class Navigation extends AppCompatActivity
         }
 
 
-        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -470,15 +487,15 @@ public class Navigation extends AppCompatActivity
 
     @Override
     public void AddCartItem() {
-            cartList.clear();
-            cartList = db.getCartList();
-            cart_count = 0;
-            for (int i = 0; i < cartList.size(); i++) {
-                cart_count = cart_count + cartList.get(i).getQty();
-            }
-            Log.e("countt", String.valueOf(cart_count));
+        cartList.clear();
+        cartList = db.getCartList();
+        cart_count = 0;
+        for (int i = 0; i < cartList.size(); i++) {
+            cart_count = cart_count + cartList.get(i).getQty();
+        }
+        Log.e("countt", String.valueOf(cart_count));
 //        cart_count = cartList.size();
-            invalidateOptionsMenu();
+        invalidateOptionsMenu();
 
     }
 
@@ -641,17 +658,17 @@ public class Navigation extends AppCompatActivity
 
     @Override
     public void onUpdateNeeded(final String updateUrl) {
-       String update= SharedPreference.getData("update",getApplicationContext());
-       if(update.equals("false")) {
-           SharedPreference.saveData("update", "true", getApplicationContext());
-           AlertDialog dialog = new AlertDialog.Builder(this)
-                   .setTitle("New version available")
-                   .setMessage("Please, update app to new version to continue reposting.")
-                   .setPositiveButton("Update",
-                           (dialog12, which) -> redirectStore(updateUrl)).setNegativeButton("No, thanks",
-                           (dialog1, which) -> dialog1.dismiss()).create();
-           dialog.show();
-       }
+        String update = SharedPreference.getData("update", getApplicationContext());
+        if (update.equals("false")) {
+            SharedPreference.saveData("update", "true", getApplicationContext());
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("New version available")
+                    .setMessage("Please, update app to new version to continue reposting.")
+                    .setPositiveButton("Update",
+                            (dialog12, which) -> redirectStore(updateUrl)).setNegativeButton("No, thanks",
+                            (dialog1, which) -> dialog1.dismiss()).create();
+            dialog.show();
+        }
     }
 
     private void redirectStore(String updateUrl) {

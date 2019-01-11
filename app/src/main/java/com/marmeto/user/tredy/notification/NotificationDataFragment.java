@@ -53,7 +53,7 @@ public class NotificationDataFragment extends AppCompatActivity {
     private OrderlistAdapter adapter;
     TextView shipping, subtotal, total;
     LinearLayout total_invisible;
-    private ProgressDialog progressDoalog;
+     ProgressDialog progressDialog;
 
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,10 +102,8 @@ public class NotificationDataFragment extends AppCompatActivity {
         adapter = new OrderlistAdapter(this, orderModelArrayList, getSupportFragmentManager());
         order_recyclerview.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-//        orderid="40251";
-//        String order_id="gid://shopify/Order/" + orderid.trim();
-//        String orderid1 = Base64.encodeToString(order_id.trim().getBytes(), Base64.DEFAULT).trim();
-//        getOrders(orderid1.trim());
+
+
         getOrders();
 
     }
@@ -134,25 +132,27 @@ public class NotificationDataFragment extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        if (VolleySingleton.getInstance(this).getRequestQueue() != null) {
-            VolleySingleton.getInstance(this).getRequestQueue().cancelAll("read");
-            VolleySingleton.getInstance(this).getRequestQueue().cancelAll("noti");
-
-        }
+//        if (VolleySingleton.getInstance(this).getRequestQueue() != null) {
+//            VolleySingleton.getInstance(this).getRequestQueue().cancelAll("read");
+//            VolleySingleton.getInstance(this).getRequestQueue().cancelAll("noti");
+//
+//        }
     }
 
     private void getOrders() {
-        progressDoalog = new ProgressDialog(NotificationDataFragment.this);
-        progressDoalog.setMessage("loading....");
-        progressDoalog.setTitle("Processing");
-        progressDoalog.setCanceledOnTouchOutside(false);
-        progressDoalog.show();
+//        progressDialog = new ProgressDialog(this);
+//        progressDialog.setMessage("loading....");
+//        progressDialog.setTitle("Processing");
+//        progressDialog.setCanceledOnTouchOutside(false);
+//        progressDialog.show();
+
+
         String accessToken = SharedPreference.getData("accesstoken", getApplicationContext());
 
         orderModelArrayList1.clear();
         Storefront.QueryRootQuery query = Storefront.query(root -> root
                 .customer(accessToken, customer -> customer
-                        .orders(arg -> arg.first(300), connection -> connection
+                        .orders(arg -> arg.first(200), connection -> connection
                                 .pageInfo(pageInfoQuery -> pageInfoQuery
                                         .hasNextPage()
                                         .hasPreviousPage()
@@ -205,7 +205,7 @@ public class NotificationDataFragment extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
                 assert response.data() != null;
-                if (response.data().getCustomer().getOrders() != null) {
+                if (response.data().getCustomer()!=null && response.data().getCustomer().getOrders() != null) {
 
 
                     for (Storefront.OrderEdge order : response.data().getCustomer().getOrders().getEdges()) {
@@ -218,7 +218,9 @@ public class NotificationDataFragment extends AppCompatActivity {
                     }
 
                     runOnUiThread(() -> {
-                        progressDoalog.dismiss();
+//                        if(progressDialog !=null && progressDialog.isShowing()){
+//                            progressDialog.dismiss();
+//                        }
                         for (int i = 0; i < orderModelArrayList1.size(); i++) {
                             String o = "#" + String.valueOf(orderModelArrayList1.get(i).getOrderd().getOrderNumber());
                             if (orderid.equals(o)) {
@@ -250,15 +252,21 @@ public class NotificationDataFragment extends AppCompatActivity {
 
 
                     });
-                } else {
-                    runOnUiThread(() -> progressDoalog.dismiss());
-                }
+                } else runOnUiThread(() -> {
+//                    if (progressDialog != null && progressDialog.isShowing()) {
+//                        progressDialog.dismiss();
+//                    }
+                });
 
             }
 
             @Override
             public void onFailure(@NonNull GraphError error) {
-                runOnUiThread(() -> progressDoalog.dismiss());
+                runOnUiThread(() -> {
+//                    if (progressDialog != null && progressDialog.isShowing()) {
+//                        progressDialog.dismiss();
+//                    }
+                });
                 Log.e("TAG", "Failed to execute query", error);
             }
         });

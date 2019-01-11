@@ -37,6 +37,7 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
     private GetTotalCost getTotalCost;
     private TextView textView, textView1;
     private FragmentManager fragmentManager;
+    LinearLayout bag_layout;
 
     public AddToCart_Adapter(List<AddToCart_Model> items, Context mContext, GetTotalCost getTotalCost, TextView textView, TextView textView1, FragmentManager fragmentManager) {
         this.items = items;
@@ -104,38 +105,56 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
             decrease = itemView.findViewById(R.id.decrease);
             increase = itemView.findViewById(R.id.increase);
             shipping_visibility = itemView.findViewById(R.id.shipping_visibility);
+            bag_layout = itemView.findViewById(R.id.bag_layout);
             String state = SharedPreference.getData("state", mContext);
             shipping_visibility.setText("Oops! The product cannot be shipped to  " + state);
 
             product_name = itemView.findViewById(R.id.product_name);
 
-            binding.productImage.setOnClickListener(view -> {
+//            binding.productImage.setOnClickListener(view -> {
+//                Bundle bundle = new Bundle();
+//                bundle.putString("category", "bag");
+//                bundle.putSerializable("category_id", items.get(getAdapterPosition()));
+//                Fragment fragment = new ProductView();
+//                fragment.setArguments(bundle);
+//                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "productview");
+//                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+//                if (fragmentManager.findFragmentByTag("productview") == null) {
+//                    ft.addToBackStack("productview");
+//                    ft.commit();
+//                } else {
+//                    ft.commit();
+//                }
+//
+//            });
+//
+//            product_name.setOnClickListener(view -> {
+//                Bundle bundle = new Bundle();
+//                bundle.putString("category", "bag");
+//                bundle.putSerializable("category_id", items.get(getAdapterPosition()));
+//                Fragment fragment = new ProductView();
+//                fragment.setArguments(bundle);
+//                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "productview");
+//                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+//                if (fragmentManager.findFragmentByTag("productview") == null) {
+//                    ft.addToBackStack("productview");
+//                    ft.commit();
+//                } else {
+//                    ft.commit();
+//                }
+//
+//            });
+
+            bag_layout.setOnClickListener(view -> {
                 Bundle bundle = new Bundle();
                 bundle.putString("category", "bag");
                 bundle.putSerializable("category_id", items.get(getAdapterPosition()));
                 Fragment fragment = new ProductView();
                 fragment.setArguments(bundle);
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "productview");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                if (fragmentManager.findFragmentByTag("fragment") == null) {
-                    ft.addToBackStack("fragment");
-                    ft.commit();
-                } else {
-                    ft.commit();
-                }
-
-            });
-
-            product_name.setOnClickListener(view -> {
-                Bundle bundle = new Bundle();
-                bundle.putString("category", "bag");
-                bundle.putSerializable("category_id", items.get(getAdapterPosition()));
-                Fragment fragment = new ProductView();
-                fragment.setArguments(bundle);
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
-                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                if (fragmentManager.findFragmentByTag("fragment") == null) {
-                    ft.addToBackStack("fragment");
+                if (fragmentManager.findFragmentByTag("productview") == null) {
+                    ft.addToBackStack("productview");
                     ft.commit();
                 } else {
                     ft.commit();
@@ -159,7 +178,7 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
 
             increase.setOnClickListener(view -> {
                 cartController = new CartController(mContext);
-                commanCartControler =  cartController;
+                commanCartControler = cartController;
                 commanCartControler.AddQuantity(items.get(getAdapterPosition()).getProduct_varient_id().trim());
 
                 items.get(getAdapterPosition()).setQty(Integer.parseInt(db.getQuantity(items.get(getAdapterPosition()).getProduct_varient_id())));
@@ -172,7 +191,7 @@ public class AddToCart_Adapter extends RecyclerView.Adapter<AddToCart_Adapter.Vi
 
             decrease.setOnClickListener(view -> {
                 cartController = new CartController(mContext);
-                commanCartControler =  cartController;
+                commanCartControler = cartController;
                 commanCartControler.RemoveQuantity(items.get(getAdapterPosition()).getProduct_varient_id().trim());
                 items.get(getAdapterPosition()).setQty(Integer.parseInt(db.getQuantity(items.get(getAdapterPosition()).getProduct_varient_id())));
                 textView.setText("Rs. " + Integer.toString(commanCartControler.getTotalPrice()));

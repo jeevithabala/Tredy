@@ -62,7 +62,11 @@ import com.shopify.graphql.support.ID;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
@@ -543,22 +547,21 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //                Log.e("product_tag", "" + product_tag);
 //            }
             ArrayList<Integer> arrayList = new ArrayList<>();
-            for (int i = 0; i < itemModel.getProduct().getVariants().getEdges().size(); i++) {
-                for (int j = 0; j < itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().size(); j++) {
-                    arrayList.add(Integer.valueOf(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue()));
+            try {
+                for (int i = 0; i < itemModel.getProduct().getVariants().getEdges().size(); i++) {
+                    for (int j = 0; j < itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().size(); j++) {
+                        arrayList.add(Integer.valueOf(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue()));
+                    }
                 }
+                selectedID = arrayList.indexOf(Collections.min(arrayList));
+            }catch (Exception e){
+
             }
-            Collections.sort(arrayList);
-//            Log.e("arraylist", arrayList.toString());
 
 
             for (int i = 0; i < itemModel.getProduct().getVariants().getEdges().size(); i++) {
                 rbn = new RadioButton(getActivity());
-
                 rbn.setId(i);
-//                arrayList.addAll(itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions());
-//                Collections.sort(arrayList.get());
-
 
                 String weightunit = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeightUnit().toString();
                 selectedweight = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeight().toString() + " " + weightunit;
@@ -588,14 +591,14 @@ public class ProductView extends Fragment implements ProductClickInterface {
                         productViewBinding.radiogroup.setOnCheckedChangeListener((radioGroup, i1) -> {
 
                             selectedID = productViewBinding.radiogroup.getCheckedRadioButtonId();
+                            Log.e("selected", String.valueOf(selectedID));
                             rbn.setTextColor(Color.BLACK);
                             rbn = view.findViewById(selectedID);
 //                            Log.e("selected id", String.valueOf(selectedID));
 //                            Log.e("selected rdn id", itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getWeight().toString());
 //                            Log.e("child count", String.valueOf(productViewBinding.radiogroup.getChildCount()));
                             selectedweight = itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getWeight().toString() + " " + finalWeightunit;
-//                    Toast.makeText(getActivity(), rbn.getText(), Toast.LENGTH_SHORT).show();
-//adapter.notifyItemChanged(selectedID);
+
 
                             product_price.setText(getResources().getString(R.string.Rs) + " " + itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getPrice().toString());
 
@@ -604,16 +607,17 @@ public class ProductView extends Fragment implements ProductClickInterface {
 
 
                             for (int j1 = 0; j1 < productViewBinding.radiogroup.getChildCount(); j1++) {
-                                Log.e("id check", j1 + String.valueOf(selectedID));
                                 if (j1 == selectedID) {
-                                    Log.e("check", "white");
                                     rbn.setTextColor(Color.WHITE);
                                 }
                             }
                         });
-                        radioGroup.check(0);
                     }
                 }
+                if (i == itemModel.getProduct().getVariants().getEdges().size() - 1) {
+                    radioGroup.check(selectedID);
+                }
+
             }
         }
 
@@ -660,4 +664,24 @@ public class ProductView extends Fragment implements ProductClickInterface {
         super.onResume();
         Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Product");
     }
+
+    public static <T extends Comparable<T>> int findMinIndex(final List<T> xs) {
+        int minIndex;
+        if (xs.isEmpty()) {
+            minIndex = -1;
+        } else {
+            final ListIterator<T> itr = xs.listIterator();
+            T min = itr.next(); // first element as the current minimum
+            minIndex = itr.previousIndex();
+            while (itr.hasNext()) {
+                final T curr = itr.next();
+                if (curr.compareTo(min) < 0) {
+                    min = curr;
+                    minIndex = itr.previousIndex();
+                }
+            }
+        }
+        return minIndex;
+    }
+
 }

@@ -69,9 +69,10 @@ public class ForYouViewModel extends ViewModel {
         banner();
         collectionList();
       //  collectionList1();
-        getCollection();
-        getTopCollection();
-        getNewArrival();
+//        getCollection();
+//        getTopCollection();
+//        getNewArrival();
+        getallhomecollection();
         getNotiCount();
 
     }
@@ -600,6 +601,137 @@ public class ForYouViewModel extends ViewModel {
             }
         });
     }
+
+    private void getallhomecollection(){
+        for (int i = 0; i <3 ; i++) {
+            if(i==0){
+                String id = "345069894";
+                String text = "gid://shopify/Collection/" + id.trim();
+                String converted = Base64.encodeToString(text.trim().getBytes(), Base64.DEFAULT);
+                topSellingModelArray.clear();
+                gethomeCollection(converted,i);
+            }else if(i==1){
+                String id = "33238122615";
+                String text = "gid://shopify/Collection/" + id.trim();
+                String converted = Base64.encodeToString(text.trim().getBytes(), Base64.DEFAULT);
+                newArrivalModelArray.clear();
+                gethomeCollection(converted,i);
+            }else {
+                String id = "58881703997";
+                String text = "gid://shopify/Collection/" + id.trim();
+                String converted = Base64.encodeToString(text.trim().getBytes(), Base64.DEFAULT);
+                GroceryHomeModelArrayList.clear();
+                gethomeCollection(converted,i);
+            }
+
+        }
+    }
+
+    private void gethomeCollection(String collectionid, int i) {
+
+        graphClient = GraphClient.builder(mContext)
+                .shopDomain(BuildConfig.SHOP_DOMAIN)
+                .accessToken(BuildConfig.API_KEY)
+                .httpCache(new File(mContext.getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
+                .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
+                .build();
+
+        Storefront.QueryRootQuery query = Storefront.query(rootQuery -> rootQuery
+                .node(new ID(collectionid.trim()), nodeQuery -> nodeQuery
+                        .onCollection(collectionQuery -> collectionQuery
+                                .title()
+                                .products(arg -> arg.first(10).sortKey(Storefront.ProductCollectionSortKeys.valueOf("MANUAL")), productConnectionQuery -> productConnectionQuery
+                                        .edges(productEdgeQuery -> productEdgeQuery
+                                                .node(productQuery -> productQuery
+                                                        .title()
+                                                        .productType()
+                                                        .description()
+                                                        .descriptionHtml()
+                                                        .images(arg -> arg.first(10), imageConnectionQuery -> imageConnectionQuery
+                                                                .edges(imageEdgeQuery -> imageEdgeQuery
+                                                                        .node(Storefront.ImageQuery::src
+                                                                        )
+                                                                )
+                                                        )
+                                                        .tags()
+                                                        .options(Storefront.ProductOptionQuery::name)
+                                                        .variants(arg -> arg.first(10), variantConnectionQuery -> variantConnectionQuery
+                                                                .edges(variantEdgeQuery -> variantEdgeQuery
+                                                                        .node(productVariantQuery -> productVariantQuery
+                                                                                .price()
+                                                                                .title()
+                                                                                .image(Storefront.ImageQuery::src)
+                                                                                .weight()
+                                                                                .weightUnit()
+                                                                                .available()
+                                                                        )
+                                                                )
+                                                        )
+                                                )
+                                        )
+
+
+                                ))));
+
+        graphClient.queryGraph(query).enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
+            @Override
+            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
+                Storefront.Collection product;
+                if (response.data() != null) {
+                    product = (Storefront.Collection) response.data().getNode();
+                    if(i==0){
+                        String collectionname = product.getTitle();
+                        for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
+
+                            String id = productEdge.getNode().getId().toString();
+                            String title = productEdge.getNode().getTitle();
+                            String price = productEdge.getNode().getVariants().getEdges().get(0).getNode().getPrice().toString();
+                            String image = "";
+                            if (productEdge.getNode().getVariants().getEdges().get(0).getNode().getImage() != null) {
+                                image = productEdge.getNode().getVariants().getEdges().get(0).getNode().getImage().getSrc();
+                            }
+                            TopSellingModel topSellingModel = new TopSellingModel(id, title, price, image, collectionname);
+                            topSellingModel.setCollectionid(collectionid.trim());
+                            topSellingModelArray.add(topSellingModel);
+                        }
+                        foryouInterface.topselling1(topSellingModelArray);
+                    }else if (i == 1) {
+                        String collectionname = product.getTitle();
+                        for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
+
+                            String id = productEdge.getNode().getId().toString();
+                            String title = productEdge.getNode().getTitle();
+                            String price = productEdge.getNode().getVariants().getEdges().get(0).getNode().getPrice().toString();
+                            String image = "";
+                            if (productEdge.getNode().getVariants().getEdges().get(0).getNode().getImage() != null) {
+                                image = productEdge.getNode().getVariants().getEdges().get(0).getNode().getImage().getSrc();
+                            }
+                            NewArrivalModel newArrivalModel = new NewArrivalModel(id, title, price, image, collectionname);
+                            newArrivalModel.setCollectionid(collectionid.trim());
+
+                            newArrivalModelArray.add(newArrivalModel);
+                        }
+                        foryouInterface.collectionlist(newArrivalModelArray);
+                    }else if(i==2) {
+                        for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
+                            GroceryHomeModel GroceryHomeModel = new GroceryHomeModel();
+                            GroceryHomeModel.setProduct(productEdge.getNode());
+                            GroceryHomeModel.setTitle(product.getTitle());
+                            GroceryHomeModel.setQty("1");
+                            GroceryHomeModelArrayList.add(GroceryHomeModel);
+                        }
+                        foryouInterface.grocerylist(GroceryHomeModelArrayList);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull GraphError error) {
+
+            }
+        });
+    }
+
 
 
 }

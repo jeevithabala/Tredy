@@ -74,11 +74,11 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
                 bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
                 Fragment fragment = new ProductView();
                 fragment.setArguments(bundle);
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
+                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "productview");
                 ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                if(fragmentManager.findFragmentByTag("fragment")==null)
+                if(fragmentManager.findFragmentByTag("productview")==null)
                 {
-                    ft.addToBackStack("fragment");
+                    ft.addToBackStack("productview");
                     ft.commit();
                 }
                 else

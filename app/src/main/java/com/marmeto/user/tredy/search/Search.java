@@ -272,10 +272,10 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
         bundle.putString("product_id", productid);
         fragment.setArguments(bundle);
         assert getFragmentManager() != null;
-        FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "fragment");
+        FragmentTransaction ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "productview");
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-        if (getFragmentManager().findFragmentByTag("fragment") == null) {
-            ft.addToBackStack("fragment");
+        if (getFragmentManager().findFragmentByTag("productview") == null) {
+            ft.addToBackStack("productview");
             ft.commit();
         } else {
             ft.commit();
