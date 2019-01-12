@@ -17,7 +17,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 
 import android.util.Base64;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,9 +34,7 @@ import android.widget.Toast;
 
 import com.marmeto.user.tredy.bag.Bag;
 import com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model;
-import com.marmeto.user.tredy.bag.ShippingAddress;
 import com.marmeto.user.tredy.BuildConfig;
-import com.marmeto.user.tredy.bag.cartdatabase.DBHelper;
 import com.marmeto.user.tredy.category.model.ProductModel;
 import com.marmeto.user.tredy.foryou.groceryhome.GroceryHomeModel;
 import com.marmeto.user.tredy.foryou.newarrival.NewArrivalModel;
@@ -62,13 +59,8 @@ import com.shopify.graphql.support.ID;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Objects;
-import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
 public class ProductView extends Fragment implements ProductClickInterface {
@@ -87,7 +79,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
     Button bag_button, buy;
     CartController cartController;
     CommanCartControler commanCartControler;
-    String selectedweight = "";
+//    String selectedweight = "";
     int selectedID = 0;
     RadioGroup radioGroup;
     String no_of_count;
@@ -112,7 +104,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
         eggless = view.findViewById(R.id.eggless);
         fatfree = view.findViewById(R.id.fatfree);
         count = view.findViewById(R.id.count);
-        graphClient = GraphClient.builder(getActivity())
+        graphClient = GraphClient.builder(Objects.requireNonNull(getActivity()))
                 .shopDomain(BuildConfig.SHOP_DOMAIN)
                 .accessToken(BuildConfig.API_KEY)
                 .httpCache(new File(getActivity().getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
@@ -287,60 +279,51 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //                }
 //            }
 //        });
-        buy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                no_of_count = count.getText().toString();
-                if (no_of_count.isEmpty()) {
-                    dialog("Please Enter Quantity.");
+        buy.setOnClickListener(view -> {
+            no_of_count = count.getText().toString();
+            if (no_of_count.isEmpty()) {
+                dialog("Please Enter Quantity.");
 
 //                    Toast.makeText(getActivity(), "Please Enter Quantity.", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (Integer.parseInt(no_of_count) <= 100) {
-                        if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist") || product.trim().equals("topselling") || product.trim().equals("newarrival")) {
-                            no_of_count = count.getText().toString();
-                            byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
-                            String val2 = new String(tmp2);
-                            String[] str = val2.split("/");
-                            commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(no_of_count));
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Fragment fragment = new Bag();
-                                    FragmentTransaction ft;
-                                    if (getFragmentManager() != null) {
-                                        ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "bag");
-                                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                                        ft.commit();
-                                    }
-                                }
-                            }, 2000);
+            } else {
+                if (Integer.parseInt(no_of_count) <= 100) {
+                    if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist") || product.trim().equals("topselling") || product.trim().equals("newarrival")) {
+                        no_of_count = count.getText().toString();
+//                        byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
+//                        String val2 = new String(tmp2);
+//                        String[] str = val2.split("/");
+                        commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(no_of_count));
+                        Handler handler = new Handler();
+                        handler.postDelayed(() -> {
+                            Fragment fragment = new Bag();
+                            FragmentTransaction ft;
+                            if (getFragmentManager() != null) {
+                                ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "bag");
+                                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                                ft.commit();
+                            }
+                        }, 2000);
 
-                        } else {
-                            String text = "gid://shopify/Product/" + id.trim();
-                            String converted = Base64.encodeToString(text.getBytes(), Base64.DEFAULT);
-                            no_of_count = count.getText().toString();
-                            commanCartControler.AddToCartGrocery(converted.trim(), selectedID, Integer.parseInt(no_of_count));
-
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Fragment fragment = new Bag();
-                                    FragmentTransaction ft;
-                                    if (getFragmentManager() != null) {
-                                        ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "bag");
-                                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                                        ft.commit();
-                                    }
-                                }
-                            }, 2000);
-                        }
                     } else {
-                        dialog("Entered Quantity should be less than 100");
-//                        Toast.makeText(getActivity(), "Entered Quantity should be less than 100", Toast.LENGTH_SHORT).show();
+                        String text = "gid://shopify/Product/" + id.trim();
+                        String converted = Base64.encodeToString(text.getBytes(), Base64.DEFAULT);
+                        no_of_count = count.getText().toString();
+                        commanCartControler.AddToCartGrocery(converted.trim(), selectedID, Integer.parseInt(no_of_count));
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(() -> {
+                            Fragment fragment = new Bag();
+                            FragmentTransaction ft;
+                            if (getFragmentManager() != null) {
+                                ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "bag");
+                                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                                ft.commit();
+                            }
+                        }, 2000);
                     }
+                } else {
+                    dialog("Entered Quantity should be less than 100");
+//                        Toast.makeText(getActivity(), "Entered Quantity should be less than 100", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -356,9 +339,9 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 if (Integer.parseInt(no_of_count) <= 100) {
                     if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist") || product.trim().equals("topselling") || product.trim().equals("newarrival")) {
                         no_of_count = count.getText().toString();
-                        byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
-                        String val2 = new String(tmp2);
-                        String[] str = val2.split("/");
+//                        byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
+//                        String val2 = new String(tmp2);
+//                        String[] str = val2.split("/");
                         commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(no_of_count));
                         Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
                     } else {
@@ -405,8 +388,6 @@ public class ProductView extends Fragment implements ProductClickInterface {
                                                         .image(Storefront.ImageQuery::src)
                                                         .weight()
                                                         .weightUnit()
-                                                        .available()
-
                                                         .selectedOptions(ar -> ar.value()
                                                                 .name())
                                                 )
@@ -505,16 +486,16 @@ public class ProductView extends Fragment implements ProductClickInterface {
             if (itemModel.getProduct().getTags() != null && itemModel.getProduct().getTags().size() > 0) {
                 ArrayList<String> arrayList = new ArrayList<>(itemModel.getProduct().getTags());
 
-                if (arrayList.contains("veg")) {
+                if (arrayList.contains("Non Veg") || arrayList.contains("Filter Type Non-Veg")) {
                     veg.setVisibility(View.VISIBLE);
+                    veg_image.setImageDrawable(getResources().getDrawable(R.drawable.ic_non_veg));
+                    veg_text.setText("Non Veg");
                 } else if (arrayList.contains("eggless") || arrayList.contains("egg less")) {
                     eggless.setVisibility(View.VISIBLE);
                 } else if (arrayList.contains("fatfree") || arrayList.contains("fat free")) {
                     fatfree.setVisibility(View.VISIBLE);
-                } else if (arrayList.contains("Non Veg") || arrayList.contains("Filter Type Non-Veg")) {
+                } else if (arrayList.contains("veg")|| arrayList.contains("Filter Type Veg")||arrayList.contains("Veg")) {
                     veg.setVisibility(View.VISIBLE);
-                    veg_image.setImageDrawable(getResources().getDrawable(R.drawable.ic_non_veg));
-                    veg_text.setText("Non Veg");
                 } else {
                     veg.setVisibility(View.INVISIBLE);
                 }
@@ -554,8 +535,8 @@ public class ProductView extends Fragment implements ProductClickInterface {
                     }
                 }
                 selectedID = arrayList.indexOf(Collections.min(arrayList));
-            }catch (Exception e){
-
+            } catch (Exception e) {
+                selectedID=0;
             }
 
 
@@ -563,11 +544,11 @@ public class ProductView extends Fragment implements ProductClickInterface {
                 rbn = new RadioButton(getActivity());
                 rbn.setId(i);
 
-                String weightunit = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeightUnit().toString();
-                selectedweight = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeight().toString() + " " + weightunit;
-                if (weightunit.trim().equals("GRAMS")) {
-                    weightunit = "g";
-                }
+//                String weightunit = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeightUnit().toString();
+//                selectedweight = itemModel.getProduct().getVariants().getEdges().get(0).getNode().getWeight().toString() + " " + weightunit;
+//                if (weightunit.trim().equals("GRAMS")) {
+//                    weightunit = "g";
+//                }
 
                 for (int j = 0; j < itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().size(); j++) {
                     if (!itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue().trim().equals("0") && itemModel.getProduct().getVariants().getEdges().get(i).getNode().getSelectedOptions().get(j).getValue() != null) {
@@ -587,19 +568,16 @@ public class ProductView extends Fragment implements ProductClickInterface {
 
                         productViewBinding.radiogroup.addView(rbn);
 
-                        String finalWeightunit = weightunit;
+//                        String finalWeightunit = weightunit;
                         productViewBinding.radiogroup.setOnCheckedChangeListener((radioGroup, i1) -> {
 
                             selectedID = productViewBinding.radiogroup.getCheckedRadioButtonId();
-                            Log.e("selected", String.valueOf(selectedID));
                             rbn.setTextColor(Color.BLACK);
                             rbn = view.findViewById(selectedID);
 //                            Log.e("selected id", String.valueOf(selectedID));
 //                            Log.e("selected rdn id", itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getWeight().toString());
 //                            Log.e("child count", String.valueOf(productViewBinding.radiogroup.getChildCount()));
-                            selectedweight = itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getWeight().toString() + " " + finalWeightunit;
-
-
+//                            selectedweight = itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getWeight().toString() + " " + finalWeightunit;
                             product_price.setText(getResources().getString(R.string.Rs) + " " + itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getPrice().toString());
 
                             itemModel.setPrice(selectedID);
@@ -665,23 +643,23 @@ public class ProductView extends Fragment implements ProductClickInterface {
         Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Product");
     }
 
-    public static <T extends Comparable<T>> int findMinIndex(final List<T> xs) {
-        int minIndex;
-        if (xs.isEmpty()) {
-            minIndex = -1;
-        } else {
-            final ListIterator<T> itr = xs.listIterator();
-            T min = itr.next(); // first element as the current minimum
-            minIndex = itr.previousIndex();
-            while (itr.hasNext()) {
-                final T curr = itr.next();
-                if (curr.compareTo(min) < 0) {
-                    min = curr;
-                    minIndex = itr.previousIndex();
-                }
-            }
-        }
-        return minIndex;
-    }
+//    public static <T extends Comparable<T>> int findMinIndex(final List<T> xs) {
+//        int minIndex;
+//        if (xs.isEmpty()) {
+//            minIndex = -1;
+//        } else {
+//            final ListIterator<T> itr = xs.listIterator();
+//            T min = itr.next(); // first element as the current minimum
+//            minIndex = itr.previousIndex();
+//            while (itr.hasNext()) {
+//                final T curr = itr.next();
+//                if (curr.compareTo(min) < 0) {
+//                    min = curr;
+//                    minIndex = itr.previousIndex();
+//                }
+//            }
+//        }
+//        return minIndex;
+//    }
 
 }

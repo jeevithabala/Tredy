@@ -349,15 +349,6 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         dialog.show();
     }
-    public RequestQueue getRequestQueue() {
-        // lazy initialize the request queue, the queue instance will be
-        // created when it is accessed for the first time
-        if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
-        }
-
-        return mRequestQueue;
-    }
     public void postOrder() {
 
         progressDialog = new ProgressDialog(this);
@@ -366,7 +357,6 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         progressDialog.show();
         phone = mobile.getText().toString().trim();
         int costtotal = Integer.parseInt(totalcost.trim());
-        Log.e("costttt", " " + costtotal);
 
         try {
             if (ordercount == 0) {
@@ -478,10 +468,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                         JSONObject obj = new JSONObject(response);
                         String msg = obj.getString("msg");
 
-                        Log.e("msg", "" + msg);
                         if (msg.equals("success")) {
                             Iterator keys = obj.keys();
-                            Log.e("Keys", "" + String.valueOf(keys));
 
                             while (keys.hasNext()) {
                                 dynamicKey = (String) keys.next();
@@ -489,7 +477,6 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                                 if (dynamicKey.equals("order")) {
                                     JSONObject order = obj.getJSONObject("order");
                                     String orderid = order.getString("id");
-                                    Log.e("orderid", orderid);
 
                                 }
                             }
@@ -509,7 +496,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     }
                 }, error -> {
                     progressDialog.dismiss();
-                    Log.e("VOLLEY", error.toString());
+                    Log.e("VOLLEY", " "+error.toString());
                 }) {
                     @Override
                     public String getBodyContentType() {

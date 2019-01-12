@@ -89,6 +89,10 @@ public class NotificationsListFragment extends Fragment implements NotificationL
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+            progressDoalog.setMessage("loading....");
+            progressDoalog.setTitle("Processing");
+            progressDoalog.setCanceledOnTouchOutside(false);
+            progressDoalog.show();
             NotificationCountstatuslist();
             getNotiCount();
         } else {
@@ -173,8 +177,7 @@ public class NotificationsListFragment extends Fragment implements NotificationL
 
     private void NotificationCountstatuslist() {
         actorsList.clear();
-        String token = SharedPreference.getData("customerid", Objects.requireNonNull(getActivity()));
-        Log.e("token", token);
+        String token = SharedPreference.getData("customerid",Objects.requireNonNull(getActivity()));
 
         String minusdatet = getCalculatedDate("MM/dd/yyyy", -10);
 
@@ -213,6 +216,9 @@ public class NotificationsListFragment extends Fragment implements NotificationL
                                 noti_text.setVisibility(GONE);
                             }
                             adapter.notifyDataSetChanged();
+                            if (progressDoalog != null && progressDoalog.isShowing()) {
+                                progressDoalog.dismiss();
+                            }
 
 
                         } catch (JSONException e) {
@@ -261,9 +267,6 @@ public class NotificationsListFragment extends Fragment implements NotificationL
                             if (getActivity() != null) {
                                 getActivity().invalidateOptionsMenu();
                             }
-                            if (progressDoalog != null && progressDoalog.isShowing()) {
-                                progressDoalog.dismiss();
-                            }
 
                         } catch (JSONException e) {
                             if (progressDoalog != null && progressDoalog.isShowing()) {
@@ -303,6 +306,9 @@ public class NotificationsListFragment extends Fragment implements NotificationL
                         try {
 
                             JSONObject obj = new JSONObject(response);
+                            if (progressDoalog != null && progressDoalog.isShowing()) {
+                                progressDoalog.dismiss();
+                            }
 
                         } catch (JSONException e) {
                             if (progressDoalog != null && progressDoalog.isShowing()) {

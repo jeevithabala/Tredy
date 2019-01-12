@@ -12,7 +12,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -246,7 +245,6 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                                                                                 .image(Storefront.ImageQuery::src)
                                                                                 .weight()
                                                                                 .weightUnit()
-                                                                                .available()
                                                                                 .sku()
                                                                                 .availableForSale()
                                                                                 .selectedOptions(Storefront.SelectedOptionQuery::name)
@@ -265,7 +263,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
                 assert response.data() != null;
                 Storefront.Collection product = (Storefront.Collection) response.data().getNode();
-                Log.e("pagin", " " + product.getProducts().getPageInfo().getHasNextPage());
+//                Log.e("pagin", " " + product.getProducts().getPageInfo().getHasNextPage());
 //                boolean hasNextProductPage = product.getProducts().getPageInfo().getHasNextPage().booleanValue();
 
 
@@ -277,29 +275,29 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
 
                             productStringPageCursor.add(productPageCursor);
                         }
-                        GroceryModel groceryModel = new GroceryModel();
-                        groceryModel.setProduct(productEdge.getNode());
-                        groceryModel.setQty("1");
-                        addToCart_modelArrayList.clear();
-                        addToCart_modelArrayList = db.getCartList();
+                        if((!productEdge.getNode().getVariants().getEdges().get(0).getNode().getPrice().toString().trim().equals("0.00"))){
+                            GroceryModel groceryModel = new GroceryModel();
+                            groceryModel.setProduct(productEdge.getNode());
+                            groceryModel.setQty("1");
+                            addToCart_modelArrayList.clear();
+                            addToCart_modelArrayList = db.getCartList();
 //                        Log.e("array", "" + db.getCartList());
-                        for (int j = 0; j < addToCart_modelArrayList.size(); j++) {
-                            if (addToCart_modelArrayList.get(j).getProduct_id().trim().equals(productEdge.getNode().getId().toString())) {
-                                groceryModel.setVisible("true");
+                            for (int j = 0; j < addToCart_modelArrayList.size(); j++) {
+                                if (addToCart_modelArrayList.get(j).getProduct_id().trim().equals(productEdge.getNode().getId().toString())) {
+                                    groceryModel.setVisible("true");
+                                }
                             }
+
+                            groceryModelArrayList.add(groceryModel);
                         }
 
-                        groceryModelArrayList.add(groceryModel);
                     }
 
                 }
                 if(getActivity()!=null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressDialog.dismiss();
-                            adapter.notifyDataSetChanged();
-                        }
+                    getActivity().runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                        adapter.notifyDataSetChanged();
                     });
                 }
             }
@@ -345,7 +343,6 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                                                                                 .image(Storefront.ImageQuery::src)
                                                                                 .weight()
                                                                                 .weightUnit()
-                                                                                .available()
                                                                         )
                                                                 )
                                                         )
@@ -362,14 +359,11 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                 Storefront.Collection product = (Storefront.Collection) response.data().getNode();
 //                Log.e("pagin1"," "+ product.getProducts().getPageInfo().getHasNextPage());
                 productStringPageCursor.clear();
-                Log.e("pagincursur", " " + productCursor);
                 boolean hasNextProductPage = product.getProducts().getPageInfo().getHasNextPage();
-                Log.e("hasNextProductPage", " " + hasNextProductPage);
                 for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
                     if (hasNextProductPage) {
 //                        productPageCursor = productEdge.getCursor().toString();
 //                        Log.e("pagin11", " " + productEdge.getCursor().toString());
-                        Log.e("product_name", " " + productEdge.getNode().getTitle());
                         for (int i = 0; i < product.getProducts().getEdges().size(); i++) {
                             productPageCursor = productEdge.getCursor();
 
@@ -377,18 +371,19 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                         }
                         i = 1;
                     }
-                    GroceryModel groceryModel = new GroceryModel();
-                    groceryModel.setProduct(productEdge.getNode());
-                    groceryModel.setQty("1");
-                    addToCart_modelArrayList.clear();
-                    addToCart_modelArrayList = db.getCartList();
-                    Log.e("array", "" + db.getCartList());
-                    for (int j = 0; j < addToCart_modelArrayList.size(); j++) {
-                        if (addToCart_modelArrayList.get(j).getProduct_id().trim().equals(productEdge.getNode().getId().toString())) {
-                            groceryModel.setVisible("true");
+                    if((!productEdge.getNode().getVariants().getEdges().get(0).getNode().getPrice().toString().trim().equals("0.00"))){
+                        GroceryModel groceryModel = new GroceryModel();
+                        groceryModel.setProduct(productEdge.getNode());
+                        groceryModel.setQty("1");
+                        addToCart_modelArrayList.clear();
+                        addToCart_modelArrayList = db.getCartList();
+                        for (int j = 0; j < addToCart_modelArrayList.size(); j++) {
+                            if (addToCart_modelArrayList.get(j).getProduct_id().trim().equals(productEdge.getNode().getId().toString())) {
+                                groceryModel.setVisible("true");
+                            }
                         }
+                        groceryModelArrayList.add(groceryModel);
                     }
-                    groceryModelArrayList.add(groceryModel);
 
                 }
 
@@ -413,13 +408,11 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
         add_to_cart.setVisibility(View.VISIBLE);
         addToCart_modelArrayList.clear();
         addToCart_modelArrayList = db.getCartList();
-        Log.e("array", "" + db.getCartList());
-        for (int j = 0; j < addToCart_modelArrayList.size(); j++) {
-            if (addToCart_modelArrayList.get(j).getProduct_id().equals(groceryModelArrayList.get(adapter_pos).getProduct().getId().toString())) {
-                Log.e("truu", "jih");
-            }
-
-        }
+//        for (int j = 0; j < addToCart_modelArrayList.size(); j++) {
+//            if (addToCart_modelArrayList.get(j).getProduct_id().equals(groceryModelArrayList.get(adapter_pos).getProduct().getId().toString())) {
+//            }
+//
+//        }
 
 
         cost = commanCartControler.getTotalPrice();

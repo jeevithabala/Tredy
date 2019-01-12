@@ -106,7 +106,7 @@ public class CartController extends ViewModel implements CommanCartControler {
             getProductVariantID1(id.trim());
         } else {
             String text = "gid://shopify/Product/" + id.trim();
-            String converted = Base64.encodeToString(text.toString().getBytes(), Base64.DEFAULT);
+            String converted = Base64.encodeToString(text.getBytes(), Base64.DEFAULT);
             getProductVariantID1(converted.trim());
         }
     }
@@ -150,7 +150,6 @@ public class CartController extends ViewModel implements CommanCartControler {
                                                         .image(Storefront.ImageQuery::src)
                                                         .weight()
                                                         .weightUnit()
-                                                        .available()
                                                         .selectedOptions(Storefront.SelectedOptionQuery::name)
                                                 )
                                         )
@@ -177,8 +176,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                         productVariant.add(productVariantEdge.getNode()
                         );
                     }
-                    String available = productVariant.get(selectedID).getAvailableForSale().toString();
-                    if (productVariant.get(0).getAvailableForSale()) {
+
                         if (cartList.size() == 0) {
 //                            int qty = 1;
                             db.insertToDo(trim.trim(), productVariant.get(selectedID), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
@@ -194,7 +192,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                         }
 
                     }
-                }
+
 
             }
 
@@ -241,7 +239,6 @@ public class CartController extends ViewModel implements CommanCartControler {
                                                         .image(Storefront.ImageQuery::src)
                                                         .weight()
                                                         .weightUnit()
-                                                        .available()
                                                         .selectedOptions(Storefront.SelectedOptionQuery::name)
                                                 )
                                         )
@@ -269,11 +266,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                         );
 
                     }
-                    String available = productVariant.get(0).getAvailableForSale().toString();
-                    Log.e("available", available);
-                    if (productVariant.get(0).getAvailableForSale()) {
                         if (whislist.size() == 0) {
-                            int qty = 1;
                             dbWhislist.insertToDo(productID.trim(), productVariant.get(0), model.getProduct().getTitle());
                         } else {
 
@@ -284,8 +277,6 @@ public class CartController extends ViewModel implements CommanCartControler {
                         }
 
                     }
-                }
-
             }
 
             @Override
@@ -333,7 +324,6 @@ public class CartController extends ViewModel implements CommanCartControler {
                                                         .image(Storefront.ImageQuery::src)
                                                         .weight()
                                                         .weightUnit()
-                                                        .available()
                                                         .selectedOptions(Storefront.SelectedOptionQuery::name)
                                                 )
                                         )
@@ -367,9 +357,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                     }
 //                    }
                     if (productVariant.size() > 0) {
-                        if (productVariant.get(0).getAvailableForSale()) {
                             if (cartList.size() == 0) {
-                                Log.e("empty", "empty");
                                 int qty = 1;
                                 db.insertToDo(productID.trim(), productVariant.get(0), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
                                 db.deletDuplicates();
@@ -385,7 +373,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                                 }
                             }
 
-                        }
+
 
                     }
                 }

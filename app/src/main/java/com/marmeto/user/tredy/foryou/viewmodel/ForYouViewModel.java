@@ -296,11 +296,12 @@ public class ForYouViewModel extends ViewModel {
                             String bannerimage = jsonObject.getString("image_src");
                             bannerlist.add(bannerimage);
 
-                            foryouInterface.bannerlist(bannerlist);
                         } catch (JSONException ignored) {
 
                         }
                     }
+                    foryouInterface.bannerlist(bannerlist);
+
                 },
                 error -> {
 

@@ -899,15 +899,15 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
         alertDialog.show();
     }
 
-    public RequestQueue getRequestQueue() {
-        // lazy initialize the request queue, the queue instance will be
-        // created when it is accessed for the first time
-        if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
-        }
-
-        return mRequestQueue;
-    }
+//    public RequestQueue getRequestQueue() {
+//        // lazy initialize the request queue, the queue instance will be
+//        // created when it is accessed for the first time
+//        if (mRequestQueue == null) {
+//            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+//        }
+//
+//        return mRequestQueue;
+//    }
 
     public void getData() {
 
