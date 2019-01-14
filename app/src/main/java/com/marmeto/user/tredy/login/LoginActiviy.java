@@ -2,7 +2,6 @@ package com.marmeto.user.tredy.login;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -16,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +23,6 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -40,7 +37,6 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 
 import com.marmeto.user.tredy.R;
 import com.facebook.login.LoginManager;
@@ -64,6 +60,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class LoginActiviy extends AppCompatActivity implements
@@ -76,18 +73,18 @@ public class LoginActiviy extends AppCompatActivity implements
     String firstname = "", lastname = "", email = "", password;
     public String customerid = "";
     private GraphClient graphClient;
-    Button facebook, google, btnSignIn;
+    Button facebook, btnSignIn;
     TextView signin, signup, forgot_password;
-    EditText name_text, email_text;
-    ProgressBar progressBar;
+    EditText  email_text;
+//    ProgressBar progressBar;
     private ProgressDialog progressDoalog;
     TextInputEditText etPassword;
     GoogleApiClient mGoogleApiClient;
-    ProgressDialog mProgressDialog;
+//    ProgressDialog mProgressDialog;
     //    SignInButton btnSignIn;
     Button btnSignOut, btnRevokeAccess;
     Boolean sociallogin = false;
-    private String personName = "";
+//    private String personName = "";
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -124,9 +121,9 @@ public class LoginActiviy extends AppCompatActivity implements
 //        }
 
 
-        btnSignIn = (Button) findViewById(R.id.btn_sign_in);
-        btnSignOut = (Button) findViewById(R.id.btn_sign_out);
-        btnRevokeAccess = (Button) findViewById(R.id.btn_revoke_access);
+        btnSignIn = findViewById(R.id.btn_sign_in);
+        btnSignOut =  findViewById(R.id.btn_sign_out);
+        btnRevokeAccess =  findViewById(R.id.btn_revoke_access);
         etPassword = findViewById(R.id.etPassword);
 
         btnSignIn.setOnClickListener(this);
@@ -147,15 +144,12 @@ public class LoginActiviy extends AppCompatActivity implements
 //        btnSignIn.setSize(SignInButton.SIZE_STANDARD);
 //        btnSignIn.setScopes(gso.getScopeArray());
 
-        btnSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isNetworkAvailable() == true) {
-                    Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-                    startActivityForResult(signInIntent, RC_SIGN_IN);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
-                }
+        btnSignIn.setOnClickListener(view -> {
+            if (isNetworkAvailable()) {
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+                startActivityForResult(signInIntent, RC_SIGN_IN);
+            } else {
+                Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -186,19 +180,17 @@ public class LoginActiviy extends AppCompatActivity implements
 
 
                         GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(),
-                                new GraphRequest.GraphJSONObjectCallback() {
-                                    @Override
-                                    public void onCompleted(JSONObject object, GraphResponse response) {
-                                        try {
-                                            sociallogin = true;
+                                (object, response) -> {
+                                    try {
+                                        sociallogin = true;
 
-                                            // Bundle bFacebookData = getFacebookData(object);
-                                            // email = response.getJSONObject().getString("email");
-                                            firstname = object.getString("first_name");
-                                            lastname = object.getString("last_name");
-                                            email = object.getString("email");
-                                            String id = object.getString("id");
-                                            Log.e("LoginActivity", id);
+                                        // Bundle bFacebookData = getFacebookData(object);
+                                        // email = response.getJSONObject().getString("email");
+                                        firstname = object.getString("first_name");
+                                        lastname = object.getString("last_name");
+                                        email = object.getString("email");
+                                        String id = object.getString("id");
+                                        Log.e("LoginActivity", id);
 
 //                                            gender = object.getString("gender");
 //                                            birthday = object.getString("birthday");
@@ -207,21 +199,20 @@ public class LoginActiviy extends AppCompatActivity implements
 //                                            i.putExtra("name", name);
 //                                            i.putExtra("email", email);
 //                                            startActivity(i);
-                                            SharedPreference.saveData("facebookid", id.trim(), getApplicationContext());
-                                            SharedPreference.saveData("email", email.trim(), getApplicationContext());
-                                            SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
-                                            SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
-                                            String password1 = email;
+                                        SharedPreference.saveData("facebookid", id.trim(), getApplicationContext());
+                                        SharedPreference.saveData("email", email.trim(), getApplicationContext());
+                                        SharedPreference.saveData("firstname", firstname.trim(), getApplicationContext());
+                                        SharedPreference.saveData("lastname", lastname.trim(), getApplicationContext());
+                                        String password1 = email;
 
-                                            String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
-                                            Log.e("coverted", password.trim());
+                                        String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
+                                        Log.e("coverted", password.trim());
 
-                                            checkCustomer(email, password.trim());
+                                        checkCustomer(email, password.trim());
 
 
-                                        } catch (JSONException e) {
-                                            Toast.makeText(LoginActiviy.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
+                                    } catch (JSONException e) {
+                                        Toast.makeText(LoginActiviy.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
                         Bundle parameters = new Bundle();
@@ -246,82 +237,70 @@ public class LoginActiviy extends AppCompatActivity implements
                     }
                 });
 
-        signup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isNetworkAvailable() == true) {
-                    Intent i = new Intent(LoginActiviy.this, SignupActivity.class);
-                    startActivity(i);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
-                }
-
+        signup.setOnClickListener(view -> {
+            if (isNetworkAvailable()) {
+                Intent i = new Intent(LoginActiviy.this, SignupActivity.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
             }
+
         });
 
-        forgot_password.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isNetworkAvailable() == true) {
-                    Intent i = new Intent(getApplicationContext(), ForgotPassword.class);
-                    startActivity(i);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
-                }
-
-
+        forgot_password.setOnClickListener(view -> {
+            if (isNetworkAvailable()) {
+                Intent i = new Intent(getApplicationContext(), ForgotPassword.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
             }
+
+
         });
 
 
-        facebook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isNetworkAvailable() == true) {
-                    if (AccessToken.getCurrentAccessToken() != null && com.facebook.Profile.getCurrentProfile() != null) {
-                        //Logged in so show the login button
+        facebook.setOnClickListener(v -> {
+            if (isNetworkAvailable()) {
+                if (AccessToken.getCurrentAccessToken() != null && com.facebook.Profile.getCurrentProfile() != null) {
+                    //Logged in so show the login button
 
-                        LoginManager.getInstance().logOut();
+                    LoginManager.getInstance().logOut();
 
-                        login_button.performClick();
+                    login_button.performClick();
 
-                    } else {
-                        login_button.performClick();
-                    }
                 } else {
-                    Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                    login_button.performClick();
                 }
+            } else {
+                Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
             }
         });
 
 
-        signin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isNetworkAvailable() == true) {
-                    email = email_text.getText().toString().trim();
-                    password = etPassword.getText().toString().trim();
-                    if (email.trim().length() != 0) {
-                        if (!email.matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
-                            dialog("Please Enter Valid email");
+        signin.setOnClickListener(view -> {
+            if (isNetworkAvailable()) {
+                email = email_text.getText().toString().trim();
+                password = Objects.requireNonNull(etPassword.getText()).toString().trim();
+                if (email.trim().length() != 0) {
+                    if (!email.matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
+                        dialog("Please Enter Valid email");
 //                            Toast.makeText(LoginActiviy.this, "Please Enter Valid email", Toast.LENGTH_SHORT).show();
-                        } else {
-                            if (password.trim().length() != 0) {
-                                sociallogin = false;
-                                checkCustomer(email.trim(), password.trim());
-                            } else {
-                                dialog("Please enter password");
-//                                Toast.makeText(getApplicationContext(), "Please enter password", Toast.LENGTH_SHORT).show();
-                            }
-                        }
                     } else {
-                        dialog("Please enter email");
-//                        Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
+                        if (password.trim().length() != 0) {
+                            sociallogin = false;
+                            checkCustomer(email.trim(), password.trim());
+                        } else {
+                            dialog("Please enter password");
+//                                Toast.makeText(getApplicationContext(), "Please enter password", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 } else {
-
-                    Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                    dialog("Please enter email");
+//                        Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+
+                Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -330,7 +309,10 @@ public class LoginActiviy extends AppCompatActivity implements
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        NetworkInfo activeNetworkInfo = null;
+        if (connectivityManager != null) {
+            activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        }
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
@@ -362,10 +344,15 @@ public class LoginActiviy extends AppCompatActivity implements
                 email = acct.getEmail();
                 String password1 = email;
 
-                String password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
+                String password = null;
+                if (password1 != null) {
+                    password = Base64.encodeToString(password1.getBytes(), Base64.DEFAULT).trim();
+                }
 //                Log.e("firstname", " "+firstname);
 //                Log.e("lastname", " "+lastname);
-                checkCustomer(email.trim(), password.trim());
+                if (email != null) {
+                    checkCustomer(email.trim(), password.trim());
+                }
             }
 
 //            String personPhotoUrl = acct.getPhotoUrl().toString();
@@ -430,29 +417,23 @@ public class LoginActiviy extends AppCompatActivity implements
                             if (sociallogin) {
                                 usercreate(email, password);
                             } else {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        progressDoalog.dismiss();
-                                        Config.Dialog("The email or password you entered is incorrect.", LoginActiviy.this);
-
-                                        if (mGoogleApiClient.isConnected()) {
-                                            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                                        }
-                                    }
-                                });
-
-                            }
-                        } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                                runOnUiThread(() -> {
                                     progressDoalog.dismiss();
                                     Config.Dialog("The email or password you entered is incorrect.", LoginActiviy.this);
 
                                     if (mGoogleApiClient.isConnected()) {
                                         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                                     }
+                                });
+
+                            }
+                        } else {
+                            runOnUiThread(() -> {
+                                progressDoalog.dismiss();
+                                Config.Dialog("The email or password you entered is incorrect.", LoginActiviy.this);
+
+                                if (mGoogleApiClient.isConnected()) {
+                                    Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                                 }
                             });
 
@@ -463,35 +444,29 @@ public class LoginActiviy extends AppCompatActivity implements
 
                         if (response.data().getCustomerAccessTokenCreate().getCustomerAccessToken() != null) {
 
-                            String token = "" + response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getAccessToken().toString();
-                            String expire = response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getExpiresAt().toString();
+                            String token = "" + response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getAccessToken();
+//                            String expire = response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getExpiresAt().toString();
                             SharedPreference.saveData("accesstoken", token.trim(), getApplicationContext());
                             getId(token.trim());
 
                         } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressDoalog.dismiss();
-                                    Config.Dialog("The email or password you entered is incorrect.", LoginActiviy.this);
+                            runOnUiThread(() -> {
+                                progressDoalog.dismiss();
+                                Config.Dialog("The email or password you entered is incorrect.", LoginActiviy.this);
 
-                                    if (mGoogleApiClient.isConnected()) {
-                                        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                                    }
+                                if (mGoogleApiClient.isConnected()) {
+                                    Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                                 }
                             });
                         }
                     }
                 } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressDoalog.dismiss();
-                            if (mGoogleApiClient.isConnected()) {
-                                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                            }
-                            Config.Dialog("Please try again later", LoginActiviy.this);
+                    runOnUiThread(() -> {
+                        progressDoalog.dismiss();
+                        if (mGoogleApiClient.isConnected()) {
+                            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                         }
+                        Config.Dialog("Please try again later", LoginActiviy.this);
                     });
 
                 }
@@ -500,16 +475,13 @@ public class LoginActiviy extends AppCompatActivity implements
 
             @Override
             public void onFailure(@NonNull GraphError error) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDoalog.dismiss();
-                        if (mGoogleApiClient.isConnected()) {
-                            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                        }
-                        Config.Dialog("Please try again later", LoginActiviy.this);
-
+                runOnUiThread(() -> {
+                    progressDoalog.dismiss();
+                    if (mGoogleApiClient.isConnected()) {
+                        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                     }
+                    Config.Dialog("Please try again later", LoginActiviy.this);
+
                 });
                 Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
 
@@ -532,14 +504,10 @@ public class LoginActiviy extends AppCompatActivity implements
 //            builder.setTitle("Success");
         builder.setMessage(poptext)
                 .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
+                .setPositiveButton("OK", (dialog, id) -> dialog.dismiss());
         AlertDialog alert = builder.create();
         alert.show();
-        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.white);
 //            alert.getWindow().setBackgroundDrawableResource(android.R.color.white)
     }
 
@@ -572,30 +540,21 @@ public class LoginActiviy extends AppCompatActivity implements
 
             final String requestBody = jsonBody.toString();
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.savetoken, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.e("tokenresponse", response);
-                    try {
-                        JSONObject obj = new JSONObject(response);
-                        SharedPreference.saveData("update", "false", getApplicationContext());
-                        Intent i = new Intent(getApplicationContext(), Navigation.class);
-                        SharedPreference.saveData("login", "true", getApplicationContext());
-                        startActivity(i);
-                        finish();
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.savetoken, response -> {
+                Log.e("tokenresponse", response);
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    SharedPreference.saveData("update", "false", getApplicationContext());
+                    Intent i = new Intent(getApplicationContext(), Navigation.class);
+                    SharedPreference.saveData("login", "true", getApplicationContext());
+                    startActivity(i);
+                    finish();
 
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("VOLLEY", " " + error.toString());
-
-                }
-            }) {
+            }, error -> Log.e("VOLLEY", " " + error.toString())) {
                 @Override
                 public String getBodyContentType() {
                     return "application/json; charset=utf-8";
@@ -615,7 +574,7 @@ public class LoginActiviy extends AppCompatActivity implements
                 @Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
-                    String statusCode = String.valueOf(response.statusCode);
+//                    String statusCode = String.valueOf(response.statusCode);
                     //Handling logic
                     return super.parseNetworkResponse(response);
                 }
@@ -639,8 +598,7 @@ public class LoginActiviy extends AppCompatActivity implements
     private void getId(String token) {
 
         Storefront.QueryRootQuery query = Storefront.query(root -> root
-                .customer(token, customer -> customer
-                        .id()
+                .customer(token, Storefront.CustomerQuery::id
 
                 )
         );
@@ -649,24 +607,14 @@ public class LoginActiviy extends AppCompatActivity implements
         call.enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
             @Override
             public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.QueryRoot> response) {
-                Log.e("data", "user..." + response.data().getCustomer().getId());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDoalog.dismiss();
-                    }
-                });
+//                Log.e("data", "user..." + response.data().getCustomer().getId());
+                runOnUiThread(() -> progressDoalog.dismiss());
                 if (response.data() != null && response.data().getCustomer() != null) {
                     customerid = response.data().getCustomer().getId().toString();
                     saveToken();
                 } else {
-                    if (response.data().getCustomer() == null) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Config.Dialog("Please try again later", LoginActiviy.this);
-                            }
-                        });
+                    if (response.data() != null && response.data().getCustomer() == null) {
+                        runOnUiThread(() -> Config.Dialog("Please try again later", LoginActiviy.this));
                     }
                 }
 
@@ -675,12 +623,7 @@ public class LoginActiviy extends AppCompatActivity implements
 
             @Override
             public void onFailure(@NonNull GraphError error) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDoalog.dismiss();
-                    }
-                });
+                runOnUiThread(() -> progressDoalog.dismiss());
 
             }
         });
@@ -720,64 +663,46 @@ public class LoginActiviy extends AppCompatActivity implements
             @Override
             public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
 
-                if (response.data().getCustomerCreate() != null) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressDoalog.dismiss();
-                        }
-                    });
-                    if (response.data().getCustomerCreate().getUserErrors() != null && response.data().getCustomerCreate().getUserErrors().size() != 0) {
-                        String error = response.data().getCustomerCreate().getUserErrors().get(0).getMessage();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                if (response.data() != null) {
+                    if (response.data().getCustomerCreate() != null) {
+                        runOnUiThread(() -> progressDoalog.dismiss());
+                        if (response.data().getCustomerCreate().getUserErrors() != null && response.data().getCustomerCreate().getUserErrors().size() != 0) {
+                            String error = response.data().getCustomerCreate().getUserErrors().get(0).getMessage();
+                            runOnUiThread(() -> {
                                 if (mGoogleApiClient.isConnected()) {
                                     Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                                 }
                                 Config.Dialog(error, LoginActiviy.this);
-                            }
-                        });
-
-                    } else {
-
-                        String id = response.data().getCustomerCreate().getCustomer().getId().toString();
-                        String email = response.data().getCustomerCreate().getCustomer().getEmail();
-
-                        if (id != null) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    checkCustomer(email.trim(), password.trim());
-                                }
                             });
+
                         } else {
+
+                            String id = response.data().getCustomerCreate().getCustomer().getId().toString();
+                            String email = response.data().getCustomerCreate().getCustomer().getEmail();
+
+                            if (id != null) {
+                                runOnUiThread(() -> checkCustomer(email.trim(), password.trim()));
+                            }
                         }
-                    }
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                    } else {
+                        runOnUiThread(() -> {
                             if (mGoogleApiClient.isConnected()) {
                                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                             }
                             Config.Dialog("Try Again Later", LoginActiviy.this);
-                        }
-                    });
+                        });
+                    }
                 }
             }
 
             @Override
             public void onFailure(@NonNull GraphError error) {
 //
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDoalog.dismiss();
-                        Config.Dialog("Try Again Later", LoginActiviy.this);
-                        if (mGoogleApiClient.isConnected()) {
-                            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                        }
+                runOnUiThread(() -> {
+                    progressDoalog.dismiss();
+                    Config.Dialog("Try Again Later", LoginActiviy.this);
+                    if (mGoogleApiClient.isConnected()) {
+                        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                     }
                 });
             }

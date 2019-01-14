@@ -92,7 +92,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     product_varientid = getArguments().getString("product_varientid");
                     product_qty = getArguments().getString("product_qty");
                     totalcost = getArguments().getString("totalcost");
-    //                Toast.makeText(getActivity(), totalcost+" ----- "+product_qty, Toast.LENGTH_SHORT).show();
+                    //                Toast.makeText(getActivity(), totalcost+" ----- "+product_qty, Toast.LENGTH_SHORT).show();
                     tag = getArguments().getString("tag");
                     if (tag != null && tag.trim().toLowerCase().contains("remove_cod")) {
                         remove_cod = "remove_cod";
@@ -574,7 +574,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         block = "false";
         productlist.clear();
         cartList.clear();
-        if(getActivity()!=null){
+        if (getActivity() != null) {
             DBHelper db = new DBHelper(getActivity());
             cartList = db.getCartList();
         }
@@ -741,6 +741,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         .phone()
                         .displayName()
                         .id()
+                        .defaultAddress(Storefront.MailingAddressQuery::zip)
                 )
         );
 
@@ -766,6 +767,16 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         });
 
                     }
+                    if (response.data() != null && response.data().getCustomer().getDefaultAddress() != null) {
+                        String pincode = response.data().getCustomer().getDefaultAddress().getZip();
+//                        String address1 = response.data().getCustomer().getDefaultAddress().getFormattedArea();
+
+
+                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                            shipping_pin_input.setText(pincode);
+//                            shipping_door_street_input.setText(address1);
+                        });
+                    }
                 }
             }
 
@@ -790,7 +801,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         JSONObject object1 = object.getJSONObject("default_address");
                         String address1 = object1.getString("address1");
                         String pincode = object1.getString("zip");
-                        String phone=object1.getString("phone");
+                        String phone = object1.getString("phone");
                         Log.e("pincodeeee", " " + pincode);
                         if (pincode != null) {
                             if (pincode.trim().length() != 0) {
@@ -801,7 +812,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                                 shipping_pin_input.setText(pincode);
                             }
                         }
-                        if(phone!=null) {
+                        if (phone != null) {
                             if (phone.trim().length() != 0) {
                                 mobilenumber.setText(phone);
                             }
@@ -824,5 +835,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         mRequestQueue.add(stringRequest);
 
     }
+
+
 
 }

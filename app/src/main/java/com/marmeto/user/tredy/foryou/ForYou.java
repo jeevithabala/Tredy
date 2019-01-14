@@ -66,10 +66,10 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
         topselling_recyclerview = view.findViewById(R.id.main_recyclerview);
         allcollection = view.findViewById(R.id.allcollection);
-        resultCallBackInterface = (ResultCallBackInterface) this;
+        resultCallBackInterface =  this;
 
 
-        graphClient = GraphClient.builder(getActivity())
+        graphClient = GraphClient.builder(Objects.requireNonNull(getActivity()))
                 .shopDomain(BuildConfig.SHOP_DOMAIN)
                 .accessToken(BuildConfig.API_KEY)
                 .httpCache(new File(getActivity().getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache

@@ -171,6 +171,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                     if (detail != null) {
                         id = detail.getId().trim();
                         title = detail.getCollectiontitle();
+
                     }
                     break;
                 case "allproduct":
@@ -355,7 +356,11 @@ ArrayList<String> arrayList=new ArrayList<>();
 
         productDetalList1.clear();
 //        productAdapter.notifyDataSetChanged();
-        postFilter();
+        if (Config.isNetworkAvailable(getActivity())) {
+            postFilter();
+        } else {
+            Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+        }
 //        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
 //            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -437,7 +442,7 @@ ArrayList<String> arrayList=new ArrayList<>();
             final String requestBody = jsonBody.toString();
             String a;
             if (sortbykey.trim().length() == 0) {
-                if (category.equals("newarrival"))
+                if (category.equals("newarrival")||id.equals("33238122615"))
                     a = "?sortBy=created_at&order=desc&page_size=10&page=" + count;
                 else
                     a = "?page_size=10&page=" + count;
@@ -550,14 +555,13 @@ ArrayList<String> arrayList=new ArrayList<>();
 //        } else {
 //            sortbystring = "?page_size=10&page=";
 //        }
-        if (category.equals("newarrival"))
+        if (category.equals("newarrival")||id.equals("33238122615"))
             sortbystring = "?sortBy=created_at&order=desc&page_size=10&page=";
         else
             sortbystring = "?page_size=10&page=";
 
 
         requestQueue.add(collectionList(id, requestCount));
-        Log.d("request counter", String.valueOf(requestCount));
         requestCount++;
     }
 

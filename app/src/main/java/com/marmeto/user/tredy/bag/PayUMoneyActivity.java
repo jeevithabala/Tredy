@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -55,6 +56,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class PayUMoneyActivity extends AppCompatActivity implements View.OnClickListener, DiscountAdapter.Discountinterface {
 
@@ -177,7 +180,12 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
         discountAdapter = new DiscountAdapter(getApplicationContext(), discountlist, this);
         discount_recycler.setAdapter(discountAdapter);
-        getDiscount();
+        if (Config.isNetworkAvailable(getApplicationContext())) {
+            getDiscount();
+        } else {
+            Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+        }
+
 
         discountAdapter.notifyDataSetChanged();
 //        if (accessToken != null) {
@@ -301,8 +309,11 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
                     OrderDetailModel orderDetailModel = new OrderDetailModel(emailstring, totalcost, firstname, lastname, bfirstname, blastname, address1, city, state, country, zip, phone, b_address1, b_city, b_state, b_country, b_zip, product_varientid, product_qty, discounted_price, discount_coupon, s_mobile, b_mobile, b_email);
                     orderDetailModelArrayList.add(orderDetailModel);
-
-                    init();
+                    if (Config.isNetworkAvailable(getApplicationContext())) {
+                        init();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                    }
 //                        Intent i = new Intent(getApplicationContext(), InitialActivity.class);
 //                        Bundle bundle = new Bundle();
 //                        bundle.putSerializable("value", orderDetailModelArrayList.get(0));
@@ -314,7 +325,12 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                         discount_coupon = "";
                     }
                     cod = 1;
-                    noDialog();
+                    if (Config.isNetworkAvailable(getApplicationContext())) {
+                        noDialog();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             } else {
                 Config.Dialog("Select the payment method", PayUMoneyActivity.this);

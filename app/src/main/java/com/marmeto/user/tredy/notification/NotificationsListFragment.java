@@ -178,6 +178,7 @@ public class NotificationsListFragment extends Fragment implements NotificationL
     private void NotificationCountstatuslist() {
         actorsList.clear();
         String token = SharedPreference.getData("customerid",Objects.requireNonNull(getActivity()));
+        Log.e("customer_id", " "+token);
 
         String minusdatet = getCalculatedDate("MM/dd/yyyy", -10);
 

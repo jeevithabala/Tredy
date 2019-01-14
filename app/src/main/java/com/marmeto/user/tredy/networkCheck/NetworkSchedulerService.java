@@ -4,11 +4,14 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.marmeto.user.tredy.foryou.viewmodel.ForYouViewModel;
 
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class NetworkSchedulerService extends JobService implements
         ConnectivityReceiver.ConnectivityReceiverListener {
 
@@ -60,7 +63,9 @@ public class NetworkSchedulerService extends JobService implements
 
                 if (!MyApplication.isInterestingActivityVisible()) {
                         String message = isConnected ? "Internet Is Now Connected" : "Please Make Sure Internet Is Connected";
-                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                        if(message.equals("Please Make Sure Internet Is Connected")) {
+                                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                        }
                         ForYouViewModel forYouViewModel=new ForYouViewModel(getApplicationContext());
                 }
 

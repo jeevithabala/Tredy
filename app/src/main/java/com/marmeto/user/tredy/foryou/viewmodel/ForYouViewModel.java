@@ -604,31 +604,35 @@ public class ForYouViewModel extends ViewModel {
     }
 
     private void getallhomecollection(){
+        String sortby="";
         for (int i = 0; i <3 ; i++) {
             if(i==0){
                 String id = "345069894";
                 String text = "gid://shopify/Collection/" + id.trim();
                 String converted = Base64.encodeToString(text.trim().getBytes(), Base64.DEFAULT);
                 topSellingModelArray.clear();
-                gethomeCollection(converted,i);
+                sortby="MANUAL";
+                gethomeCollection(converted,i,sortby);
             }else if(i==1){
                 String id = "33238122615";
                 String text = "gid://shopify/Collection/" + id.trim();
                 String converted = Base64.encodeToString(text.trim().getBytes(), Base64.DEFAULT);
                 newArrivalModelArray.clear();
-                gethomeCollection(converted,i);
+                sortby="COLLECTION_DEFAULT";
+                gethomeCollection(converted,i,sortby);
             }else {
                 String id = "58881703997";
                 String text = "gid://shopify/Collection/" + id.trim();
                 String converted = Base64.encodeToString(text.trim().getBytes(), Base64.DEFAULT);
                 GroceryHomeModelArrayList.clear();
-                gethomeCollection(converted,i);
+                sortby="TITLE";
+                gethomeCollection(converted,i,sortby);
             }
 
         }
     }
 
-    private void gethomeCollection(String collectionid, int i) {
+    private void gethomeCollection(String collectionid, int i,String sortby) {
 
         graphClient = GraphClient.builder(mContext)
                 .shopDomain(BuildConfig.SHOP_DOMAIN)
@@ -641,7 +645,7 @@ public class ForYouViewModel extends ViewModel {
                 .node(new ID(collectionid.trim()), nodeQuery -> nodeQuery
                         .onCollection(collectionQuery -> collectionQuery
                                 .title()
-                                .products(arg -> arg.first(10).sortKey(Storefront.ProductCollectionSortKeys.valueOf("MANUAL")), productConnectionQuery -> productConnectionQuery
+                                .products(arg -> arg.first(10).sortKey(Storefront.ProductCollectionSortKeys.valueOf(sortby)), productConnectionQuery -> productConnectionQuery
                                         .edges(productEdgeQuery -> productEdgeQuery
                                                 .node(productQuery -> productQuery
                                                         .title()
