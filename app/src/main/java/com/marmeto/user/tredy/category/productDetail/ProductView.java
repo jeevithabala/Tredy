@@ -280,6 +280,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
 //            }
 //        });
         buy.setOnClickListener(view -> {
+            if (Config.isNetworkAvailable(getActivity())) {
             no_of_count = count.getText().toString();
             if (no_of_count.isEmpty()) {
                 dialog("Please Enter Quantity.");
@@ -325,37 +326,45 @@ public class ProductView extends Fragment implements ProductClickInterface {
                     dialog("Entered Quantity should be less than 100");
 //                        Toast.makeText(getActivity(), "Entered Quantity should be less than 100", Toast.LENGTH_SHORT).show();
                 }
+            }
+            } else {
+                Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
             }
         });
 
 
         bag_button.setOnClickListener(view -> {
-            no_of_count = count.getText().toString();
-            if (no_of_count.isEmpty()) {
-                dialog("Please Enter Quantity.");
+            if (Config.isNetworkAvailable(getActivity())) {
+                no_of_count = count.getText().toString();
+                if (no_of_count.isEmpty()) {
+                    dialog("Please Enter Quantity.");
 
 //                    Toast.makeText(getActivity(), "Please Enter Quantity.", Toast.LENGTH_SHORT).show();
-            } else {
-                if (Integer.parseInt(no_of_count) <= 100) {
-                    if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist") || product.trim().equals("topselling") || product.trim().equals("newarrival")) {
-                        no_of_count = count.getText().toString();
+                } else {
+                    if (Integer.parseInt(no_of_count) <= 100) {
+                        if (product.trim().equals("grocery") || product.trim().equals("groceryhome") || product.trim().equals("bag") || product.trim().equals("wishlist") || product.trim().equals("topselling") || product.trim().equals("newarrival")) {
+                            no_of_count = count.getText().toString();
 //                        byte[] tmp2 = Base64.decode(id, Base64.DEFAULT);
 //                        String val2 = new String(tmp2);
 //                        String[] str = val2.split("/");
-                        commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(no_of_count));
-                        Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
+                            commanCartControler.AddToCartGrocery(id.trim(), selectedID, Integer.parseInt(no_of_count));
+                            Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String text = "gid://shopify/Product/" + id.trim();
+                            String converted = Base64.encodeToString(text.getBytes(), Base64.DEFAULT);
+                            no_of_count = count.getText().toString();
+                            commanCartControler.AddToCartGrocery(converted.trim(), selectedID, Integer.parseInt(no_of_count));
+                            Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        String text = "gid://shopify/Product/" + id.trim();
-                        String converted = Base64.encodeToString(text.getBytes(), Base64.DEFAULT);
-                        no_of_count = count.getText().toString();
-                        commanCartControler.AddToCartGrocery(converted.trim(), selectedID, Integer.parseInt(no_of_count));
-                        Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    dialog("Entered Quantity should be less than 100");
+                        dialog("Entered Quantity should be less than 100");
 //                        Toast.makeText(getActivity(), "Entered Quantity should be less than 100", Toast.LENGTH_SHORT).show();
+                    }
                 }
+            } else {
+                Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
             }
+
         });
     }
 

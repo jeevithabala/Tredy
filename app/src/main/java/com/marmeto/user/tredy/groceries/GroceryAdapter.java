@@ -15,14 +15,17 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.marmeto.user.tredy.category.productDetail.ProductView;
 import com.marmeto.user.tredy.callback.CartController;
 import com.marmeto.user.tredy.callback.CommanCartControler;
 import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.databinding.GroceryadapterBinding;
+import com.marmeto.user.tredy.util.Config;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHolder> {
 
@@ -36,7 +39,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     private LayoutInflater layoutInflater;
     private int pos1 = 0;
 
-     GroceryAdapter(Context mContext, ArrayList<GroceryModel> itemsList, FragmentManager fragmentManager, CartDailog cartDailog) {
+    GroceryAdapter(Context mContext, ArrayList<GroceryModel> itemsList, FragmentManager fragmentManager, CartDailog cartDailog) {
         this.mContext = mContext;
         this.itemsList = itemsList;
         this.fragmentManager = fragmentManager;
@@ -143,18 +146,22 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
 
 
             addgrocery.setOnClickListener(view -> {
-                pos1 = getAdapterPosition();
+                if (Config.isNetworkAvailable(mContext)) {
+
+                    pos1 = getAdapterPosition();
 //                    display();
-                cartController = new CartController(mContext);
-                commanCartControler = cartController;
-                commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
-                add_to_cart.setVisibility(View.VISIBLE);
+                    cartController = new CartController(mContext);
+                    commanCartControler = cartController;
+                    commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
+                    add_to_cart.setVisibility(View.VISIBLE);
 
-                Handler handler = new Handler();
-                handler.postDelayed(() -> cartDailog.cart(pos1, pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty())), 1500);
+                    Handler handler = new Handler();
+                    handler.postDelayed(() -> cartDailog.cart(pos1, pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty())), 1500);
 
 
-
+                } else {
+                    Toast.makeText(mContext, "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                }
             });
 
             binding.setCounter(new GroceryInterface() {
@@ -182,21 +189,22 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
 
                 @Override
                 public void click() {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("category", "grocery");
-                    bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
-                    Fragment fragment = new ProductView();
-                    fragment.setArguments(bundle);
-                    FragmentTransaction ft = fragmentManager.beginTransaction().add(R.id.home_container, fragment, "productview");
-                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    if(fragmentManager.findFragmentByTag("productview")==null)
-                    {
-                        ft.addToBackStack("productview");
-                        ft.commit();
-                    }
-                    else
-                    {
-                        ft.commit();
+                    if (Config.isNetworkAvailable(mContext)) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("category", "grocery");
+                        bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
+                        Fragment fragment = new ProductView();
+                        fragment.setArguments(bundle);
+                        FragmentTransaction ft = fragmentManager.beginTransaction().add(R.id.home_container, fragment, "productview");
+                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                        if (fragmentManager.findFragmentByTag("productview") == null) {
+                            ft.addToBackStack("productview");
+                            ft.commit();
+                        } else {
+                            ft.commit();
+                        }
+                    } else {
+                        Toast.makeText(mContext, "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -237,7 +245,7 @@ public class GroceryAdapter extends RecyclerView.Adapter<GroceryAdapter.ViewHold
     }
 
     public interface CartDailog {
-         void cart(int adapter_pos, int varient_pos, int qty);
+        void cart(int adapter_pos, int varient_pos, int qty);
     }
 
 

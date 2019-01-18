@@ -11,13 +11,16 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.marmeto.user.tredy.category.model.CategoryModel;
 import com.marmeto.user.tredy.groceries.Groceries;
 import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.databinding.CategoreyAdapterBinding;
+import com.marmeto.user.tredy.util.Config;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAdapter.ViewHolder> {
@@ -68,7 +71,9 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
 
 
             binding.setItemclick(() -> {
-                if (itemsList.get(getAdapterPosition()).getCollectiontitle().trim().toLowerCase().equals("grocery")) {
+                if (Config.isNetworkAvailable(mContext)) {
+
+                    if (itemsList.get(getAdapterPosition()).getCollectiontitle().trim().toLowerCase().equals("grocery")) {
                     Groceries groceries = new Groceries();
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
                     transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
@@ -116,7 +121,6 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
                     Fragment fragment = new SubCategory();
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
-                    Log.e("iddddddd1", String.valueOf(itemsList.get(getAdapterPosition()).getSubCategoryModelArrayList()));
                     fragment.setArguments(bundle);
                     FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "fragment");
                     ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
@@ -127,6 +131,10 @@ public class CategoreDetailAdapter extends RecyclerView.Adapter<CategoreDetailAd
                         ft.commit();
                     }
 
+
+                }
+                } else {
+                    Toast.makeText(mContext, "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
 
                 }
 //

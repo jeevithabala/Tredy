@@ -6,6 +6,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model;
 import com.marmeto.user.tredy.bag.cartdatabase.DBHelper;
@@ -180,6 +181,7 @@ public class CartController extends ViewModel implements CommanCartControler {
                         if (cartList.size() == 0) {
 //                            int qty = 1;
                             db.insertToDo(trim.trim(), productVariant.get(selectedID), qty, model.getProduct().getTitle(), String.valueOf(model.getProduct().getTags()), model.getShip());
+
                         } else {
 
 //                            db.checkUser(productVariant.get(0).getId().toString().trim());
@@ -372,8 +374,6 @@ public class CartController extends ViewModel implements CommanCartControler {
                                     db.deletDuplicates();
                                 }
                             }
-
-
 
                     }
                 }

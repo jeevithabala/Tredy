@@ -18,8 +18,10 @@ import com.marmeto.user.tredy.callback.CartController;
 import com.marmeto.user.tredy.callback.CommanCartControler;
 import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.databinding.NewarrivalAdapterBinding;
+import com.marmeto.user.tredy.util.Config;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.ViewHolder> {
 
@@ -69,43 +71,57 @@ public class NewArrivalAdapter extends RecyclerView.Adapter<NewArrivalAdapter.Vi
             this.binding = itembinding;
 
             binding.setItemclick(() -> {
-                Bundle bundle = new Bundle();
-                bundle.putString("category", "newarrival");
-                bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
-                Fragment fragment = new ProductView();
-                fragment.setArguments(bundle);
-                FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "productview");
-                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                if(fragmentManager.findFragmentByTag("productview")==null)
-                {
-                    ft.addToBackStack("productview");
-                    ft.commit();
+                if (Config.isNetworkAvailable(mContext)) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("category", "newarrival");
+                    bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
+                    Fragment fragment = new ProductView();
+                    fragment.setArguments(bundle);
+                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "productview");
+                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    if(fragmentManager.findFragmentByTag("productview")==null)
+                    {
+                        ft.addToBackStack("productview");
+                        ft.commit();
+                    }
+                    else
+                    {
+                        ft.commit();
+                    }
+                } else {
+                    Toast.makeText(mContext, "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
                 }
-                else
-                {
-                    ft.commit();
-                }
+
 
             });
             binding.setOnitemclickplus(new Plus() {
 
                 @Override
                 public void OnclickPlus() {
-                    cartController = new CartController(mContext);
-                    commanCartControler = cartController;
+                    if (Config.isNetworkAvailable(mContext)) {
+                        cartController = new CartController(mContext);
+                        commanCartControler = cartController;
 //                    commanCartControler.AddToCart(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
-                    commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct_ID()), 0, 1);
+                        commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct_ID()), 0, 1);
+                        Toast.makeText(mContext,"Added to cart",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(mContext, "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                    }
 
-                    Toast.makeText(mContext,"Added to cart",Toast.LENGTH_SHORT).show();
 
                 }
 
                 @Override
                 public void OnclickWhislilst() {
-                    cartController = new CartController(mContext);
-                    commanCartControler = cartController;
-                    commanCartControler.AddToWhislist(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
-                    Toast.makeText(mContext,"Added to Wishlist",Toast.LENGTH_SHORT).show();
+                    if (Config.isNetworkAvailable(mContext)) {
+                        cartController = new CartController(mContext);
+                        commanCartControler = cartController;
+                        commanCartControler.AddToWhislist(itemsList.get(getAdapterPosition()).getProduct_ID().trim());
+                        Toast.makeText(mContext,"Added to Wishlist",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(mContext, "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
 
 

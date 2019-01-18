@@ -22,6 +22,7 @@ import com.marmeto.user.tredy.callback.CartController;
 import com.marmeto.user.tredy.callback.CommanCartControler;
 import com.marmeto.user.tredy.R;
 import com.marmeto.user.tredy.databinding.Groceryadapter1Binding;
+import com.marmeto.user.tredy.util.Config;
 
 import java.util.ArrayList;
 
@@ -84,10 +85,15 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
             spinner.setOnItemSelectedListener(this);
 
             addgrocery.setOnClickListener(view -> {
-                cartController = new CartController(mContext);
-                commanCartControler = cartController;
-                commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
-                Toast.makeText(mContext, "Added to cart", Toast.LENGTH_SHORT).show();
+                if (Config.isNetworkAvailable(mContext)) {
+                    cartController = new CartController(mContext);
+                    commanCartControler = cartController;
+                    commanCartControler.AddToCartGrocery(String.valueOf(itemsList.get(getAdapterPosition()).getProduct().getId()), pos, Integer.parseInt(itemsList.get(getAdapterPosition()).getQty()));
+                    Toast.makeText(mContext, "Added to cart", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(mContext, "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+                }
+
             });
 //            spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) mContext);
 
@@ -117,19 +123,24 @@ public class GroceryHomeAdapter extends RecyclerView.Adapter<GroceryHomeAdapter.
 
                 @Override
                 public void click() {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("category", "groceryhome");
-                    bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
-                    Fragment fragment = new ProductView();
-                    fragment.setArguments(bundle);
-                    FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "productview");
-                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-                    if (fragmentManager.findFragmentByTag("productview") == null) {
-                        ft.addToBackStack("productview");
-                        ft.commit();
+                    if (Config.isNetworkAvailable(mContext)) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("category", "groceryhome");
+                        bundle.putSerializable("category_id", itemsList.get(getAdapterPosition()));
+                        Fragment fragment = new ProductView();
+                        fragment.setArguments(bundle);
+                        FragmentTransaction ft = fragmentManager.beginTransaction().replace(R.id.home_container, fragment, "productview");
+                        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                        if (fragmentManager.findFragmentByTag("productview") == null) {
+                            ft.addToBackStack("productview");
+                            ft.commit();
+                        } else {
+                            ft.commit();
+                        }
                     } else {
-                        ft.commit();
+                        Toast.makeText(mContext, "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
                     }
+
 
                 }
             });

@@ -139,7 +139,6 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         super.onResume();
 
 
-
         if (getArguments() != null) {
             category = getArguments().getString("collection");
         }
@@ -286,13 +285,13 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 if (isLastItemDisplaying(recyclerView)) {
                     //Calling the method getdata again
                     if (isFilterData) {
-                        if (Config.isNetworkAvailable(getActivity())) {
+                        if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
                             postFilter();
                         } else {
                             Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        if (Config.isNetworkAvailable(getActivity())) {
+                        if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
                             getData();
                         } else {
                             Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
@@ -310,7 +309,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 
     public void getFilterData(String minprice, String maxprice, String sortby, String collectionid, ArrayList<String> selectedFilterLists, String CollectionName) {
 
-ArrayList<String> arrayList=new ArrayList<>();
+        ArrayList<String> arrayList = new ArrayList<>();
         if (FilterSharedPreference.getArrayList("filter", getActivity()) != null) {
             for (int i = 0; i < FilterSharedPreference.getArrayList("filter", getActivity()).size(); i++) {
                 FilterSharedPreference.saveInSp(FilterSharedPreference.getArrayList("filter", getActivity()).get(i), false, Objects.requireNonNull(getActivity()));
@@ -330,7 +329,7 @@ ArrayList<String> arrayList=new ArrayList<>();
 
             for (int j = 0; j < splitStr.length; j++) {
                 if (j + 1 < splitStr.length) {
-                    selectedf = selectedf + " "+splitStr[j + 1].trim();
+                    selectedf = selectedf + " " + splitStr[j + 1].trim();
                     arrayList.add(selectedf.trim());
                 }
             }
@@ -442,7 +441,7 @@ ArrayList<String> arrayList=new ArrayList<>();
             final String requestBody = jsonBody.toString();
             String a;
             if (sortbykey.trim().length() == 0) {
-                if (category.equals("newarrival")||id.equals("33238122615"))
+                if (category.equals("newarrival") || id.equals("33238122615"))
                     a = "?sortBy=created_at&order=desc&page_size=10&page=" + count;
                 else
                     a = "?page_size=10&page=" + count;
@@ -555,7 +554,7 @@ ArrayList<String> arrayList=new ArrayList<>();
 //        } else {
 //            sortbystring = "?page_size=10&page=";
 //        }
-        if (category.equals("newarrival")||id.equals("33238122615"))
+        if (category.equals("newarrival") || id.equals("33238122615"))
             sortbystring = "?sortBy=created_at&order=desc&page_size=10&page=";
         else
             sortbystring = "?page_size=10&page=";
@@ -742,45 +741,60 @@ ArrayList<String> arrayList=new ArrayList<>();
 
     @Override
     public void clickProduct(String productid) {
+        if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
 
-        Log.d("product value", productid);
-        Fragment fragment = new ProductView();
-        Bundle bundle = new Bundle();
-        bundle.putString("category", "ca_adapter");
-        bundle.putString("product_id", productid);
-        fragment.setArguments(bundle);
-        FragmentTransaction ft;
-        if (getFragmentManager() != null) {
-            ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "productview");
-            ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-            if (getFragmentManager().findFragmentByTag("productview") == null) {
-                ft.addToBackStack("productview");
-                ft.commit();
-            } else {
-                ft.commit();
+            Log.d("product value", productid);
+            Fragment fragment = new ProductView();
+            Bundle bundle = new Bundle();
+            bundle.putString("category", "ca_adapter");
+            bundle.putString("product_id", productid);
+            fragment.setArguments(bundle);
+            FragmentTransaction ft;
+            if (getFragmentManager() != null) {
+                ft = getFragmentManager().beginTransaction().replace(R.id.home_container, fragment, "productview");
+                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                if (getFragmentManager().findFragmentByTag("productview") == null) {
+                    ft.addToBackStack("productview");
+                    ft.commit();
+                } else {
+                    ft.commit();
+                }
             }
+        } else {
+            Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+
         }
 
     }
 
     @Override
     public void OnclickPlus(String productid) {
-        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-            cartController = new CartController(getActivity());
-            commanCartControler = cartController;
-            commanCartControler.AddToCart(productid.trim());
+        if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+
+            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                cartController = new CartController(getActivity());
+                commanCartControler = cartController;
+                commanCartControler.AddToCart(productid.trim());
 //                productAdapter.notifyDataSetChanged();
-            Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
-        });
+                Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
     @Override
     public void OnclickWhislilst(String productid) {
-        cartController = new CartController(getActivity());
-        commanCartControler = cartController;
-        commanCartControler.AddToWhislist(productid.trim());
-        Toast.makeText(getActivity(), "Added to Wishlist", Toast.LENGTH_SHORT).show();
+        if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
+
+            cartController = new CartController(getActivity());
+            commanCartControler = cartController;
+            commanCartControler.AddToWhislist(productid.trim());
+            Toast.makeText(getActivity(), "Added to Wishlist", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

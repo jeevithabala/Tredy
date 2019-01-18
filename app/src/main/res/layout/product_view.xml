@@ -406,7 +406,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@color/colorPrimaryDark"
-                    android:text="Add to bag"
+                    android:text="Add to cart"
                     android:textColor="@color/white" />
 
                 <Button

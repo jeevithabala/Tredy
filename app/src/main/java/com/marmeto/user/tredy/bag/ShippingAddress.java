@@ -115,12 +115,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (getActivity() != null)
-            Objects.requireNonNull(((Navigation) getActivity()).getSupportActionBar()).setTitle("Shipping");
-    }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -214,124 +209,126 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         });
 
         payment_section.setOnClickListener(view -> {
-            if (same.isChecked()) {
-//                    firstnamestring = first_name.getText().toString().trim();
-//                    lastnamestring = last_name.getText().toString().trim();
-//                    s_area = shipping_door_street_input.getText().toString();
-//                    s_city = shipping_city_input.getText().toString();
-//                    s_state = shipping_state_input.getText().toString();
-//                    s_country = shipping_country_input.getText().toString();
-//                    s_pincode = shipping_pin_input.getText().toString();
-//                    s_mobile = mobilenumber.getText().toString();
-//                    emailstring = email.getText().toString();
-//
-//                    if (s_mobile.contains("+91")) {
-//                        s_mobile = s_mobile.substring(3, 13);
-//                    }
-//                    bfirstnamestring = firstnamestring;
-//                    blastnamestring = lastnamestring;
-//                    b_area = s_area;
-//                    b_city = s_city;
-//                    b_state = s_state;
-//                    b_country = s_country;
-//                    b_pincode = s_pincode;
-//                    b_mobile = s_mobile;
-//                    b_email = emailstring;
-//
-//                    bfirst_name.setText(firstnamestring);
-//                    blast_name.setText(blastnamestring);
-//                    billing_door_street_input.setText(b_area);
-//                    billing_city.setText(b_city);
-//                    billing_state.setText(b_state);
-//                    billing_country.setText(b_country);
-//                    billing_pin.setText(b_pincode);
-//                    b_mobilenumber.setText(b_mobile);
-//                    billing_email.setText(b_email);
-                bfirstnamestring = firstnamestring;
-                blastnamestring = "";
-                b_area = "";
-                b_city = "";
-                b_state = "";
-                b_country = "";
-                b_pincode = "";
-                b_mobile = "";
-                b_email = "";
-
-
-                layout_same.setVisibility(View.GONE);
-            }
-            s_pincode = shipping_pin_input.getText().toString().trim();
-            s_area = shipping_door_street_input.getText().toString().trim();
-            s_state = shipping_state_input.getText().toString().trim();
-            s_city = shipping_city_input.getText().toString().trim();
-            s_country = shipping_country_input.getText().toString().trim();
-            s_mobile = mobilenumber.getText().toString();
-            emailstring = email.getText().toString().trim();
-
-            b_pincode = billing_pin.getText().toString().trim();
-            b_area = billing_door_street_input.getText().toString().trim();
-            b_state = billing_state.getText().toString().trim();
-            b_city = billing_city.getText().toString().trim();
-            b_country = billing_country.getText().toString().trim();
-            firstnamestring = first_name.getText().toString().trim();
-            lastnamestring = last_name.getText().toString().trim();
-            bfirstnamestring = bfirst_name.getText().toString().trim();
-            blastnamestring = blast_name.getText().toString().trim();
-            b_email = billing_email.getText().toString().trim();
-            b_mobile = b_mobilenumber.getText().toString().trim();
-
-            if (b_mobile.trim().length() != 0) {
-                if (b_mobile.contains("+91")) {
-                    b_mobile = b_mobile.substring(3, 13);
+            if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
+                if (same.isChecked()) {
+                    bfirstnamestring = firstnamestring;
+                    blastnamestring = "";
+                    b_area = "";
+                    b_city = "";
+                    b_state = "";
+                    b_country = "";
+                    b_pincode = "";
+                    b_mobile = "";
+                    b_email = "";
+                    layout_same.setVisibility(View.GONE);
                 }
-                b_mobilenumber.setText(b_mobile);
-            }
-            if (s_mobile.trim().length() != 0) {
-                if (s_mobile.contains("+91")) {
-                    s_mobile = s_mobile.substring(3, 13);
-                }
-                mobilenumber.setText(s_mobile);
-            }
+                s_pincode = shipping_pin_input.getText().toString().trim();
+                s_area = shipping_door_street_input.getText().toString().trim();
+                s_state = shipping_state_input.getText().toString().trim();
+                s_city = shipping_city_input.getText().toString().trim();
+                s_country = shipping_country_input.getText().toString().trim();
+                s_mobile = mobilenumber.getText().toString();
+                emailstring = email.getText().toString().trim();
 
-            if (s_pincode.trim().length() == 0) {
-                Config.Dialog("Please enter your shipping address pin-code", getActivity());
-            } else if (emailstring.trim().length() == 0) {
-                Config.Dialog("Please enter your email", getActivity());
-            } else if (!Validationemail.isEmailAddress(email, true)) {
-                Config.Dialog("Please enter your valid email", getActivity());
-            } else if (s_mobile.trim().length() == 0) {
-                Config.Dialog("Please enter your shipping phone number", getActivity());
-            } else if (!Validationmobile.isPhoneNumber(mobilenumber, true)) {
-                Config.Dialog("Please enter your valid shipping phone number", getActivity());
-            } else if (s_pincode.trim().length() < 6) {
-                Config.Dialog("Please enter your valid pin-code", getActivity());
-            } else if (firstnamestring.trim().length() == 0) {
-                Config.Dialog("Please enter your shipping address first name", getActivity());
-            } else if (lastnamestring.trim().length() == 0) {
-                Config.Dialog("Please enter your shipping address last name", getActivity());
-            } else if (s_area.trim().length() == 0) {
-                Config.Dialog("Please enter your shipping address door number & area", getActivity());
-            } else if (s_state.trim().length() == 0) {
-                Config.Dialog("Please enter your valid shipping address pin-code", getActivity());
-            } else if (!same.isChecked()) {
-                if (b_pincode.trim().length() == 0) {
-                    Config.Dialog("Please enter your billing address pin-code", getActivity());
-                } else if (b_pincode.trim().length() < 0) {
-                    Config.Dialog("Please enter your valid billing address pin-code", getActivity());
-                } else if (b_mobile.trim().length() == 0) {
-                    Config.Dialog("Please enter your billing phone number", getActivity());
-                } else if (!Validationmobile.isPhoneNumber(b_mobilenumber, true)) {
-                    Config.Dialog("Please enter your valid billing phone number", getActivity());
-                } else if (bfirstnamestring.trim().length() == 0) {
-                    Config.Dialog("Please enter your billing address first name", getActivity());
-                } else if (blastnamestring.trim().length() == 0) {
-                    Config.Dialog("Please enter your billing address last name", getActivity());
-                } else if (b_area.trim().length() == 0) {
-                    Config.Dialog("Please enter your billing address door number & area", getActivity());
-                } else if (b_email.trim().length() == 0) {
-                    Config.Dialog("Please enter your  billing email", getActivity());
-                } else if (!Validationemail.isEmailAddress(billing_email, true)) {
-                    Config.Dialog("Please enter your valid billing email", getActivity());
+                b_pincode = billing_pin.getText().toString().trim();
+                b_area = billing_door_street_input.getText().toString().trim();
+                b_state = billing_state.getText().toString().trim();
+                b_city = billing_city.getText().toString().trim();
+                b_country = billing_country.getText().toString().trim();
+                firstnamestring = first_name.getText().toString().trim();
+                lastnamestring = last_name.getText().toString().trim();
+                bfirstnamestring = bfirst_name.getText().toString().trim();
+                blastnamestring = blast_name.getText().toString().trim();
+                b_email = billing_email.getText().toString().trim();
+                b_mobile = b_mobilenumber.getText().toString().trim();
+
+                if (b_mobile.trim().length() != 0) {
+                    if (b_mobile.contains("+91")) {
+                        b_mobile = b_mobile.substring(3, 13);
+                    }
+                    b_mobilenumber.setText(b_mobile);
+                }
+                if (s_mobile.trim().length() != 0) {
+                    if (s_mobile.contains("+91")) {
+                        s_mobile = s_mobile.substring(3, 13);
+                    }
+                    mobilenumber.setText(s_mobile);
+                }
+
+                if (s_pincode.trim().length() == 0) {
+                    Config.Dialog("Please enter your shipping address pin-code", getActivity());
+                } else if (emailstring.trim().length() == 0) {
+                    Config.Dialog("Please enter your email", getActivity());
+                } else if (!Validationemail.isEmailAddress(email, true)) {
+                    Config.Dialog("Please enter your valid email", getActivity());
+                } else if (s_mobile.trim().length() == 0) {
+                    Config.Dialog("Please enter your shipping phone number", getActivity());
+                } else if (!Validationmobile.isPhoneNumber(mobilenumber, true)) {
+                    Config.Dialog("Please enter your valid shipping phone number", getActivity());
+                } else if (s_pincode.trim().length() < 6) {
+                    Config.Dialog("Please enter your valid pin-code", getActivity());
+                } else if (firstnamestring.trim().length() == 0) {
+                    Config.Dialog("Please enter your shipping address first name", getActivity());
+                } else if (lastnamestring.trim().length() == 0) {
+                    Config.Dialog("Please enter your shipping address last name", getActivity());
+                } else if (s_area.trim().length() == 0) {
+                    Config.Dialog("Please enter your shipping address door number & area", getActivity());
+                } else if (s_state.trim().length() == 0) {
+                    Config.Dialog("Please enter your valid shipping address pin-code", getActivity());
+                } else if (!same.isChecked()) {
+                    if (b_pincode.trim().length() == 0) {
+                        Config.Dialog("Please enter your billing address pin-code", getActivity());
+                    } else if (b_pincode.trim().length() < 0) {
+                        Config.Dialog("Please enter your valid billing address pin-code", getActivity());
+                    } else if (b_mobile.trim().length() == 0) {
+                        Config.Dialog("Please enter your billing phone number", getActivity());
+                    } else if (!Validationmobile.isPhoneNumber(b_mobilenumber, true)) {
+                        Config.Dialog("Please enter your valid billing phone number", getActivity());
+                    } else if (bfirstnamestring.trim().length() == 0) {
+                        Config.Dialog("Please enter your billing address first name", getActivity());
+                    } else if (blastnamestring.trim().length() == 0) {
+                        Config.Dialog("Please enter your billing address last name", getActivity());
+                    } else if (b_area.trim().length() == 0) {
+                        Config.Dialog("Please enter your billing address door number & area", getActivity());
+                    } else if (b_email.trim().length() == 0) {
+                        Config.Dialog("Please enter your  billing email", getActivity());
+                    } else if (!Validationemail.isEmailAddress(billing_email, true)) {
+                        Config.Dialog("Please enter your valid billing email", getActivity());
+
+                    } else {
+                        if (block.equals("false")) {
+                            Intent intent = new Intent(getActivity(), PayUMoneyActivity.class);
+                            intent.putExtra("firstname", firstnamestring);
+                            intent.putExtra("lastname", lastnamestring);
+                            intent.putExtra("email", emailstring);
+                            intent.putExtra("s_area", s_area);
+                            intent.putExtra("s_city", s_city);
+                            intent.putExtra("s_state", s_state);
+                            intent.putExtra("s_country", s_country);
+                            intent.putExtra("s_pincode", s_pincode);
+                            intent.putExtra("s_mobile", s_mobile);
+
+//
+                            intent.putExtra("bfirstname", bfirstnamestring);
+                            intent.putExtra("blastname", blastnamestring);
+                            intent.putExtra("b_pincode", b_pincode);
+                            intent.putExtra("b_area", b_area);
+                            intent.putExtra("b_state", b_state);
+                            intent.putExtra("b_city", b_city);
+                            intent.putExtra("b_country", b_country);
+                            intent.putExtra("remove_cod", remove_cod);
+                            intent.putExtra("product_varientid", product_varientid);
+                            intent.putExtra("product_qty", product_qty);
+                            intent.putExtra("totalcost", " " + totalcost);
+                            intent.putExtra("tag", tag);
+                            intent.putExtra("b_mobile", b_mobile);
+                            intent.putExtra("b_email", b_email);
+                            startActivity(intent);
+                        } else {
+                            payment_section.setEnabled(false);
+                            layout_placing.findFocus();
+                        }
+                    }
 
                 } else {
                     if (block.equals("false")) {
@@ -367,40 +364,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         layout_placing.findFocus();
                     }
                 }
-
             } else {
-                if (block.equals("false")) {
-                    Intent intent = new Intent(getActivity(), PayUMoneyActivity.class);
-                    intent.putExtra("firstname", firstnamestring);
-                    intent.putExtra("lastname", lastnamestring);
-                    intent.putExtra("email", emailstring);
-                    intent.putExtra("s_area", s_area);
-                    intent.putExtra("s_city", s_city);
-                    intent.putExtra("s_state", s_state);
-                    intent.putExtra("s_country", s_country);
-                    intent.putExtra("s_pincode", s_pincode);
-                    intent.putExtra("s_mobile", s_mobile);
-
-//
-                    intent.putExtra("bfirstname", bfirstnamestring);
-                    intent.putExtra("blastname", blastnamestring);
-                    intent.putExtra("b_pincode", b_pincode);
-                    intent.putExtra("b_area", b_area);
-                    intent.putExtra("b_state", b_state);
-                    intent.putExtra("b_city", b_city);
-                    intent.putExtra("b_country", b_country);
-                    intent.putExtra("remove_cod", remove_cod);
-                    intent.putExtra("product_varientid", product_varientid);
-                    intent.putExtra("product_qty", product_qty);
-                    intent.putExtra("totalcost", " " + totalcost);
-                    intent.putExtra("tag", tag);
-                    intent.putExtra("b_mobile", b_mobile);
-                    intent.putExtra("b_email", b_email);
-                    startActivity(intent);
-                } else {
-                    payment_section.setEnabled(false);
-                    layout_placing.findFocus();
-                }
+                Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
         layout_placing.setOnClickListener(view -> {
@@ -524,6 +489,14 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() != null) {
+            Objects.requireNonNull(((Navigation) getActivity()).getSupportActionBar()).setTitle("Shipping");
+        }
+    }
+
+    @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
     }
@@ -539,7 +512,12 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     shipping_country_input.setText("");
                 } else {
                     check_ship_bill = "shipping";
-                    getAddress(s_pincode);
+                    if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
+                        getAddress(s_pincode);
+                    } else {
+                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }
+
 
                 }
             } else if (charSequence.hashCode() == billing_pin.getText().hashCode()) {
@@ -550,7 +528,11 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     billing_country.setText("");
                 } else {
                     check_ship_bill = "billing";
-                    getAddress(b_pincode);
+                    if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
+                        getAddress(b_pincode);
+                    } else {
+                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
             }
