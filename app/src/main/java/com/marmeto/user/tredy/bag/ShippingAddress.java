@@ -38,6 +38,7 @@ import com.marmeto.user.tredy.util.Config;
 import com.marmeto.user.tredy.util.Constants;
 import com.marmeto.user.tredy.util.Internet;
 import com.marmeto.user.tredy.util.SharedPreference;
+import com.marmeto.user.tredy.util.VolleySingleton;
 import com.shopify.buy3.GraphCall;
 import com.shopify.buy3.GraphClient;
 import com.shopify.buy3.GraphError;
@@ -133,21 +134,24 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
                 .build();
 
-        if (accessToken != null) {
-            getEmailId();
-        }
-
-
-        s_pincode = shipping_pin_input.getText().toString();
-
-        shipping_pin_input.addTextChangedListener(this);
-        billing_pin.addTextChangedListener(this);
         if (Internet.isConnected(getActivity())) {
             getlatestCheckouot();
-
         } else {
             Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
         }
+
+        if (accessToken != null) {
+            if (Internet.isConnected(getActivity())) {
+                getEmailId();
+            } else {
+                Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+
+        shipping_pin_input.addTextChangedListener(this);
+        billing_pin.addTextChangedListener(this);
 
         same.setOnClickListener(view -> {
             if (same.isChecked()) {
@@ -427,12 +431,12 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 
 
     private void getAddress(String pincode) {
-        citylist.clear();
+//        citylist.clear();
         area = "";
         city = "";
         state = "";
         country = "";
-        RequestQueue mRequestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
+//        RequestQueue mRequestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.shippingaddressfetch + pincode,
                 response -> {
                     try {
@@ -451,7 +455,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                                 city = object.getString("District");
                                 state = object.getString("State");
                                 country = object.getString("Country");
-                                citylist.add(city);
+//                                citylist.add(city);
 
                             }
                         }
@@ -478,13 +482,15 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 }) {
 
         };
-        stringRequest.setTag("categories_page");
-        // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
 
-        int socketTimeout = 10000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        stringRequest.setRetryPolicy(policy);
-        mRequestQueue.add(stringRequest);
+//        stringRequest.setTag("categories_page");
+//        // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
+//
+//        int socketTimeout = 10000;
+//        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+//        stringRequest.setRetryPolicy(policy);
+//        mRequestQueue.add(stringRequest);
 
     }
 
@@ -502,10 +508,10 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     }
 
     @Override
-    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        if (charSequence != null) {
-            if (charSequence.hashCode() == shipping_pin_input.getText().hashCode()) {
-                s_pincode = shipping_pin_input.getText().toString();
+    public void onTextChanged(CharSequence charSequence1, int i, int i1, int i2) {
+        if (charSequence1 != null) {
+            if (charSequence1.hashCode() == shipping_pin_input.getText().hashCode()) {
+              String  s_pincode = shipping_pin_input.getText().toString().trim();
                 if (s_pincode.trim().length() == 0) {
                     shipping_city_input.setText("");
                     shipping_state_input.setText("");
@@ -513,15 +519,13 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 } else {
                     check_ship_bill = "shipping";
                     if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
-                        getAddress(s_pincode);
+                        getAddress(s_pincode.trim());
                     } else {
                         Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
-
-
                 }
-            } else if (charSequence.hashCode() == billing_pin.getText().hashCode()) {
-                b_pincode = billing_pin.getText().toString();
+            } else if (charSequence1.hashCode() == billing_pin.getText().hashCode()) {
+               String b_pincode = billing_pin.getText().toString();
                 if (b_pincode.trim().length() == 0) {
                     billing_city.setText("");
                     billing_state.setText("");
@@ -529,7 +533,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                 } else {
                     check_ship_bill = "billing";
                     if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
-                        getAddress(b_pincode);
+                        getAddress(b_pincode.trim());
                     } else {
                         Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
@@ -544,6 +548,42 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable editable) {
+        if (editable != null) {
+            if (editable.hashCode() == shipping_pin_input.getText().hashCode()) {
+                s_pincode = shipping_pin_input.getText().toString().trim();
+                if (s_pincode.trim().length() == 0) {
+                    shipping_city_input.setText("");
+                    shipping_state_input.setText("");
+                    shipping_country_input.setText("");
+                } else {
+                    check_ship_bill = "shipping";
+                    if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
+                        getAddress(s_pincode.trim());
+                    } else {
+                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                }
+            } else if (editable.hashCode() == billing_pin.getText().hashCode()) {
+                b_pincode = billing_pin.getText().toString().trim();
+                if (b_pincode.trim().length() == 0) {
+                    billing_city.setText("");
+                    billing_state.setText("");
+                    billing_country.setText("");
+                } else {
+                    check_ship_bill = "billing";
+                    if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
+                        getAddress(b_pincode.trim());
+                    } else {
+                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            }
+
+
+        }
 
     }
 
@@ -792,6 +832,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 
                                 }
                                 shipping_pin_input.setText(pincode);
+                                s_pincode=shipping_pin_input.getText().toString();
                             }
                         }
                         if (phone != null) {

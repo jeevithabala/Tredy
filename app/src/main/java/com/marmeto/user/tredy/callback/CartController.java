@@ -165,7 +165,7 @@ public class CartController extends ViewModel implements CommanCartControler {
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
 
 
-                if (response.data() != null) {
+                if (response.data() != null&&response.data().getNode()!=null) {
                     Storefront.Product product = (Storefront.Product) response.data().getNode();
 //                    Log.e("titit", product.getTitle());
                     model = new SelectItemModel();
@@ -255,7 +255,7 @@ public class CartController extends ViewModel implements CommanCartControler {
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
 
 
-                if (response.data() != null) {
+                if (response.data() != null&&response.data().getNode()!=null) {
                     Storefront.Product product = (Storefront.Product) response.data().getNode();
 //                    Log.e("titit", product.getTitle());
                     model = new SelectItemModel();
@@ -340,7 +340,7 @@ public class CartController extends ViewModel implements CommanCartControler {
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
 
 
-                if (response.data() != null) {
+                if (response.data() != null&&response.data().getNode()!=null) {
 //                    Log.e("productid",productID);
 //                    Log.e("reponse"," "+response.data().toString());
 //                    Log.e("reponse"," "+response.data().getNode());

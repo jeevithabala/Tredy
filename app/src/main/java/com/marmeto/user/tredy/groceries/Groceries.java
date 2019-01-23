@@ -262,10 +262,10 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
             @Override
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
                 assert response.data() != null;
+                if(response.data().getNode()!=null){
                 Storefront.Collection product = (Storefront.Collection) response.data().getNode();
 //                Log.e("pagin", " " + product.getProducts().getPageInfo().getHasNextPage());
 //                boolean hasNextProductPage = product.getProducts().getPageInfo().getHasNextPage().booleanValue();
-
 
                 for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
 
@@ -275,7 +275,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
 
                             productStringPageCursor.add(productPageCursor);
                         }
-                        if((!productEdge.getNode().getVariants().getEdges().get(0).getNode().getPrice().toString().trim().equals("0.00"))){
+                        if ((!productEdge.getNode().getVariants().getEdges().get(0).getNode().getPrice().toString().trim().equals("0.00"))) {
                             GroceryModel groceryModel = new GroceryModel();
                             groceryModel.setProduct(productEdge.getNode());
                             groceryModel.setQty("1");
@@ -294,14 +294,18 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                     }
 
                 }
-                if(getActivity()!=null) {
+                if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
                         progressDialog.dismiss();
                         adapter.notifyDataSetChanged();
                     });
                 }
-            }
-
+            }else {
+                    getActivity().runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                    });
+                }
+        }
             @Override
             public void onFailure(@NonNull GraphError error) {
                 Objects.requireNonNull(getActivity()).runOnUiThread(() -> progressDialog.dismiss());

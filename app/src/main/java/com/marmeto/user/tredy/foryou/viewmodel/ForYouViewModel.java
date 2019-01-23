@@ -682,7 +682,7 @@ public class ForYouViewModel extends ViewModel {
             @Override
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
                 Storefront.Collection product;
-                if (response.data() != null) {
+                if (response.data() != null&&response.data().getNode()!=null) {
                     product = (Storefront.Collection) response.data().getNode();
                     if(i==0){
                         String collectionname = product.getTitle();
