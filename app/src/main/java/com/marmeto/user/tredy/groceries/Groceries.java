@@ -49,7 +49,8 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
     RecyclerView grocery_recycler;
     GroceryAdapter adapter;
     ArrayList<GroceryModel> groceryModelArrayList = new ArrayList<>();
-    LinearLayout title_layout;
+    LinearLayout title_layout, filter_layout;
+    RelativeLayout cartframe;
     private String productPageCursor = "";
     ArrayList<String> productStringPageCursor = new ArrayList<>();
     int i = 0;
@@ -64,7 +65,7 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
     private ProgressDialog progressDialog;
     private int check = 0;
     private String sort_string = "TITLE";
-    TextView filter;
+    TextView filter,notfound;
 
 
     @SuppressLint("SetTextI18n")
@@ -78,6 +79,8 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
         grocery_recycler = view.findViewById(R.id.grocery_recycler);
         title_layout = view.findViewById(R.id.title_layout);
         filter = view.findViewById(R.id.filter);
+        notfound=view.findViewById(R.id.notfound);
+        filter_layout=view.findViewById(R.id.filter_layout);
 
         title_layout.setVisibility(View.GONE);
         String id = "58881703997";
@@ -294,14 +297,15 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                     }
 
                 }
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        progressDialog.dismiss();
-                        adapter.notifyDataSetChanged();
-                    });
-                }
+                if (getActivity() != null) getActivity().runOnUiThread(() -> {
+                    notfound.setVisibility(View.GONE);
+                    progressDialog.dismiss();
+                    adapter.notifyDataSetChanged();
+                });
             }else {
-                    getActivity().runOnUiThread(() -> {
+                    Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                        notfound.setVisibility(View.VISIBLE);
+                        filter_layout.setVisibility(View.GONE);
                         progressDialog.dismiss();
                     });
                 }
@@ -360,39 +364,41 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
             @Override
             public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
                 assert response.data() != null;
-                Storefront.Collection product = (Storefront.Collection) response.data().getNode();
+                if(response.data().getNode()!=null) {
+                    Storefront.Collection product = (Storefront.Collection) response.data().getNode();
 //                Log.e("pagin1"," "+ product.getProducts().getPageInfo().getHasNextPage());
-                productStringPageCursor.clear();
-                boolean hasNextProductPage = product.getProducts().getPageInfo().getHasNextPage();
-                for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
-                    if (hasNextProductPage) {
+                    productStringPageCursor.clear();
+                    boolean hasNextProductPage = product.getProducts().getPageInfo().getHasNextPage();
+                    for (Storefront.ProductEdge productEdge : product.getProducts().getEdges()) {
+                        if (hasNextProductPage) {
 //                        productPageCursor = productEdge.getCursor().toString();
 //                        Log.e("pagin11", " " + productEdge.getCursor().toString());
-                        for (int i = 0; i < product.getProducts().getEdges().size(); i++) {
-                            productPageCursor = productEdge.getCursor();
+                            for (int i = 0; i < product.getProducts().getEdges().size(); i++) {
+                                productPageCursor = productEdge.getCursor();
 
-                            productStringPageCursor.add(productPageCursor);
-                        }
-                        i = 1;
-                    }
-                    if((!productEdge.getNode().getVariants().getEdges().get(0).getNode().getPrice().toString().trim().equals("0.00"))){
-                        GroceryModel groceryModel = new GroceryModel();
-                        groceryModel.setProduct(productEdge.getNode());
-                        groceryModel.setQty("1");
-                        addToCart_modelArrayList.clear();
-                        addToCart_modelArrayList = db.getCartList();
-                        for (int j = 0; j < addToCart_modelArrayList.size(); j++) {
-                            if (addToCart_modelArrayList.get(j).getProduct_id().trim().equals(productEdge.getNode().getId().toString())) {
-                                groceryModel.setVisible("true");
+                                productStringPageCursor.add(productPageCursor);
                             }
+                            i = 1;
                         }
-                        groceryModelArrayList.add(groceryModel);
+                        if ((!productEdge.getNode().getVariants().getEdges().get(0).getNode().getPrice().toString().trim().equals("0.00"))) {
+                            GroceryModel groceryModel = new GroceryModel();
+                            groceryModel.setProduct(productEdge.getNode());
+                            groceryModel.setQty("1");
+                            addToCart_modelArrayList.clear();
+                            addToCart_modelArrayList = db.getCartList();
+                            for (int j = 0; j < addToCart_modelArrayList.size(); j++) {
+                                if (addToCart_modelArrayList.get(j).getProduct_id().trim().equals(productEdge.getNode().getId().toString())) {
+                                    groceryModel.setVisible("true");
+                                }
+                            }
+                            groceryModelArrayList.add(groceryModel);
+                        }
+
                     }
 
+
+                    Objects.requireNonNull(getActivity()).runOnUiThread(() -> adapter.notifyDataSetChanged());
                 }
-
-
-                Objects.requireNonNull(getActivity()).runOnUiThread(() -> adapter.notifyDataSetChanged());
             }
 
             @Override

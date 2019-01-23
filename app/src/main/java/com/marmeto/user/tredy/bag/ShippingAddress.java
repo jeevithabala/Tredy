@@ -793,11 +793,12 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         String pincode = response.data().getCustomer().getDefaultAddress().getZip();
 //                        String address1 = response.data().getCustomer().getDefaultAddress().getFormattedArea();
 
-
-                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                            shipping_pin_input.setText(pincode);
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(() -> {
+                                shipping_pin_input.setText(pincode);
 //                            shipping_door_street_input.setText(address1);
-                        });
+                            });
+                        }
                     }
                 }
             }

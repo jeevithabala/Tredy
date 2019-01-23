@@ -1367,7 +1367,7 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
         lastname = detail.getLastname();
         bfirstname = detail.getBfirstname();
         blastname = detail.getBlastname();
-        address1 = detail.getLastname();
+        address1 = detail.getAddress1();
         city = detail.getCity();
         state = detail.getState();
         country = detail.getCountry();
