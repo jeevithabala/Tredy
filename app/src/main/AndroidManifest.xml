@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
 
-
     <!-- Always required on api < 21, needed to keep a wake lock while your job is running -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Required on api < 21 if you are using setRequiredNetworkType(int) -->
@@ -28,7 +27,10 @@
         android:roundIcon="@drawable/tredylogo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup">
+        android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup"
+        tools:targetApi="m">
+
         <activity
             android:name="com.marmeto.user.tredy.login.LoginActiviy"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"
@@ -62,9 +64,9 @@
         </activity>
         <activity
             android:name="com.marmeto.user.tredy.Navigation"
-            android:windowSoftInputMode="stateHidden"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name="com.marmeto.user.tredy.bag.PayUMoneyActivity"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"
@@ -109,6 +111,7 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="d3ea14f2460d1d35139fe7a9f570c35b4e7f4eb0" />
+
     </application>
 
 </manifest>

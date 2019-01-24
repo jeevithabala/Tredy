@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -115,7 +116,6 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 
         return view;
     }
-
 
 
     @Override
@@ -277,12 +277,12 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     Config.Dialog("Please enter your shipping address last name", getActivity());
                 } else if (s_area.trim().length() == 0) {
                     Config.Dialog("Please enter your shipping address door number & area", getActivity());
-                } else if (s_state.trim().length() == 0) {
-                    Config.Dialog("Please enter your valid shipping address pin-code", getActivity());
+                } else if (s_state.trim().length() == 0 || s_city.trim().length() == 0 || s_country.trim().length() == 0) {
+                    Config.Dialog("Please enter your shipping address", getActivity());
                 } else if (!same.isChecked()) {
                     if (b_pincode.trim().length() == 0) {
                         Config.Dialog("Please enter your billing address pin-code", getActivity());
-                    } else if (b_pincode.trim().length() < 0) {
+                    } else if (b_pincode.trim().length() < 6) {
                         Config.Dialog("Please enter your valid billing address pin-code", getActivity());
                     } else if (b_mobile.trim().length() == 0) {
                         Config.Dialog("Please enter your billing phone number", getActivity());
@@ -298,7 +298,8 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         Config.Dialog("Please enter your  billing email", getActivity());
                     } else if (!Validationemail.isEmailAddress(billing_email, true)) {
                         Config.Dialog("Please enter your valid billing email", getActivity());
-
+                    } else if (b_state.trim().length() == 0 || b_city.trim().length() == 0 || b_country.trim().length() == 0) {
+                        Config.Dialog("Please enter your  billing address", getActivity());
                     } else {
                         if (block.equals("false")) {
                             Intent intent = new Intent(getActivity(), PayUMoneyActivity.class);
@@ -437,46 +438,48 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         state = "";
         country = "";
 //        RequestQueue mRequestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.shippingaddressfetch + pincode,
-                response -> {
-                    try {
-                        Log.e("response", response);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.shippingaddressfetch + pincode, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+//                        Log.e("response", response);
 
-                        JSONObject obj = new JSONObject(response);
-                        Log.e("response1", response);
-                        String status = obj.getString("Status");
-                        if (status.equals("Success")) {
-                            JSONArray jsonarray = obj.getJSONArray("PostOffice");
-                            Log.e("jsonarray", String.valueOf(jsonarray));
+                    JSONObject obj = new JSONObject(response);
+//                        Log.e("response1", response);
+                    String status = obj.getString("Status");
+                    if (status.equals("Success")) {
+                        JSONArray jsonarray = obj.getJSONArray("PostOffice");
+//                            Log.e("jsonarray", String.valueOf(jsonarray));
 
-                            for (int i = 0; i < jsonarray.length(); i++) {
-                                JSONObject object = jsonarray.getJSONObject(i);
-                                area = object.getString("Name");
-                                city = object.getString("District");
-                                state = object.getString("State");
-                                country = object.getString("Country");
+                        for (int i = 0; i < jsonarray.length(); i++) {
+                            JSONObject object = jsonarray.getJSONObject(i);
+                            area = object.getString("Name");
+                            city = object.getString("District");
+                            state = object.getString("State");
+                            country = object.getString("Country");
 //                                citylist.add(city);
 
-                            }
                         }
-                        if (check_ship_bill.trim().equals("shipping")) {
-                            Log.e("city", "" + city);
-                            shipping_city_input.setText(city);
-                            shipping_state_input.setText(state);
-                            shipping_country_input.setText(country);
-                        } else {
-                            Log.e("city", "" + city);
-                            billing_city.setText(city);
-                            billing_state.setText(state);
-                            billing_country.setText(country);
-                        }
-                        getdataDB(state);
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                },
+                    if (check_ship_bill.trim().equals("shipping")) {
+//                            Log.e("city", "" + city);
+                        shipping_city_input.setText(city);
+                        shipping_state_input.setText(state);
+                        shipping_country_input.setText(country);
+                    } else {
+//                            Log.e("city", "" + city);
+                        billing_city.setText(city);
+                        billing_state.setText(state);
+                        billing_country.setText(country);
+                    }
+                    getdataDB(state);
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        },
                 error -> {
 
                 }) {
@@ -511,7 +514,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
     public void onTextChanged(CharSequence charSequence1, int i, int i1, int i2) {
         if (charSequence1 != null) {
             if (charSequence1.hashCode() == shipping_pin_input.getText().hashCode()) {
-              String  s_pincode = shipping_pin_input.getText().toString().trim();
+                String s_pincode = shipping_pin_input.getText().toString().trim();
                 if (s_pincode.trim().length() == 0) {
                     shipping_city_input.setText("");
                     shipping_state_input.setText("");
@@ -525,7 +528,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     }
                 }
             } else if (charSequence1.hashCode() == billing_pin.getText().hashCode()) {
-               String b_pincode = billing_pin.getText().toString();
+                String b_pincode = billing_pin.getText().toString();
                 if (b_pincode.trim().length() == 0) {
                     billing_city.setText("");
                     billing_state.setText("");
@@ -791,7 +794,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     }
                     if (response.data() != null && response.data().getCustomer().getDefaultAddress() != null) {
                         String pincode = response.data().getCustomer().getDefaultAddress().getZip();
-//                        String address1 = response.data().getCustomer().getDefaultAddress().getFormattedArea();
+//                        String city = response.data().getCustomer().getDefaultAddress().getCity();
 
                         if (getActivity() != null) {
                             getActivity().runOnUiThread(() -> {
@@ -833,7 +836,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
 
                                 }
                                 shipping_pin_input.setText(pincode);
-                                s_pincode=shipping_pin_input.getText().toString();
+                                s_pincode = shipping_pin_input.getText().toString();
                             }
                         }
                         if (phone != null) {
@@ -859,7 +862,6 @@ public class ShippingAddress extends Fragment implements TextWatcher {
         mRequestQueue.add(stringRequest);
 
     }
-
 
 
 }
