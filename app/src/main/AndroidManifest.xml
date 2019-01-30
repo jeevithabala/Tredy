@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.marmeto.user.tredy">
+    package="com.tredy.user.tredy">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
+    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!--<uses-permission android:name="android.permission.RECEIVE_SMS" />-->
+    <!--<uses-permission android:name="android.permission.READ_SMS" />-->
+    <!--<uses-permission android:name="android.permission.SEND_SMS" />-->
 
     <!-- Always required on api < 21, needed to keep a wake lock while your job is running -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -19,7 +19,7 @@
 
     <application
 
-        android:name="com.marmeto.user.tredy.App"
+        android:name="com.tredy.user.tredy.App"
         android:allowBackup="true"
         android:icon="@drawable/tredylogo"
         android:label="@string/app_name"
@@ -32,7 +32,7 @@
         tools:targetApi="m">
 
         <activity
-            android:name="com.marmeto.user.tredy.login.LoginActiviy"
+            android:name="com.tredy.user.tredy.login.LoginActiviy"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"
             android:label="@string/app_name"
             android:theme="@style/SplashTheme">
@@ -63,46 +63,46 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.marmeto.user.tredy.Navigation"
+            android:name="com.tredy.user.tredy.Navigation"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.marmeto.user.tredy.bag.PayUMoneyActivity"
+            android:name="com.tredy.user.tredy.bag.PayUMoneyActivity"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.marmeto.user.tredy.login.SignupActivity"
+            android:name="com.tredy.user.tredy.login.SignupActivity"
             android:configChanges="orientation|keyboardHidden|navigation|screenLayout|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="com.marmeto.user.tredy.ccavenue.InitialActivity" />
+        <activity android:name="com.tredy.user.tredy.ccavenue.InitialActivity" />
         <activity
-            android:name="com.marmeto.user.tredy.ccavenue.WebViewActivity"
+            android:name="com.tredy.user.tredy.ccavenue.WebViewActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.marmeto.user.tredy.ccavenue.StatusActivity" />
+        <activity android:name="com.tredy.user.tredy.ccavenue.StatusActivity" />
 
 
-        <activity android:name="com.marmeto.user.tredy.login.ForgotPassword" />
-        <activity android:name="com.marmeto.user.tredy.notification.NotificationDataFragment" />
+        <activity android:name="com.tredy.user.tredy.login.ForgotPassword" />
+        <activity android:name="com.tredy.user.tredy.notification.NotificationDataFragment" />
 
-        <receiver android:name="com.marmeto.user.tredy.ccavenue.SmsReceiver">
+        <receiver android:name="com.tredy.user.tredy.ccavenue.SmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
 
         <service
-            android:name="com.marmeto.user.tredy.networkCheck.NetworkSchedulerService"
+            android:name="com.tredy.user.tredy.networkCheck.NetworkSchedulerService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <service android:name="com.marmeto.user.tredy.Fcm.MyFirebaseMessagingService">
+        <service android:name="com.tredy.user.tredy.Fcm.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <service android:name="com.marmeto.user.tredy.Fcm.MyFirebaseInstanceIdService">
+        <service android:name="com.tredy.user.tredy.Fcm.MyFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>

@@ -5,11 +5,11 @@
 
         <variable
             name="order"
-            type="com.marmeto.user.tredy.account.orders.OrderModel" />
+            type="com.tredy.user.tredy.account.orders.OrderModel" />
 
         <variable
             name="itemclick"
-            type="com.marmeto.user.tredy.callback.FragmentRecyclerViewClick" />
+            type="com.tredy.user.tredy.callback.FragmentRecyclerViewClick" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

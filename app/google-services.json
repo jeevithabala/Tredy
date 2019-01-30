@@ -8,18 +8,42 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:971728730613:android:3a3dc0ce10f88d04",
+        "mobilesdk_app_id": "1:971728730613:android:efc7edc78f4874ec",
         "android_client_info": {
-          "package_name": "com.marmeto.user.tredy"
+          "package_name": "com.tredy.user.tredy"
         }
       },
       "oauth_client": [
         {
-          "client_id": "971728730613-p1nil46tj9go7v7drm9442jc3ljjgdr3.apps.googleusercontent.com",
+          "client_id": "971728730613-6d9lo8uvihc719135vqcm78b1s4s8k7b.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.marmeto.user.tredy",
+            "package_name": "com.tredy.user.tredy",
             "certificate_hash": "a7e16e3818d39adfa4958b56dd1892228841f0c3"
+          }
+        },
+        {
+          "client_id": "971728730613-e69i07tv6b6vijiu4uclc5k418lsqifa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tredy.user.tredy",
+            "certificate_hash": "30914eb72ab0b0549133d82fd4cb613479fb2cc2"
+          }
+        },
+        {
+          "client_id": "971728730613-dt5uk4930e1k0ejlfgpjjsku7dsfrp75.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tredy.user.tredy",
+            "certificate_hash": "f4585d112b20a8cca2d83ac8ca5fb22f6b158621"
+          }
+        },
+        {
+          "client_id": "971728730613-jr7p00la8b5o7mr1om4eitm97iiboofk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tredy.user.tredy",
+            "certificate_hash": "5396950cf2ef0131c7f25d9502cbde62260149e1"
           }
         },
         {

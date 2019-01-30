@@ -20,11 +20,11 @@ repositories {
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.marmeto.user.tredy"
+        applicationId "com.tredy.user.tredy"
         minSdkVersion 20
         targetSdkVersion 28
-        versionCode 38
-        versionName "1.37"
+        versionCode 3
+        versionName "1.2"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField 'String', 'SHOP_DOMAIN', '"tredyfoods.myshopify.com"'

@@ -7,10 +7,10 @@
 
         <variable
             name="whislistitem"
-            type="com.marmeto.user.tredy.whislist.AddWhislistModel" />
+            type="com.tredy.user.tredy.whislist.AddWhislistModel" />
         <variable
             name="itemclick"
-            type="com.marmeto.user.tredy.callback.FragmentRecyclerViewClick" />
+            type="com.tredy.user.tredy.callback.FragmentRecyclerViewClick" />
     </data>
 
     <android.support.v7.widget.CardView

@@ -5,17 +5,17 @@
 
         <variable
             name="topselling"
-            type="com.marmeto.user.tredy.foryou.topselling.TopSellingModel">
+            type="com.tredy.user.tredy.foryou.topselling.TopSellingModel">
 
         </variable>
 
         <variable
             name="onitemclick"
-            type="com.marmeto.user.tredy.callback.TopSellingInterface" />
+            type="com.tredy.user.tredy.callback.TopSellingInterface" />
 
         <variable
             name="onitemclickplus"
-            type="com.marmeto.user.tredy.foryou.topselling.Plus" />
+            type="com.tredy.user.tredy.foryou.topselling.Plus" />
     </data>
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
