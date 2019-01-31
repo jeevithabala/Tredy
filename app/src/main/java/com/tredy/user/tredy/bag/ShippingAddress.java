@@ -140,6 +140,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
             Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
         }
 
+
         if (accessToken != null) {
             if (Internet.isConnected(getActivity())) {
                 getEmailId();
@@ -822,7 +823,7 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     try {
 
                         JSONObject obj = new JSONObject(response);
-                        Log.e("response", response);
+//                        Log.e("response", response);
                         JSONObject object = obj.getJSONObject("customer");
                         JSONObject object1 = object.getJSONObject("default_address");
                         String address1 = object1.getString("address1");
