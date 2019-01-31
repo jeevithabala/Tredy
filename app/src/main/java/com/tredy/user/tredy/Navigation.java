@@ -251,7 +251,10 @@ public class Navigation extends AppCompatActivity
         // and "bound" to the JobScheduler (also called "Scheduled" by the JobScheduler). This call
         // to stopService() won't prevent scheduled jobs to be processed. However, failing
         // to call stopService() would keep it alive indefinitely.
-        stopService(new Intent(this, NetworkSchedulerService.class));
+        try {
+            stopService(new Intent(this, NetworkSchedulerService.class));
+        }catch (Exception ignored){
+                    }
         super.onStop();
     }
 

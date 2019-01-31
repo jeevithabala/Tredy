@@ -10,9 +10,9 @@
 
     <ScrollView
         android:id="@+id/scroll"
-        android:layout_above="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/button"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="30dp">
 
@@ -48,7 +48,6 @@
                     android:orientation="vertical">
 
 
-
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -70,9 +69,10 @@
                             android:id="@+id/first_name_input_layout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="5dp"
                             android:layout_marginTop="10dp"
-                            android:layout_weight="1">
+                            android:layout_marginRight="5dp"
+                            android:layout_weight="1"
+                            android:hint="First Name">
 
                             <EditText
                                 android:id="@+id/first_name"
@@ -81,7 +81,6 @@
                                 android:background="@drawable/edt_bg_selector"
                                 android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz. "
                                 android:fontFamily="@font/lucidasansdemibold"
-                                android:hint="First Name"
                                 android:singleLine="true"
                                 android:textSize="12sp" />
 
@@ -93,7 +92,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
                             android:layout_marginTop="10dp"
-                            android:layout_weight="1">
+                            android:layout_weight="1"
+                            android:hint="Last Name">
 
                             <EditText
                                 android:id="@+id/last_name"
@@ -102,20 +102,21 @@
                                 android:background="@drawable/edt_bg_selector"
                                 android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz. "
                                 android:fontFamily="@font/lucidasansdemibold"
-                                android:hint="Last Name"
                                 android:singleLine="true"
                                 android:textSize="12sp" />
 
                         </android.support.design.widget.TextInputLayout>
 
                     </LinearLayout>
+
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/email_input_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
                         android:layout_marginTop="10dp"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
+                        android:hint="Email"
                         android:paddingTop="5dp">
 
                         <EditText
@@ -124,9 +125,10 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/edt_bg_selector"
                             android:fontFamily="@font/lucidasansdemibold"
-                            android:hint="Email"
+                            android:importantForAutofill="noExcludeDescendants"
                             android:singleLine="true"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            tools:targetApi="o" />
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -134,9 +136,10 @@
                         android:id="@+id/phone_input_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
                         android:layout_marginTop="10dp"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
+                        android:hint="Mobile Number"
                         android:paddingTop="5dp">
 
                         <EditText
@@ -145,7 +148,6 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/edt_bg_selector"
                             android:fontFamily="@font/lucidasansdemibold"
-                            android:hint="Mobile Number"
                             android:inputType="phone"
                             android:maxLength="14"
                             android:singleLine="true"
@@ -158,8 +160,9 @@
                         android:id="@+id/shipping_door_street_input_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="10dp"
-                        android:paddingTop="10dp">
+                        android:hint="Enter Address"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
 
                         <EditText
                             android:id="@+id/shipping_door_street_input"
@@ -168,7 +171,6 @@
                             android:background="@drawable/edt_bg_selector"
                             android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 #`~!@#$%^*()-_=+{}[]\|;':,./?&amp;"
                             android:fontFamily="@font/lucidasansdemibold"
-                            android:hint="Enter Address"
                             android:maxLength="100"
                             android:maxLines="1"
                             android:singleLine="true"
@@ -195,8 +197,9 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginRight="10dp"
-                                    android:paddingBottom="10dp"
-                                    android:paddingTop="10dp">
+                                    android:hint="Pin"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="10dp">
 
                                     <EditText
                                         android:id="@+id/shipping_pin_input"
@@ -205,7 +208,6 @@
                                         android:background="@drawable/edt_bg_selector"
                                         android:digits="0123456789"
                                         android:fontFamily="@font/lucidasansdemibold"
-                                        android:hint="Pin"
                                         android:inputType="number"
                                         android:maxLength="6"
                                         android:maxLines="1"
@@ -233,9 +235,10 @@
                                         android:id="@+id/shipping_city_input_layout"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:paddingBottom="10dp"
+                                        android:hint="City"
                                         android:paddingLeft="10dp"
-                                        android:paddingTop="10dp">
+                                        android:paddingTop="10dp"
+                                        android:paddingBottom="10dp">
 
                                         <EditText
                                             android:id="@+id/shipping_city_input"
@@ -243,7 +246,6 @@
                                             android:layout_height="wrap_content"
                                             android:background="@drawable/edt_bg_selector"
                                             android:fontFamily="@font/lucidasansdemibold"
-                                            android:hint="City"
                                             android:singleLine="true"
                                             android:textSize="12sp" />
                                     </android.support.design.widget.TextInputLayout>
@@ -256,8 +258,8 @@
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentRight="true"
                                         android:layout_centerVertical="true"
-                                        android:layout_marginRight="13dp"
                                         android:layout_marginTop="12dp"
+                                        android:layout_marginRight="13dp"
                                         android:background="#fafafa"
                                         android:indeterminate="true"
                                         android:indeterminateTint="#d9d5d5"
@@ -291,8 +293,9 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginRight="10dp"
-                                    android:paddingBottom="10dp"
-                                    android:paddingTop="10dp">
+                                    android:hint="State"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="10dp">
 
                                     <EditText
                                         android:id="@+id/shipping_state_input"
@@ -300,7 +303,6 @@
                                         android:layout_height="wrap_content"
                                         android:background="@drawable/edt_bg_selector"
                                         android:fontFamily="@font/lucidasansdemibold"
-                                        android:hint="State"
                                         android:singleLine="true"
                                         android:textSize="12sp" />
                                 </android.support.design.widget.TextInputLayout>
@@ -312,8 +314,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_centerVertical="true"
-                                    android:layout_marginRight="13dp"
                                     android:layout_marginTop="12dp"
+                                    android:layout_marginRight="13dp"
                                     android:background="#fafafa"
                                     android:indeterminate="true"
                                     android:indeterminateTint="#d9d5d5"
@@ -333,16 +335,16 @@
                                 android:id="@+id/shipping_country_input_layout"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:paddingBottom="10dp"
+                                android:hint="Country"
                                 android:paddingLeft="10dp"
-                                android:paddingTop="10dp">
+                                android:paddingTop="10dp"
+                                android:paddingBottom="10dp">
 
                                 <EditText
                                     android:id="@+id/shipping_country_input"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/edt_bg_selector"
-                                    android:hint="Country"
                                     android:fontFamily="@font/lucidasansdemibold"
                                     android:singleLine="true"
                                     android:textSize="12sp" />
@@ -355,8 +357,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
-                                android:layout_marginRight="13dp"
                                 android:layout_marginTop="12dp"
+                                android:layout_marginRight="13dp"
                                 android:background="#fafafa"
                                 android:indeterminate="true"
                                 android:indeterminateTint="#d9d5d5"
@@ -411,9 +413,10 @@
                                 android:id="@+id/b_first_name_input_layout"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginRight="5dp"
                                 android:layout_marginTop="10dp"
-                                android:layout_weight="1">
+                                android:layout_marginRight="5dp"
+                                android:layout_weight="1"
+                                android:hint="First Name">
 
                                 <EditText
                                     android:id="@+id/b_first_name"
@@ -422,7 +425,6 @@
                                     android:background="@drawable/edt_bg_selector"
                                     android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz. "
                                     android:fontFamily="@font/lucidasansdemibold"
-                                    android:hint="First Name"
                                     android:singleLine="true"
                                     android:textSize="12sp" />
 
@@ -434,7 +436,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="5dp"
                                 android:layout_marginTop="10dp"
-                                android:layout_weight="1">
+                                android:layout_weight="1"
+                                android:hint="Last Name">
 
                                 <EditText
                                     android:id="@+id/b_last_name"
@@ -443,7 +446,6 @@
                                     android:background="@drawable/edt_bg_selector"
                                     android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz. "
                                     android:fontFamily="@font/lucidasansdemibold"
-                                    android:hint="Last Name"
                                     android:singleLine="true"
                                     android:textSize="12sp" />
 
@@ -455,9 +457,10 @@
                             android:id="@+id/billing_email_input_layout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="5dp"
                             android:layout_marginTop="10dp"
+                            android:layout_marginRight="5dp"
                             android:layout_weight="1"
+                            android:hint="Email"
                             android:paddingTop="5dp">
 
                             <EditText
@@ -466,9 +469,10 @@
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/edt_bg_selector"
                                 android:fontFamily="@font/lucidasansdemibold"
-                                android:hint="Email"
+                                android:importantForAutofill="noExcludeDescendants"
                                 android:singleLine="true"
-                                android:textSize="12sp" />
+                                android:textSize="12sp"
+                                tools:targetApi="o" />
 
                         </android.support.design.widget.TextInputLayout>
 
@@ -476,9 +480,10 @@
                             android:id="@+id/billing_phone_input_layout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="5dp"
                             android:layout_marginTop="10dp"
+                            android:layout_marginRight="5dp"
                             android:layout_weight="1"
+                            android:hint="Mobile Number"
                             android:paddingTop="5dp">
 
                             <EditText
@@ -487,7 +492,6 @@
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/edt_bg_selector"
                                 android:fontFamily="@font/lucidasansdemibold"
-                                android:hint="Mobile Number"
                                 android:inputType="phone"
                                 android:maxLength="14"
                                 android:singleLine="true"
@@ -496,13 +500,13 @@
                         </android.support.design.widget.TextInputLayout>
 
 
-
                         <android.support.design.widget.TextInputLayout
                             android:id="@+id/billing_door_street_input_layout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingBottom="10dp"
-                            android:paddingTop="10dp">
+                            android:hint="Enter Address"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp">
 
                             <EditText
                                 android:id="@+id/billing_door_street_input"
@@ -511,7 +515,6 @@
                                 android:background="@drawable/edt_bg_selector"
                                 android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 #`~!@#$%^*()-_=+{}[]\|;':,./?&amp;"
                                 android:fontFamily="@font/lucidasansdemibold"
-                                android:hint="Enter Address"
                                 android:maxLength="100"
                                 android:maxLines="1"
                                 android:singleLine="true"
@@ -537,8 +540,9 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginRight="10dp"
-                                        android:paddingBottom="10dp"
-                                        android:paddingTop="10dp">
+                                        android:hint="Pin"
+                                        android:paddingTop="10dp"
+                                        android:paddingBottom="10dp">
 
                                         <EditText
                                             android:id="@+id/billing_pin"
@@ -547,7 +551,7 @@
                                             android:background="@drawable/edt_bg_selector"
                                             android:digits="0123456789"
                                             android:fontFamily="@font/lucidasansdemibold"
-                                            android:hint="Pin"
+
                                             android:inputType="number"
                                             android:maxLength="6"
                                             android:maxLines="1"
@@ -570,9 +574,10 @@
                                         android:id="@+id/billing_city_input_layout"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:paddingBottom="10dp"
+                                        android:hint="City"
                                         android:paddingLeft="10dp"
-                                        android:paddingTop="10dp">
+                                        android:paddingTop="10dp"
+                                        android:paddingBottom="10dp">
 
                                         <EditText
                                             android:id="@+id/billing_city"
@@ -580,7 +585,6 @@
                                             android:layout_height="wrap_content"
                                             android:background="@drawable/edt_bg_selector"
                                             android:fontFamily="@font/lucidasansdemibold"
-                                            android:hint="City"
                                             android:singleLine="true"
                                             android:textSize="12sp" />
                                     </android.support.design.widget.TextInputLayout>
@@ -592,8 +596,8 @@
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentRight="true"
                                         android:layout_centerVertical="true"
-                                        android:layout_marginRight="13dp"
                                         android:layout_marginTop="12dp"
+                                        android:layout_marginRight="13dp"
                                         android:background="#fafafa"
                                         android:indeterminate="true"
                                         android:indeterminateTint="#d9d5d5"
@@ -625,9 +629,10 @@
                                         android:id="@+id/billing_state_input_layout"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:paddingBottom="10dp"
+                                        android:hint="State"
+                                        android:paddingTop="10dp"
                                         android:paddingRight="10dp"
-                                        android:paddingTop="10dp">
+                                        android:paddingBottom="10dp">
 
                                         <EditText
                                             android:id="@+id/billing_state"
@@ -635,7 +640,6 @@
                                             android:layout_height="wrap_content"
                                             android:background="@drawable/edt_bg_selector"
                                             android:fontFamily="@font/lucidasansdemibold"
-                                            android:hint="State"
                                             android:singleLine="true"
                                             android:textSize="12sp" />
                                     </android.support.design.widget.TextInputLayout>
@@ -647,8 +651,8 @@
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentRight="true"
                                         android:layout_centerVertical="true"
-                                        android:layout_marginRight="13dp"
                                         android:layout_marginTop="12dp"
+                                        android:layout_marginRight="13dp"
                                         android:background="#fafafa"
                                         android:indeterminate="true"
                                         android:indeterminateTint="#d9d5d5"
@@ -671,9 +675,10 @@
                                         android:id="@+id/billing_input_layout"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:paddingBottom="10dp"
+                                        android:hint="Country"
                                         android:paddingLeft="10dp"
-                                        android:paddingTop="10dp">
+                                        android:paddingTop="10dp"
+                                        android:paddingBottom="10dp">
 
                                         <EditText
                                             android:id="@+id/billing_country"
@@ -681,7 +686,6 @@
                                             android:layout_height="wrap_content"
                                             android:background="@drawable/edt_bg_selector"
                                             android:fontFamily="@font/lucidasansdemibold"
-                                            android:hint="Country"
                                             android:singleLine="true"
                                             android:textSize="12sp" />
                                     </android.support.design.widget.TextInputLayout>
@@ -693,8 +697,8 @@
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentRight="true"
                                         android:layout_centerVertical="true"
-                                        android:layout_marginRight="13dp"
                                         android:layout_marginTop="12dp"
+                                        android:layout_marginRight="13dp"
                                         android:background="#fafafa"
                                         android:indeterminate="true"
                                         android:indeterminateTint="#d9d5d5"
@@ -712,8 +716,8 @@
                         android:id="@+id/layout_placing"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="50dp"
                         android:layout_marginTop="20dp"
+                        android:layout_marginBottom="50dp"
                         android:orientation="vertical"
                         android:visibility="gone">
 
@@ -746,29 +750,30 @@
             </android.support.v7.widget.CardView>
         </LinearLayout>
     </ScrollView>
+
     <LinearLayout
         android:id="@+id/button"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
 
 
-            <LinearLayout
-                android:id="@+id/payment_section"
+        <LinearLayout
+            android:id="@+id/payment_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent">
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorAccent">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/lucidasansdemiboldroman"
-                    android:gravity="center"
-                    android:padding="15dp"
-                    android:text="Continue to shipping method"
-                    android:textColor="@color/white"
-                    android:textSize="14sp" />
-            </LinearLayout>
+                android:fontFamily="@font/lucidasansdemiboldroman"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="Continue to shipping method"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </LinearLayout>
 
 
     </LinearLayout>
