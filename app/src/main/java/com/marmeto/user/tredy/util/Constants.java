@@ -21,4 +21,6 @@ public class Constants {
     public static final String unreadcount=Base_URL + "/api/v1/customer/notifications/count/";
     public static final String latestcheckout=Base_URL+"/api/v1/checkouts/latest?";
     public static final String postch = "https://67a5731832317f2f54b7942366d9ce54:5ec307570d980aaf7fb4aedfd07cc27e@tredyfoods.myshopify.com/admin/orders.json";
+
+    public static final String Check_COD_API ="https://sheets.googleapis.com/v4/spreadsheets/1xjP7jQb4OxbDhSImOWUX4Ktzy4l1BuBTzQESlRkVH2o/values/Sheet1?key=AIzaSyDIZ3OSu2vbrYgz870WTkb0LSZ2G7YXLVw";
 }

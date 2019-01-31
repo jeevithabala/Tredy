@@ -30,7 +30,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.marmeto.user.tredy.bag.cartdatabase.AddToCart_Model;
@@ -85,12 +87,15 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     private String orderId, discounted_price, discount_coupon;
     String accessCode, merchantId, currency, rsaKeyUrl, redirectUrl, cancelUrl;
     int buynow = 0, ordercount = 0;
+    ArrayList<String> allPinList = new ArrayList<>();
 
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay_umoney);
+
+         getAllPinList();
         SharedPreference.saveData("update", "true", getApplicationContext());
         accessToken = SharedPreference.getData("accesstoken", PayUMoneyActivity.this);
 
@@ -188,6 +193,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
         discountAdapter.notifyDataSetChanged();
+
+
 //        if (accessToken != null) {
 //            getEmailId();
 //        }
@@ -255,7 +262,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 //                    Toast.makeText(getApplicationContext(), "Please enter your valid phone number", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    showCustomDialog1();
+
+//                    iufjaflgahfgalbfghafdfrflhfbglafhgjflb
+                    showCustomDialog1(checkPinCode(zip));
 
                 }
                 break;
@@ -268,9 +277,63 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    private void getAllPinList(){
 
-    protected void showCustomDialog1() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Processing, please wait...");
+        progressDialog.setCanceledOnTouchOutside(false);
+
+
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constants.Check_COD_API,
+                null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+
+                try {
+                    JSONArray jsonArray = response.getJSONArray("values") ;
+
+                    for(int i=0; i<jsonArray.length();i++){
+
+                        JSONArray jsonArray1 = jsonArray.getJSONArray(i);
+                        Log.d("array"+i,jsonArray1.get(0).toString());
+                        allPinList.add(jsonArray1.get(0).toString());
+
+                        progressDialog.dismiss();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                progressDialog.dismiss();
+            }
+        });
+
+        RequestQueue requestQueue = Volley.newRequestQueue(PayUMoneyActivity.this);
+        requestQueue.add(jsonObjectRequest);
+
+
+    }
+    private boolean checkPinCode(String pin){
+
+        if(allPinList.contains(pin))
+            return true;
+
+        return false;
+    }
+
+    protected void showCustomDialog1(Boolean isCODAvilable) {
         // TODO Auto-generated method stub
+
+
 
         final Dialog dialog = new Dialog(PayUMoneyActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -292,6 +355,11 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         } else {
             btnradonline.setVisibility(View.VISIBLE);
         }
+
+        if(isCODAvilable)
+            btnradcod.setVisibility(View.VISIBLE);
+        else
+            btnradcod.setVisibility(View.GONE);
 
         txtpayamount.setText(totalcost);
         btnradonline.setOnClickListener(this);
