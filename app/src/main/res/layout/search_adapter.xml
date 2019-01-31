@@ -5,13 +5,13 @@
 
         <variable
             name="searchproduct"
-            type="com.marmeto.user.tredy.search.SearchModel">
+            type="com.tredy.user.tredy.search.SearchModel">
 
         </variable>
 
         <variable
             name="itemclick"
-            type="com.marmeto.user.tredy.callback.ProductClickInterface" />
+            type="com.tredy.user.tredy.callback.ProductClickInterface" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

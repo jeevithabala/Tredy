@@ -5,13 +5,13 @@
 
         <variable
             name="allcollection"
-            type="com.marmeto.user.tredy.foryou.allcollection.AllCollectionModel">
+            type="com.tredy.user.tredy.foryou.allcollection.AllCollectionModel">
 
         </variable>
 
         <variable
             name="itemclick"
-            type="com.marmeto.user.tredy.callback.FragmentRecyclerViewClick" />
+            type="com.tredy.user.tredy.callback.FragmentRecyclerViewClick" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

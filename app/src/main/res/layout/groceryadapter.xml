@@ -6,7 +6,7 @@
 
         <variable
             name="grocery"
-            type="com.marmeto.user.tredy.groceries.GroceryModel">
+            type="com.tredy.user.tredy.groceries.GroceryModel">
 
         </variable>
         <!--<variable-->
@@ -14,7 +14,7 @@
         <!--type="com.example.user.trendy.Interface.FragmentRecyclerViewClick" />-->
         <variable
             name="counter"
-            type="com.marmeto.user.tredy.groceries.GroceryInterface" />
+            type="com.tredy.user.tredy.groceries.GroceryInterface" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

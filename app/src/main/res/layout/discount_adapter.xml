@@ -6,11 +6,11 @@
 
         <variable
             name="discount"
-            type="com.marmeto.user.tredy.bag.DiscountModel" />
+            type="com.tredy.user.tredy.bag.DiscountModel" />
 
         <variable
             name="itemclick"
-            type="com.marmeto.user.tredy.callback.FragmentRecyclerViewClick" />
+            type="com.tredy.user.tredy.callback.FragmentRecyclerViewClick" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -44,7 +44,7 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="50dp"
-                        app:srcCompat="@drawable/ic_coupon"
+                        app:srcCompat="@drawable/ic_piggybank"
                         tools:ignore="VectorDrawableCompat" />
                 </LinearLayout>
 

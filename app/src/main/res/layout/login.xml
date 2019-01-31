@@ -187,6 +187,10 @@
                 android:textSize="14sp" />
 
             <LinearLayout
+                android:paddingTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/social"
@@ -204,6 +208,8 @@
                         android:id="@+id/btn_sign_in"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:layout_gravity="end"
+                        android:gravity="end"
                         android:layout_marginLeft="110dp"
                         android:background="@drawable/googleplus"
                         android:visibility="visible" />

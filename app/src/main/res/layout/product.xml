@@ -5,13 +5,13 @@
 
         <variable
             name="product"
-            type="com.marmeto.user.tredy.category.model.ProductModel">
+            type="com.tredy.user.tredy.category.model.ProductModel">
 
         </variable>
 
         <variable
             name="itemclick"
-            type="com.marmeto.user.tredy.callback.ProductClickInterface" />
+            type="com.tredy.user.tredy.callback.ProductClickInterface" />
     </data>
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
