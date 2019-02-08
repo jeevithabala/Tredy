@@ -81,7 +81,7 @@ public class NotificationsListFragment extends Fragment implements NotificationL
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager1);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        adapter = new NotificationListAdapter(actorsList, getActivity(),this);
+        adapter = new NotificationListAdapter(actorsList, getActivity(), this);
         recyclerView.setAdapter(adapter);
         if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
             progressDoalog.setMessage("loading....");
@@ -105,7 +105,7 @@ public class NotificationsListFragment extends Fragment implements NotificationL
                 if (actorsList.size() > 0) {
                     if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
                         for (int i = 0; i < actorsList.size(); i++) {
-                            if(actorsList.get(i).getPnew().equals("null")) {
+                            if (actorsList.get(i).getPnew().equals("null")) {
                                 registperp(actorsList.get(i).getPid());
                             }
                         }
@@ -114,7 +114,7 @@ public class NotificationsListFragment extends Fragment implements NotificationL
                         progressDoalog.dismiss();
                         Toast.makeText(getActivity(), "Please Make Sure Internet Is Connected", Toast.LENGTH_SHORT).show();
                     }
-                }else {
+                } else {
                     progressDoalog.dismiss();
                 }
             }
@@ -171,75 +171,76 @@ public class NotificationsListFragment extends Fragment implements NotificationL
 
 
     private void NotificationCountstatuslist() {
+        if (getActivity() != null) {
 
-        String token = SharedPreference.getData("customerid",Objects.requireNonNull(getActivity()));
-        Log.e("customer_id", " "+token);
+            String token = SharedPreference.getData("customerid", getActivity());
+            Log.e("customer_id", " " + token);
 
-        String minusdatet = getCalculatedDate("MM/dd/yyyy", -10);
+            String minusdatet = getCalculatedDate("MM/dd/yyyy", -10);
 
-        RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.getallnotification + token.trim() + "?from=" + minusdatet,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
+            RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.getallnotification + token.trim() + "?from=" + minusdatet,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
 //                            paginationProgress.setVisibility(View.GONE);
 //                            progressBar.setVisibility(View.GONE);
-                            JSONArray array = new JSONArray(response);
+                                JSONArray array = new JSONArray(response);
 
-                            actorsList.clear();
-                            for (int i = 0; i < array.length(); i++) {
-                                JSONObject object1 = array.getJSONObject(i);
-                                NotificationListSet actor = new NotificationListSet();
-                                String id = object1.getString("_id");
-                                JSONObject object = object1.getJSONObject("notification");
+                                actorsList.clear();
+                                for (int i = 0; i < array.length(); i++) {
+                                    JSONObject object1 = array.getJSONObject(i);
+                                    NotificationListSet actor = new NotificationListSet();
+                                    String id = object1.getString("_id");
+                                    JSONObject object = object1.getJSONObject("notification");
 
-                                actor.setTitle(object.getString("title"));
-                                actor.setPnew(object1.getString("read_at"));
-                                if (object.has("order_name") && !object.isNull("order_name")) {
-                                    actor.setOrderid(object.getString("order_name"));
+                                    actor.setTitle(object.getString("title"));
+                                    actor.setPnew(object1.getString("read_at"));
+                                    if (object.has("order_name") && !object.isNull("order_name")) {
+                                        actor.setOrderid(object.getString("order_name"));
+                                    } else {
+                                        // Avoid this user.
+                                    }
+
+                                    actor.setPid(id);
+                                    actorsList.add(actor);
+
+                                }
+                                if (actorsList.size() == 0) {
+                                    noti_text.setVisibility(VISIBLE);
                                 } else {
-                                    // Avoid this user.
+                                    noti_text.setVisibility(GONE);
+                                }
+                                adapter.notifyDataSetChanged();
+                                if (progressDoalog != null && progressDoalog.isShowing()) {
+                                    progressDoalog.dismiss();
                                 }
 
-                                actor.setPid(id);
-                                actorsList.add(actor);
 
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                            if (actorsList.size() == 0) {
-                                noti_text.setVisibility(VISIBLE);
-                            } else {
-                                noti_text.setVisibility(GONE);
-                            }
-                            adapter.notifyDataSetChanged();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
                             if (progressDoalog != null && progressDoalog.isShowing()) {
                                 progressDoalog.dismiss();
                             }
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (progressDoalog != null && progressDoalog.isShowing()) {
-                            progressDoalog.dismiss();
-                        }
-                    }
-                }) {
+                    }) {
 
-        };
-        stringRequest.setTag("noti");
-        // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
+            };
+            stringRequest.setTag("noti");
+            // VolleySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
 
-        int socketTimeout = 10000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        stringRequest.setRetryPolicy(policy);
-        mRequestQueue.add(stringRequest);
-
+            int socketTimeout = 10000;
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            stringRequest.setRetryPolicy(policy);
+            mRequestQueue.add(stringRequest);
+        }
     }
 
 
@@ -336,7 +337,7 @@ public class NotificationsListFragment extends Fragment implements NotificationL
     }
 
     @Override
-    public void noticountchange( String id) {
-      getNotiCount();
+    public void noticountchange(String id) {
+        getNotiCount();
     }
 }

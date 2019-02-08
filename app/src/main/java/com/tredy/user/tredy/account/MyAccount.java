@@ -188,7 +188,9 @@ public class MyAccount extends Fragment {
                     emailtext = "" + response.data().getCustomer().getEmail();
                     mobiletext = "" + response.data().getCustomer().getPhone();
                     if (mobiletext.trim().length() != 0) {
-                        SharedPreference.saveData("mobile", mobiletext.trim(), Objects.requireNonNull(getActivity()));
+                        if (getActivity() != null) {
+                            SharedPreference.saveData("mobile", mobiletext.trim(), getActivity());
+                        }
                     }
 
                     getActivity().runOnUiThread(() -> {

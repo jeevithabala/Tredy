@@ -66,7 +66,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
         topselling_recyclerview = view.findViewById(R.id.main_recyclerview);
         allcollection = view.findViewById(R.id.allcollection);
-        resultCallBackInterface =  this;
+        resultCallBackInterface = this;
 
 
         graphClient = GraphClient.builder(Objects.requireNonNull(getActivity()))
@@ -135,7 +135,9 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
 
                 getObject().add(topSellingModelArrayList.get(0));
-                adapter.notifyDataSetChanged();
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
+                }
 
 
             });
@@ -155,8 +157,9 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
                     newArrivalModelArrayList.add(newArrivalModel);
                 }
                 getObject().add(newArrivalModelArrayList.get(0));
-                adapter.notifyDataSetChanged();
-
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
+                }
 
             });
         }
@@ -181,7 +184,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
 
     private void init() {
-        if (getActivity() != null) {
+        if (getActivity() != null && bannerlist != null) {
             slidingImage_adapter = new SlidingImage_Adapter(getActivity(), bannerlist);
             mPager.setAdapter(slidingImage_adapter);
 
@@ -249,15 +252,19 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
     @Override
     public void collectionlist(ArrayList<NewArrivalModel> newArrivalModelArrayList) {
-        if(newArrivalModelArrayList!=null) {
-            resultCallBackInterface.newArrivals(newArrivalModelArrayList);
+        if (newArrivalModelArrayList != null) {
+            try {
+                resultCallBackInterface.newArrivals(newArrivalModelArrayList);
+            }catch (Exception ignored){
+
+            }
         }
     }
 
 
     @Override
     public void bannerlist(ArrayList<String> bannerlist1) {
-        if(bannerlist1!=null) {
+        if (bannerlist1 != null) {
             bannerlist.clear();
             bannerlist.addAll(bannerlist1);
             init();
@@ -266,15 +273,23 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
 
     @Override
     public void grocerylist(ArrayList<GroceryHomeModel> arrayList) {
-        if(arrayList!=null) {
-            resultCallBackInterface.grocery(arrayList);
+        if (arrayList != null) {
+            try {
+                resultCallBackInterface.grocery(arrayList);
+            } catch (Exception ignored) {
+
+            }
         }
     }
 
     @Override
     public void topselling1(ArrayList<TopSellingModel> topSellingModelArrayList) {
-        if(topSellingModelArrayList!=null) {
-            resultCallBackInterface.topSelling(topSellingModelArrayList);
+        if (topSellingModelArrayList != null) {
+            try {
+                resultCallBackInterface.topSelling(topSellingModelArrayList);
+            } catch (Exception ignored) {
+
+            }
         }
     }
 
@@ -298,12 +313,10 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     }
 
 
-
     @Override
     public void onPause() {
         super.onPause();
     }
-
 
 
 }
