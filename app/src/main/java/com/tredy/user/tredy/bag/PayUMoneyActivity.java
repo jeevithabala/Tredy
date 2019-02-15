@@ -984,4 +984,10 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         super.onBackPressed();
         SharedPreference.saveData("update", "true", getApplicationContext());
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        abandandCheckout();
+    }
 }

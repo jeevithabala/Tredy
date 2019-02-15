@@ -22,6 +22,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -449,67 +450,74 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                 a = "?" + sortbykey.trim() + "&page_size=10&page=" + count;
             }
 
-            stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + a, response -> {
-                Log.i("VOLLEY", response);
-                try {
-                    JSONObject obj = new JSONObject(response);
-                    title = obj.getString("collection_name");
-                    if (title.toLowerCase().equals("home page")) {
-                        category_title.setText("Trending");
-                    } else {
-                        category_title.setText(title);
-                    }
+            stringRequest = new StringRequest(Request.Method.POST, Constants.filter_post + a, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        title = obj.getString("collection_name");
+                        if (title.toLowerCase().equals("home page")) {
+                            category_title.setText("Trending");
+                        } else {
+                            category_title.setText(title);
+                        }
 
-                    Log.e("title", "" + title);
-                    Iterator keys = obj.keys();
-                    Log.e("Keys", "" + String.valueOf(keys));
+//                        Log.e("title", "" + title);
+                        Iterator keys = obj.keys();
+//                        Log.e("Keys", "" + String.valueOf(keys));
 
-                    while (keys.hasNext()) {
-                        dynamicKey = (String) keys.next();
-                        Log.d("Dynamic Key", "" + dynamicKey);
+                        while (keys.hasNext()) {
+                            dynamicKey = (String) keys.next();
+//                            Log.d("Dynamic Key", "" + dynamicKey);
 
-                        JSONArray array;
-                        try {
-                            array = obj.getJSONArray(dynamicKey);
+                            JSONArray array;
+                            try {
+                                array = obj.getJSONArray(dynamicKey);
 
-                            for (int i = 0; i < array.length(); i++) {
-                                JSONObject object1 = array.getJSONObject(i);
-                                String title = object1.getString("title");
-                                String min_price = object1.getString("min_price");
+                                for (int i = 0; i < array.length(); i++) {
+                                    JSONObject object1 = array.getJSONObject(i);
+                                    String title = object1.getString("title");
+                                    String min_price = object1.getString("min_price");
 
-                                String imagesrc = "";
-                                JSONArray array1 = object1.getJSONArray("images");
-                                for (int j = 0; j < array1.length(); j++) {
-                                    JSONObject object = array1.getJSONObject(j);
-                                    productidapi = object.getString("product_id");
-                                    imagesrc = object.getString("src");
+                                    String imagesrc = "";
+                                    JSONArray array1 = object1.getJSONArray("images");
+                                    for (int j = 0; j < array1.length(); j++) {
+                                        JSONObject object = array1.getJSONObject(j);
+                                        productidapi = object.getString("product_id");
+                                        imagesrc = object.getString("src");
+                                    }
+                                    ProductModel productModel = new ProductModel(productidapi, min_price, title, imagesrc);
+                                    productDetalList1.add(productModel);
                                 }
-                                ProductModel productModel = new ProductModel(productidapi, min_price, title, imagesrc);
-                                productDetalList1.add(productModel);
-                            }
 
 //                                productAdapter1 = new ProductAdapter(getActivity(), productDetalList1, getFragmentManager(), CategoryProduct.this);
 //                                productAdapter = new ProductAdapter(getActivity(), productDetalList, getFragmentManager(), CategoryProduct.this);
 //                                recyclerView.setAdapter(productAdapter);
-                            productAdapter1.notifyDataSetChanged();
-                            if (productDetalList1.size() == 0) {
-                                noproduct.setVisibility(View.VISIBLE);
-                            } else {
-                                noproduct.setVisibility(View.GONE);
+                                productAdapter1.notifyDataSetChanged();
+                                if (productDetalList1.size() == 0) {
+                                    noproduct.setVisibility(View.VISIBLE);
+                                } else {
+                                    noproduct.setVisibility(View.GONE);
+                                }
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+
                             }
-                        } catch (JSONException e1) {
-                            e1.printStackTrace();
+
 
                         }
 
 
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }, error -> Log.e("VOLLEY", error.toString())) {
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("VOLLEY"," "+ error.toString());
+                }
+            }) {
                 @Override
                 public String getBodyContentType() {
                     return "application/json; charset=utf-8";

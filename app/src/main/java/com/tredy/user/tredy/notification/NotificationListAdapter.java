@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.tredy.user.tredy.R;
+import com.tredy.user.tredy.bag.Bag;
 import com.tredy.user.tredy.util.Constants;
 import com.tredy.user.tredy.util.Internet;
 
@@ -79,11 +81,11 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
-    public NotificationListAdapter(List<NotificationListSet> customerlist, Context context, noticount noticount) {
+    public NotificationListAdapter(List<NotificationListSet> customerlist, Context context, noticount noticount, FragmentManager fragmentManager) {
         this.customerlist = customerlist;
         this.context = context;
-        this.noticount=noticount;
-
+        this.noticount = noticount;
+        this.fragmentManager = fragmentManager;
     }
 
     @Override
@@ -149,9 +151,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 //
 //            }
 
-            viewHolder.notification.setOnClickListener(new View.OnClickListener()
-
-            {
+            viewHolder.notification.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 //                    viewHolder.name.setTextColor(context.getResources().getColor(R.color.ntificationtextread));
@@ -165,16 +165,32 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                     final String pnew = customerlist.get(position).getPnew();
                     final String title = customerlist.get(position).getTitle();
                     String orderid = customerlist.get(position).getOrderid();
+                    String checkout_id = customerlist.get(position).getOrderid();
 
+                    if (checkout_id.trim().equals("")) {
+                        if (fragmentManager.findFragmentById(R.id.home_container) instanceof Bag) {
 
-                    Intent i = new Intent(context, NotificationDataFragment.class);
-                    i.putExtra("id", id);
-                    i.putExtra("pnew", pnew);
-                    i.putExtra("title", title);
-                    i.putExtra("orderid", orderid);
-                    context.startActivity(i);
-
-//
+                        } else {
+                            Bag bag = new Bag();
+//                        FragmentManager fragmentManager = ge;
+                            FragmentTransaction transaction1 = fragmentManager.beginTransaction();
+                            transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                            transaction1.replace(R.id.home_container, bag, "Bag");
+                            if (fragmentManager.findFragmentByTag("Bag") == null) {
+                                transaction1.addToBackStack("Bag");
+                                transaction1.commit();
+                            } else {
+                                transaction1.commit();
+                            }
+                        }
+                    } else {
+                        Intent i = new Intent(context, NotificationDataFragment.class);
+                        i.putExtra("id", id);
+                        i.putExtra("pnew", pnew);
+                        i.putExtra("title", title);
+                        i.putExtra("orderid", orderid);
+                        context.startActivity(i);
+                    }
                 }
             });
 
@@ -223,8 +239,6 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         mRequestQueue.add(stringRequest);
 
     }
-
-
 
 
     @Override

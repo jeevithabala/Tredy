@@ -33,6 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="5dp"
+                    android:hint="First Name"
                     android:layout_weight="1">
 
                     <EditText
@@ -41,7 +42,6 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/edt_bg_selector"
                         android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz. "
-                        android:hint="First Name"
                         android:singleLine="true"
                         android:textSize="15sp"
                         tools:ignore="UnusedAttribute" />

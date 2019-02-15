@@ -161,7 +161,7 @@ public class MyAccountEdit extends Fragment {
             @Override
             public void onResponse(@NonNull GraphResponse<Storefront.Mutation> response) {
                 if (response.data() != null) {
-                    if(response.data().getCustomerUpdate().getCustomer()!=null) {
+                    if(response.data().getCustomerUpdate()!=null && response.data().getCustomerUpdate().getCustomer()!=null) {
                         String phone = response.data().getCustomerUpdate().getCustomer().getPhone();
                         String firstName = response.data().getCustomerUpdate().getCustomer().getFirstName();
                         String lastName = response.data().getCustomerUpdate().getCustomer().getLastName();

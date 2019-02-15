@@ -84,6 +84,7 @@ dependencies {
     // Required for instrumented tests
     androidTestImplementation 'com.android.support:support-annotations:24.0.0'
     androidTestImplementation 'com.android.support.test:runner:0.5'
+    implementation 'com.facebook.android:facebook-marketing:[4,5)'
 }
 
 apply plugin: 'com.google.gms.google-services'

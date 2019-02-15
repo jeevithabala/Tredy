@@ -75,9 +75,10 @@ public class AddWhislistModel implements Serializable{
 
     @BindingAdapter("imageplace")
     public static void loadImage(ImageView view, String imageUrl) {
-        Picasso.with(view.getContext())
-                .load(imageUrl)
-                .into(view);
+        if (imageUrl.equals("")){}else {
+            Picasso.with(view.getContext())
+                    .load(imageUrl)
+                    .into(view);}
     }
 
 }

@@ -81,7 +81,7 @@ public class NotificationsListFragment extends Fragment implements NotificationL
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager1);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        adapter = new NotificationListAdapter(actorsList, getActivity(), this);
+        adapter = new NotificationListAdapter(actorsList, getActivity(), this,getFragmentManager());
         recyclerView.setAdapter(adapter);
         if (Config.isNetworkAvailable(Objects.requireNonNull(getActivity()))) {
             progressDoalog.setMessage("loading....");
@@ -187,6 +187,7 @@ public class NotificationsListFragment extends Fragment implements NotificationL
 //                            paginationProgress.setVisibility(View.GONE);
 //                            progressBar.setVisibility(View.GONE);
                                 JSONArray array = new JSONArray(response);
+                                Log.e("response", response);
 
                                 actorsList.clear();
                                 for (int i = 0; i < array.length(); i++) {
@@ -202,7 +203,11 @@ public class NotificationsListFragment extends Fragment implements NotificationL
                                     } else {
                                         // Avoid this user.
                                     }
-
+                                    if(object.has("checkout_id")&&!object.isNull("checkout_id")){
+                                        actor.setCheckout_id(object.getString("checkout_id"));
+                                    }else {
+//                                        actor.setCheckout_id(object.getString(""));
+                                    }
                                     actor.setPid(id);
                                     actorsList.add(actor);
 
