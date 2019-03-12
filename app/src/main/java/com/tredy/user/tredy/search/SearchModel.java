@@ -52,13 +52,14 @@ public class SearchModel implements Serializable {
         if(imageUrl!=null) {
             Picasso.with(view.getContext())
                     .load(imageUrl)
-                    .placeholder(R.drawable.trendybanner)
-                    .error(R.drawable.trendybanner)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .error(R.drawable.ic_placeholder)
                     .resize(200,200)
                     .into(view);
         } else {
             Picasso.with(view.getContext())
-                    .load(R.drawable.trendybanner)
+                    .load(R.drawable.ic_placeholder)
+                    .placeholder(R.drawable.ic_placeholder)
                     .into(view);
         }
     }

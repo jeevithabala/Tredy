@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-
+    android:focusableInTouchMode="true">
 
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <LinearLayout
-            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp">
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:orientation="vertical">
 
 
             <LinearLayout
@@ -31,20 +31,20 @@
                     android:id="@+id/first_name_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginRight="5dp"
+                    android:hint="First Name"
                     android:layout_weight="1">
 
                     <EditText
-                        android:importantForAutofill="noExcludeDescendants"
                         android:id="@+id/first_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/edt_bg_selector"
                         android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz. "
-                        android:hint="First Name"
                         android:singleLine="true"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        tools:ignore="UnusedAttribute" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -54,7 +54,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="10dp"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:hint="Last Name">
 
                     <EditText
                         android:id="@+id/last_name"
@@ -62,49 +63,53 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/edt_bg_selector"
                         android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz. "
-                        android:hint="Last Name"
                         android:singleLine="true"
                         android:textSize="15sp" />
 
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
+
             <android.support.design.widget.TextInputLayout
-                android:paddingTop="5dp"
                 android:id="@+id/email_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
                 android:layout_marginTop="10dp"
-                android:layout_weight="1">
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:hint="Email"
+                android:paddingTop="5dp">
 
                 <EditText
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/edt_bg_selector"
-                    android:hint="Email"
+                    android:importantForAutofill="noExcludeDescendants"
                     android:singleLine="true"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    tools:ignore="UnusedAttribute" />
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:paddingTop="5dp"
                 android:id="@+id/mobile_number_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
                 android:layout_marginTop="10dp"
-                android:layout_weight="1">
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:paddingTop="5dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="+91"/>
+                        android:text="+91" />
 
                     <EditText
                         android:id="@+id/mobile_number"
@@ -126,23 +131,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
+                android:singleLine="true"
                 android:text="* Profile update will take time."
                 android:textColor="#ff0000"
-                android:singleLine="true"
                 android:textSize="15sp" />
         </LinearLayout>
     </ScrollView>
 
     <TextView
-        android:layout_alignParentBottom="true"
-        android:background="@color/appcolor"
         android:id="@+id/save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save"
-        android:gravity="center"
-        android:textColor="@color/white"
+        android:layout_alignParentBottom="true"
+        android:background="@color/appcolor"
         android:fontFamily="@font/lucidasansdemibold"
-        android:padding="10dp"/>
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="Save"
+        android:textColor="@color/white" />
 
 </RelativeLayout>

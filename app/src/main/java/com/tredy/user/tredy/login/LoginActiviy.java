@@ -75,12 +75,12 @@ public class LoginActiviy extends AppCompatActivity implements
     private GraphClient graphClient;
     Button facebook, btnSignIn;
     TextView signin, signup, forgot_password;
-    EditText  email_text;
-//    ProgressBar progressBar;
+    EditText email_text;
+    //    ProgressBar progressBar;
     private ProgressDialog progressDoalog;
     TextInputEditText etPassword;
     GoogleApiClient mGoogleApiClient;
-//    ProgressDialog mProgressDialog;
+    //    ProgressDialog mProgressDialog;
     //    SignInButton btnSignIn;
     Button btnSignOut, btnRevokeAccess;
     Boolean sociallogin = false;
@@ -122,8 +122,8 @@ public class LoginActiviy extends AppCompatActivity implements
 
 
         btnSignIn = findViewById(R.id.btn_sign_in);
-        btnSignOut =  findViewById(R.id.btn_sign_out);
-        btnRevokeAccess =  findViewById(R.id.btn_revoke_access);
+        btnSignOut = findViewById(R.id.btn_sign_out);
+        btnRevokeAccess = findViewById(R.id.btn_revoke_access);
         etPassword = findViewById(R.id.etPassword);
 
         btnSignIn.setOnClickListener(this);
@@ -164,9 +164,7 @@ public class LoginActiviy extends AppCompatActivity implements
         callbackManager = CallbackManager.Factory.create();
 
         login_button.registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>()
-
-                {
+                new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
 
@@ -340,7 +338,7 @@ public class LoginActiviy extends AppCompatActivity implements
 
             if (acct != null) {
                 firstname = acct.getGivenName();
-                lastname=acct.getFamilyName();
+                lastname = acct.getFamilyName();
                 email = acct.getEmail();
                 String password1 = email;
 
@@ -358,7 +356,7 @@ public class LoginActiviy extends AppCompatActivity implements
 //            String personPhotoUrl = acct.getPhotoUrl().toString();
 
         } else {
-            Log.e("erroer", " "+result.toString());
+            Log.e("erroer", " " + result.toString());
         }
     }
 
@@ -391,19 +389,15 @@ public class LoginActiviy extends AppCompatActivity implements
                         .customerAccessToken(customerAccessToken -> customerAccessToken
                                 .accessToken()
                                 .expiresAt()
-
                         )
-
                         .userErrors(userError -> userError
                                 .field()
                                 .message()
                         )
-
                 )
         );
 
         graphClient.mutateGraph(mutationQuery1).enqueue(new GraphCall.Callback<Storefront.Mutation>() {
-
 
             @Override
             public void onResponse(@NonNull com.shopify.buy3.GraphResponse<Storefront.Mutation> response) {
@@ -513,71 +507,66 @@ public class LoginActiviy extends AppCompatActivity implements
 
     public void saveToken() {
         String token = FilterSharedPreference.getData("firebasetoken", getApplicationContext());
-        Log.e("tokennn", " " + token);
+        if (token.trim().length() > 0) {
 
 
-        byte[] data = Base64.decode(customerid, Base64.DEFAULT);
-        try {
-            customerid = new String(data, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        String[] separated = customerid.split("/");
-        customerid = separated[4]; // this will contain "Customer id"
-        Log.e("customer_id", " " + customerid);
-        SharedPreference.saveData("customerid", customerid, getApplicationContext());
+            byte[] data = Base64.decode(customerid, Base64.DEFAULT);
+            try {
+                customerid = new String(data, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            String[] separated = customerid.split("/");
+            customerid = separated[4]; // this will contain "Customer id"
+            SharedPreference.saveData("customerid", customerid, getApplicationContext());
 
 
-        try {
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            JSONObject jsonBody = new JSONObject();
-            jsonBody.put("customer_id", customerid.trim());
-            jsonBody.put("registration_token", token);
+            try {
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("customer_id", customerid.trim());
+                jsonBody.put("registration_token", token);
 
+                final String requestBody = jsonBody.toString();
 
-            Log.d("check JSON", jsonBody.toString());
-
-
-            final String requestBody = jsonBody.toString();
-
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.savetoken, response -> {
-                Log.e("tokenresponse", response);
-                try {
-                    JSONObject obj = new JSONObject(response);
-                    SharedPreference.saveData("update", "false", getApplicationContext());
-                    Intent i = new Intent(getApplicationContext(), Navigation.class);
-                    SharedPreference.saveData("login", "true", getApplicationContext());
-                    startActivity(i);
-                    finish();
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }, error -> Log.e("VOLLEY", " " + error.toString())) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
-
-                @Override
-                public byte[] getBody() throws AuthFailureError {
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.savetoken, response -> {
+                    Log.e("tokenresponse", response);
                     try {
-                        return requestBody == null ? null : requestBody.getBytes("utf-8");
-//                        return requestBody == null;
-                    } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-                        return null;
-                    }
-                }
+                        JSONObject obj = new JSONObject(response);
+                        SharedPreference.saveData("update", "false", getApplicationContext());
+                        Intent i = new Intent(getApplicationContext(), Navigation.class);
+                        SharedPreference.saveData("login", "true", getApplicationContext());
+                        startActivity(i);
+                        finish();
 
-                @Override
-                protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                    //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }, error -> Log.e("VOLLEY", " " + error.toString())) {
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public byte[] getBody() throws AuthFailureError {
+                        try {
+                            return requestBody == null ? null : requestBody.getBytes("utf-8");
+//                        return requestBody == null;
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                        //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
 //                    String statusCode = String.valueOf(response.statusCode);
-                    //Handling logic
-                    return super.parseNetworkResponse(response);
-                }
+                        //Handling logic
+                        return super.parseNetworkResponse(response);
+                    }
 //                @Override
 //                protected Response<String> parseNetworkResponse(NetworkResponse response) {
 //                    String responseString = "";
@@ -587,11 +576,12 @@ public class LoginActiviy extends AppCompatActivity implements
 //                    }
 //                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
 //                }
-            };
+                };
 
-            requestQueue.add(stringRequest);
-        } catch (JSONException e) {
-            e.printStackTrace();
+                requestQueue.add(stringRequest);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

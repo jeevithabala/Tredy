@@ -409,17 +409,20 @@ public class ForYouViewModel extends ViewModel {
 
         RequestQueue mRequestQueue = Volley.newRequestQueue(mContext);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.unreadcount + customerid.trim() + "?from=" + minusdatet,
-                response -> {
-                    try {
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
 
-                        JSONObject obj = new JSONObject(response);
-                        Log.e("response", response);
-                        String count = obj.getString("count");
-                        int noti_counnt = Integer.parseInt(count);
-                        foryouInterface.getcount(noti_counnt);
+                            JSONObject obj = new JSONObject(response);
+                            Log.e("response", response);
+                            String count = obj.getString("count");
+                            int noti_counnt = Integer.parseInt(count);
+                            foryouInterface.getcount(noti_counnt);
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 error -> {

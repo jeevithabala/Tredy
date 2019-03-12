@@ -9,7 +9,10 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +35,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.tredy.user.tredy.Navigation;
 import com.tredy.user.tredy.R;
+import com.tredy.user.tredy.Tawk;
 import com.tredy.user.tredy.util.Config;
 import com.tredy.user.tredy.util.Constants;
 import com.tredy.user.tredy.util.Internet;
@@ -58,6 +62,7 @@ public class NotificationsListFragment extends Fragment implements NotificationL
     public static boolean active = false;
     TextView noti_text, read_all;
     private ProgressDialog progressDoalog;
+    private FloatingActionButton chat_button;
 
 
     @Nullable
@@ -68,6 +73,7 @@ public class NotificationsListFragment extends Fragment implements NotificationL
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         read_all = view.findViewById(R.id.read_all);
         noti_text = view.findViewById(R.id.noti_text);
+        chat_button=view.findViewById(R.id.chat_button);
 
         return view;
     }
@@ -77,6 +83,28 @@ public class NotificationsListFragment extends Fragment implements NotificationL
         super.onActivityCreated(savedInstanceState);
         Objects.requireNonNull(((Navigation) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Notification");
         progressDoalog = new ProgressDialog(getActivity());
+
+        chat_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tawk tawk = new Tawk();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction transaction1 = null;
+                if (getFragmentManager() != null) {
+                    transaction1 = getFragmentManager().beginTransaction();
+                    transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    transaction1.add(R.id.home_container, tawk, "tawk");
+                    if (fragmentManager.findFragmentByTag("tawk") == null) {
+                        transaction1.addToBackStack("tawk");
+                        transaction1.commit();
+                    } else {
+                        transaction1.commit();
+                    }
+                }
+
+            }
+        });
+
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager1);

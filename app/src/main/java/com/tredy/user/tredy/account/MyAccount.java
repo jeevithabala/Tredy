@@ -5,7 +5,9 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 import com.tredy.user.tredy.BuildConfig;
 import com.tredy.user.tredy.Navigation;
 import com.tredy.user.tredy.R;
+import com.tredy.user.tredy.Tawk;
 import com.tredy.user.tredy.util.Config;
 import com.tredy.user.tredy.util.SharedPreference;
 import com.shopify.buy3.GraphCall;
@@ -44,6 +47,7 @@ public class MyAccount extends Fragment {
 //    private String productPageCursor = "";
 //    private int i = 0;
     private ProgressDialog progressDialog;
+    FloatingActionButton chat_button;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.myaccount, container, false);
@@ -54,6 +58,7 @@ public class MyAccount extends Fragment {
         email = view.findViewById(R.id.email);
         mobile_number = view.findViewById(R.id.mobile_number);
         edit_profile = view.findViewById(R.id.edit_profile);
+        chat_button=view.findViewById(R.id.chat_button);
 //        order_recyclerview = view.findViewById(R.id.order_recyclerview);
 //        order = view.findViewById(R.id.order);
 
@@ -87,6 +92,28 @@ public class MyAccount extends Fragment {
             }
 
         }
+
+        chat_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tawk tawk = new Tawk();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction transaction1 = null;
+                if (getFragmentManager() != null) {
+                    transaction1 = getFragmentManager().beginTransaction();
+                    transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    transaction1.add(R.id.home_container, tawk, "tawk");
+                    if (fragmentManager.findFragmentByTag("tawk") == null) {
+                        transaction1.addToBackStack("tawk");
+                        transaction1.commit();
+                    } else {
+                        transaction1.commit();
+                    }
+                }
+
+            }
+        });
+
 
 
         edit_profile.setOnClickListener(view -> {
@@ -187,26 +214,28 @@ public class MyAccount extends Fragment {
                     nametext = response.data().getCustomer().getFirstName() + "" + response.data().getCustomer().getLastName();
                     emailtext = "" + response.data().getCustomer().getEmail();
                     mobiletext = "" + response.data().getCustomer().getPhone();
-                    if (mobiletext.trim().length() != 0) {
-                        if (getActivity() != null) {
-                            SharedPreference.saveData("mobile", mobiletext.trim(), getActivity());
-                        }
-                    }
-
-                    getActivity().runOnUiThread(() -> {
-                        progressDialog.dismiss();
-                        if (nametext != null) {
-                            name.setText(firstname + " " + lastname);
-                            email.setText(emailtext.trim());
-                            if (mobiletext.trim().equals("null")) {
-                                mobiletext = "";
-                                mobile_number.setText(mobiletext);
-                            } else {
-                                mobile_number.setText(mobiletext.trim());
+                    if(getActivity()!=null) {
+                        if (mobiletext.trim().length() != 0) {
+                            if (getActivity() != null) {
+                                SharedPreference.saveData("mobile", mobiletext.trim(), getActivity());
                             }
                         }
 
-                    });
+                        getActivity().runOnUiThread(() -> {
+                            progressDialog.dismiss();
+                            if (nametext != null) {
+                                name.setText(firstname + " " + lastname);
+                                email.setText(emailtext.trim());
+                                if (mobiletext.trim().equals("null")) {
+                                    mobiletext = "";
+                                    mobile_number.setText(mobiletext);
+                                } else {
+                                    mobile_number.setText(mobiletext.trim());
+                                }
+                            }
+
+                        });
+                    }
                 }
 
             }

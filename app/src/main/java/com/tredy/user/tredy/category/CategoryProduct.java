@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -28,6 +30,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.tredy.user.tredy.BuildConfig;
+import com.tredy.user.tredy.Tawk;
 import com.tredy.user.tredy.category.model.CategoryModel;
 import com.tredy.user.tredy.category.model.ProductModel;
 import com.tredy.user.tredy.category.productDetail.ProductView;
@@ -92,6 +95,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     private Boolean isFilterData = false;
     String sortbystring = "";
     String category = null;
+    FloatingActionButton chat_button;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -109,6 +113,7 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
         filter = view.findViewById(R.id.filter);
         view1 = view.findViewById(R.id.list);
         grid = view.findViewById(R.id.grid);
+        chat_button=view.findViewById(R.id.chat_button);
         filter.setOnClickListener(this);
         view1.setOnClickListener(this);
         grid.setOnClickListener(this);
@@ -138,6 +143,28 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
     @Override
     public void onResume() {
         super.onResume();
+
+
+        chat_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tawk tawk = new Tawk();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction transaction1 = null;
+                if (getFragmentManager() != null) {
+                    transaction1 = getFragmentManager().beginTransaction();
+                    transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    transaction1.add(R.id.home_container, tawk, "tawk");
+                    if (fragmentManager.findFragmentByTag("tawk") == null) {
+                        transaction1.addToBackStack("tawk");
+                        transaction1.commit();
+                    } else {
+                        transaction1.commit();
+                    }
+                }
+
+            }
+        });
 
 
         if (getArguments() != null) {

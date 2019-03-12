@@ -3,7 +3,10 @@ package com.tredy.user.tredy.whislist;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 
 import com.tredy.user.tredy.Navigation;
 import com.tredy.user.tredy.R;
+import com.tredy.user.tredy.Tawk;
 import com.tredy.user.tredy.whislist.whislistDB.DBWhislist;
 
 import java.util.ArrayList;
@@ -28,6 +32,8 @@ public class Whislist extends Fragment implements WhislistAdapter.GetTotalCost {
     WhislistAdapter adapter;
     TextView items;
     private TextView nobag;
+    private FloatingActionButton chat_button;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.whislist, container, false);
@@ -37,6 +43,7 @@ public class Whislist extends Fragment implements WhislistAdapter.GetTotalCost {
         cartList.clear();
         items = view.findViewById(R.id.items);
         nobag = view.findViewById(R.id.nobag);
+        chat_button=view.findViewById(R.id.chat_button);
         items.setVisibility(View.VISIBLE);
 
         db = new DBWhislist(getActivity());
@@ -58,6 +65,32 @@ public class Whislist extends Fragment implements WhislistAdapter.GetTotalCost {
         visibilityCheck();
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        chat_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tawk tawk = new Tawk();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction transaction1 = null;
+                if (getFragmentManager() != null) {
+                    transaction1 = getFragmentManager().beginTransaction();
+                    transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    transaction1.add(R.id.home_container, tawk, "tawk");
+                    if (fragmentManager.findFragmentByTag("tawk") == null) {
+                        transaction1.addToBackStack("tawk");
+                        transaction1.commit();
+                    } else {
+                        transaction1.commit();
+                    }
+                }
+
+            }
+        });
+
     }
 
     @Override

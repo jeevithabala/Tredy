@@ -86,6 +86,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     String accessCode, merchantId, currency, rsaKeyUrl, redirectUrl, cancelUrl;
     int buynow = 0, ordercount = 0;
     ArrayList<String> allPinList = new ArrayList<>();
+    String isCODAvilable=" ";
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -150,6 +151,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
         }
+        Log.e("remove_cod", " "+remove_cod);
 
 //        Toast.makeText(this, totalcost, Toast.LENGTH_SHORT).show();
 
@@ -158,7 +160,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             String[] separated = totalamount.split(" ");
             totalamount = separated[1];
         }
-
+if(zip!=null&&zip.trim().length()>0){
+    checkPinCode(zip);
+}
 
         emailedit =findViewById(R.id.payuemail);
         mobile =  findViewById(R.id.payumobile);
@@ -261,8 +265,9 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
                 } else {
 
-//                    iufjaflgahfgalbfghafdfrflhfbglafhgjflb
-                    showCustomDialog1(checkPinCode(zip));
+//                    showCustomDialog1(checkPinCode(zip));
+
+                    showCustomDialog1(isCODAvilable);
 
                 }
                 break;
@@ -322,15 +327,16 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     }
     private boolean checkPinCode(String pin){
 
-        if(allPinList.contains(pin))
+        if(allPinList.contains(pin)) {
+            isCODAvilable="cod";
             return true;
+        }
 
         return false;
     }
 
-    protected void showCustomDialog1(Boolean isCODAvilable) {
+    protected void showCustomDialog1(String isCODAvilable) {
         // TODO Auto-generated method stub
-
 
 
         final Dialog dialog = new Dialog(PayUMoneyActivity.this);
@@ -342,22 +348,24 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         txtpayamount =  dialog.findViewById(R.id.pay_amount);
         btnradonline =dialog.findViewById(R.id.online);
         btnradcod =  dialog.findViewById(R.id.cod);
-        if (remove_cod.trim().length() != 0) {
-            btnradcod.setVisibility(View.GONE);
-        } else {
-            btnradcod.setVisibility(View.VISIBLE);
-        }
+//        btnradcod.setVisibility(View.GONE);
         int cost = Integer.parseInt(totalcost.trim());
+        if (remove_cod.trim().length() == 0||isCODAvilable.trim().equals("cod")) {
+            btnradcod.setVisibility(View.VISIBLE);
+        } else {
+            btnradcod.setVisibility(View.GONE);
+        }
+
         if (cost == 0) {
             btnradonline.setVisibility(View.GONE);
         } else {
             btnradonline.setVisibility(View.VISIBLE);
         }
 
-        if(isCODAvilable)
-            btnradcod.setVisibility(View.VISIBLE);
-        else
-            btnradcod.setVisibility(View.GONE);
+//        if(isCODAvilable)
+//            btnradcod.setVisibility(View.VISIBLE);
+//        else
+//            btnradcod.setVisibility(View.GONE);
 
         txtpayamount.setText(totalcost);
         btnradonline.setOnClickListener(this);
@@ -816,15 +824,17 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     product_varientid = str[4];
 
                     Integer quantity = cartlist.get(i).getQty();
+                    Log.e("quantity"," "+ String.valueOf(quantity));
 //                    items.put("variant_id", "5823671107611");
                     items.put("product_id", product_varientid.trim());
                     items.put("quantity", quantity);
+                    items.put("title", cartlist.get(i).getProduct_name());
                     line_items.put(items);
                     jsonBody.put("line_items", line_items);
                 }
             } else {
                 JSONObject items = new JSONObject();
-
+                Log.e("quantity1",product_qty);
 //                items.put("variant_id", "5823671107611");
                 items.put("product_id", product_varientid.trim());
                 items.put("quantity", product_qty);

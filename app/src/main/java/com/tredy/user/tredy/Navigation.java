@@ -1,5 +1,6 @@
 package com.tredy.user.tredy;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
@@ -21,17 +22,29 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.shopify.buy3.GraphCall;
+import com.shopify.buy3.GraphClient;
+import com.shopify.buy3.GraphError;
+import com.shopify.buy3.GraphResponse;
+import com.shopify.buy3.HttpCachePolicy;
+import com.shopify.buy3.QueryGraphCall;
+import com.shopify.buy3.Storefront;
 import com.tredy.user.tredy.account.MyAccount;
 import com.tredy.user.tredy.bag.Bag;
 import com.tredy.user.tredy.bag.cartdatabase.AddToCart_Model;
@@ -51,6 +64,7 @@ import com.tredy.user.tredy.networkCheck.NetworkSchedulerService;
 import com.tredy.user.tredy.notification.NotificationsListFragment;
 import com.tredy.user.tredy.search.Search;
 import com.tredy.user.tredy.util.Constants;
+import com.tredy.user.tredy.util.FilterSharedPreference;
 import com.tredy.user.tredy.util.Internet;
 import com.tredy.user.tredy.util.SharedPreference;
 import com.tredy.user.tredy.utility.Converter;
@@ -67,12 +81,15 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 
 public class Navigation extends AppCompatActivity
@@ -85,6 +102,7 @@ public class Navigation extends AppCompatActivity
     private List<AddToCart_Model> cartList = new ArrayList<>();
     private GoogleApiClient mGoogleApiClient;
     Toolbar toolbar;
+    private GraphClient graphClient;
 
 
     @Override
@@ -166,11 +184,7 @@ public class Navigation extends AppCompatActivity
             cart_count = cart_count + cartList.get(i).getQty();
         }
 
-        if (Internet.isConnected(this)) {
-            getNotiCount();
-        } else {
-            Toast.makeText(getApplicationContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-        }
+
     }
 
     @Override
@@ -205,11 +219,42 @@ public class Navigation extends AppCompatActivity
                     toolbar.setTitle("Product");
                 } else if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("categoryproduct")).isVisible()) {
                     toolbar.setTitle("Categories");
+                } else if (Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("tawk")).isVisible()) {
+                    toolbar.setTitle("Chat");
                 }
 
             } catch (NullPointerException ignored) {
             }
 
+        }
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        graphClient = GraphClient.builder(this)
+                .shopDomain(BuildConfig.SHOP_DOMAIN)
+                .accessToken(BuildConfig.API_KEY)
+                .httpCache(new File(getApplicationContext().getCacheDir(), "/http"), 10 * 1024 * 1024) // 10mb for http cache
+                .defaultHttpCachePolicy(HttpCachePolicy.CACHE_FIRST.expireAfter(5, TimeUnit.MINUTES)) // cached response valid by default for 5 minutes
+                .build();
+
+        String customerid = SharedPreference.getData("customerid", this);
+        if (customerid.trim().length() == 0) {
+            if (Internet.isConnected(this)) {
+                String accessToken = SharedPreference.getData("accesstoken", getApplicationContext());
+                getCustomerId(accessToken);
+            } else {
+                Toast.makeText(getApplicationContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            if (Internet.isConnected(this)) {
+                saveToken();
+            } else {
+                Toast.makeText(getApplicationContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+            }
         }
 
 
@@ -253,8 +298,8 @@ public class Navigation extends AppCompatActivity
         // to call stopService() would keep it alive indefinitely.
         try {
             stopService(new Intent(this, NetworkSchedulerService.class));
-        }catch (Exception ignored){
-                    }
+        } catch (Exception ignored) {
+        }
         super.onStop();
     }
 
@@ -528,6 +573,7 @@ public class Navigation extends AppCompatActivity
                     }
                     SharedPreference.saveData("login", "", Navigation.this);
                     SharedPreference.saveData("accesstoken", "", getApplicationContext());
+                    SharedPreference.clearSession(getApplicationContext());
                     startActivity(new Intent(Navigation.this, LoginActiviy.class));
                     finish();
                     break;
@@ -698,6 +744,122 @@ public class Navigation extends AppCompatActivity
         Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.white);
 
     }
+
+    public void saveToken() {
+        String token = FilterSharedPreference.getData("firebasetoken", getApplicationContext());
+        if (token.trim().length() > 0) {
+
+
+            String customerid = SharedPreference.getData("customerid", this);
+
+
+            try {
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("customer_id", customerid.trim());
+                jsonBody.put("registration_token", token);
+
+                final String requestBody = jsonBody.toString();
+
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.savetoken, response -> {
+                    Log.e("tokenresponse", response);
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        getNotiCount();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }, error -> Log.e("VOLLEY", " " + error.toString())) {
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public byte[] getBody() throws AuthFailureError {
+                        try {
+                            return requestBody == null ? null : requestBody.getBytes("utf-8");
+//                        return requestBody == null;
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                        //TODO if you want to use the status code for any other purpose like to handle 401, 403, 404
+//                    String statusCode = String.valueOf(response.statusCode);
+                        //Handling logic
+                        return super.parseNetworkResponse(response);
+                    }
+//                @Override
+//                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+//                    String responseString = "";
+//                    if (response != null) {
+//                        responseString = String.valueOf(response.statusCode);
+//                        // can get more details such as response.headers
+//                    }
+//                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+//                }
+                };
+
+                requestQueue.add(stringRequest);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void getCustomerId(String accessToken) {
+
+        Storefront.QueryRootQuery query = Storefront.query(root -> root
+                .customer(accessToken, customer -> customer
+                        .id()
+                )
+        );
+
+        QueryGraphCall call = graphClient.queryGraph(query);
+
+        call.enqueue(new GraphCall.Callback<Storefront.QueryRoot>() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onResponse(@NonNull GraphResponse<Storefront.QueryRoot> response) {
+
+                if (response.data() != null && response.data().getCustomer() != null) {
+                    String customerid = response.data().getCustomer().getId().toString();
+                    byte[] data = Base64.decode(customerid, Base64.DEFAULT);
+                    try {
+                        customerid = new String(data, "UTF-8");
+                        String[] separated = customerid.split("/");
+                        customerid = separated[4]; // this will contain "Customer id"
+                        Log.e("customer_id", " " + customerid);
+                        SharedPreference.saveData("customerid", customerid, getApplicationContext());
+                        if (getApplicationContext() != null) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    saveToken();
+                                }
+                            });
+                        }
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull GraphError error) {
+                Log.e("TAG", "Failed to execute query", error);
+            }
+        });
+
+    }
+
 
     @Override
     protected void onDestroy() {

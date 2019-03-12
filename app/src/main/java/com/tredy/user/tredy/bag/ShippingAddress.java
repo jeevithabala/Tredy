@@ -100,7 +100,9 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                         remove_cod = "remove_cod";
                     }
                 } else {
+//                    remove_cod=getArguments().getString("remove_cod");
                     totalcost = getArguments().getString("totalcost");
+//                    Log.e("re",remove_cod);
                 }
             }
         }

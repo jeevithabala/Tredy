@@ -11,6 +11,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.tredy.user.tredy.R;
 
+import java.util.Objects;
+
 public class Config {
 
     // global topic to receive app wide push notifications
@@ -40,9 +42,11 @@ public class Config {
                     }
                 });
         AlertDialog alert = builder.create();
-        alert.show();
-
-        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        if(!((Activity) context).isFinishing())
+        {
+            alert.show();
+            Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.white);
+        }
 
 
     }

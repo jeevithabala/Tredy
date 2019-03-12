@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +34,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tredy.user.tredy.Tawk;
 import com.tredy.user.tredy.bag.Bag;
 import com.tredy.user.tredy.bag.cartdatabase.AddToCart_Model;
 import com.tredy.user.tredy.BuildConfig;
@@ -84,7 +87,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
     RadioGroup radioGroup;
     String no_of_count;
     private ImageView veg_image;
-
+    private FloatingActionButton chat_button;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +102,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
         //  final View view = inflater.inflate(R.layout.product_view, container, false);
         cartController = new CartController(getActivity());
         commanCartControler = cartController;
+        chat_button=view.findViewById(R.id.chat_button);
 
         veg = view.findViewById(R.id.veg);
         eggless = view.findViewById(R.id.eggless);
@@ -129,6 +133,28 @@ public class ProductView extends Fragment implements ProductClickInterface {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        chat_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tawk tawk = new Tawk();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction transaction1 = null;
+                if (getFragmentManager() != null) {
+                    transaction1 = getFragmentManager().beginTransaction();
+                    transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    transaction1.add(R.id.home_container, tawk, "tawk");
+                    if (fragmentManager.findFragmentByTag("tawk") == null) {
+                        transaction1.addToBackStack("tawk");
+                        transaction1.commit();
+                    } else {
+                        transaction1.commit();
+                    }
+                }
+
+            }
+        });
+
+
         if (getArguments() != null) {
             product = getArguments().getString("category");
         }

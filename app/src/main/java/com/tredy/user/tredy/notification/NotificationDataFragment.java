@@ -215,56 +215,66 @@ public class NotificationDataFragment extends AppCompatActivity {
                         orderModelArrayList1.add(orderModel);
 
                     }
-
-                    runOnUiThread(() -> {
+                    if(getApplicationContext()!=null) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 //                        if(progressDialog !=null && progressDialog.isShowing()){
 //                            progressDialog.dismiss();
 //                        }
-                        for (int i = 0; i < orderModelArrayList1.size(); i++) {
-                            String o = "#" + String.valueOf(orderModelArrayList1.get(i).getOrderd().getOrderNumber());
-                            if (orderid.equals(o)) {
-                                for (int j = 0; j < orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().size(); j++) {
+                                for (int i = 0; i < orderModelArrayList1.size(); i++) {
+                                    String o = "#" + String.valueOf(orderModelArrayList1.get(i).getOrderd().getOrderNumber());
+                                    if (orderid.equals(o)) {
+                                        for (int j = 0; j < orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().size(); j++) {
 
-                                    OrderListModel orderListModel = new OrderListModel();
-                                    orderListModel.setId(String.valueOf(orderModelArrayList1.get(i).getOrderd().getOrderNumber()));
-                                    orderListModel.setTitle(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getProduct().getTitle());
-                                    if (orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getImage() == null) {
-                                        orderListModel.setImage(null);
-                                    } else {
-                                        orderListModel.setImage(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getImage().getSrc());
+                                            OrderListModel orderListModel = new OrderListModel();
+                                            orderListModel.setId(String.valueOf(orderModelArrayList1.get(i).getOrderd().getOrderNumber()));
+                                            orderListModel.setTitle(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getProduct().getTitle());
+                                            if (orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getImage() == null) {
+                                                orderListModel.setImage(null);
+                                            } else {
+                                                orderListModel.setImage(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getImage().getSrc());
+                                            }
+                                            orderListModel.setShippingtax(String.valueOf(orderModelArrayList1.get(i).getOrderd().getShippingAddress()));
+                                            orderListModel.setSubtotal(String.valueOf(orderModelArrayList1.get(i).getOrderd().getSubtotalPrice()));
+                                            orderListModel.setTotalcost(String.valueOf(orderModelArrayList1.get(i).getOrderd().getTotalPrice()));
+                                            orderListModel.setQuantity(String.valueOf(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getQuantity()));
+                                            orderListModel.setProductcost(String.valueOf(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getPrice()));
+
+                                            shipping.setText(String.valueOf(orderModelArrayList1.get(i).getOrderd().getTotalShippingPrice()));
+                                            total.setText(String.valueOf(orderModelArrayList1.get(i).getOrderd().getTotalPrice()));
+                                            subtotal.setText(String.valueOf(orderModelArrayList1.get(i).getOrderd().getSubtotalPrice()));
+                                            total_invisible.setVisibility(View.VISIBLE);
+                                            orderModelArrayList.add(orderListModel);
+                                            adapter.notifyDataSetChanged();
+                                        }
                                     }
-                                    orderListModel.setShippingtax(String.valueOf(orderModelArrayList1.get(i).getOrderd().getShippingAddress()));
-                                    orderListModel.setSubtotal(String.valueOf(orderModelArrayList1.get(i).getOrderd().getSubtotalPrice()));
-                                    orderListModel.setTotalcost(String.valueOf(orderModelArrayList1.get(i).getOrderd().getTotalPrice()));
-                                    orderListModel.setQuantity(String.valueOf(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getQuantity()));
-                                    orderListModel.setProductcost(String.valueOf(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getPrice()));
-
-                                    shipping.setText(String.valueOf(orderModelArrayList1.get(i).getOrderd().getTotalShippingPrice()));
-                                    total.setText(String.valueOf(orderModelArrayList1.get(i).getOrderd().getTotalPrice()));
-                                    subtotal.setText(String.valueOf(orderModelArrayList1.get(i).getOrderd().getSubtotalPrice()));
-                                    total_invisible.setVisibility(View.VISIBLE);
-                                    orderModelArrayList.add(orderListModel);
-                                    adapter.notifyDataSetChanged();
                                 }
+
+
                             }
-                        }
-
-
-                    });
-                } else runOnUiThread(() -> {
+                        });
+                    }
+                } else runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
 //                    if (progressDialog != null && progressDialog.isShowing()) {
 //                        progressDialog.dismiss();
 //                    }
+                    }
                 });
 
             }
 
             @Override
             public void onFailure(@NonNull GraphError error) {
-                runOnUiThread(() -> {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
 //                    if (progressDialog != null && progressDialog.isShowing()) {
 //                        progressDialog.dismiss();
 //                    }
+                    }
                 });
                 Log.e("TAG", "Failed to execute query", error);
             }

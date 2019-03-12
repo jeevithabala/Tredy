@@ -3,7 +3,9 @@ package com.tredy.user.tredy.search;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +26,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.tredy.user.tredy.Tawk;
 import com.tredy.user.tredy.category.productDetail.ProductView;
 import com.tredy.user.tredy.callback.CartController;
 import com.tredy.user.tredy.callback.CommanCartControler;
@@ -56,6 +59,7 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
     String searchtext = "";
     private Boolean isFilterData = false;
     private int requestCount = 1;
+    private FloatingActionButton chat_button;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,6 +69,7 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
         search_recycler = view.findViewById(R.id.search_recycler);
         search = view.findViewById(R.id.search);
         search.onActionViewExpanded();
+        chat_button=view.findViewById(R.id.chat_button);
 
 
         noproduct = view.findViewById(R.id.no_product);
@@ -76,6 +81,28 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        chat_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tawk tawk = new Tawk();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction transaction1 = null;
+                if (getFragmentManager() != null) {
+                    transaction1 = getFragmentManager().beginTransaction();
+                    transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    transaction1.add(R.id.home_container, tawk, "tawk");
+                    if (fragmentManager.findFragmentByTag("tawk") == null) {
+                        transaction1.addToBackStack("tawk");
+                        transaction1.commit();
+                    } else {
+                        transaction1.commit();
+                    }
+                }
+
+            }
+        });
+
 //        graphClient = GraphClient.builder(getActivity())
 //                .shopDomain(BuildConfig.SHOP_DOMAIN)
 //                .accessToken(BuildConfig.API_KEY)
@@ -199,10 +226,12 @@ public class Search extends Fragment implements SearchView.OnQueryTextListener, 
                         String productid = object1.getString("id");
 
                         JSONArray array1 = object1.getJSONArray("images");
+                        src=null;
                         for (int j = 0; j < array1.length(); j++) {
                             JSONObject object = array1.getJSONObject(j);
                             src = object.getString("src");
                         }
+
                         SearchModel searchModel = new SearchModel(productid, price, title, src);
                         searchlist.add(searchModel);
                     }

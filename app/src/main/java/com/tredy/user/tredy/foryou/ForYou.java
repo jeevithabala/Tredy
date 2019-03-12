@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tredy.user.tredy.BuildConfig;
+import com.tredy.user.tredy.Tawk;
 import com.tredy.user.tredy.foryou.allcollection.AllCollectionAdapter;
 import com.tredy.user.tredy.foryou.allcollection.AllCollectionModel;
 import com.tredy.user.tredy.foryou.groceryhome.GroceryHomeModel;
@@ -56,12 +60,14 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
     private static int currentPage = 0;
     private static int NUM_PAGES = 0;
     SlidingImage_Adapter slidingImage_adapter;
+    FloatingActionButton chat_button;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.foryou, container, false);
 
 
         ForYouViewModel forYouViewModel = new ForYouViewModel(getActivity(), this);
+        chat_button = view.findViewById(R.id.chat_button);
 
 
         topselling_recyclerview = view.findViewById(R.id.main_recyclerview);
@@ -96,6 +102,27 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
             adapter = new MainAdapter(getActivity(), getObject(), getFragmentManager());
             topselling_recyclerview.setAdapter(adapter);
         }
+
+        chat_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tawk tawk = new Tawk();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction transaction1 = null;
+                if (getFragmentManager() != null) {
+                    transaction1 = getFragmentManager().beginTransaction();
+                    transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    transaction1.add(R.id.home_container, tawk, "tawk");
+                    if (fragmentManager.findFragmentByTag("tawk") == null) {
+                        transaction1.addToBackStack("tawk");
+                        transaction1.commit();
+                    } else {
+                        transaction1.commit();
+                    }
+                }
+
+            }
+        });
     }
 
     private ArrayList<Object> getObject() {
@@ -255,7 +282,7 @@ public class ForYou extends Fragment implements ResultCallBackInterface, ForyouI
         if (newArrivalModelArrayList != null) {
             try {
                 resultCallBackInterface.newArrivals(newArrivalModelArrayList);
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
 
             }
         }

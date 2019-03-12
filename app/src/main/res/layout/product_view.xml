@@ -420,6 +420,19 @@
                     android:textColor="@color/white" />
             </LinearLayout>
         </RelativeLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/chat_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="25dp"
+            android:layout_marginRight="8dp"
+            android:clickable="true"
+            app:backgroundTint="@color/colorPrimary"
+            app:srcCompat="@drawable/ic_chat"
+            tools:ignore="VectorDrawableCompat"  />
+
 
         <!--app:totalcost="@{productview.}"-->
     </RelativeLayout>

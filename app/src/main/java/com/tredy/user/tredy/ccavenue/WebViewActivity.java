@@ -124,8 +124,11 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             // Dismiss the progress dialog
+            if(getApplicationContext()!=null){
+                LoadingDialog.cancelLoading();
+            }
 
-            LoadingDialog.cancelLoading();
+
             @SuppressWarnings("unused")
             class MyJavaScriptInterface {
                 @JavascriptInterface
@@ -204,7 +207,9 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(myBrowser, url);
-                    LoadingDialog.cancelLoading();
+                    if(getApplicationContext()!=null){
+                        LoadingDialog.cancelLoading();
+                    }
                     if (url.indexOf("/ccavResponseHandler.php") != -1) {
                         myBrowser.loadUrl("javascript:window.HTMLOUT.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
                     }
@@ -836,7 +841,9 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                     @Override
                     public void onResponse(String response) {
                         //Toast.makeText(WebViewActivity.this,response,Toast.LENGTH_LONG).show();
-                        LoadingDialog.cancelLoading();
+                        if(getApplicationContext()!=null){
+                            LoadingDialog.cancelLoading();
+                        }
                         vResponse = response;
                         if (vResponse.contains("!ERROR!")) {
 
@@ -850,7 +857,9 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        LoadingDialog.cancelLoading();
+                        if(getApplicationContext()!=null){
+                            LoadingDialog.cancelLoading();
+                        }
                         Toast.makeText(WebViewActivity.this, error.toString(), Toast.LENGTH_LONG).show();
                     }
                 }) {

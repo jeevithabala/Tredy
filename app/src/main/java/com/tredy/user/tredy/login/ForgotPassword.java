@@ -100,6 +100,7 @@ public class ForgotPassword extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    progressDialog.dismiss();
                                     dialog(response.data().getCustomerRecover().getUserErrors().get(0).getMessage());
 
                                 }
@@ -108,6 +109,7 @@ public class ForgotPassword extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    progressDialog.dismiss();
                                     dialog("Password reset link is sent to your registered email ID");
                                 }
                             });
@@ -119,6 +121,7 @@ public class ForgotPassword extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                progressDialog.dismiss();
                                 dialog("Resetting password limit exceeded. Please try again later.");
 
                             }
@@ -132,7 +135,15 @@ public class ForgotPassword extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull GraphError error) {
                 Log.d("fa", "Create customer Account API FAIL:" + error.getMessage());
-                progressDialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+
+                    }
+                });
+
+
             }
 
 
@@ -141,7 +152,7 @@ public class ForgotPassword extends AppCompatActivity {
     }
 
     public void dialog(String poptext) {
-        progressDialog.dismiss();
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ForgotPassword.this);
 //            builder.setTitle("Success");
@@ -155,7 +166,7 @@ public class ForgotPassword extends AppCompatActivity {
                 });
         AlertDialog alert = builder.create();
         alert.show();
-        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.white);
 //            alert.getWindow().setBackgroundDrawableResource(android.R.color.white)
     }
 

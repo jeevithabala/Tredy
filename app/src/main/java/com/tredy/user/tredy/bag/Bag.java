@@ -5,7 +5,9 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tredy.user.tredy.Tawk;
 import com.tredy.user.tredy.bag.cartdatabase.AddToCart_Adapter;
 import com.tredy.user.tredy.bag.cartdatabase.AddToCart_Model;
 import com.tredy.user.tredy.bag.cartdatabase.DBHelper;
@@ -46,7 +49,8 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
     String state = "", totalcosts = "";
     CartController cartController;
     CommanCartControler commanCartControler;
-
+FloatingActionButton chat_button;
+String remove_cod=" ";
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.bag, container, false);
@@ -59,7 +63,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         items = view.findViewById(R.id.items);
         totalcost = view.findViewById(R.id.total);
         nobag = view.findViewById(R.id.nobag);
-
+        chat_button=view.findViewById(R.id.chat_button);
 
 
 
@@ -127,6 +131,15 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
 //            Toast.makeText(getApplicationContext(), cartList.get(0).getProduct_name(), Toast.LENGTH_SHORT).show();
         visibilityCheck();
         total();
+//        for (int i = 0; i < cartList.size(); i++) {
+//            String tag=cartList.get(i).getTag();
+//            Log.e("tag",tag);
+//            if (tag != null && tag.trim().toLowerCase().contains("remove_cod")) {
+//                remove_cod = "remove_cod";
+//            }
+//
+//        }
+
 
         checkoutbtn.setOnClickListener(view -> {
             String[] str_totalCost = totalcost.getText().toString().split(" ");
@@ -134,6 +147,7 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
             Bundle bundle = new Bundle();
             bundle.putString("collection", "allcollection");
             bundle.putString("totalcost", totalcosts);
+//            bundle.putString("remove_cod", remove_cod);
             Fragment fragment = new ShippingAddress();
             fragment.setArguments(bundle);
             assert getFragmentManager() != null;
@@ -171,6 +185,26 @@ public class Bag extends Fragment implements AddToCart_Adapter.GetTotalCost {
         SharedPreference.saveData("total", Integer.toString(commanCartControler.getTotalPrice()), Objects.requireNonNull(getActivity()));
         totalcost.setText(getResources().getString(R.string.Rs) + " " + Integer.toString(commanCartControler.getTotalPrice()));
 
+        chat_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tawk tawk = new Tawk();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction transaction1 = null;
+                if (getFragmentManager() != null) {
+                    transaction1 = getFragmentManager().beginTransaction();
+                    transaction1.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+                    transaction1.add(R.id.home_container, tawk, "tawk");
+                    if (fragmentManager.findFragmentByTag("tawk") == null) {
+                        transaction1.addToBackStack("tawk");
+                        transaction1.commit();
+                    } else {
+                        transaction1.commit();
+                    }
+                }
+
+            }
+        });
 
     }
 
