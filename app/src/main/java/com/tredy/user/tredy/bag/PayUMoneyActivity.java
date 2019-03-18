@@ -53,6 +53,7 @@ import com.tredy.user.tredy.utility.ServiceUtility;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -69,7 +70,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     String s_mobile = "", b_mobile = "", b_email = "";
     TextView txtpayamount, t_pay, discount_price, apply_coupon;
     LinearLayout discount_layout;
-    int  cod = 0;
+    int cod = 0;
     private String dynamicKey = "", remove_cod = "";
     DBHelper db;
     List<AddToCart_Model> cartlist = new ArrayList<>();
@@ -86,7 +87,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     String accessCode, merchantId, currency, rsaKeyUrl, redirectUrl, cancelUrl;
     int buynow = 0, ordercount = 0;
     ArrayList<String> allPinList = new ArrayList<>();
-    String isCODAvilable=" ";
+    String isCODAvilable = " ";
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -94,7 +95,12 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay_umoney);
 
-         getAllPinList();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("loading....");
+        progressDialog.setTitle("Processing");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
         SharedPreference.saveData("update", "true", getApplicationContext());
         accessToken = SharedPreference.getData("accesstoken", PayUMoneyActivity.this);
 
@@ -151,7 +157,10 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
 
         }
-        Log.e("remove_cod", " "+remove_cod);
+        Log.e("remove_cod", " " + remove_cod);
+
+
+        getAllPinList();
 
 //        Toast.makeText(this, totalcost, Toast.LENGTH_SHORT).show();
 
@@ -160,19 +169,17 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             String[] separated = totalamount.split(" ");
             totalamount = separated[1];
         }
-if(zip!=null&&zip.trim().length()>0){
-    checkPinCode(zip);
-}
 
-        emailedit =findViewById(R.id.payuemail);
-        mobile =  findViewById(R.id.payumobile);
-        amountedit =findViewById(R.id.payuamount);
+
+        emailedit = findViewById(R.id.payuemail);
+        mobile = findViewById(R.id.payumobile);
+        amountedit = findViewById(R.id.payuamount);
 //        apply_discount = findViewById(R.id.apply_discount);
         discount_price = findViewById(R.id.discount_price);
         t_pay = findViewById(R.id.t_pay);
         discount_layout = findViewById(R.id.discount_layout);
         apply_coupon = findViewById(R.id.apply_coupon);
-        paynowbtn =  findViewById(R.id.paynowbtn);
+        paynowbtn = findViewById(R.id.paynowbtn);
         paynowbtn.setOnClickListener(this);
         view_coupon.setOnClickListener(this);
 
@@ -280,14 +287,7 @@ if(zip!=null&&zip.trim().length()>0){
         }
     }
 
-    private void getAllPinList(){
-
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Processing, please wait...");
-        progressDialog.setCanceledOnTouchOutside(false);
-
-
-
+    private void getAllPinList() {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constants.Check_COD_API,
                 null, new Response.Listener<JSONObject>() {
@@ -296,18 +296,24 @@ if(zip!=null&&zip.trim().length()>0){
 
 
                 try {
-                    JSONArray jsonArray = response.getJSONArray("values") ;
+                    JSONArray jsonArray = response.getJSONArray("values");
 
-                    for(int i=0; i<jsonArray.length();i++){
+                    for (int i = 0; i < jsonArray.length(); i++) {
 
                         JSONArray jsonArray1 = jsonArray.getJSONArray(i);
-                        Log.d("array"+i,jsonArray1.get(0).toString());
+//                        Log.d("array" + i, jsonArray1.get(0).toString());
                         allPinList.add(jsonArray1.get(0).toString());
 
-                        progressDialog.dismiss();
-                    }
 
+                    }
+                    if (zip != null && zip.trim().length() > 0) {
+                        checkPinCode(zip);
+                    }else {
+                        progressDialog.dismiss();
+
+                    }
                 } catch (JSONException e) {
+                    progressDialog.dismiss();
                     e.printStackTrace();
                 }
 
@@ -315,7 +321,6 @@ if(zip!=null&&zip.trim().length()>0){
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 progressDialog.dismiss();
             }
         });
@@ -325,12 +330,17 @@ if(zip!=null&&zip.trim().length()>0){
 
 
     }
-    private boolean checkPinCode(String pin){
 
-        if(allPinList.contains(pin)) {
-            isCODAvilable="cod";
+    private boolean checkPinCode(String pin) {
+//        Log.e("allPinList", String.valueOf(allPinList.size()));
+//        Log.e("iscod", isCODAvilable);
+        progressDialog.dismiss();
+
+        if (allPinList.contains(pin.trim())) {
+            isCODAvilable = "cod";
             return true;
         }
+
 
         return false;
     }
@@ -343,14 +353,20 @@ if(zip!=null&&zip.trim().length()>0){
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.paybywalletorbankdata);
 
-        btnsubmit1 =  dialog.findViewById(R.id.res_pay_submit);
-        btncancel =  dialog.findViewById(R.id.res_pay_cancel);
-        txtpayamount =  dialog.findViewById(R.id.pay_amount);
-        btnradonline =dialog.findViewById(R.id.online);
-        btnradcod =  dialog.findViewById(R.id.cod);
+        btnsubmit1 = dialog.findViewById(R.id.res_pay_submit);
+        btncancel = dialog.findViewById(R.id.res_pay_cancel);
+        txtpayamount = dialog.findViewById(R.id.pay_amount);
+        btnradonline = dialog.findViewById(R.id.online);
+        btnradcod = dialog.findViewById(R.id.cod);
 //        btnradcod.setVisibility(View.GONE);
         int cost = Integer.parseInt(totalcost.trim());
-        if (remove_cod.trim().length() == 0||isCODAvilable.trim().equals("cod")) {
+//        Log.e("remove_cod", " " + remove_cod);
+//        Log.e("isCODAvilable", " " + isCODAvilable);
+//        if (remove_cod.trim().length() == 0||isCODAvilable.trim().equals("cod")) {
+
+        if (remove_cod.trim().equals("remove_cod")) {
+            btnradcod.setVisibility(View.GONE);
+        } else if (isCODAvilable.trim().equals("cod")) {
             btnradcod.setVisibility(View.VISIBLE);
         } else {
             btnradcod.setVisibility(View.GONE);
@@ -439,6 +455,7 @@ if(zip!=null&&zip.trim().length()>0){
         Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         dialog.show();
     }
+
     public void postOrder() {
 
         progressDialog = new ProgressDialog(this);
@@ -572,7 +589,7 @@ if(zip!=null&&zip.trim().length()>0){
                             }
                             progressDialog.dismiss();
 //                            if (buynow != 1) {
-                                db.deleteCart(getApplicationContext());
+                            db.deleteCart(getApplicationContext());
 //                            }
                             Dialog("Your Order Placed Successfully");
 
@@ -586,7 +603,7 @@ if(zip!=null&&zip.trim().length()>0){
                     }
                 }, error -> {
                     progressDialog.dismiss();
-                    Log.e("VOLLEY", " "+error.toString());
+                    Log.e("VOLLEY", " " + error.toString());
                 }) {
                     @Override
                     public String getBodyContentType() {
@@ -638,7 +655,7 @@ if(zip!=null&&zip.trim().length()>0){
 
     private void getDiscount() {
         discountlist.clear();
-       RequestQueue mRequestQueue = Volley.newRequestQueue(PayUMoneyActivity.this);
+        RequestQueue mRequestQueue = Volley.newRequestQueue(PayUMoneyActivity.this);
 
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.getDiscount,
@@ -648,9 +665,9 @@ if(zip!=null&&zip.trim().length()>0){
                         JSONObject obj = new JSONObject(response);
 
                         JSONArray jsonarray = obj.getJSONArray("discounts");
-                        if(jsonarray.length()==0){
+                        if (jsonarray.length() == 0) {
                             recycler_layout.setVisibility(View.GONE);
-                        }else {
+                        } else {
                             recycler_layout.setVisibility(View.VISIBLE);
                         }
 
@@ -824,7 +841,7 @@ if(zip!=null&&zip.trim().length()>0){
                     product_varientid = str[4];
 
                     Integer quantity = cartlist.get(i).getQty();
-                    Log.e("quantity"," "+ String.valueOf(quantity));
+                    Log.e("quantity", " " + String.valueOf(quantity));
 //                    items.put("variant_id", "5823671107611");
                     items.put("product_id", product_varientid.trim());
                     items.put("quantity", quantity);
@@ -834,7 +851,7 @@ if(zip!=null&&zip.trim().length()>0){
                 }
             } else {
                 JSONObject items = new JSONObject();
-                Log.e("quantity1",product_qty);
+                Log.e("quantity1", product_qty);
 //                items.put("variant_id", "5823671107611");
                 items.put("product_id", product_varientid.trim());
                 items.put("quantity", product_qty);

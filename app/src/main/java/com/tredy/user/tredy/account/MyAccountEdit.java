@@ -30,7 +30,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created By Jeevitha 
+ * Created By Jeevitha
  */
 
 public class MyAccountEdit extends Fragment {
@@ -51,7 +51,7 @@ public class MyAccountEdit extends Fragment {
         email = view.findViewById(R.id.email);
         mobilenumber = view.findViewById(R.id.mobile_number);
 //        password=view.findViewById(R.id.password);
-        save=view.findViewById(R.id.save);
+        save = view.findViewById(R.id.save);
 
 
         assert getArguments() != null;
@@ -63,7 +63,7 @@ public class MyAccountEdit extends Fragment {
         firstname.setText(firstnametext);
         lastname.setText(lastnametext);
         email.setText(emailtext);
-        if(mobiletext!=null) {
+        if (mobiletext != null) {
             if (mobiletext.length() > 0) {
                 mobiletext = mobiletext.substring(3, 13);
             }
@@ -78,8 +78,6 @@ public class MyAccountEdit extends Fragment {
                 .build();
 
 
-
-
         return view;
     }
 
@@ -90,22 +88,19 @@ public class MyAccountEdit extends Fragment {
         save.setOnClickListener(view -> {
 //                Boolean valid=true;
             if (accessToken != null) {
-                emailtext=email.getText().toString().trim();
-                mobiletext=mobilenumber.getText().toString().trim();
-                firstnametext=firstname.getText().toString().trim();
-                lastnametext=lastname.getText().toString().trim();
-                if(mobiletext.length()>0)
-                {
-                    if(mobiletext.length()<10) {
+                emailtext = email.getText().toString().trim();
+                mobiletext = mobilenumber.getText().toString().trim();
+                firstnametext = firstname.getText().toString().trim();
+                lastnametext = lastname.getText().toString().trim();
+                if (mobiletext.length() > 0) {
+                    if (mobiletext.length() < 10) {
 //                            Toast.makeText(getActivity(), "Please Enter 10 Digit Mobile Number", Toast.LENGTH_SHORT).show();
                         Config.Dialog("Please Enter 10 Digit Mobile Number", getActivity());
 
 //                            valid = false;
-                    }
-                    else if(mobiletext.length()==10)
-                    {
+                    } else if (mobiletext.length() == 10) {
 //                            valid=true;
-                        mobiletext=("+91"+mobiletext).trim();
+                        mobiletext = ("+91" + mobiletext).trim();
                         progressDialog = new ProgressDialog(getActivity());
                         progressDialog.setMessage("loading, please wait...");
                         progressDialog.setCanceledOnTouchOutside(false);
@@ -117,9 +112,7 @@ public class MyAccountEdit extends Fragment {
                         }
 
                     }
-                }
-                else
-                {
+                } else {
                     Config.Dialog("Please Enter Mobile Number", getActivity());
 
 //                        valid=false;
@@ -127,7 +120,7 @@ public class MyAccountEdit extends Fragment {
 
                 }
             }
-            });
+        });
     }
 
     public void update(String accessToken) {
@@ -161,47 +154,45 @@ public class MyAccountEdit extends Fragment {
             @Override
             public void onResponse(@NonNull GraphResponse<Storefront.Mutation> response) {
                 if (response.data() != null) {
-                    if(response.data().getCustomerUpdate()!=null && response.data().getCustomerUpdate().getCustomer()!=null) {
+                    if (response.data().getCustomerUpdate() != null && response.data().getCustomerUpdate().getCustomer() != null) {
                         String phone = response.data().getCustomerUpdate().getCustomer().getPhone();
                         String firstName = response.data().getCustomerUpdate().getCustomer().getFirstName();
                         String lastName = response.data().getCustomerUpdate().getCustomer().getLastName();
                         String email = response.data().getCustomerUpdate().getCustomer().getEmail();
-                        String id=response.data().getCustomerUpdate().getCustomer().getId().toString();
-                        Log.e("phone", ""+phone+firstName+lastName+email+id);
+                        String id = response.data().getCustomerUpdate().getCustomer().getId().toString();
+                        Log.e("phone", "" + phone + firstName + lastName + email + id);
 
 //                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
 //                        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
 //                        transaction.replace(R.id.home_container, new MyAccount(), "account");
 //                        transaction.addToBackStack("account");
 //                        transaction.commit();
-                       if(getActivity()!=null) {
-                           getActivity().runOnUiThread(() -> {
-                               progressDialog.dismiss();
-                               Config.Dialog("Profile Changes updated.. It takes few minutes to update in your account", getActivity());
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(() -> {
+                                progressDialog.dismiss();
+                                Config.Dialog("Profile Changes updated.. It takes few minutes to update in your account", getActivity());
 
 //                                   Toast.makeText(getActivity(), "Changes updated.. It takes few minutes to update in your account", Toast.LENGTH_SHORT).show();
-                               if (getFragmentManager() != null) {
-                                   getFragmentManager().popBackStack();
-                               }
-
-                           });
-                       }
-
-
-
-                    }else{
-
-                        for (int i=0;i<response.data().getCustomerUpdate().getUserErrors().size();i++){
-                            String phonecheck=response.data().getCustomerUpdate().getUserErrors().get(i).getMessage();
-                            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                                progressDialog.dismiss();
-                                Config.Dialog(phonecheck, getActivity());
-
-//                                    Toast.makeText(getActivity(),phonecheck,Toast.LENGTH_SHORT).show();
+                                if (getFragmentManager() != null) {
+                                    getFragmentManager().popBackStack();
+                                }
 
                             });
                         }
 
+
+                    } else {
+                        if (response.data().getCustomerUpdate().getUserErrors() != null)
+                            for (int i = 0; i < response.data().getCustomerUpdate().getUserErrors().size(); i++) {
+                                String phonecheck = response.data().getCustomerUpdate().getUserErrors().get(i).getMessage();
+                                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                                    progressDialog.dismiss();
+                                    Config.Dialog(phonecheck, getActivity());
+
+//                                    Toast.makeText(getActivity(),phonecheck,Toast.LENGTH_SHORT).show();
+
+                                });
+                            }
 
 
                     }
