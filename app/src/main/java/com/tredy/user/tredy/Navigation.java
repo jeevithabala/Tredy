@@ -729,7 +729,6 @@ public class Navigation extends AppCompatActivity
 
     public void Dialog(String poptext) {
 
-
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(Navigation.this, R.style.AlertDialogStyle);
         builder.setTitle("Status");
         builder.setMessage(poptext)

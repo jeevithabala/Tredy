@@ -8,6 +8,9 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.tredy.user.tredy.util.SharedPreference;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class ForceUpdateChecker {
     private static final String TAG = ForceUpdateChecker.class.getSimpleName();
@@ -43,6 +46,7 @@ public class ForceUpdateChecker {
 
             if (!TextUtils.equals(currentVersion, appVersion)
                     && onUpdateNeededListener != null) {
+                SharedPreference.saveData("update", "false", getApplicationContext());
                 onUpdateNeededListener.onUpdateNeeded(updateUrl);
             }
         }

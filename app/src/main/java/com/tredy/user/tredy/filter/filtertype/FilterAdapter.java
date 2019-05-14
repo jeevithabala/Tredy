@@ -97,7 +97,6 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
 
             }
         });
-
     }
 
     @Override

@@ -31,7 +31,6 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
 
     private void sendRegistrationToServer(String token) {
         //  FcmToken(token);
-
     }
 
 

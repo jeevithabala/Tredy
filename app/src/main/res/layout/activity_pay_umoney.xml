@@ -43,10 +43,10 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="10dp"
-                    android:paddingRight="10dp"
                     android:hint="Email"
-                    android:paddingTop="10dp">
+                    android:paddingTop="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="10dp">
 
                     <EditText
                         android:id="@+id/payuemail"
@@ -62,10 +62,10 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="10dp"
-                    android:paddingRight="10dp"
                     android:hint="Mobile Number"
-                    android:paddingTop="10dp">
+                    android:paddingTop="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="10dp">
 
                     <EditText
                         android:id="@+id/payumobile"
@@ -83,10 +83,10 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="10dp"
-                    android:paddingRight="10dp"
                     android:hint="Total Amount"
-                    android:paddingTop="10dp">
+                    android:paddingTop="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="10dp">
 
                     <EditText
                         android:id="@+id/payuamount"
@@ -98,6 +98,17 @@
                         android:singleLine="true"
                         android:textSize="12sp" />
                 </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/textcoupon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lucidasansdemibold"
+                    android:padding="10dp"
+                    android:text=""
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/discount_layout"
@@ -224,9 +235,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.7"
-                            android:paddingBottom="10dp"
+                            android:paddingTop="10dp"
                             android:paddingRight="10dp"
-                            android:paddingTop="10dp">
+                            android:paddingBottom="10dp">
 
                             <TextView
                                 android:id="@+id/discount"

@@ -601,7 +601,23 @@ public class LoginActiviy extends AppCompatActivity implements
                 runOnUiThread(() -> progressDoalog.dismiss());
                 if (response.data() != null && response.data().getCustomer() != null) {
                     customerid = response.data().getCustomer().getId().toString();
-                    saveToken();
+//                    saveToken();
+                    byte[] data = Base64.decode(customerid, Base64.DEFAULT);
+                    try {
+                        customerid = new String(data, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    String[] separated = customerid.split("/");
+                    customerid = separated[4]; // this will contain "Customer id"
+
+                    SharedPreference.saveData("customerid", customerid, getApplicationContext());
+                    SharedPreference.saveData("update", "false", getApplicationContext());
+                    Intent i = new Intent(getApplicationContext(), Navigation.class);
+                    SharedPreference.saveData("login", "true", getApplicationContext());
+                    startActivity(i);
+                    finish();
+
                 } else {
                     if (response.data() != null && response.data().getCustomer() == null) {
                         runOnUiThread(() -> Config.Dialog("Please try again later", LoginActiviy.this));

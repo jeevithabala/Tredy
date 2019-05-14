@@ -62,7 +62,8 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.ViewHo
             binding.setItemclick(new FragmentRecyclerViewClick() {
                 @Override
                 public void onClickPostion() {
-                    discountinterface.discountValue(itemsList.get(getAdapterPosition()).getValue(), itemsList.get(getAdapterPosition()).getTitle());
+                    discountinterface.discountValue(itemsList.get(getAdapterPosition()).getValue(), itemsList.get(getAdapterPosition()).getTitle(),itemsList.get(getAdapterPosition()).getValuetype(),itemsList.get(getAdapterPosition()).getDiscount_type(),itemsList.get(getAdapterPosition()).getDiscountvalue());
+
 
                 }
             });
@@ -72,7 +73,7 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.ViewHo
     }
 
     public interface Discountinterface {
-        void discountValue(String discounted_amount, String coupon);
+        void discountValue(String discounted_amount, String coupon, String amount,String discount_type,String discountvalue);
     }
 }
 

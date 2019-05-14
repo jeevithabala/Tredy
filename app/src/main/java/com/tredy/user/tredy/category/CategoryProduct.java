@@ -505,7 +505,6 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
                                     JSONObject object1 = array.getJSONObject(i);
                                     String title = object1.getString("title");
                                     String min_price = object1.getString("min_price");
-
                                     String imagesrc = "";
                                     JSONArray array1 = object1.getJSONArray("images");
                                     for (int j = 0; j < array1.length(); j++) {

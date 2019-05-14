@@ -12,7 +12,7 @@ public class Constants {
     public static final String banner = Base_URL + "/api/v1/banners/all";
     public static final String shippingaddressfetch = "http://postalpincode.in/api/pincode/";
     public static final String postcreateorder = "https://order.tredyfoods.com/api/v1/order/create";
-    public static final String getDiscount = Base_URL + "/api/v1/discounts/all";
+    public static final String getDiscount = Base_URL + "/api/v2/discounts/all";
     public static final String search = Base_URL + "/api/v1/products/all?search=";
     public static final String savetoken = Base_URL + "/api/v1/customer/save-token";
     public static final String getallnotification=Base_URL + "/api/v1/customer/notifications/";

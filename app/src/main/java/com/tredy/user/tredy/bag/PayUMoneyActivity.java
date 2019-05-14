@@ -68,7 +68,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     RadioButton btnradonline, btnradcod;
     String emailstring, totalamount, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "";
     String s_mobile = "", b_mobile = "", b_email = "";
-    TextView txtpayamount, t_pay, discount_price, apply_coupon;
+    TextView textcoupon,txtpayamount, t_pay, discount_price, apply_coupon;
     LinearLayout discount_layout;
     int cod = 0;
     private String dynamicKey = "", remove_cod = "";
@@ -87,7 +87,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
     String accessCode, merchantId, currency, rsaKeyUrl, redirectUrl, cancelUrl;
     int buynow = 0, ordercount = 0;
     ArrayList<String> allPinList = new ArrayList<>();
-    String isCODAvilable = " ";
+    String isCODAvilable = " ", tcost="";
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -119,6 +119,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         discount_recycler = findViewById(R.id.discount_recycler);
         recycler_layout = findViewById(R.id.recycler_layout);
         view_coupon = findViewById(R.id.view_coupon);
+        textcoupon=findViewById(R.id.textcoupon);
 
         if (getIntent() != null) {
             firstname = getIntent().getStringExtra("firstname");
@@ -165,6 +166,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 //        Toast.makeText(this, totalcost, Toast.LENGTH_SHORT).show();
 
         totalamount = totalcost;
+        tcost=totalcost;
         if (totalamount != null) {
             String[] separated = totalamount.split(" ");
             totalamount = separated[1];
@@ -359,7 +361,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         btnradonline = dialog.findViewById(R.id.online);
         btnradcod = dialog.findViewById(R.id.cod);
 //        btnradcod.setVisibility(View.GONE);
-        int cost = Integer.parseInt(totalcost.trim());
+        double cost = Double.parseDouble(totalcost.trim());
 //        Log.e("remove_cod", " " + remove_cod);
 //        Log.e("isCODAvilable", " " + isCODAvilable);
 //        if (remove_cod.trim().length() == 0||isCODAvilable.trim().equals("cod")) {
@@ -372,7 +374,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             btnradcod.setVisibility(View.GONE);
         }
 
-        if (cost == 0) {
+        if (cost == 0.00) {
             btnradonline.setVisibility(View.GONE);
         } else {
             btnradonline.setVisibility(View.VISIBLE);
@@ -438,10 +440,8 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             builder.setMessage("Are you sure you want to cancel?")
                     .setCancelable(false)
                     .setPositiveButton("Yes", (dialog1, id) -> {
-
                         dialog.dismiss();
                         abandandCheckout();
-
                     })
                     .setNegativeButton("No", (dialog1, id) -> dialog1.cancel())
                     .show();
@@ -463,7 +463,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         phone = mobile.getText().toString().trim();
-        int costtotal = Integer.parseInt(totalcost.trim());
+        double costtotal = Double.parseDouble(totalcost.trim());
 
         try {
             if (ordercount == 0) {
@@ -660,6 +660,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.getDiscount,
                 response -> {
+            Log.e("response",response);
                     try {
 
                         JSONObject obj = new JSONObject(response);
@@ -672,19 +673,55 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                         }
 
                         for (int i = 0; i < jsonarray.length(); i++) {
+                            double cal = 0.0, amount = 0.0, value1 = 0.0;
+
                             JSONObject collectionobject = jsonarray.getJSONObject(i);
 
                             DiscountModel discountModel = new DiscountModel();
-                            String discountname = collectionobject.getString("title");
-                            String value = collectionobject.getString("value");
-                            discountModel.setTitle(discountname);
-                            discountModel.setValue(value);
+                            String active=collectionobject.getString("active");
+                            if(active.trim().equals("true")){
+                                String discountname = collectionobject.getString("title");
+                                String value = collectionobject.getString("value");
+                                String percent = collectionobject.getString("value_type");
+                                String discount_type = collectionobject.getString("discount_type");
+                                String discount_value=collectionobject.getString("discount_value");
+                                String[] str = value.split("-");
+                                value = str[1];
+                                Log.e("value",value);
+                                Log.e("totalcost",totalcost);
+                                if (percent.trim().equals("percentage")) {
+                                    int discountvalue = Integer.parseInt(value.trim());
+                                    cal = Double.parseDouble(value.trim()) / 100;
+                                    amount = Double.parseDouble(totalcost) * cal;
+                                    value1 = Double.parseDouble(totalcost) - amount;
+                                    Log.e("amouunt", String.valueOf(amount));
 
-                            discountlist.add(discountModel);
+                                    discountModel.setValue(String.valueOf(Math.round(amount)));
+                                    discountModel.setValuetype(String.valueOf(value1));
+                                    discountModel.setPercent(value +" "+"%");
+                                } else {
+                                    value1 = Double.parseDouble(totalcost) - Double.parseDouble(value.trim());
+//                                Log.e("amouunt", String.valueOf(amount));
+
+//                                discountModel.setValue(String.valueOf(Math.round(amount)));
+                                    discountModel.setValue(value);
+                                    discountModel.setValuetype(String.valueOf(value1));
+                                    discountModel.setPercent("Rs. "+value );
+
+
+                                }
+                                discountModel.setDiscountvalue(discount_value);
+                                discountModel.setDiscount_type(discount_type);
+                                discountModel.setTitle(discountname);
+
+                                discountlist.add(discountModel);
+                            }
+                            discountAdapter.notifyDataSetChanged();
+
+
                         }
 
 
-                        discountAdapter.notifyDataSetChanged();
 //
 //
 
@@ -694,7 +731,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     }
                 },
                 error -> {
-
+                    recycler_layout.setVisibility(View.GONE);
                 }) {
 
             @Override
@@ -723,29 +760,106 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void discountValue(String discounted_amount, String coupon) {
+    public void discountValue(String discounted_amount, String coupon, String totalamount, String discount_type,String discountvalue) {
+String totalcost1=tcost;
         if (discounted_amount.trim().length() != 0) {
 
             discount_coupon = coupon;
-            int amount;
+            double amount;
 
-            String val2 = discounted_amount;
-            String[] str = val2.split("-");
-            discounted_amount = str[1];
+//            String val2 = discounted_amount;
+//            String[] str = val2.split("-");
+//            discounted_amount = str[1];
             discounted_price = discounted_amount;
-            amount = Integer.parseInt(discounted_amount);
+            amount = Double.parseDouble(discounted_amount);
             Log.e("amount", String.valueOf(discounted_amount));
-            totalcost = totalamount;
-            if (Integer.parseInt(totalcost) >= amount) {
+//            totalcost = totalamount;
+            Log.e("totalcost", totalamount);
+            if (Double.parseDouble(totalcost) >= amount) {
                 discount_layout.setVisibility(View.VISIBLE);
-                int a = Integer.parseInt(totalcost) - amount;
-                totalcost = String.valueOf(a);
-                t_pay.setText(getResources().getString(R.string.Rs) + " " + totalcost);
-                discount_price.setText(getResources().getString(R.string.Rs) + " " + discounted_amount);
-                apply_coupon.setText("Your Applied Coupon Code is : " + coupon);
-                recycler_layout.setVisibility(View.GONE);
-                view_coupon.setText(R.string.view);
-                view_coupon.setVisibility(View.VISIBLE);
+//                Double a = (double) Math.round(Double.parseDouble(totalcost) - amount);
+                Double a = (double) Math.round(Double.parseDouble(totalamount));
+
+                switch (discount_type) {
+                    case "greater":
+                        if (Double.parseDouble(totalcost1) > Math.round(Double.parseDouble(discountvalue))) {
+                            totalcost = String.valueOf(a);
+                            t_pay.setText(getResources().getString(R.string.Rs) + " " + totalcost);
+                            discount_price.setText(getResources().getString(R.string.Rs) + " " + discounted_amount);
+                            apply_coupon.setText("Your Applied Coupon Code is : " + coupon);
+                            recycler_layout.setVisibility(View.GONE);
+                            view_coupon.setText(R.string.view);
+                            view_coupon.setVisibility(View.VISIBLE);
+                            textcoupon.setVisibility(View.GONE);
+                            discount_layout.setVisibility(View.VISIBLE);
+
+                        } else {
+                            totalcost=totalcost1;
+                            discount_coupon="";
+                            discounted_price="";
+                            textcoupon.setVisibility(View.VISIBLE);
+                            textcoupon.setText("This coupon is available only for more than Rs."+discountvalue+". Please add more items in your cart ");
+                            discount_layout.setVisibility(View.GONE);
+                        }
+                        break;
+                    case "equal":
+                        if (Double.parseDouble(totalcost1) == Math.round(Double.parseDouble(discountvalue))) {
+                            totalcost = String.valueOf(a);
+                            t_pay.setText(getResources().getString(R.string.Rs) + " " + totalcost);
+                            discount_price.setText(getResources().getString(R.string.Rs) + " " + discounted_amount);
+                            apply_coupon.setText("Your Applied Coupon Code is : " + coupon);
+                            recycler_layout.setVisibility(View.GONE);
+                            view_coupon.setText(R.string.view);
+                            view_coupon.setVisibility(View.VISIBLE);
+                            textcoupon.setVisibility(View.GONE);
+                            discount_layout.setVisibility(View.VISIBLE);
+
+                        } else {
+                            totalcost=totalcost1;
+                            discount_coupon="";
+                            discounted_price="";
+                            textcoupon.setText("This coupon is available only for equal to Rs."+discountvalue);
+                            textcoupon.setVisibility(View.VISIBLE);
+                            discount_layout.setVisibility(View.GONE);
+
+
+                        }
+
+                        break;
+                    case "less":
+                        if (Double.parseDouble(totalcost1.trim()) <  Math.round(Double.parseDouble(discountvalue.trim()))) {
+                            totalcost = String.valueOf(a);
+                            t_pay.setText(getResources().getString(R.string.Rs) + " " + totalcost);
+                            discount_price.setText(getResources().getString(R.string.Rs) + " " + discounted_amount);
+                            apply_coupon.setText("Your Applied Coupon Code is : " + coupon);
+                            recycler_layout.setVisibility(View.GONE);
+                            view_coupon.setText(R.string.view);
+                            view_coupon.setVisibility(View.VISIBLE);
+                            textcoupon.setVisibility(View.GONE);
+                            discount_layout.setVisibility(View.VISIBLE);
+
+                        } else {
+                            totalcost=totalcost1;
+                            discount_coupon="";
+                            discounted_price="";
+                            textcoupon.setText("This coupon is available only for less than Rs."+discountvalue);
+                            textcoupon.setVisibility(View.VISIBLE);
+                            discount_layout.setVisibility(View.GONE);
+
+                        }
+                        break;
+                }
+
+
+
+
+//                totalcost = String.valueOf(a);
+//                t_pay.setText(getResources().getString(R.string.Rs) + " " + totalcost);
+//                discount_price.setText(getResources().getString(R.string.Rs) + " " + discounted_amount);
+//                apply_coupon.setText("Your Applied Coupon Code is : " + coupon);
+//                recycler_layout.setVisibility(View.GONE);
+//                view_coupon.setText(R.string.view);
+//                view_coupon.setVisibility(View.VISIBLE);
             } else {
                 discount_layout.setVisibility(View.VISIBLE);
 //                int a = Integer.parseInt(totalcost) - amount;
@@ -818,7 +932,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         Integer randomNum = ServiceUtility.randInt(0, 9999999);
         orderId = randomNum.toString();
         phone = mobile.getText().toString().trim();
-        int costtotal = Integer.parseInt(totalcost.trim());
+        double costtotal = Double.parseDouble(totalcost.trim());
         String customerid = SharedPreference.getData("customerid", getApplicationContext());
 
         try {
