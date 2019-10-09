@@ -24,8 +24,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -711,14 +717,67 @@ public class Navigation extends AppCompatActivity
         String update = SharedPreference.getData("update", getApplicationContext());
         if (update.equals("false")) {
             SharedPreference.saveData("update", "true", getApplicationContext());
-            AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setTitle("New version available")
-                    .setMessage("Please, update app to new version to continue reposting.")
-                    .setPositiveButton("Update",
-                            (dialog12, which) -> redirectStore(updateUrl)).setNegativeButton("No, thanks",
-                            (dialog1, which) -> dialog1.dismiss()).create();
-            dialog.show();
+//            AlertDialog dialog = new AlertDialog.Builder(this)
+//                    .setTitle("New version available")
+//                    .setMessage("Please, update app to new version to continue shopping.")
+//                    .setPositiveButton("Update",
+//                            (dialog12, which) -> redirectStore(updateUrl)).setNegativeButton("No, thanks",
+//                            (dialog1, which) -> dialog1.dismiss()).create();
+//            dialog.show();
+            showCustomDialog(updateUrl);
         }
+    }
+
+
+    private void showCustomDialog(String dtext) {
+        if (getApplicationContext() != null) {
+            //before inflating the custom alert dialog layout, we will get the current activity viewgroup
+            ViewGroup viewGroup = findViewById(android.R.id.content);
+
+            //then we will inflate the custom alert dialog xml that we created
+            View dialogView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.customdialog, viewGroup, false);
+
+            //Now we need an AlertDialog.Builder object
+     AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            //setting the view of the builder to our custom view that we already inflated
+            builder.setView(dialogView);
+
+            //finally creating the alert dialog and displaying it
+            AlertDialog alertDialog = builder.create();
+            alertDialog.setCanceledOnTouchOutside(false);
+            alertDialog.setCancelable(false);
+//            alertDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+//                @Override
+//                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+//                    // Prevent dialog close on back press button
+//                    return keyCode == KeyEvent.KEYCODE_BACK;
+//                }
+//            });
+
+            Button ok = dialogView.findViewById(R.id.buttonOk);
+            TextView dialog_text = dialogView.findViewById(R.id.dialog_text);
+//            dialog_text.setText(dtext);
+            ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//                    alertDialog.dismiss();
+                    redirectStore(dtext);
+                }
+            });
+
+//            alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener(){
+//                @Override
+//                public void onCancel(DialogInterface dialogInterface) {
+//                    closeActivity();
+//                }
+//            });
+
+
+            alertDialog.show();
+
+        }
+
     }
 
     private void redirectStore(String updateUrl) {
@@ -727,6 +786,11 @@ public class Navigation extends AppCompatActivity
         startActivity(intent);
     }
 
+    public void closeActivity(){
+
+        finish();
+
+    }
     public void Dialog(String poptext) {
 
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(Navigation.this, R.style.AlertDialogStyle);

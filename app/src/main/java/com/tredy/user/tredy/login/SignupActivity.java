@@ -291,7 +291,7 @@ public class SignupActivity extends Activity implements TextWatcher {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if(getApplicationContext()!=null && progressDialog.isShowing()) {
+                                if(progressDialog!=null && progressDialog.isShowing()) {
                                     progressDialog.dismiss();
                                 }
                             }

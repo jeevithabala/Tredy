@@ -88,6 +88,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
     String no_of_count;
     private ImageView veg_image;
     private FloatingActionButton chat_button;
+    WebView webView;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +122,8 @@ public class ProductView extends Fragment implements ProductClickInterface {
         radioGroup = view.findViewById(R.id.radiogroup);
         veg_image = view.findViewById(R.id.veg_image);
         veg_text = view.findViewById(R.id.veg_text);
+         webView = view.findViewById(R.id.webView);
+
 
         // desc=view.findViewById(R.id.desc);
 //        count.addTextChangedListener(this);
@@ -446,9 +449,12 @@ public class ProductView extends Fragment implements ProductClickInterface {
                         itemModel.setWeightname(product.getVariants().getEdges().get(0).getNode().getSelectedOptions().get(0).getName());
                         productViewBinding.setProductview(itemModel);
                         if (getActivity() != null) {
-                            getActivity().runOnUiThread(() -> {
-                                getData();
-                                progressDialog.dismiss();
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    getData();
+                                    progressDialog.dismiss();
+                                }
                             });
                         }
 
@@ -465,7 +471,12 @@ public class ProductView extends Fragment implements ProductClickInterface {
             @Override
             public void onFailure(@NonNull GraphError error) {
                 if(getActivity()!=null) {
-                    getActivity().runOnUiThread(progressDialog::dismiss);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
                 }
 
 //                Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
@@ -485,7 +496,6 @@ public class ProductView extends Fragment implements ProductClickInterface {
             itemModel.setPrice(selectedID);
 
 
-            WebView webView = view.findViewById(R.id.webView);
 //            webView.clearCache(true);
 //            String s="<head><meta name=viewport content=target-densitydpi=medium-dpi, width=device-width/></head>";
             webView.loadDataWithBaseURL(null, mHtmlString, "text/html", "utf-8", null);
@@ -494,7 +504,7 @@ public class ProductView extends Fragment implements ProductClickInterface {
             webView.setBackgroundColor(Color.TRANSPARENT);
 
 
-            if (itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getSku() != null) {
+            if (itemModel.getProduct().getVariants().getEdges()!=null&&itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode()!=null&&itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getSku() != null) {
                 sku.setText(itemModel.getProduct().getVariants().getEdges().get(selectedID).getNode().getSku());
             } else {
                 sku.setText("");

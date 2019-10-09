@@ -289,7 +289,7 @@
                     android:fontFamily="@font/lucidasansdemiboldroman"
                     android:gravity="center"
                     android:padding="15dp"
-                    android:text="Continue to payment method"
+                    android:text="Continue to Payment Method"
                     android:textColor="@color/white"
                     android:textSize="14sp" />
             </LinearLayout>

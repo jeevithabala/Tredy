@@ -5,8 +5,11 @@
     <string name="title_bag">Cart</string>
     <string name="title_whishlist">Wishlist</string>
     <string name="dollar">$</string>
-    <string name="facebook_app_id">977168719337923</string>
-    <string name="fb_login_protocol_scheme">fb977168719337923</string>
+<!--    <string name="facebook_app_id">977168719337923</string>-->
+<!--    <string name="fb_login_protocol_scheme">fb977168719337923</string>-->
+    <string name="facebook_app_id">2393860927602534</string>
+    <string name="fb_login_protocol_scheme">fb2393860927602534</string>
+
     <string name="buy">Buy Now @ </string>
     <string name="Rs">Rs. </string>
     <string name="link"><u>Please remove them to continue.</u></string>
@@ -58,6 +61,9 @@
     <string name="aboutus1">Tredyfoods.com is well networked and our endeavour to deliver that snack to you and not even its identical one is saddled in all our efforts. Selected from the best of cuisines tredyfoods.com strives to serve you only THE BEST.</string>
     <string name="aboutus2">In a country with diverse people, language, culture, traditions, flora and fauna, food is no exception and tredyfoods.com bridges the gap between YOU and the wide variety of foods that are hygienic, healthy and of course mouth watering.</string>
     <string name="aboutus3">Tredyfoods.com wishes you a Happy and Healthy Snacking.</string>
+
+
+    <string name="cancel1"><u>Cancel</u></string>
 
 
 </resources>

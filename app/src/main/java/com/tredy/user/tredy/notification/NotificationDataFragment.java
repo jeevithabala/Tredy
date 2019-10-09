@@ -229,17 +229,21 @@ public class NotificationDataFragment extends AppCompatActivity {
 
                                             OrderListModel orderListModel = new OrderListModel();
                                             orderListModel.setId(String.valueOf(orderModelArrayList1.get(i).getOrderd().getOrderNumber()));
-                                            orderListModel.setTitle(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getProduct().getTitle());
-                                            if (orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getImage() == null) {
-                                                orderListModel.setImage(null);
-                                            } else {
-                                                orderListModel.setImage(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getImage().getSrc());
+                                            if(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode()!=null&&orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant()!=null){
+                                                orderListModel.setTitle(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getProduct().getTitle());
+                                                if (orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getImage() == null) {
+                                                    orderListModel.setImage(null);
+                                                } else {
+                                                    orderListModel.setImage(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getImage().getSrc());
+                                                }
+                                                orderListModel.setQuantity(String.valueOf(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getQuantity()));
+                                                orderListModel.setProductcost(String.valueOf(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getPrice()));
+
                                             }
+
                                             orderListModel.setShippingtax(String.valueOf(orderModelArrayList1.get(i).getOrderd().getShippingAddress()));
                                             orderListModel.setSubtotal(String.valueOf(orderModelArrayList1.get(i).getOrderd().getSubtotalPrice()));
                                             orderListModel.setTotalcost(String.valueOf(orderModelArrayList1.get(i).getOrderd().getTotalPrice()));
-                                            orderListModel.setQuantity(String.valueOf(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getQuantity()));
-                                            orderListModel.setProductcost(String.valueOf(orderModelArrayList1.get(i).getOrderd().getLineItems().getEdges().get(j).getNode().getVariant().getPrice()));
 
                                             shipping.setText(String.valueOf(orderModelArrayList1.get(i).getOrderd().getTotalShippingPrice()));
                                             total.setText(String.valueOf(orderModelArrayList1.get(i).getOrderd().getTotalPrice()));

@@ -90,14 +90,14 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.e("ulhijio", "hui");
+//        Log.e("ulhijio", "hui");
         if (viewType == TYPE_ITEM) {
-            Log.e("item_view", "came");
+//            Log.e("item_view", "came");
             View itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.notificationlistadapter, parent, false);
             return new ViewHolder(itemView);
         } else if (viewType == TYPE_FOOTER) {
-            Log.e("footer_view", "came");
+//            Log.e("footer_view", "came");
             View itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.notification_list_footer, parent, false);
             return new FooterViewHolder(itemView);

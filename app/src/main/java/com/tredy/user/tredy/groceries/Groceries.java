@@ -297,22 +297,38 @@ public class Groceries extends Fragment implements GroceryAdapter.CartDailog, Vi
                     }
 
                 }
-                if (getActivity() != null) getActivity().runOnUiThread(() -> {
-                    notfound.setVisibility(View.GONE);
-                    progressDialog.dismiss();
-                    adapter.notifyDataSetChanged();
+                if (getActivity() != null)
+                    getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        notfound.setVisibility(View.GONE);
+                        progressDialog.dismiss();
+                        adapter.notifyDataSetChanged();
+                    }
                 });
             }else {
-                    Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                        notfound.setVisibility(View.VISIBLE);
-                        filter_layout.setVisibility(View.GONE);
-                        progressDialog.dismiss();
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            notfound.setVisibility(View.VISIBLE);
+                            filter_layout.setVisibility(View.GONE);
+                            progressDialog.dismiss();
+                        }
                     });
                 }
         }
             @Override
             public void onFailure(@NonNull GraphError error) {
-                Objects.requireNonNull(getActivity()).runOnUiThread(() -> progressDialog.dismiss());
+                if(getActivity()!=null){
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
+                }
+
             }
         });
     }

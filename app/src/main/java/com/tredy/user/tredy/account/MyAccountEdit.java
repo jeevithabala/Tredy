@@ -168,42 +168,69 @@ public class MyAccountEdit extends Fragment {
 //                        transaction.addToBackStack("account");
 //                        transaction.commit();
                         if (getActivity() != null) {
-                            getActivity().runOnUiThread(() -> {
-                                progressDialog.dismiss();
-                                Config.Dialog("Profile Changes updated.. It takes few minutes to update in your account", getActivity());
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressDialog.dismiss();
+                                    Config.Dialog("Profile Changes updated.. It takes few minutes to update in your account", getActivity());
 
 //                                   Toast.makeText(getActivity(), "Changes updated.. It takes few minutes to update in your account", Toast.LENGTH_SHORT).show();
-                                if (getFragmentManager() != null) {
-                                    getFragmentManager().popBackStack();
-                                }
+                                    if (getFragmentManager() != null) {
+                                        getFragmentManager().popBackStack();
+                                    }
 
+                                }
                             });
                         }
 
 
                     } else {
-                        if (response.data().getCustomerUpdate().getUserErrors() != null)
+                        if (response.data().getCustomerUpdate() != null && response.data().getCustomerUpdate().getUserErrors() != null)
                             for (int i = 0; i < response.data().getCustomerUpdate().getUserErrors().size(); i++) {
                                 String phonecheck = response.data().getCustomerUpdate().getUserErrors().get(i).getMessage();
-                                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                                    progressDialog.dismiss();
-                                    Config.Dialog(phonecheck, getActivity());
+                                if(getActivity()!=null){
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            progressDialog.dismiss();
+                                            Config.Dialog(phonecheck, getActivity());
 
 //                                    Toast.makeText(getActivity(),phonecheck,Toast.LENGTH_SHORT).show();
 
-                                });
+                                        }
+                                    });
+
+                                }
                             }
 
 
                     }
                 } else {
-                    progressDialog.dismiss();
+                    if(getActivity()!=null){
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                            }
+                        });
+
+                    }
+
                 }
             }
 
             @Override
             public void onFailure(@NonNull GraphError error) {
-                progressDialog.dismiss();
+                if(getActivity()!=null){
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
+
+                }
+
 
             }
         });

@@ -849,7 +849,12 @@ public class WebViewActivity extends AppCompatActivity implements Communicator {
 
                             show_alert(vResponse);
                         } else {
-                            new RenderView().execute();
+                            try{
+                                new RenderView().execute();
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
                         }
 
                     }

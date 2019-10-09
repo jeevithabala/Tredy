@@ -184,8 +184,12 @@ public class LoginActiviy extends AppCompatActivity implements
 
                                         // Bundle bFacebookData = getFacebookData(object);
                                         // email = response.getJSONObject().getString("email");
+
                                         firstname = object.getString("first_name");
-                                        lastname = object.getString("last_name");
+                                        try{
+                                            lastname = object.getString("last_name");
+                                        }catch (Exception ignored){
+                                        }
                                         email = object.getString("email");
                                         String id = object.getString("id");
                                         Log.e("LoginActivity", id);
@@ -377,7 +381,7 @@ public class LoginActiviy extends AppCompatActivity implements
 
     public void checkCustomer(String email, String password) {
 
-        progressDoalog = new ProgressDialog(LoginActiviy.this);
+        progressDoalog = new ProgressDialog(this);
         progressDoalog.setMessage("loading....");
         progressDoalog.setTitle("Processing");
         progressDoalog.setCanceledOnTouchOutside(false);
@@ -405,7 +409,7 @@ public class LoginActiviy extends AppCompatActivity implements
 
                 if (response.data() != null) {
 
-                    if (response.data().getCustomerAccessTokenCreate().getUserErrors().size() > 0) {
+                    if (response.data().getCustomerAccessTokenCreate()!=null&&response.data().getCustomerAccessTokenCreate().getUserErrors()!=null&&response.data().getCustomerAccessTokenCreate().getUserErrors().size() > 0) {
                         String message = response.data().getCustomerAccessTokenCreate().getUserErrors().get(0).getMessage();
                         if (message.trim().equalsIgnoreCase("unidentified customer")) {
                             if (sociallogin) {
@@ -436,7 +440,7 @@ public class LoginActiviy extends AppCompatActivity implements
 
                     } else {
 
-                        if (response.data().getCustomerAccessTokenCreate().getCustomerAccessToken() != null) {
+                        if (response.data().getCustomerAccessTokenCreate()!=null&&response.data().getCustomerAccessTokenCreate().getCustomerAccessToken() != null) {
 
                             String token = "" + response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getAccessToken();
 //                            String expire = response.data().getCustomerAccessTokenCreate().getCustomerAccessToken().getExpiresAt().toString();

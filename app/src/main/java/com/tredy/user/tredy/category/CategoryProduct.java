@@ -519,12 +519,15 @@ public class CategoryProduct extends Fragment implements ProductAdapter.OnItemCl
 //                                productAdapter1 = new ProductAdapter(getActivity(), productDetalList1, getFragmentManager(), CategoryProduct.this);
 //                                productAdapter = new ProductAdapter(getActivity(), productDetalList, getFragmentManager(), CategoryProduct.this);
 //                                recyclerView.setAdapter(productAdapter);
-                                productAdapter1.notifyDataSetChanged();
-                                if (productDetalList1.size() == 0) {
-                                    noproduct.setVisibility(View.VISIBLE);
-                                } else {
-                                    noproduct.setVisibility(View.GONE);
+                                if(getActivity()!=null){
+                                    productAdapter1.notifyDataSetChanged();
+                                    if (productDetalList1.size() == 0) {
+                                        noproduct.setVisibility(View.VISIBLE);
+                                    } else {
+                                        noproduct.setVisibility(View.GONE);
+                                    }
                                 }
+
                             } catch (JSONException e1) {
                                 e1.printStackTrace();
 

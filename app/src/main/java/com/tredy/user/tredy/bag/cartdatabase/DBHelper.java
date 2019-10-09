@@ -144,6 +144,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             db.update(TABLE_ADDTOCART, values, COLUMN_PRODUCT_VARIENT_ID + "= '" + id + "'", null);
         }
+        cursor.close();
         db.close();
         ((AddRemoveCartItem) mContext).AddCartItem();
     }

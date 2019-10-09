@@ -119,7 +119,7 @@
                         android:fontFamily="@font/lucidasansdemibold"
                         android:gravity="center"
                         android:padding="10dp"
-                        android:text="Proceed To Checkout"
+                        android:text="Proceed to Checkout"
                         android:textColor="@color/white"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -132,7 +132,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="50dp"
             android:layout_marginRight="8dp"
             android:clickable="true"
             app:backgroundTint="@color/colorPrimary"

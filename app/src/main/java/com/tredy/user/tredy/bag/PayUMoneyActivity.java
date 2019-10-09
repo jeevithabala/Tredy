@@ -64,17 +64,19 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
 
     EditText emailedit, mobile, amountedit;
     LinearLayout paynowbtn, recycler_layout;
-    Button btnsubmit1, btncancel;
+    Button btnsubmit1;
+    TextView btncancel;
     RadioButton btnradonline, btnradcod;
     String emailstring, totalamount, firstname = "", lastname = "", bfirstname = "", blastname = "", address1 = "", city = "", state = "", country = "", zip = "", phone = "", b_address1 = "", b_city = "", b_state = "", b_country = "", b_zip = "";
     String s_mobile = "", b_mobile = "", b_email = "";
     TextView textcoupon,txtpayamount, t_pay, discount_price, apply_coupon;
     LinearLayout discount_layout;
+    TextView cod_l;
     int cod = 0;
     private String dynamicKey = "", remove_cod = "";
     DBHelper db;
     List<AddToCart_Model> cartlist = new ArrayList<>();
-    String product_varientid = "", product_qty = "", totalcost = "", tag = "";
+    String product_varientid = "", product_qty = "", totalcost = "", tag = "",fcost="";
     RecyclerView discount_recycler;
     private RequestQueue mRequestQueue;
     ArrayList<DiscountModel> discountlist = new ArrayList<>();
@@ -182,6 +184,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         discount_layout = findViewById(R.id.discount_layout);
         apply_coupon = findViewById(R.id.apply_coupon);
         paynowbtn = findViewById(R.id.paynowbtn);
+        cod_l=findViewById(R.id.cod_l);
         paynowbtn.setOnClickListener(this);
         view_coupon.setOnClickListener(this);
 
@@ -252,11 +255,14 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
             case R.id.online:
                 btnradonline.setChecked(true);
                 btnradcod.setChecked(false);
+                txtpayamount.setText(totalcost);
                 break;
 
             case R.id.cod:
                 btnradcod.setChecked(true);
                 btnradonline.setChecked(false);
+
+                txtpayamount.setText(fcost);
                 break;
             case R.id.paynowbtn:
                 phone = mobile.getText().toString();
@@ -360,17 +366,22 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
         txtpayamount = dialog.findViewById(R.id.pay_amount);
         btnradonline = dialog.findViewById(R.id.online);
         btnradcod = dialog.findViewById(R.id.cod);
+        cod_l=dialog.findViewById(R.id.cod_l);
 //        btnradcod.setVisibility(View.GONE);
         double cost = Double.parseDouble(totalcost.trim());
+        fcost="";
+        fcost= String.valueOf(cost+25.00);
 //        Log.e("remove_cod", " " + remove_cod);
 //        Log.e("isCODAvilable", " " + isCODAvilable);
 //        if (remove_cod.trim().length() == 0||isCODAvilable.trim().equals("cod")) {
 
         if (remove_cod.trim().equals("remove_cod")) {
+            cod_l.setVisibility(View.GONE);
             btnradcod.setVisibility(View.GONE);
         } else if (isCODAvilable.trim().equals("cod")) {
             btnradcod.setVisibility(View.VISIBLE);
         } else {
+            cod_l.setVisibility(View.GONE);
             btnradcod.setVisibility(View.GONE);
         }
 
@@ -416,6 +427,7 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                         discounted_price = "";
                         discount_coupon = "";
                     }
+                    totalcost=fcost;
                     cod = 1;
                     if (Config.isNetworkAvailable(getApplicationContext())) {
                         noDialog();
@@ -502,6 +514,13 @@ public class PayUMoneyActivity extends AppCompatActivity implements View.OnClick
                     jsonBody.put("line_items", line_items);
 
                 }
+
+                JSONArray shipping_lines=new JSONArray();
+                JSONObject ship_items = new JSONObject();
+                ship_items.put("price",25);
+                ship_items.put("title","Standard Shipping");
+                shipping_lines.put(ship_items);
+                jsonBody.put("shipping_lines", shipping_lines);
                 if (discount_coupon.trim().length() != 0) {
                     JSONArray note1 = new JSONArray();
                     JSONObject notes1 = new JSONObject();

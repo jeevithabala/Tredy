@@ -770,7 +770,7 @@
                 android:fontFamily="@font/lucidasansdemiboldroman"
                 android:gravity="center"
                 android:padding="15dp"
-                android:text="Continue to shipping method"
+                android:text="Continue"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
         </LinearLayout>

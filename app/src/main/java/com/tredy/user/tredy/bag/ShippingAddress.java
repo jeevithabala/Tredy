@@ -524,11 +524,14 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     shipping_country_input.setText("");
                 } else {
                     check_ship_bill = "shipping";
-                    if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
-                        getAddress(s_pincode.trim());
-                    } else {
-                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    if(getActivity()!=null){
+                        if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
+                            getAddress(s_pincode.trim());
+                        } else {
+                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        }
                     }
+
                 }
             } else if (charSequence1.hashCode() == billing_pin.getText().hashCode()) {
                 String b_pincode = billing_pin.getText().toString();
@@ -538,10 +541,12 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     billing_country.setText("");
                 } else {
                     check_ship_bill = "billing";
-                    if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
-                        getAddress(b_pincode.trim());
-                    } else {
-                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    if(getActivity()!=null) {
+                        if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
+                            getAddress(b_pincode.trim());
+                        } else {
+                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                 }
@@ -563,10 +568,12 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     shipping_country_input.setText("");
                 } else {
                     check_ship_bill = "shipping";
-                    if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
-                        getAddress(s_pincode.trim());
-                    } else {
-                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    if(getActivity()!=null) {
+                        if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
+                            getAddress(s_pincode.trim());
+                        } else {
+                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
 
@@ -579,12 +586,13 @@ public class ShippingAddress extends Fragment implements TextWatcher {
                     billing_country.setText("");
                 } else {
                     check_ship_bill = "billing";
-                    if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
-                        getAddress(b_pincode.trim());
-                    } else {
-                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    if(getActivity()!=null) {
+                        if (Internet.isConnected(Objects.requireNonNull(getActivity()))) {
+                            getAddress(b_pincode.trim());
+                        } else {
+                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        }
                     }
-
                 }
             }
 
